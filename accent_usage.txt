@@ -1,0 +1,30 @@
+101:                step === i && activePersona === 'ABBEY' && "border-accent text-accent",
+286:            <span className="font-mono text-[9px] uppercase tracking-widest text-accent-light">{text}</span>
+356:      accentClass: 'text-accent',
+1433:                    <span className="technical-value text-[9px] text-accent">WAITING</span>
+1477:                <span className="technical-label text-accent-light block mb-2 text-center uppercase tracking-[0.3em]">Warning</span>
+1586:                    <span className="technical-label text-accent animate-pulse tracking-[0.3em]">Synching_Neural_Backtrace...</span>
+1590:                  <div className="w-64 space-y-1 font-mono text-[7px] text-accent/40 uppercase">
+1652:                  isAutoPersona ? "text-accent bg-accent/10" : "text-white/20 hover:text-white/40"
+1681:                <span className="technical-value text-accent-light">{fps} FPS</span>
+1717:            <span className="technical-value text-accent-light font-bold uppercase tracking-widest">{activePersona}</span>
+1739:                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent-light text-[10px] font-bold tracking-[0.2em] uppercase">
+1798:                      <div className="text-[10px] font-mono text-accent-light tracking-widest uppercase">System_Status</div>
+1986:                                  className={`px-3 py-1 rounded-md technical-label transition-all ${isPaused ? 'bg-white/5 text-text-dim border border-white/5' : 'bg-accent/20 text-accent-light border border-accent/40'}`}
+2168:                                        <h3 className="technical-label text-white text-[11px] group-hover:text-accent-light transition-colors">
+2180:                                          <span className="technical-label text-accent font-bold tracking-[0.2em] group-hover:animate-pulse">
+2243:                                            <span className="technical-label text-accent-light animate-pulse">NEURAL_DEEP_SYNC</span>
+2255:                                  <span className="technical-label text-accent-light">Live_Feed</span>
+2383:                                      <span className="technical-label text-accent-light">{p.name}</span>
+2402:                                <p className="text-[9px] font-mono leading-relaxed text-accent-light italic">
+2412:                                <Globe className="w-24 h-24 text-accent/20 animate-pulse" />
+2451:                                <h3 className="technical-label text-accent/60">Active_Infrastructure_Nodes</h3>
+2522:                                  <Layers className="w-32 h-32 text-accent/10" />
+2584:                                  <span className="micro-label text-accent font-bold">READY</span>
+2606:                                          <span className="micro-label text-accent-light px-1 bg-accent/10">{log.type}</span>
+2634:                                  <h3 className="technical-label text-accent-light text-xl mb-1">MLAI_CORPORATION</h3>
+2699:              className="w-10 h-10 flex items-center justify-center technical-label text-white hover:text-accent transition-colors border border-white/5 bg-white/5"
+2707:            <span className="technical-value text-accent">{zoom.toFixed(2)}x</span>
+2713:              className="w-10 h-10 flex items-center justify-center technical-label text-white hover:text-accent transition-colors border border-white/5 bg-white/5"
+2731:            <span className="technical-label text-accent">Kernel_Logs</span>
+2743:              className="text-accent-light"
