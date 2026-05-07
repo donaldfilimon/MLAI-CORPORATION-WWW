@@ -3,31 +3,36 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, {
   useEffect,
   useRef,
   useState,
   useCallback,
-  type ReactNode,
 } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "./lib/utils";
+import { PERSONAS, PersonaType } from "./constants/personas";
+import { Tooltip } from "./components/Tooltip";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { useAutoSave } from "./lib/useAutoSave";
+import { InquiryForm } from "./components/InquiryForm";
+import { BrandTab } from "./components/tabs/BrandTab";
+import { FrameworkTab } from "./components/tabs/FrameworkTab";
+import { BenchmarksTab } from "./components/tabs/BenchmarksTab";
+import { AbbeyTab } from "./components/tabs/AbbeyTab";
+import { PortfolioTab } from "./components/tabs/PortfolioTab";
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip as ChartTooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
 } from "recharts";
-import { cn } from "./lib/utils";
+
 import {
   Maximize2,
   Minimize2,
@@ -58,447 +63,13 @@ import {
   Shield,
   FlaskConical,
   Scale,
+  AlertCircle,
 } from "lucide-react";
 
-const InquiryForm = ({
-  isOpen,
-  onClose,
-  activePersona,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  activePersona: string;
-}) => {
-  const [step, setStep] = useState(0);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    services: [] as string[],
-    budget: "",
-    message: "",
-  });
-  const [error, setError] = useState<string | null>(null);
-
-  if (!isOpen) return null;
-
-  const validate = () => {
-    setError(null);
-    if (activePersona === "ABBEY") {
-      if (step === 0) {
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-          setError("Please enter a valid email.");
-          return false;
-        }
-        if (!/^\+?[1-9]\d{9,14}$/.test(formData.phone)) {
-          setError("Please enter a valid phone number.");
-          return false;
-        }
-      }
-    } else if (activePersona === "AVIVA") {
-      if (step === 1) {
-        if (!formData.company.trim()) {
-          setError("Company name is required.");
-          return false;
-        }
-        if (formData.services.length === 0) {
-          setError("Please select at least one service.");
-          return false;
-        }
-      }
-    } else if (activePersona === "ABI") {
-      if (step === 2) {
-        if (!formData.budget) {
-          setError("Please select a budget range.");
-          return false;
-        }
-        if (!formData.message.trim()) {
-          setError("Message is required.");
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
-  const nextStep = () => {
-    if (step < 3) {
-      if (validate()) {
-        setStep((s) => Math.min(s + 1, 3));
-      }
-    } else {
-        onClose();
-    }
-  };
-  const prevStep = () => {
-    setStep((s) => Math.max(s - 1, 0));
-    setError(null);
-  };
-
-  const steps = [
-    { title: "Contact", label: "Step 1 of 3", sub: "Let's start with you." },
-    { title: "Business", label: "Step 2 of 3", sub: "About your business." },
-    { title: "Scope", label: "Step 3 of 3", sub: "Project scope." },
-    { title: "Done", label: "✓", sub: "Inquiry received." },
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-bg/90 backdrop-blur-xl overflow-y-auto"
-    >
-      <div className="absolute inset-0 bg-grid opacity-5" />
-      <motion.div
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        className="relative w-full max-w-[500px] bg-[#131316] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl"
-      >
-        <div className="flex border-b border-white/5">
-          {steps.map((s, i) => (
-            <div
-              key={i}
-              className={cn(
-                "flex-1 flex flex-col items-center py-5 px-1 relative transition-all duration-500",
-                step === i ? "opacity-100" : "opacity-40",
-                step > i && "opacity-60",
-              )}
-            >
-              <div
-                className={cn(
-                  "w-7 h-7 rounded-full border flex items-center justify-center text-[11px] font-bold transition-all duration-500",
-                  step === i
-                    ? "border-accent text-accent shadow-[0_0_15px_var(--accent)]"
-                    : "border-white/10 text-white/40",
-                  step > i && "bg-accent border-accent text-bg",
-                )}
-              >
-                {step > i ? "✓" : i + 1}
-              </div>
-              <span className="text-[9px] uppercase tracking-widest font-bold mt-2 text-white/40">
-                {s.title}
-              </span>
-              {i < 3 && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[1px] h-4 bg-white/5" />
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="h-1 bg-white/5 w-full">
-          <motion.div
-            className="h-full bg-accent transition-colors duration-1000"
-            animate={{ width: `${((step + 1) / 4) * 100}%` }}
-          />
-        </div>
-
-        <div className="p-8 md:p-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={step}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
-            >
-              {step < 3 ? (
-                <>
-                  <div className="space-y-2">
-                    <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/30">
-                      {steps[step].label}
-                    </div>
-                    <h3 className="text-2xl font-bold text-white">
-                      {steps[step].title}
-                    </h3>
-                    <p className="text-text-dim text-sm">{steps[step].sub}</p>
-                  </div>
-
-                  <div className="space-y-4 pt-4">
-                    {step === 0 && (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
-                            Full Name
-                          </label>
-                          <input
-                            placeholder="Jane Smith"
-                            value={formData.name}
-                            onChange={(e) => setFormData({...formData, name: e.target.value})}
-                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
-                            Work Email
-                          </label>
-                          <input
-                            placeholder="jane@company.com"
-                            value={formData.email}
-                            onChange={(e) => setFormData({...formData, email: e.target.value})}
-                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
-                            Phone
-                          </label>
-                          <input
-                            placeholder="+1234567890"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
-                          />
-                        </div>
-                      </>
-                    )}
-                    {step === 1 && (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
-                            Company Name
-                          </label>
-                          <input
-                            placeholder="Acme Corp"
-                            value={formData.company}
-                            onChange={(e) => setFormData({...formData, company: e.target.value})}
-                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 gap-2">
-                          {[
-                            "ML Model Development",
-                            "AI Integration",
-                            "Data Strategy",
-                          ].map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => {
-                                const newServices = formData.services.includes(
-                                  s,
-                                )
-                                  ? formData.services.filter((x) => x !== s)
-                                  : [...formData.services, s];
-                                setFormData({
-                                  ...formData,
-                                  services: newServices,
-                                });
-                              }}
-                              className={cn(
-                                "flex items-center gap-3 p-3 rounded-xl border transition-all text-left group",
-                                formData.services.includes(s)
-                                  ? "bg-white/10 border-white/40"
-                                  : "bg-white/5 border-white/5 hover:border-white/20",
-                              )}
-                            >
-                              <div
-                                className={cn(
-                                  "w-4 h-4 rounded border flex items-center justify-center transition-all",
-                                  formData.services.includes(s)
-                                    ? "bg-white border-white"
-                                    : "border-white/20",
-                                )}
-                              >
-                                {formData.services.includes(s) && (
-                                  <div className="w-2 h-2 bg-bg rounded-sm" />
-                                )}
-                              </div>
-                              <span
-                                className={cn(
-                                  "text-xs transition-colors",
-                                  formData.services.includes(s)
-                                    ? "text-white"
-                                    : "text-white/40 group-hover:text-white/60",
-                                )}
-                              >
-                                {s}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                    {step === 2 && (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
-                            Budget Range
-                          </label>
-                          <select 
-                            value={formData.budget}
-                            onChange={(e) => setFormData({...formData, budget: e.target.value})}
-                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors appearance-none cursor-pointer">
-                            <option value="">Select a budget</option>
-                            <option>Under $25k</option>
-                            <option>$25k - $100k</option>
-                            <option>$100k+</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
-                            Message
-                          </label>
-                          <textarea
-                            rows={4}
-                            placeholder="Describe your project..."
-                            value={formData.message}
-                            onChange={(e) => setFormData({...formData, message: e.target.value})}
-                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors resize-none"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {error && <div className="text-red-400 text-xs">{error}</div>}
-                  <div className="flex gap-3 pt-6">
-                    {step > 0 && (
-                      <button
-                        onClick={prevStep}
-                        className="px-6 py-4 border border-white/10 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                    )}
-                    <button
-                      onClick={nextStep}
-                      className={cn(
-                        "flex-1 px-8 py-4 bg-white text-bg rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all",
-                        activePersona === "AVIVA" && "bg-purple-400",
-                        activePersona === "ABI" && "bg-accent",
-                      )}
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center space-y-8 py-10">
-                  <div className="w-20 h-20 rounded-full border-2 border-accent/20 flex items-center justify-center mx-auto mb-6 relative">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="w-12 h-12 bg-accent rounded-full flex items-center justify-center"
-                    >
-                      <div className="w-6 h-[2px] bg-bg rotate-45 translate-y-[2px]" />
-                      <div className="w-3 h-[2px] bg-bg -rotate-45 translate-x-[-10px] translate-y-[-2px]" />
-                    </motion.div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-3xl font-bold text-white">
-                      Inquiry Sent.
-                    </h3>
-                    <p className="text-text-dim text-sm leading-relaxed px-4">
-                      Our system has registered your request. An analyst from
-                      the MLAI Corporation will review your telemetry and
-                      respond within 24-48 hours.
-                    </p>
-                  </div>
-                  <button
-                    onClick={onClose}
-                    className="w-full py-4 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-[0.3em] text-white/40 hover:text-white transition-all"
-                  >
-                    Close_Terminal
-                  </button>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const PERSONAS = {
-  ABBEY: {
-    color: "cyan",
-    hex: "#00f2ff",
-    label: "Ethical_Compliance",
-    mission: "PRESERVING_CORE_INTEGRITY",
-    protocol: "ABBEY_SECURE_INTEGRITY_SHIELD",
-    accentClass: "text-accent",
-    accentLightClass: "text-accent-light",
-    borderClass: "border-accent/30",
-    bgClass: "bg-accent/5",
-    glowClass: "from-accent/25 to-transparent",
-    orbClass: "bg-accent shadow-[0_0_80px_rgba(0,242,255,0.4)]",
-    neuralTheme: "staggered-data-active",
-  },
-  AVIVA: {
-    color: "purple",
-    hex: "#d900ff",
-    label: "Advanced_Research",
-    mission: "NEURAL_SYNTHETIC_EXPANSION",
-    protocol: "AVIVA_HYPER_COMPUTE_OVERCLOCK",
-    accentClass: "text-accent",
-    accentLightClass: "text-accent-light",
-    borderClass: "border-accent/40",
-    bgClass: "bg-accent/10",
-    glowClass: "from-accent/30 to-transparent",
-    orbClass: "bg-accent shadow-[0_0_80px_rgba(217,0,255,0.5)]",
-    neuralTheme: "quantum-distortion-v4",
-  },
-  ABI: {
-    color: "orange",
-    hex: "#ffbb00",
-    label: "Regulatory_Oversight",
-    mission: "DYNAMIC_MODERATION_SYNC",
-    protocol: "ABI_MEDIATION_LAYER_ACTIVE",
-    accentClass: "text-accent",
-    accentLightClass: "text-accent-light",
-    borderClass: "border-accent/30",
-    bgClass: "bg-accent/5",
-    glowClass: "from-accent/20 to-transparent",
-    orbClass: "bg-accent shadow-[0_0_80px_rgba(255,187,0,0.4)]",
-    neuralTheme: "regulatory-buffer-sync",
-  },
-} as const;
-
-const Tooltip = ({
-  children,
-  text,
-  activePersona,
-}: {
-  children: ReactNode;
-  text: string;
-  activePersona: string;
-  key?: string;
-}) => {
-  const [show, setShow] = useState(false);
-  const theme =
-    PERSONAS[activePersona as keyof typeof PERSONAS] || PERSONAS.ABBEY;
-  return (
-    <div
-      className="relative inline-block"
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-    >
-      {children}
-      <AnimatePresence>
-        {show && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-black/90 border border-white/20 technical-panel whitespace-nowrap pointer-events-none"
-          >
-            <div className="corner-accent top-0 left-0 border-t-2 border-l-2 w-1 h-1" />
-            <div className="corner-accent bottom-0 right-0 border-b-2 border-r-2 w-1 h-1" />
-            <span
-              className={cn(
-                "font-mono text-[9px] uppercase tracking-widest",
-                theme.accentLightClass,
-              )}
-            >
-              {text}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+const PERSONA_ICONS: Record<string, React.ElementType> = {
+  ABBEY: Shield,
+  AVIVA: FlaskConical,
+  ABI: Scale,
 };
 
 export default function App() {
@@ -510,6 +81,26 @@ export default function App() {
   const envFilterRef = useRef<BiquadFilterNode | null>(null);
   const envGainRef = useRef<GainNode | null>(null);
   const movementRef = useRef(0);
+  const framesRef = useRef(0);
+  const lastTimeRef = useRef(performance.now());
+
+  // Load initial settings from localStorage once
+  useEffect(() => {
+    const saved = localStorage.getItem('mlai-settings');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.speed !== undefined) setSpeed(parsed.speed);
+      if (parsed.lighting !== undefined) setLighting(parsed.lighting);
+      if (parsed.zoom !== undefined) setZoom(parsed.zoom);
+      if (parsed.yaw !== undefined) setYaw(parsed.yaw);
+      if (parsed.pitch !== undefined) setPitch(parsed.pitch);
+      if (parsed.proximity !== undefined) setProximity(parsed.proximity);
+      if (parsed.wind !== undefined) setWind(parsed.wind);
+      if (parsed.colorMode !== undefined) setColorMode(parsed.colorMode);
+      if (parsed.isPaused !== undefined) setIsPaused(parsed.isPaused);
+      if (parsed.renderMode !== undefined) setRenderMode(parsed.renderMode);
+    }
+  }, []);
 
   const [speed, setSpeed] = useState(0.2);
   const [lighting, setLighting] = useState(1.0);
@@ -525,165 +116,146 @@ export default function App() {
     | "controls"
     | "landscape"
     | "minimap"
-    | "docs"
     | "telemetry"
     | "network"
-    | "security"
-    | "blueprint"
     | "archive"
-    | "about"
+    | "brand"
+    | "framework"
+    | "benchmarks"
+    | "abbey"
+    | "portfolio"
   >("landscape");
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [renderMode, setRenderMode] = useState(0); // 0: Mandelbulb, 1: Neural Brain
   const [neuralActivity, setNeuralActivity] = useState(1.0);
   const [fps, setFps] = useState(0);
-  const [activePersona, setActivePersona] = useState("ABBEY");
+  const [activePersona, setActivePersona] = useState<PersonaType>("ABBEY");
   const [isAutoPersona, setIsAutoPersona] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [abbeyPulse, setAbbeyPulse] = useState(1.0);
   const [avivaGlitch, setAvivaGlitch] = useState(0.85);
   const [abiFlicker, setAbiFlicker] = useState(1.0);
+  
+  const settings = { speed, lighting, zoom, yaw, pitch, proximity, wind, colorMode, isPaused, renderMode };
+  const autoSaveStatus = useAutoSave(settings, 'mlai-settings', 3000);
+  const [sequence, setSequence] = useState<"landing" | "connecting" | "active">(
+    "landing",
+  );
+// Telemetry
+  const [telemetryData, setTelemetryData] = useState(
+    Array.from({ length: 20 }).map((_, i) => ({
+      name: i,
+      value: 50 + Math.random() * 10,
+    })),
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTelemetryData((prev) => {
+        const next = [...prev.slice(1), { name: prev[19].name + 1, value: 50 + Math.random() * 10 }];
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const colors = {
+    cyan: [0.0, 0.8, 1.0],
+    purple: [0.6, 0.2, 1.0],
+    lime: [0.2, 1.0, 0.2],
+    orange: [1.0, 0.5, 0.0],
+  };
+
   const [logs, setLogs] = useState<string[]>([
     "> BOOTING WDBX_KERNEL_V3.4...",
     "> MAPPING NEURAL_SYNAPSE_GRID...",
     "> PROTOCOL: ABBEY_LEVEL_SECURE",
   ]);
 
+  const PERSONA_MESSAGES: Record<PersonaType, string[]> = {
+    ABBEY: [
+      "> SWITCH: PERSONA_ABBEY",
+      "> STATUS: ETHICAL_COMPLIANCE_NOMINAL",
+      "> ENFORCING_INTEGRITY_SHIELD...",
+    ],
+    AVIVA: [
+      "> SWITCH: PERSONA_AVIVA",
+      "> STATUS: RESEARCH_CORE_ACTIVE",
+      "> OVERCLOCKING_SYNAPSE_GRID...",
+    ],
+    ABI: [
+      "> SWITCH: PERSONA_ABI",
+      "> STATUS: MODERATOR_LAYER_ENGAGED",
+      "> SYNCING_REGULATORY_BUFFER...",
+    ],
+  };
+
   const playPersonaCue = useCallback(
-    (persona: string, type: string = "SWITCH") => {
+    (persona: PersonaType, type: string = "SWITCH") => {
       if (!audioContextRef.current || !audioStarted) return;
       const ctx = audioContextRef.current;
       if (ctx.state === "suspended") ctx.resume();
 
       const cueGain = ctx.createGain();
-
-      // We pass it through a gentle lowpass so it's not too harsh in the mix
       const cueFilter = ctx.createBiquadFilter();
       cueFilter.type = "lowpass";
       cueFilter.frequency.setValueAtTime(3000, ctx.currentTime);
-
       cueGain.connect(cueFilter);
       cueFilter.connect(ctx.destination);
 
-      // Abbey: Harmonious, calm confirmation/security
-    if (persona === "ABBEY") {
-    if (type === "SWITCH") {
-      const freq1 = 523.25;
-      const freq2 = 659.25;
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      osc1.frequency.setValueAtTime(freq1, ctx.currentTime);
-      osc2.frequency.setValueAtTime(freq2, ctx.currentTime + 0.1);
-      
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.05); // Subtler
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-      
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(ctx.destination);
-      osc1.start(); osc1.stop(ctx.currentTime + 1.0);
-      osc2.start(ctx.currentTime + 0.1); osc2.stop(ctx.currentTime + 1.0);
-    } else if (type === "EVENT_SECURE") {
-      const osc = ctx.createOscillator();
-      osc.frequency.setValueAtTime(783.99, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(523.25, ctx.currentTime + 0.3);
-      
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-      
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(); osc.stop(ctx.currentTime + 0.3);
-    }
-  } else if (persona === "AVIVA") {
-    // Aviva: Complex, rising data pulses
-    if (type === "SWITCH") {
-       const osc1 = ctx.createOscillator();
-       osc1.frequency.setValueAtTime(150, ctx.currentTime);
-       osc1.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.2);
-       
-       const gain = ctx.createGain();
-       gain.gain.setValueAtTime(0, ctx.currentTime);
-       gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.05);
-       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-       
-       osc1.connect(gain);
-       gain.connect(ctx.destination);
-       osc1.start(); osc1.stop(ctx.currentTime + 0.5);
-    } else if (type === "EVENT_RESEARCH") {
-       const osc = ctx.createOscillator();
-       osc.type = "sawtooth";
-       osc.frequency.setValueAtTime(200, ctx.currentTime);
-       osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.3);
-       
-       const gain = ctx.createGain();
-       gain.gain.setValueAtTime(0, ctx.currentTime);
-       gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 0.05);
-       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-       
-       osc.connect(gain);
-       gain.connect(ctx.destination);
-       osc.start(); osc.stop(ctx.currentTime + 0.3);
-    }
-  } else if (persona === "ABI") {
-    // Abi: Precise, sharp confirmation
-    if (type === "SWITCH") {
-      const osc = ctx.createOscillator();
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(800, ctx.currentTime);
-      osc.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.1);
-      
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-      
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(); osc.stop(ctx.currentTime + 0.15);
-    } else if (type === "EVENT_CONFIRM") {
-       const osc = ctx.createOscillator();
-       osc.type = "square";
-       osc.frequency.setValueAtTime(1200, ctx.currentTime);
-       
-       const gain = ctx.createGain();
-       gain.gain.setValueAtTime(0, ctx.currentTime);
-       gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.02);
-       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-       
-       osc.connect(gain);
-       gain.connect(ctx.destination);
-       osc.start(); osc.stop(ctx.currentTime + 0.08);
-    }
-  }
+      const playOsc = (freq: number, type: OscillatorType, dur: number, attack: number, volume: number) => {
+        const osc = ctx.createOscillator();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + attack);
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(cueGain);
+        osc.start();
+        osc.stop(ctx.currentTime + dur);
+      };
+
+      if (persona === "ABBEY") {
+        if (type === "SWITCH") {
+            playOsc(523.25, "sine", 0.5, 0.05, 0.05);
+            playOsc(659.25, "sine", 0.5, 0.1, 0.05);
+        } else if (type === "EVENT_SECURE" || type === "EVENT_SECURITY_ALERT") {
+             const baseFreq = type === "EVENT_SECURITY_ALERT" ? 440 : 783.99;
+             // Rhythmic pulse for alert
+             for (let i = 0; i < (type === "EVENT_SECURITY_ALERT" ? 3 : 1); i++) {
+                setTimeout(() => playOsc(baseFreq, "square", 0.1, 0.01, 0.03), i * 150);
+             }
+        }
+      } else if (persona === "AVIVA") {
+        if (type === "SWITCH") {
+           playOsc(150, "sine", 0.3, 0.05, 0.04);
+           playOsc(400, "sine", 0.3, 0.1, 0.04);
+        } else if (type === "EVENT_RESEARCH" || type === "EVENT_DATA_SURGE") {
+           const type_ = type === "EVENT_DATA_SURGE" ? "sawtooth" : "sine";
+           for (let i = 0; i < (type === "EVENT_DATA_SURGE" ? 5 : 1); i++) {
+               setTimeout(() => playOsc(200 + i * 100, type_, 0.2, 0.02, 0.03), i * 50);
+           }
+        }
+      } else if (persona === "ABI") {
+        if (type === "SWITCH") {
+          playOsc(800, "triangle", 0.15, 0.02, 0.08);
+        } else if (type === "EVENT_CONFIRM" || type === "EVENT_REGULATORY_NOTIFICATION") {
+           const freq1 = type === "EVENT_REGULATORY_NOTIFICATION" ? 440 : 1200;
+           const freq2 = type === "EVENT_REGULATORY_NOTIFICATION" ? 659.25 : 1200;
+           playOsc(freq1, "square", 0.1, 0.02, 0.05);
+           setTimeout(() => playOsc(freq2, "square", 0.1, 0.02, 0.05), 100);
+        }
+      }
     },
     [audioStarted],
   );
 
   useEffect(() => {
-    const personaMessages = {
-      ABBEY: [
-        "> SWITCH: PERSONA_ABBEY",
-        "> STATUS: ETHICAL_COMPLIANCE_NOMINAL",
-        "> ENFORCING_INTEGRITY_SHIELD...",
-      ],
-      AVIVA: [
-        "> SWITCH: PERSONA_AVIVA",
-        "> STATUS: RESEARCH_CORE_ACTIVE",
-        "> OVERCLOCKING_SYNAPSE_GRID...",
-      ],
-      ABI: [
-        "> SWITCH: PERSONA_ABI",
-        "> STATUS: MODERATOR_LAYER_ENGAGED",
-        "> SYNCING_REGULATORY_BUFFER...",
-      ],
-    };
     const newLogs = [
       ...logs,
-      ...personaMessages[activePersona as keyof typeof personaMessages],
+      ...PERSONA_MESSAGES[activePersona],
     ].slice(-12);
     setLogs(newLogs);
 
@@ -713,15 +285,11 @@ export default function App() {
     (window as any)._shaderActivity = neuralActivity;
     (window as any)._shaderPaused = isPaused;
 
-    const pIdx =
-      activePersona === "ABBEY" ? 0 : activePersona === "AVIVA" ? 1 : 2;
+    const personaKeys = Object.keys(PERSONAS) as PersonaType[];
+    const pIdx = personaKeys.indexOf(activePersona);
     (window as any)._shaderPersona = pIdx;
 
-    if (colorMode === "cyan") (window as any)._shaderColor = [0.0, 0.8, 1.0];
-    else if (colorMode === "magenta")
-      (window as any)._shaderColor = [1.0, 0.0, 0.8];
-    else if (colorMode === "amber")
-      (window as any)._shaderColor = [1.0, 0.7, 0.0];
+    (window as any)._shaderColor = (colors as any)[colorMode] || [0.0, 0.8, 1.0];
 
     (window as any)._shaderAbbeyPulse = abbeyPulse;
     (window as any)._shaderAvivaGlitch = avivaGlitch;
@@ -743,33 +311,23 @@ export default function App() {
     avivaGlitch,
     abiFlicker,
   ]);
-  const framesRef = useRef(0);
-  const lastTimeRef = useRef(performance.now());
 
-  const [sequence, setSequence] = useState<"landing" | "connecting" | "active">(
-    "landing",
-  );
+  const theme = PERSONAS[activePersona];
 
-  const getTheme = () => PERSONAS[activePersona as keyof typeof PERSONAS];
-  const theme = getTheme();
-
-  const personaConfig = (PERSONAS as any)[activePersona];
+  const personaConfig = PERSONAS[activePersona];
 
   // Keyboard shortcuts for persona switching
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input (though there aren't many in this UI)
+      // Ignore if user is typing in an input
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName))
         return;
 
-      if (e.key === "1") {
-        setActivePersona("ABBEY");
-        setIsAutoPersona(false);
-      } else if (e.key === "2") {
-        setActivePersona("AVIVA");
-        setIsAutoPersona(false);
-      } else if (e.key === "3") {
-        setActivePersona("ABI");
+      const personaKeys = Object.keys(PERSONAS) as PersonaType[];
+      const index = parseInt(e.key) - 1;
+      
+      if (index >= 0 && index < personaKeys.length) {
+        setActivePersona(personaKeys[index]);
         setIsAutoPersona(false);
       }
     };
@@ -788,8 +346,8 @@ export default function App() {
       // Update Active Persona every 5 seconds for effect
       if (isAutoPersona) {
         const seconds = Math.floor(now / 5000);
-        const personaList = ["ABBEY", "AVIVA", "ABI"];
-        setActivePersona(personaList[seconds % 3]);
+        const personaKeys = Object.keys(PERSONAS) as PersonaType[];
+        setActivePersona(personaKeys[seconds % personaKeys.length]);
       }
 
       // Modulate neural activity
@@ -827,13 +385,6 @@ export default function App() {
     setProximity(-1.8);
     setWind(1.0);
     setSpeed(0.2);
-  };
-
-  const colors = {
-    cyan: [0.0, 0.8, 1.0],
-    orange: [1.0, 0.4, 0.0],
-    purple: [0.7, 0.2, 1.0],
-    lime: [0.6, 1.0, 0.0],
   };
 
   const startAudio = () => {
@@ -1150,8 +701,9 @@ export default function App() {
             ) * 2.0 - 1.0;
             
             float pFreq = 1.0 + cellHash; // Reduced frequency
-            float pulse = sin(u_time * pFreq + cellHash * 50.0) * 0.5 + 0.5;
-            float size = 0.02 + pulse * 0.04 * (u_persona == 1 ? 1.5 : 0.6);
+            float pulseTime = u_time * (1.0 + (u_persona == 0 ? u_abbey_pulse * 0.2 : 0.0));
+            float pulse = sin(pulseTime * pFreq + cellHash * 50.0) * 0.5 + 0.5;
+            float size = 0.02 + pulse * 0.04 * (u_persona == 1 ? 1.5 : (u_persona == 0 ? 0.6 + u_abbey_pulse * 0.3 : 0.6));
             
             float s;
             if (u_persona == 0) {
@@ -1169,6 +721,7 @@ export default function App() {
             if (s < 0.2 / scale) {
               float influence = smoothstep(0.2 / scale, 0.0, s);
               float iPulse = (0.4 + pulse * 1.0 * u_neural_activity);
+              if (u_persona == 0) iPulse *= (1.0 + u_abbey_pulse * 0.5);
               totalOrbit += influence * iPulse;
             }
           }
@@ -1292,11 +845,12 @@ export default function App() {
         vec3 personaSignColor = vec3(0.0);
         
         if (u_persona == 0) {
-          // Abbey: Pronounced cyan glow with subtle wave-like motion
-          float wave = sin(u_time * 3.0 + screenUV.y * 15.0) * 0.15;
-          float pulse = 0.7 + (0.5 + wave) * sin(u_time * 3.0);
-          personaSignColor = vec3(0.0, 0.95, 1.6) * pulse * 1.6;
-          finalTitleGlow = titleMask * pulse * 3.0;
+          // Abbey: Pronounced cyan glow with calming wave-like motion
+          float calmTime = u_time * (0.5 + u_abbey_pulse * 0.1);
+          float wave = sin(calmTime * 2.0 + screenUV.y * 5.0) * 0.2 * u_abbey_pulse;
+          float pulse = 0.6 + (0.4 + wave) * sin(calmTime * 2.0) * (0.8 + u_abbey_pulse * 0.4);
+          personaSignColor = vec3(0.1, 0.8, 1.2) * pulse * (1.0 + u_abbey_pulse * 0.8);
+          finalTitleGlow = titleMask * pulse * (2.0 + u_abbey_pulse * 2.0);
         } else if (u_persona == 1) {
           // Aviva: Intensified purple glitch with pronounced distortion and chromatic aberration
           float neuralPulse = 0.8 + 0.2 * sin(u_time * 5.0); // Subtle pulse based on 'neural activity'
@@ -1443,7 +997,8 @@ export default function App() {
                 // Abbey: Grid Integrity
                 float grid = smoothstep(0.01, 0.0, abs(fract(p.x * 20.0) - 0.5)) + 
                              smoothstep(0.01, 0.0, abs(fract(p.y * 20.0) - 0.5));
-                baseColor += grid * abbeyColor * 0.3;
+                float calmPulse = 0.8 + 0.3 * sin(u_time * 1.5) * u_abbey_pulse;
+                baseColor += grid * abbeyColor * 0.3 * calmPulse * (1.0 + u_abbey_pulse * 0.5);
             }
             if (u_persona == 2) {
                 // Abi: Binary Stream
@@ -1879,44 +1434,8 @@ export default function App() {
     },
   ];
 
-  // Sync state to window for the render loop to pick up
-  useEffect(() => {
-    (window as any)._shaderSpeed = speed;
-    (window as any)._shaderLighting = lighting;
-    (window as any)._shaderZoom = zoom;
-    (window as any)._shaderYaw = yaw;
-    (window as any)._shaderPitch = pitch;
-    (window as any)._shaderPaused = isPaused;
-    (window as any)._shaderDepth = proximity;
-    (window as any)._shaderWind = wind;
-    (window as any)._shaderColor = (colors as any)[colorMode];
-    (window as any)._shaderMode = renderMode;
-    (window as any)._shaderPersona =
-      activePersona === "ABBEY" ? 0 : activePersona === "AVIVA" ? 1 : 2;
-    (window as any)._shaderActivity = neuralActivity;
-    (window as any)._shaderAbbeyPulse = abbeyPulse;
-    (window as any)._shaderAvivaGlitch = avivaGlitch;
-    (window as any)._shaderAbiFlicker = abiFlicker;
-  }, [
-    speed,
-    lighting,
-    zoom,
-    yaw,
-    pitch,
-    isPaused,
-    proximity,
-    wind,
-    colorMode,
-    renderMode,
-    neuralActivity,
-    activePersona,
-    abbeyPulse,
-    avivaGlitch,
-    abiFlicker,
-  ]);
-
   return (
-    <>
+    <ErrorBoundary>
       <AnimatePresence>
         {sequence !== "active" && (
           <motion.div
@@ -1924,9 +1443,30 @@ export default function App() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black"
           >
-            <div className="absolute inset-0 bg-grid opacity-10" />
-            <div className="scanlines opacity-5" />
-            <div className="scanning-bar opacity-10" />
+            <div className="absolute inset-0 bg-grid opacity-[0.08]" />
+            <div className="absolute inset-0 bg-radial-gradient from-accent/5 to-transparent opacity-50" />
+            <div className="scanlines opacity-[0.02]" />
+            <div className="scanning-bar opacity-[0.04]" />
+
+            {/* Immersive background elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <motion.div
+                animate={{
+                  opacity: [0.03, 0.08, 0.03],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-accent blur-[120px]"
+              />
+              <motion.div
+                animate={{
+                  opacity: [0.02, 0.05, 0.02],
+                  scale: [1.2, 1, 1.2],
+                }}
+                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-accent blur-[150px]"
+              />
+            </div>
 
             {/* Background Decorative Globe */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none overflow-hidden">
@@ -2092,112 +1632,96 @@ export default function App() {
               </div>
             </motion.div>
 
-            <div className="relative z-10 flex flex-col items-center">
+            <div className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] w-full max-w-7xl px-6 mx-auto">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="w-32 h-32 mb-16 relative flex items-center justify-center"
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="w-40 h-40 mb-12 relative flex items-center justify-center"
               >
                 <div
-                  className={`absolute inset-0 border rounded-full animate-ping ${theme.borderClass}`}
+                  className={`absolute inset-0 border-2 rounded-[32px] rotate-45 opacity-20 ${theme.borderClass} animate-[ping_4s_linear_infinite]`}
                 />
                 <div
-                  className={`absolute inset-2 border rounded-full animate-pulse blur-sm ${theme.borderClass}`}
+                  className={`absolute inset-4 border rounded-[24px] rotate-[15deg] animate-pulse blur-md ${theme.borderClass}`}
                 />
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                  className={`absolute inset-[-10%] border border-dashed rounded-full ${theme.borderClass} opacity-50`}
+                  transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                  className={`absolute inset-[-15%] border border-dashed rounded-full ${theme.borderClass} opacity-40`}
                 />
                 <motion.div
                   animate={{ rotate: -360 }}
-                  transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                  className={`absolute inset-[-20%] border border-dashed rounded-full ${theme.borderClass} opacity-30`}
+                  transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+                  className={`absolute inset-[-30%] border border-dotted rounded-full ${theme.borderClass} opacity-20`}
                 />
                 <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-1000 ${theme.orbClass}`}
+                  className={`w-20 h-20 rounded-[16px] flex items-center justify-center transition-all duration-1000 relative group overflow-hidden ${theme.orbClass}`}
+                  style={{ boxShadow: `0 0 60px ${theme.hex}66` }}
                 >
-                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
+                  <div className="w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_15px_#fff]" />
                 </div>
               </motion.div>
 
-              <div className="text-center space-y-4 mb-24">
+              <div className="text-center space-y-6 mb-20">
                 <motion.div
-                  initial={{ y: 20, opacity: 0 }}
+                  initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
                   className="relative"
                 >
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-4 opacity-20">
-                    <div className="w-12 h-[1px] bg-white" />
-                    <span className="technical-label tracking-[1em]">
-                      CORE_IDENTIFIER
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-6 opacity-40 w-full max-w-2xl">
+                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/30" />
+                    <span className="technical-label tracking-[1.2em] text-[10px] whitespace-nowrap">
+                      DISTRIBUTED_INTELLIGENCE_CORE
                     </span>
-                    <div className="w-12 h-[1px] bg-white" />
+                    <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-white/30" />
                   </div>
-                  <h1 className="text-white font-display text-8xl md:text-[10rem] leading-none italic group cursor-default relative flex items-center justify-center gap-4">
-                    <span className="glitch-text" data-text="MLAI">MLAI</span>
+                  <h1 className="text-white font-display text-8xl md:text-[12rem] lg:text-[14rem] leading-[0.85] uppercase group cursor-default relative flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 tracking-tighter">
+                    <span className="glitch-text relative" data-text="MLAI">
+                      MLAI
+                      <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-white/5" />
+                    </span>
                     <span
                       className={cn(
-                        "transition-colors duration-1000 glitch-text",
+                        "transition-colors duration-1000 glitch-text font-serif italic",
                         theme.accentClass,
                       )}
                       data-text="CORP"
                     >
                       CORP
                     </span>
-                    {/* Floating decorators */}
-                    <motion.div
-                      animate={{ opacity: [0.1, 0.5, 0.1], y: [-5, 5, -5] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                      className="absolute -top-12 -right-24 hidden md:block"
-                    >
-                      <div
-                        className={cn(
-                          "technical-panel px-3 py-2 transition-all duration-1000 flex items-center gap-2",
-                          theme.borderClass,
-                          theme.bgClass,
-                        )}
-                      >
-                        <div className={cn("w-2 h-2 rounded-full animate-pulse", theme.bgClass.replace('bg-', 'bg-').replace('/5', ''))} style={{ backgroundColor: theme.hex }} />
-                        <span
-                          className={cn(
-                            "micro-label transition-colors duration-1000 text-[9px] tracking-widest",
-                            theme.accentClass,
-                          )}
-                        >
-                          WDBX_SYN_{activePersona.charAt(0)}
-                        </span>
-                      </div>
-                    </motion.div>
                   </h1>
                 </motion.div>
+
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  className="flex flex-col items-center gap-6 mt-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                  className="flex flex-col items-center gap-8 mt-12"
                 >
-                  <div className="flex items-center justify-center gap-6">
-                    <div className="h-[1px] w-12 bg-white/10" />
-                    <p className="technical-label tracking-[0.6em] text-white/40 uppercase">
-                      Abbey_Aviva_Abi_Framework_v3.4
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-white/10" />
+                    <p className="technical-label tracking-[0.8em] text-white/50 uppercase text-[11px] font-medium">
+                      Neural_Nexus_v3.42_Stable
                     </p>
-                    <div className="h-[1px] w-12 bg-white/10" />
+                    <div className="h-[1px] w-16 bg-gradient-to-l from-transparent to-white/10" />
                   </div>
-                  <div className="flex gap-4">
-                    <div className="flex flex-col items-center border border-white/5 py-2 px-6 bg-white/[0.01]">
-                      <span className="technical-label opacity-40 mb-1">S_PROTO</span>
-                      <span className="font-mono text-xs text-white">0.42</span>
+                  
+                  <div className="flex flex-wrap items-center justify-center gap-4">
+                    <div className="flex flex-col items-center min-w-[120px] py-4 px-8 border border-white/5 bg-black/40 backdrop-blur-md rounded-[16px]">
+                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">PROTOCOL</span>
+                      <span className="font-mono text-xs text-white tracking-widest font-bold">SECURE_L7</span>
                     </div>
-                    <div className="flex flex-col items-center border border-white/5 py-2 px-6 bg-white/[0.01]">
-                      <span className="technical-label opacity-40 mb-1">N_CORE</span>
-                      <span className={cn("font-mono text-xs", theme.accentClass)}>ACTIVE</span>
+                    <div className="flex flex-col items-center min-w-[120px] py-4 px-8 border border-white/5 bg-black/40 backdrop-blur-md rounded-[16px] relative overflow-hidden group">
+                      <div className={cn("absolute inset-0 opacity-10 animate-pulse mix-blend-screen", theme.bgClass)} />
+                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">CORE_STATE</span>
+                      <span className={cn("font-mono text-xs tracking-widest font-bold drop-shadow-md", theme.accentClass)}>ACTIVE</span>
                     </div>
-                    <div className="flex flex-col items-center border border-white/5 py-2 px-6 bg-white/[0.01]">
-                      <span className="technical-label opacity-40 mb-1">UPLINK</span>
-                      <span className="font-mono text-xs text-white">READY</span>
+                    <div className="flex flex-col items-center min-w-[120px] py-4 px-8 border border-white/5 bg-black/40 backdrop-blur-md rounded-[16px]">
+                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">UPLINK_STS</span>
+                      <span className="font-mono text-xs text-emerald-400 tracking-widest font-bold">ENCRYPTED</span>
                     </div>
                   </div>
                 </motion.div>
@@ -2208,29 +1732,15 @@ export default function App() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
+                  className="mt-6"
                 >
                   <motion.button
                     key="landing-button"
-                    initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      y: 0,
-                      boxShadow: [
-                        `0 0 0px ${theme.hex}00`,
-                        `0 0 20px ${theme.hex}33`,
-                        `0 0 0px ${theme.hex}00`,
-                      ],
-                    }}
-                    transition={{
-                      boxShadow: {
-                        repeat: Infinity,
-                        duration: 2,
-                      },
-                    }}
-                    exit={{ opacity: 0, y: -50 }}
-                    whileHover={{ scale: 1.05, boxShadow: `0 0 30px ${theme.hex}` }}
-                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2, duration: 0.8 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       setSequence("connecting");
                       setTimeout(() => {
@@ -2239,10 +1749,11 @@ export default function App() {
                       }, 3500);
                     }}
                     className={cn(
-                      "group relative px-20 py-8 technical-panel transition-all overflow-hidden",
+                      "group relative px-12 py-6 bg-white/5 backdrop-blur-md rounded-[20px] transition-all overflow-hidden border",
                       theme.borderClass,
-                      "hover:border-white/50",
+                      "hover:bg-white/10"
                     )}
+                    style={{ boxShadow: `0 0 40px ${theme.hex}22` }}
                   >
                   <div
                     className={cn(
@@ -2254,36 +1765,20 @@ export default function App() {
                   {/* Scanning bar effect on hover */}
                   <div className="absolute top-0 left-0 bottom-0 w-1 bg-white/20 -translate-x-full group-hover:animate-[scan_2s_linear_infinite]" style={{ boxShadow: `0 0 20px ${theme.hex}` }} />
 
-                  <div
-                    className={cn(
-                      "absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0",
-                      theme.borderClass,
-                    )}
-                  />
-                  <div
-                    className={cn(
-                      "absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0",
-                      theme.borderClass,
-                    )}
-                  />
-
-                  <div className="relative z-10 flex flex-col items-center gap-3">
+                  <div className="relative z-10 flex flex-col items-center gap-4">
                     <span
                       className={cn(
-                        "technical-label group-hover:text-white transition-colors text-xs tracking-[0.6em] font-bold",
+                        "font-mono text-sm tracking-[0.4em] font-bold transition-colors uppercase group-hover:text-white",
                         theme.accentClass,
                       )}
                     >
-                      INITIALIZE_NEURAL_UPLINK
+                      INITIALIZE_UPLINK
                     </span>
-                    <div className="flex items-center gap-2 w-full">
-                      <div className={cn("flex-1 h-[1px] transition-colors opacity-20")} style={{ backgroundColor: theme.hex }} />
+                    <div className="flex items-center gap-3 w-full max-w-[200px]">
+                      <div className="flex-1 h-[1px] bg-white/10 group-hover:bg-white/30 transition-colors" />
                       <div className={cn("w-1.5 h-1.5 rounded-full transition-colors")} style={{ backgroundColor: theme.hex }} />
-                      <div className={cn("flex-1 h-[1px] transition-colors opacity-20")} style={{ backgroundColor: theme.hex }} />
+                      <div className="flex-1 h-[1px] bg-white/10 group-hover:bg-white/30 transition-colors" />
                     </div>
-                    <span className="technical-label opacity-40 group-hover:opacity-100 transition-opacity">
-                      ESTABLISH_WDBX_HANDSHAKE
-                    </span>
                   </div>
                 </motion.button>
               </motion.div>
@@ -2296,23 +1791,43 @@ export default function App() {
                   transition={{ duration: 0.8, ease: "easeInOut" }}
                   className="flex flex-col items-center gap-8"
                 >
-                  <div className="flex gap-3">
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                      <motion.div
-                        key={i}
-                        animate={{
-                          height: [24, 60, 24],
-                          opacity: [0.3, 1, 0.3],
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 1.2,
-                          delay: i * 0.15,
-                          ease: "easeInOut",
-                        }}
-                        className="w-1 bg-accent shadow-[0_0_15px_var(--accent)]"
-                      />
-                    ))}
+                  <div className="flex flex-col items-center gap-6">
+                    <motion.div
+                      animate={{ 
+                        rotate: 360,
+                        scale: (sequence === "connecting" && activePersona === "ABBEY") ? [1, 1.2, 1] : 1
+                      }}
+                      transition={{ 
+                        rotate: { duration: 1.5, repeat: Infinity, ease: "linear" },
+                        scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                      }}
+                      className={cn(
+                        "w-16 h-16 border-2 border-t-current border-r-transparent border-b-current border-l-transparent rounded-full",
+                        (sequence === "connecting" && activePersona === "ABBEY") && "animate-pulse"
+                      )}
+                      style={{ color: theme.hex }}
+                    />
+                    <div className="flex gap-3">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                        <motion.div
+                          key={i}
+                          animate={{
+                            height: (sequence === "connecting" && activePersona === "ABBEY") ? [24, 80, 24] : [24, 60, 24],
+                            opacity: [0.3, 1, 0.3],
+                          }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1.2,
+                            delay: i * 0.15,
+                            ease: "easeInOut",
+                          }}
+                          className={cn(
+                            "w-1 bg-accent shadow-[0_0_15px_var(--accent)]",
+                            (sequence === "connecting" && activePersona === "ABBEY") && "w-2 !bg-white shadow-[0_0_20px_white]"
+                          )}
+                        />
+                      ))}
+                    </div>
                   </div>
                   <div className="flex flex-col items-center gap-2">
                     <span className="technical-label text-accent animate-pulse tracking-[0.3em]">
@@ -2443,7 +1958,7 @@ export default function App() {
           </div>
         )}
 
-        <canvas ref={canvasRef} className="w-full h-full block" />
+        <canvas ref={canvasRef} className="w-full h-full block touch-none mix-blend-screen opacity-90 transition-opacity duration-1000" />
 
         {/* System Status Bar */}
         <div className="fixed top-0 left-0 right-0 z-[60] h-10 flex items-center justify-between px-6 border-b border-white/10 bg-black/60 backdrop-blur-md pointer-events-none">
@@ -2461,14 +1976,12 @@ export default function App() {
               </div>
               <div className="w-[1px] h-6 bg-white/10" />
               <div className="flex items-center gap-2">
-                <div className="flex bg-white/5 p-1 rounded-md border border-white/10 gap-1 pointer-events-auto">
-                  {["ABBEY", "AVIVA", "ABI"].map((p, index) => {
-                    const Icon =
-                      p === "ABBEY"
-                        ? Shield
-                        : p === "AVIVA"
-                          ? FlaskConical
-                          : Scale;
+                <div className="flex bg-white/[0.02] p-1 rounded-full border border-white/[0.05] gap-1 pointer-events-auto backdrop-blur-md shadow-inner">
+                  {Object.keys(PERSONAS).map((p, index) => {
+                    const personaKey = p as keyof typeof PERSONAS;
+                    const config = PERSONAS[personaKey];
+                    const Icon = PERSONA_ICONS[p] || Shield;
+
                     return (
                       <button
                         key={p}
@@ -2477,26 +1990,21 @@ export default function App() {
                           setIsAutoPersona(false);
                         }}
                         className={cn(
-                          "flex items-center gap-1.5 px-2 py-0.5 text-[8px] font-bold transition-all rounded",
+                          "group flex items-center gap-2 px-3 py-1.5 text-[10px] font-semibold tracking-wide transition-all duration-300 rounded-full border",
                           activePersona === p
-                            ? `${PERSONAS[p as keyof typeof PERSONAS].bgClass.replace("bg-", "bg-") || "bg-white/20"} ${PERSONAS[p as keyof typeof PERSONAS].accentClass} border border-white/20`
-                            : "text-white/20 hover:text-white/40",
+                            ? `${config.bgClass} text-white border-white/30 shadow-[0_0_15px_rgba(255,255,255,0.1)]`
+                            : "bg-white/[0.02] text-[#9aa4b2] border-transparent hover:bg-white/[0.06] hover:text-white",
                         )}
+                        style={ activePersona === p ? { boxShadow: `0 0 15px ${config.hex}40` } : {} }
                       >
                         <Icon
                           className={cn(
-                            "w-3 h-3",
-                            activePersona === p
-                              ? p === "ABBEY"
-                                ? "animate-abbey"
-                                : p === "AVIVA"
-                                  ? "animate-aviva"
-                                  : "animate-abi"
-                              : "",
+                            "w-3 h-3 transition-transform duration-500",
+                            activePersona === p ? config.animationClass : "opacity-60 group-hover:scale-110",
                           )}
                         />
                         {p}
-                        <span className="opacity-50 ml-1">[{index + 1}]</span>
+                        <span className="text-[7px] font-mono opacity-40 ml-1 group-hover:opacity-100 transition-opacity">[{index + 1}]</span>
                       </button>
                     );
                   })}
@@ -2504,10 +2012,10 @@ export default function App() {
                 <button
                   onClick={() => setIsAutoPersona(!isAutoPersona)}
                   className={cn(
-                    "micro-label px-2 py-1 rounded transition-all pointer-events-auto",
+                    "px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] transition-all duration-300 rounded-full border shadow-sm pointer-events-auto active:scale-95 ml-2",
                     isAutoPersona
-                      ? "text-accent bg-accent/10"
-                      : "text-white/20 hover:text-white/40",
+                      ? "text-[#042024] bg-gradient-to-r from-accent to-[#6ee7cf] border-transparent shadow-[0_0_15px_var(--accent)]"
+                      : "bg-white/[0.03] text-[#9aa4b2] border-white/[0.05] hover:bg-white/[0.08] hover:text-white hover:border-white/20",
                   )}
                 >
                   AUTO
@@ -2523,7 +2031,7 @@ export default function App() {
                   <span className="technical-label text-text-dim/40 leading-none">
                     Node_Identifier
                   </span>
-                  <span className="technical-value text-white">
+                  <span className="technical-value text-[#e6eef6] tracking-tight font-medium drop-shadow-sm">
                     WDBX-US-W2-092
                   </span>
                 </div>
@@ -2654,8 +2162,9 @@ export default function App() {
               >
                 {activePersona}
               </span>
-              <span className="micro-label opacity-20 mt-1">
+              <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-[#cbd5e1] opacity-70 mt-1.5 mix-blend-screen flex items-center gap-1">
                 {personaConfig.protocol}
+                <span className="opacity-50">{autoSaveStatus !== 'saved' ? `[${autoSaveStatus}]` : '[saved]'}</span>
               </span>
             </div>
           </div>
@@ -2970,75 +2479,75 @@ export default function App() {
                           </motion.button>
                         </Tooltip>
                         <Tooltip
-                          text="MLAI_DOCUMENTATION"
+                          text="MLAI_CORPORATION_BRAND"
                           activePersona={activePersona}
                         >
                           <motion.button
-                            onClick={() => setActiveTab("docs")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "docs" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            onClick={() => setActiveTab("brand")}
+                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "brand" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
-                            {activeTab === "docs" && (
+                            {activeTab === "brand" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                               />
                             )}
-                            <span className="relative z-10">Docs</span>
+                            <span className="relative z-10">Brand</span>
                           </motion.button>
                         </Tooltip>
                         <Tooltip
-                          text="GLOBAL_NETWORK_STATUS"
+                          text="ABI_MULTI_PERSONA_FRAMEWORK"
                           activePersona={activePersona}
                         >
                           <motion.button
-                            onClick={() => setActiveTab("network")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "network" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            onClick={() => setActiveTab("framework")}
+                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "framework" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
-                            {activeTab === "network" && (
+                            {activeTab === "framework" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                               />
                             )}
-                            <span className="relative z-10">Network</span>
+                            <span className="relative z-10">Framework</span>
                           </motion.button>
                         </Tooltip>
                         <Tooltip
-                          text="THREAT_DETECTION"
+                          text="WDBX_VECTOR_ENGINE_BENCHMARKS"
                           activePersona={activePersona}
                         >
                           <motion.button
-                            onClick={() => setActiveTab("security")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "security" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            onClick={() => setActiveTab("benchmarks")}
+                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "benchmarks" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
-                            {activeTab === "security" && (
+                            {activeTab === "benchmarks" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                               />
                             )}
-                            <span className="relative z-10">Security</span>
+                            <span className="relative z-10">Benchmarks</span>
                           </motion.button>
                         </Tooltip>
                         <Tooltip
-                          text="SYSTEM_BLUEPRINT"
+                          text="ABBEY_PERSONA"
                           activePersona={activePersona}
                         >
                           <motion.button
-                            onClick={() => setActiveTab("blueprint")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "blueprint" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            onClick={() => setActiveTab("abbey")}
+                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "abbey" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
-                            {activeTab === "blueprint" && (
+                            {activeTab === "abbey" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                               />
                             )}
-                            <span className="relative z-10">Blueprint</span>
+                            <span className="relative z-10">Abbey</span>
                           </motion.button>
                         </Tooltip>
                         <Tooltip
@@ -3060,21 +2569,21 @@ export default function App() {
                           </motion.button>
                         </Tooltip>
                         <Tooltip
-                          text="CORPORATION_INTEL"
+                          text="CREATOR_PORTFOLIO"
                           activePersona={activePersona}
                         >
                           <motion.button
-                            onClick={() => setActiveTab("about")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "about" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            onClick={() => setActiveTab("portfolio")}
+                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "portfolio" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
-                            {activeTab === "about" && (
+                            {activeTab === "portfolio" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                               />
                             )}
-                            <span className="relative z-10">About</span>
+                            <span className="relative z-10">Portfolio</span>
                           </motion.button>
                         </Tooltip>
                       </div>
@@ -3162,8 +2671,8 @@ export default function App() {
                                 {/* Abbey Pulse */}
                                 <div className="space-y-2">
                                   <div className="flex justify-between text-[10px]">
-                                    <span className="technical-label">Abbey Pulse</span>
-                                    <span className="technical-value">{abbeyPulse.toFixed(2)}</span>
+                                    <span className="technical-label">Abbey Pulse Intensity</span>
+                                    <span className="technical-value">{abbeyPulse.toFixed(2)}x</span>
                                   </div>
                                   <input type="range" min="0" max="2" step="0.01" value={abbeyPulse} onChange={(e) => setAbbeyPulse(parseFloat(e.target.value))} className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent" />
                                 </div>
@@ -3334,7 +2843,7 @@ export default function App() {
                                       activePersona={activePersona}
                                     >
                                       <span className="technical-label text-cyan-400 cursor-help border-b border-dotted border-white/20">
-                                        Abbey Pulse
+                                        Abbey Pulse Intensity
                                       </span>
                                     </Tooltip>
                                     <span className="technical-value">
@@ -3504,12 +3013,21 @@ export default function App() {
 
                           {activeTab === "landscape" && (
                             <div className="grid grid-cols-1 gap-4 pt-6">
-                              {landscapes.map((landscape) => (
-                                <button
-                                  key={landscape.id}
-                                  onClick={() => applyLandscape(landscape)}
-                                  className="w-full text-left group overflow-hidden"
-                                >
+                              <input
+                                type="text"
+                                placeholder="Search infrastructure nodes..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 p-2 text-white text-xs font-mono placeholder:text-white/20 focus:border-accent outline-none"
+                              />
+                              {landscapes
+                                .filter((l) => l.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                                .map((landscape) => (
+                                  <button
+                                    key={landscape.id}
+                                    onClick={() => applyLandscape(landscape)}
+                                    className="w-full text-left group overflow-hidden"
+                                  >
                                   <div className="relative aspect-[21/9] w-full rounded-none overflow-hidden border border-white/10 bg-black/40 card-hover flex">
                                     <div className="w-1/3 h-full overflow-hidden border-r border-white/5 relative">
                                       <img
@@ -3745,53 +3263,19 @@ export default function App() {
                                     </span>
                                   </div>
                                   <div className="h-32 w-full">
-                                    <ResponsiveContainer
-                                      width="100%"
-                                      height="100%"
-                                    >
-                                      <AreaChart
-                                        data={Array.from({ length: 20 }).map(
-                                          (_, i) => ({
-                                            value:
-                                              60 +
-                                              Math.random() * 20 +
-                                              Math.sin(
-                                                i * 0.5 +
-                                                  performance.now() * 0.001,
-                                              ) *
-                                                10,
-                                          }),
-                                        )}
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <LineChart
+                                        data={telemetryData}
                                       >
-                                        <defs>
-                                          <linearGradient
-                                            id={`colorValue-${activePersona}`}
-                                            x1="0"
-                                            y1="0"
-                                            x2="0"
-                                            y2="1"
-                                          >
-                                            <stop
-                                              offset="5%"
-                                              stopColor={theme.hex}
-                                              stopOpacity={0.3}
-                                            />
-                                            <stop
-                                              offset="95%"
-                                              stopColor={theme.hex}
-                                              stopOpacity={0}
-                                            />
-                                          </linearGradient>
-                                        </defs>
-                                        <Area
+                                        <Line
                                           type="monotone"
                                           dataKey="value"
                                           stroke={theme.hex}
-                                          fillOpacity={1}
-                                          fill={`url(#colorValue-${activePersona})`}
                                           strokeWidth={2}
+                                          dot={false}
+                                          isAnimationActive={false}
                                         />
-                                      </AreaChart>
+                                      </LineChart>
                                     </ResponsiveContainer>
                                   </div>
                                 </div>
@@ -3807,25 +3291,14 @@ export default function App() {
                                     </span>
                                   </div>
                                   <div className="h-32 w-full">
-                                    <ResponsiveContainer
-                                      width="100%"
-                                      height="100%"
-                                    >
-                                      <LineChart
-                                        data={Array.from({ length: 20 }).map(
-                                          (_, i) => ({
-                                            value: 98 + Math.random() * 2,
-                                          }),
-                                        )}
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart
+                                        data={Array.from({ length: 15 }).map((_, i) => ({
+                                          v: 80 + Math.random() * 20,
+                                        }))}
                                       >
-                                        <Line
-                                          type="stepAfter"
-                                          dataKey="value"
-                                          stroke={theme.hex}
-                                          dot={false}
-                                          strokeWidth={2}
-                                        />
-                                      </LineChart>
+                                        <Bar dataKey="v" fill={theme.hex} />
+                                      </BarChart>
                                     </ResponsiveContainer>
                                   </div>
                                 </div>
@@ -3842,16 +3315,21 @@ export default function App() {
                                     Verified
                                   </span>
                                 </div>
-                                <div className="grid grid-cols-3 gap-2 h-2">
-                                  <div
-                                    className={`h-full transition-all duration-1000 ${theme.accentClass.replace("text", "bg")} opacity-100`}
-                                  />
-                                  <div
-                                    className={`h-full transition-all duration-1000 ${theme.accentClass.replace("text", "bg")} ${isPaused ? "opacity-20" : "opacity-60"}`}
-                                  />
-                                  <div
-                                    className={`h-full transition-all duration-1000 ${theme.accentClass.replace("text", "bg")} ${neuralActivity > 1 ? "opacity-50" : "opacity-20"}`}
-                                  />
+                                <div className="grid grid-cols-1 gap-2 h-24">
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                      layout="vertical"
+                                      data={[
+                                        { name: 'Layer 1', v: 100 },
+                                        { name: 'Layer 2', v: 60 },
+                                        { name: 'Layer 3', v: 40 },
+                                      ]}
+                                    >
+                                      <XAxis type="number" hide />
+                                      <YAxis dataKey="name" type="category" hide />
+                                      <Bar dataKey="v" fill={theme.hex.replace("text-", "bg-")} />
+                                    </BarChart>
+                                  </ResponsiveContainer>
                                 </div>
                               </div>
 
@@ -3861,7 +3339,7 @@ export default function App() {
                                     Cross_Persona_Mediation
                                   </h3>
                                   <div className="flex gap-2">
-                                    {["ABBEY", "AVIVA", "ABI"].map((p) => (
+                                    {Object.keys(PERSONAS).map((p) => (
                                       <div
                                         key={p}
                                         className={cn(
@@ -3898,395 +3376,10 @@ export default function App() {
                             </div>
                           )}
 
-                          {activeTab === "docs" && (
-                            <div className="pt-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-1.5 h-1.5 bg-accent" />
-                                  <h3 className="technical-label text-white tracking-[0.4em]">
-                                    ABI: Multi-Layer Persona Design
-                                  </h3>
-                                </div>
-                                <div className="p-4 bg-white/5 border border-white/10 industrial-border">
-                                  <p className="font-mono text-[10px] text-text-secondary leading-relaxed italic">
-                                    "Unlocking the Power of Multi-Layer,
-                                    Multi-Persona AI Assistants with Distributed
-                                    WDBX for Enhanced Performance, Scalability,
-                                    and Ethical Considerations."
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="space-y-4 font-light text-[11px] leading-relaxed text-text-dim px-2">
-                                <p>
-                                  This research presents ABI, a groundbreaking
-                                  multi-layer, multi-persona AI assistant system
-                                  that leverages the Weighted Distributed Block
-                                  Exchange (WDBX) architecture.
-                                </p>
-                                <div className="grid grid-cols-1 gap-1">
-                                  {[
-                                    {
-                                      name: "ABBEY",
-                                      role: "Empathetic Polymath",
-                                    },
-                                    {
-                                      name: "AVIVA",
-                                      role: "Unfiltered Expert",
-                                    },
-                                    { name: "ABI", role: "Adaptive Moderator" },
-                                  ].map((p) => (
-                                    <div
-                                      key={p.name}
-                                      className="flex justify-between items-center py-1 border-b border-white/5"
-                                    >
-                                      <span
-                                        className={cn(
-                                          "technical-label",
-                                          theme.accentLightClass,
-                                        )}
-                                      >
-                                        {p.name}
-                                      </span>
-                                      <span className="micro-label opacity-60">
-                                        {p.role}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                                <p>
-                                  Key innovations include adaptive routing
-                                  protocols, real-time performance optimization,
-                                  and comprehensive ethical safeguards.
-                                </p>
-                              </div>
-
-                              <button
-                                onClick={() => setIsInquiryOpen(true)}
-                                className="w-full py-4 bg-accent text-white font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 hover:bg-accent/80 transition-all border border-accent/20 shadow-[0_0_20px_rgba(59,130,246,0.3)] animate-pulse"
-                              >
-                                [ Initialize_Inquiry ]
-                                <ArrowUpRight className="w-3 h-3" />
-                              </button>
-
-                              <div className="p-4 technical-panel border-accent/20 bg-accent/5">
-                                <p
-                                  className={cn(
-                                    "text-[9px] font-mono leading-relaxed italic",
-                                    theme.accentLightClass,
-                                  )}
-                                >
-                                  WARNING: Unauthorized access to the WDBX
-                                  MEDIATION LAYER is strictly prohibited by MLAI
-                                  Corp International Security Protocols.
-                                </p>
-                              </div>
-                            </div>
-                          )}
-
-                          {activeTab === "network" && (
-                            <div className="pt-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <div className="aspect-video bg-white/5 border border-white/10 relative overflow-hidden flex items-center justify-center">
-                                <Globe className="w-24 h-24 text-accent/20 animate-pulse" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div className="w-3/4 h-3/4 border border-dashed border-accent/10 rounded-full animate-[spin_60s_linear_infinite]" />
-                                  <div className="absolute w-full h-[1px] bg-accent/10 top-1/2" />
-                                  <div className="absolute h-full w-[1px] bg-accent/10 left-1/2" />
-                                </div>
-                                <div className="absolute top-4 left-4 p-2 bg-black/60 border border-white/5 technical-panel">
-                                  <span className="technical-label text-[8px]">
-                                    Global_Sync_Status
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    <div
-                                      className={`w-1 h-1 rounded-full ${activePersona === "ABI" ? "bg-emerald-500" : "bg-accent"}`}
-                                    />
-                                    <span className="technical-value text-[10px]">
-                                      99.8% Online
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="absolute bottom-4 right-4 p-2 bg-black/60 border border-white/5 technical-panel space-y-1">
-                                  <div className="flex justify-between gap-4">
-                                    <span className="technical-label text-[8px]">
-                                      North_America
-                                    </span>
-                                    <span className="technical-value text-[8px] text-emerald-500">
-                                      Normal
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between gap-4">
-                                    <span className="technical-label text-[8px]">
-                                      Europe_Region
-                                    </span>
-                                    <span className="technical-value text-[8px] text-emerald-500">
-                                      Normal
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between gap-4">
-                                    <span className="technical-label text-[8px]">
-                                      Asia_Pacific
-                                    </span>
-                                    <span className="technical-value text-[8px] text-accent">
-                                      High_Load
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-white/5 border border-white/5 space-y-2">
-                                  <span className="technical-label block">
-                                    Ingress_Bandwidth
-                                  </span>
-                                  <span className="technical-value text-xl">
-                                    12.4 TB/s
-                                  </span>
-                                </div>
-                                <div className="p-4 bg-white/5 border border-white/5 space-y-2">
-                                  <span className="technical-label block">
-                                    Egress_Bandwidth
-                                  </span>
-                                  <span className="technical-value text-xl">
-                                    8.1 TB/s
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                <h3 className="technical-label text-accent/60">
-                                  Active_Infrastructure_Nodes
-                                </h3>
-                                <div className="space-y-1">
-                                  {[
-                                    {
-                                      id: "HK-92",
-                                      location: "Hong Kong",
-                                      status: "Active",
-                                    },
-                                    {
-                                      id: "US-W2",
-                                      location: "Oregon, USA",
-                                      status: "Active",
-                                    },
-                                    {
-                                      id: "EU-C1",
-                                      location: "Frankfurt, GER",
-                                      status: "Syncing",
-                                    },
-                                  ].map((node) => (
-                                    <div
-                                      key={node.id}
-                                      className="flex justify-between items-center p-3 bg-white/[0.02] border border-white/5"
-                                    >
-                                      <div className="flex flex-col">
-                                        <span className="technical-value text-white">
-                                          {node.id}
-                                        </span>
-                                        <span className="micro-label opacity-40">
-                                          {node.location}
-                                        </span>
-                                      </div>
-                                      <span
-                                        className={cn(
-                                          "technical-label text-[8px]",
-                                          node.status === "Active"
-                                            ? "text-emerald-500"
-                                            : "text-accent",
-                                        )}
-                                      >
-                                        {node.status}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {activeTab === "security" && (
-                            <div className="pt-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <div className="p-6 bg-red-500/5 border border-red-500/20 technical-panel flex items-start gap-4">
-                                <ShieldAlert className="w-8 h-8 text-red-500 animate-pulse mt-1" />
-                                <div className="space-y-1">
-                                  <h3 className="technical-label text-red-500 text-[11px]">
-                                    Firewall_Status: Compromised_Containment
-                                  </h3>
-                                  <p className="text-[10px] text-text-dim leading-relaxed">
-                                    Automated threat detection has isolated 3
-                                    attempted brute-force injections in the
-                                    primary memory buffer. Sector 4-C is
-                                    currently in lockdown.
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                  <h3 className="technical-label">
-                                    Recent_Threat_Log
-                                  </h3>
-                                  <span
-                                    className={`micro-label font-bold animate-pulse ${theme.accentClass}`}
-                                  >
-                                    Scanning_Live...
-                                  </span>
-                                </div>
-                                <div className="space-y-1 font-mono text-[9px]">
-                                  {[
-                                    {
-                                      time: "14:22:01",
-                                      event:
-                                        "Invalid Handshake (IP: 192.168.1.1)",
-                                      type: "WARN",
-                                    },
-                                    {
-                                      time: "14:21:45",
-                                      event: "Packet Fragmentation in Buffer B",
-                                      type: "INFO",
-                                    },
-                                    {
-                                      time: "14:20:12",
-                                      event:
-                                        "Unauthorized Access Attempt - Persona: AVIVA",
-                                      type: "CRITICAL",
-                                    },
-                                    {
-                                      time: "14:18:55",
-                                      event:
-                                        "Sync Pulse Detected from External Node",
-                                      type: "INFO",
-                                    },
-                                  ].map((log, i) => (
-                                    <div
-                                      key={i}
-                                      className="flex gap-4 p-2 bg-white/[0.02] border-b border-white/5"
-                                    >
-                                      <span className="opacity-40">
-                                        {log.time}
-                                      </span>
-                                      <span
-                                        className={cn(
-                                          "font-bold",
-                                          log.type === "CRITICAL"
-                                            ? "text-red-500"
-                                            : log.type === "WARN"
-                                              ? "text-amber-500"
-                                              : theme.accentClass,
-                                        )}
-                                      >
-                                        [{log.type}]
-                                      </span>
-                                      <span className="text-text-secondary truncate">
-                                        {log.event}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                              <div className="flex gap-2">
-                                <button className="flex-1 py-3 bg-red-500/10 border border-red-500/40 text-red-500 technical-label hover:bg-red-500/20 transition-all">
-                                  Hard_Lockdown
-                                </button>
-                                <button
-                                  className={`flex-1 py-3 bg-white/5 border border-white/10 hover:border-white/40 technical-label transition-all ${theme.accentClass}`}
-                                >
-                                  Clear_Logs
-                                </button>
-                              </div>
-                            </div>
-                          )}
-
-                          {activeTab === "blueprint" && (
-                            <div className="pt-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <div className="aspect-square bg-grid relative border border-white/10 p-8 flex items-center justify-center">
-                                <div className="absolute inset-4 border border-dashed border-white/10 flex items-center justify-center">
-                                  <Layers className="w-32 h-32 text-accent/10" />
-                                  {/* Schematic overlays */}
-                                  <div className="absolute top-0 w-full h-[1px] bg-accent/30" />
-                                  <div className="absolute bottom-0 w-full h-[1px] bg-accent/30" />
-                                  <div className="absolute left-0 h-full w-[1px] bg-accent/30" />
-                                  <div className="absolute right-0 h-full w-[1px] bg-accent/30" />
-
-                                  <motion.div
-                                    animate={{
-                                      height: ["40%", "60%", "40%"],
-                                      top: ["30%", "20%", "30%"],
-                                    }}
-                                    transition={{
-                                      duration: 2,
-                                      repeat: Infinity,
-                                      ease: "easeInOut",
-                                    }}
-                                    className="absolute left-4 w-[2px] bg-accent shadow-[0_0_15px_var(--accent)]"
-                                  />
-                                </div>
-                                <div className="relative z-10 w-full h-full flex flex-col justify-between">
-                                  <div className="flex justify-between">
-                                    <span className="technical-label text-[8px] bg-bg px-2">
-                                      Layer_01: Input_Cortex
-                                    </span>
-                                    <span className="technical-label text-[8px] bg-bg px-2">
-                                      v4.2.1-final
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-center">
-                                    <div className="blueprint-node">
-                                      <span
-                                        className={`technical-label font-bold ${theme.accentClass}`}
-                                      >
-                                        WDBX_Core_v4
-                                      </span>
-                                      <div className="mt-2 space-y-1">
-                                        <div className="h-1 w-24 bg-white/5 rounded-full overflow-hidden">
-                                          <motion.div
-                                            animate={{ width: ["0%", "100%"] }}
-                                            transition={{
-                                              duration: 3,
-                                              repeat: Infinity,
-                                            }}
-                                            className={`h-full ${theme.accentClass.replace("text", "bg")}`}
-                                          />
-                                        </div>
-                                        <span className="micro-label opacity-40">
-                                          Processing_Weight: 1.42
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="technical-label text-[8px] bg-bg px-2">
-                                      Relativity_Buffer_Shift
-                                    </span>
-                                    <span className="technical-label text-[8px] bg-bg px-2">
-                                      MLAI_Proprietary
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="space-y-4">
-                                <h3 className="technical-label">
-                                  Architecture_Specs
-                                </h3>
-                                <div className="grid grid-cols-1 gap-2">
-                                  {[
-                                    { k: "Cores", v: "128x Neural Quantum" },
-                                    { k: "Buffer", v: "2.4 PB L1 Cache" },
-                                    { k: "Integrity", v: "99.99% Guaranteed" },
-                                  ].map((spec) => (
-                                    <div
-                                      key={spec.k}
-                                      className="flex justify-between border-b border-white/5 py-2"
-                                    >
-                                      <span className="technical-label opacity-40">
-                                        {spec.k}
-                                      </span>
-                                      <span className="technical-value text-white">
-                                        {spec.v}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                          {activeTab === "brand" && <BrandTab theme={theme} />}
+                          {activeTab === "framework" && <FrameworkTab theme={theme} />}
+                          {activeTab === "benchmarks" && <BenchmarksTab theme={theme} />}
+                          {activeTab === "abbey" && <AbbeyTab theme={theme} />}
                           {activeTab === "archive" && (
                             <div className="pt-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                               <div className="flex items-center justify-between mb-2">
@@ -4395,103 +3488,7 @@ export default function App() {
                             </div>
                           )}
 
-                          {activeTab === "about" && (
-                            <div className="pt-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <div className="relative aspect-video bg-white/5 border border-white/10 overflow-hidden group">
-                                <img
-                                  src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800"
-                                  alt="Robotics Lab"
-                                  className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent" />
-                                <div className="absolute bottom-6 left-6 right-6">
-                                  <h3
-                                    className={cn(
-                                      "technical-label text-xl mb-1",
-                                      theme.accentLightClass,
-                                    )}
-                                  >
-                                    MLAI_CORPORATION
-                                  </h3>
-                                  <p className="micro-label opacity-60">
-                                    Founded 2024 / Silicon Valley Research Wing
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-8">
-                                <div className="space-y-4">
-                                  <h4 className="technical-label text-white uppercase tracking-[0.2em]">
-                                    Our_Mission
-                                  </h4>
-                                  <p className="text-[11px] leading-relaxed text-text-dim font-light">
-                                    To bridge the gap between human intuition
-                                    and machine throughput through multi-layered
-                                    persona architectures that prioritize
-                                    ethical safety as much as computational
-                                    speed.
-                                  </p>
-                                </div>
-                                <div className="space-y-4">
-                                  <h4 className="technical-label text-white uppercase tracking-[0.2em]">
-                                    The_Tri-Layer
-                                  </h4>
-                                  <p className="text-[11px] leading-relaxed text-text-dim font-light">
-                                    Our proprietary WDBX engine utilizes a
-                                    dynamic trifecta of personas (Abbey, Aviva,
-                                    Abi) to ensure every neural step is
-                                    calculated, reviewed, and balanced.
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="space-y-4 pt-4">
-                                <h4 className="technical-label text-white uppercase tracking-[0.2em] px-2 border-l-2 border-accent">
-                                  Leadership_Grid
-                                </h4>
-                                <div className="grid grid-cols-3 gap-2">
-                                  {[
-                                    {
-                                      name: "Dr. Sarah Lynch",
-                                      role: "Chief_Architect",
-                                    },
-                                    {
-                                      name: "Marcus Vane",
-                                      role: "Ethical_Director",
-                                    },
-                                    {
-                                      name: "Elena Korova",
-                                      role: "Uplink_Specialist",
-                                    },
-                                  ].map((p, i) => (
-                                    <div
-                                      key={i}
-                                      className="p-3 bg-white/[0.02] border border-white/5"
-                                    >
-                                      <span className="technical-value text-white block text-[10px]">
-                                        {p.name}
-                                      </span>
-                                      <span className="micro-label opacity-40 uppercase">
-                                        {p.role}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-
-                              <div className="p-4 technical-panel bg-white/5 border-white/10 flex items-center justify-between">
-                                <span className="technical-label text-[10px]">
-                                  Contact_Corporation
-                                </span>
-                                <button
-                                  onClick={() => setIsInquiryOpen(true)}
-                                  className="px-4 py-2 bg-white text-bg font-bold text-[9px] uppercase tracking-widest hover:bg-accent-light hover:text-white transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                                >
-                                  Open_Channel
-                                </button>
-                              </div>
-                            </div>
-                          )}
+                          {activeTab === "portfolio" && <PortfolioTab theme={theme} />}
                         </motion.div>
                       </AnimatePresence>
                     </div>
@@ -4635,6 +3632,6 @@ export default function App() {
           )}
         </AnimatePresence>
       </div>
-    </>
+    </ErrorBoundary>
   );
 }
