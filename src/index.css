@@ -17,9 +17,36 @@
   --color-line: rgba(255, 255, 255, 0.05);
 }
 
-.theme-ABBEY { --color-accent: #00ccff; }
-.theme-AVIVA { --color-accent: #b233ff; }
-.theme-ABI { --color-accent: #ff9900; }
+.theme-ABBEY { 
+  --color-accent: #00f2ff; 
+  --color-accent-dim: rgba(0, 242, 255, 0.1);
+  --color-accent-glow: rgba(0, 242, 255, 0.3);
+}
+.theme-AVIVA { 
+  --color-accent: #d900ff; 
+  --color-accent-dim: rgba(217, 0, 255, 0.1);
+  --color-accent-glow: rgba(217, 0, 255, 0.4);
+}
+.theme-ABI { 
+  --color-accent: #ffbb00; 
+  --color-accent-dim: rgba(255, 187, 0, 0.1);
+  --color-accent-glow: rgba(255, 187, 0, 0.3);
+}
+
+@keyframes persona-glow {
+  0% { box-shadow: 0 0 0px var(--color-accent); }
+  50% { box-shadow: 0 0 20px var(--color-accent-glow); }
+  100% { box-shadow: 0 0 0px var(--color-accent); }
+}
+
+@keyframes persona-outline {
+  0% { outline: 1px solid rgba(255, 187, 0, 0.3); }
+  50% { outline: 2px solid rgba(255, 187, 0, 0.7); }
+  100% { outline: 1px solid rgba(255, 187, 0, 0.3); }
+}
+
+.persona-glow { animation: persona-glow 2s infinite ease-in-out; }
+.persona-outline { animation: persona-outline 1.5s infinite ease-in-out; }
 
 @layer base {
   body {
@@ -137,9 +164,10 @@
 }
 
 @utility scanning-bar {
-  @apply absolute left-0 right-0 h-[2px] bg-accent/30 pointer-events-none z-10;
+  @apply absolute left-0 right-0 h-[2.5px] pointer-events-none z-10;
+  background: linear-gradient(to right, transparent, var(--color-accent), transparent);
   animation: scan 4s linear infinite;
-  box-shadow: 0 0 15px var(--accent);
+  box-shadow: 0 0 15px var(--color-accent-glow);
 }
 
 @keyframes scan {

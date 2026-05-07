@@ -79,11 +79,62 @@ const InquiryForm = ({
     budget: "",
     message: "",
   });
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 3));
-  const prevStep = () => setStep((s) => Math.max(s - 1, 0));
+  const validate = () => {
+    setError(null);
+    if (activePersona === "ABBEY") {
+      if (step === 0) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          setError("Please enter a valid email.");
+          return false;
+        }
+        if (!/^\+?[1-9]\d{9,14}$/.test(formData.phone)) {
+          setError("Please enter a valid phone number.");
+          return false;
+        }
+      }
+    } else if (activePersona === "AVIVA") {
+      if (step === 1) {
+        if (!formData.company.trim()) {
+          setError("Company name is required.");
+          return false;
+        }
+        if (formData.services.length === 0) {
+          setError("Please select at least one service.");
+          return false;
+        }
+      }
+    } else if (activePersona === "ABI") {
+      if (step === 2) {
+        if (!formData.budget) {
+          setError("Please select a budget range.");
+          return false;
+        }
+        if (!formData.message.trim()) {
+          setError("Message is required.");
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const nextStep = () => {
+    if (step < 3) {
+      if (validate()) {
+        setStep((s) => Math.min(s + 1, 3));
+      }
+    } else {
+        onClose();
+    }
+  };
+  const prevStep = () => {
+    setStep((s) => Math.max(s - 1, 0));
+    setError(null);
+  };
 
   const steps = [
     { title: "Contact", label: "Step 1 of 3", sub: "Let's start with you." },
@@ -173,6 +224,8 @@ const InquiryForm = ({
                           </label>
                           <input
                             placeholder="Jane Smith"
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
                             className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
                           />
                         </div>
@@ -182,6 +235,19 @@ const InquiryForm = ({
                           </label>
                           <input
                             placeholder="jane@company.com"
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
+                            Phone
+                          </label>
+                          <input
+                            placeholder="+1234567890"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
                             className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
                           />
                         </div>
@@ -195,6 +261,8 @@ const InquiryForm = ({
                           </label>
                           <input
                             placeholder="Acme Corp"
+                            value={formData.company}
+                            onChange={(e) => setFormData({...formData, company: e.target.value})}
                             className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors"
                           />
                         </div>
@@ -257,7 +325,11 @@ const InquiryForm = ({
                           <label className="text-[10px] uppercase tracking-widest font-bold text-white/30 ml-1">
                             Budget Range
                           </label>
-                          <select className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors appearance-none cursor-pointer">
+                          <select 
+                            value={formData.budget}
+                            onChange={(e) => setFormData({...formData, budget: e.target.value})}
+                            className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors appearance-none cursor-pointer">
+                            <option value="">Select a budget</option>
                             <option>Under $25k</option>
                             <option>$25k - $100k</option>
                             <option>$100k+</option>
@@ -270,6 +342,8 @@ const InquiryForm = ({
                           <textarea
                             rows={4}
                             placeholder="Describe your project..."
+                            value={formData.message}
+                            onChange={(e) => setFormData({...formData, message: e.target.value})}
                             className="w-full bg-[#0f0f12] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent/40 transition-colors resize-none"
                           />
                         </div>
@@ -277,6 +351,7 @@ const InquiryForm = ({
                     )}
                   </div>
 
+                  {error && <div className="text-red-400 text-xs">{error}</div>}
                   <div className="flex gap-3 pt-6">
                     {step > 0 && (
                       <button
@@ -339,42 +414,45 @@ const InquiryForm = ({
 const PERSONAS = {
   ABBEY: {
     color: "cyan",
-    hex: "#00ccff",
+    hex: "#00f2ff",
     label: "Ethical_Compliance",
     mission: "PRESERVING_CORE_INTEGRITY",
-    protocol: "ABBEY_V4_SECURE",
+    protocol: "ABBEY_SECURE_INTEGRITY_SHIELD",
     accentClass: "text-accent",
     accentLightClass: "text-accent-light",
-    borderClass: "border-accent/40",
+    borderClass: "border-accent/30",
     bgClass: "bg-accent/5",
-    glowClass: "from-accent/20 to-transparent",
-    orbClass: "bg-accent shadow-[0_0_60px_var(--accent)]",
+    glowClass: "from-accent/25 to-transparent",
+    orbClass: "bg-accent shadow-[0_0_80px_rgba(0,242,255,0.4)]",
+    neuralTheme: "staggered-data-active",
   },
   AVIVA: {
     color: "purple",
-    hex: "#b233ff",
+    hex: "#d900ff",
     label: "Advanced_Research",
     mission: "NEURAL_SYNTHETIC_EXPANSION",
-    protocol: "AVIVA_HYPER_COMPUTE",
+    protocol: "AVIVA_HYPER_COMPUTE_OVERCLOCK",
     accentClass: "text-accent",
     accentLightClass: "text-accent-light",
     borderClass: "border-accent/40",
-    bgClass: "bg-accent/5",
-    glowClass: "from-accent/20 to-transparent",
-    orbClass: "bg-accent shadow-[0_0_60px_var(--accent)]",
+    bgClass: "bg-accent/10",
+    glowClass: "from-accent/30 to-transparent",
+    orbClass: "bg-accent shadow-[0_0_80px_rgba(217,0,255,0.5)]",
+    neuralTheme: "quantum-distortion-v4",
   },
   ABI: {
     color: "orange",
-    hex: "#ff9900",
+    hex: "#ffbb00",
     label: "Regulatory_Oversight",
     mission: "DYNAMIC_MODERATION_SYNC",
-    protocol: "ABI_MEDIATION_LAYER",
+    protocol: "ABI_MEDIATION_LAYER_ACTIVE",
     accentClass: "text-accent",
     accentLightClass: "text-accent-light",
-    borderClass: "border-accent/40",
+    borderClass: "border-accent/30",
     bgClass: "bg-accent/5",
     glowClass: "from-accent/20 to-transparent",
-    orbClass: "bg-accent shadow-[0_0_60px_var(--accent)]",
+    orbClass: "bg-accent shadow-[0_0_80px_rgba(255,187,0,0.4)]",
+    neuralTheme: "regulatory-buffer-sync",
   },
 } as const;
 
@@ -486,146 +564,101 @@ export default function App() {
       cueGain.connect(cueFilter);
       cueFilter.connect(ctx.destination);
 
-      if (persona === "ABBEY") {
-        if (type === "SWITCH") {
-            // Subtle, reassuring chime for secure operations (Pure sine waves, harmonious)
-            const osc1 = ctx.createOscillator();
-            const osc2 = ctx.createOscillator();
-            osc1.type = "sine";
-            osc2.type = "sine";
-
-            osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-            osc2.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
-
-            cueGain.gain.setValueAtTime(0, ctx.currentTime);
-            cueGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
-            cueGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
-
-            osc1.connect(cueGain);
-            osc2.connect(cueGain);
-
-            osc1.start();
-            osc2.start(ctx.currentTime + 0.1);
-            osc1.stop(ctx.currentTime + 1.5);
-            osc2.stop(ctx.currentTime + 1.5);
-        } else if (type === "EVENT_SECURE") {
-            // Reassuring chime for security
-            const osc = ctx.createOscillator();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(783.99, ctx.currentTime); // G5
-            osc.frequency.exponentialRampToValueAtTime(523.25, ctx.currentTime + 0.5); // C5
-            cueGain.gain.setValueAtTime(0, ctx.currentTime);
-            cueGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.05);
-            cueGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-            osc.connect(cueGain);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.5);
-        }
-      } else if (persona === "AVIVA") {
-        if (type === "SWITCH") {
-            // Complex, data-driven soundscape for research (Glitchy, rising sweep)
-            const osc1 = ctx.createOscillator();
-            const osc2 = ctx.createOscillator();
-            osc1.type = "square";
-            osc2.type = "sawtooth";
-
-            osc1.frequency.setValueAtTime(150, ctx.currentTime);
-            osc1.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.3);
-
-            osc2.frequency.setValueAtTime(200, ctx.currentTime + 0.1);
-            osc2.frequency.exponentialRampToValueAtTime(
-              1200,
-              ctx.currentTime + 0.4,
-            );
-
-            cueGain.gain.setValueAtTime(0, ctx.currentTime);
-            cueGain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05);
-            cueGain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.2);
-            cueGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-
-            // Add a bandpass filter sweep for extra glitch character
-            cueFilter.type = "bandpass";
-            cueFilter.frequency.setValueAtTime(600, ctx.currentTime);
-            cueFilter.frequency.exponentialRampToValueAtTime(
-              3000,
-              ctx.currentTime + 0.3,
-            );
-
-            osc1.connect(cueGain);
-            osc2.connect(cueGain);
-
-            osc1.start();
-            osc2.start(ctx.currentTime + 0.1);
-            osc1.stop(ctx.currentTime + 0.8);
-            osc2.stop(ctx.currentTime + 0.8);
-        } else if (type === "EVENT_RESEARCH") {
-            // Complex data-driven soundscape
-            const osc = ctx.createOscillator();
-            osc.type = "sawtooth";
-            osc.frequency.setValueAtTime(200, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.5);
-            cueGain.gain.setValueAtTime(0, ctx.currentTime);
-            cueGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.1);
-            cueGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-            osc.connect(cueGain);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.5);
-        }
-      } else if (persona === "ABI") {
-        if (type === "SWITCH") {
-            // Precise, sharp tone for regulatory confirmations (Short, snappy, descending)
-            const osc = ctx.createOscillator();
-            osc.type = "triangle";
-
-            osc.frequency.setValueAtTime(1200, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.15);
-
-            cueGain.gain.setValueAtTime(0, ctx.currentTime);
-            cueGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.02);
-            cueGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-
-            osc.connect(cueGain);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.25);
-
-            // Secondary confirmation beep
-            const beepOsc = ctx.createOscillator();
-            beepOsc.type = "square";
-            beepOsc.frequency.setValueAtTime(1600, ctx.currentTime + 0.15);
-
-            const beepGain = ctx.createGain();
-            beepGain.gain.setValueAtTime(0, ctx.currentTime);
-            beepGain.gain.setValueAtTime(0.05, ctx.currentTime + 0.15);
-            beepGain.gain.exponentialRampToValueAtTime(
-              0.01,
-              ctx.currentTime + 0.25,
-            );
-            beepGain.connect(cueFilter);
-
-            beepOsc.connect(beepGain);
-            beepOsc.start(ctx.currentTime + 0.15);
-            beepOsc.stop(ctx.currentTime + 0.25);
-        } else if (type === "EVENT_CONFIRM") {
-             // Precise, sharp confirmation
-            const osc = ctx.createOscillator();
-            osc.type = "square";
-            osc.frequency.setValueAtTime(1000, ctx.currentTime);
-            cueGain.gain.setValueAtTime(0, ctx.currentTime);
-            cueGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
-            cueGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-            osc.connect(cueGain);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.1);
-        }
-      }
-
-      // Cleanup to avoid memory leaks
-      setTimeout(() => {
-        try {
-          cueGain.disconnect();
-          cueFilter.disconnect();
-        } catch (e) {}
-      }, 2000);
+      // Abbey: Harmonious, calm confirmation/security
+    if (persona === "ABBEY") {
+    if (type === "SWITCH") {
+      const freq1 = 523.25;
+      const freq2 = 659.25;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      osc1.frequency.setValueAtTime(freq1, ctx.currentTime);
+      osc2.frequency.setValueAtTime(freq2, ctx.currentTime + 0.1);
+      
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.05); // Subtler
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      osc1.start(); osc1.stop(ctx.currentTime + 1.0);
+      osc2.start(ctx.currentTime + 0.1); osc2.stop(ctx.currentTime + 1.0);
+    } else if (type === "EVENT_SECURE") {
+      const osc = ctx.createOscillator();
+      osc.frequency.setValueAtTime(783.99, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(523.25, ctx.currentTime + 0.3);
+      
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    }
+  } else if (persona === "AVIVA") {
+    // Aviva: Complex, rising data pulses
+    if (type === "SWITCH") {
+       const osc1 = ctx.createOscillator();
+       osc1.frequency.setValueAtTime(150, ctx.currentTime);
+       osc1.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.2);
+       
+       const gain = ctx.createGain();
+       gain.gain.setValueAtTime(0, ctx.currentTime);
+       gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.05);
+       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+       
+       osc1.connect(gain);
+       gain.connect(ctx.destination);
+       osc1.start(); osc1.stop(ctx.currentTime + 0.5);
+    } else if (type === "EVENT_RESEARCH") {
+       const osc = ctx.createOscillator();
+       osc.type = "sawtooth";
+       osc.frequency.setValueAtTime(200, ctx.currentTime);
+       osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.3);
+       
+       const gain = ctx.createGain();
+       gain.gain.setValueAtTime(0, ctx.currentTime);
+       gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 0.05);
+       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+       
+       osc.connect(gain);
+       gain.connect(ctx.destination);
+       osc.start(); osc.stop(ctx.currentTime + 0.3);
+    }
+  } else if (persona === "ABI") {
+    // Abi: Precise, sharp confirmation
+    if (type === "SWITCH") {
+      const osc = ctx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.1);
+      
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.15);
+    } else if (type === "EVENT_CONFIRM") {
+       const osc = ctx.createOscillator();
+       osc.type = "square";
+       osc.frequency.setValueAtTime(1200, ctx.currentTime);
+       
+       const gain = ctx.createGain();
+       gain.gain.setValueAtTime(0, ctx.currentTime);
+       gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.02);
+       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+       
+       osc.connect(gain);
+       gain.connect(ctx.destination);
+       osc.start(); osc.stop(ctx.currentTime + 0.08);
+    }
+  }
     },
     [audioStarted],
   );
@@ -2327,25 +2360,88 @@ export default function App() {
       </AnimatePresence>
 
       <div
-        className={`fixed inset-0 overflow-hidden transition-all duration-1000 theme-${activePersona} selection:bg-accent selection:text-white ${activePersona === "AVIVA" ? "bg-[#0a050f]" : activePersona === "ABI" ? "bg-[#0f0a05]" : "bg-bg"}`}
+        className={cn(
+          `fixed inset-0 overflow-hidden transition-all duration-1000 theme-${activePersona} selection:bg-accent selection:text-white`,
+          activePersona === "AVIVA"
+            ? "bg-[#0b0614]"
+            : activePersona === "ABI"
+              ? "bg-[#120b04]"
+              : "bg-[#060b14]",
+        )}
         style={
           {
             "--accent": theme.hex,
             "--color-accent": theme.hex,
             "--color-accent-light":
               activePersona === "AVIVA"
-                ? "#d884ff"
+                ? "#e59bff"
                 : activePersona === "ABI"
-                  ? "#ffcc66"
-                  : "#60A5FA",
+                  ? "#ffd280"
+                  : "#80d4ff",
           } as any
         }
       >
         <div
-          className={`grain-overlay pointer-events-none ${activePersona === "AVIVA" ? "opacity-20 blend-overlay" : ""}`}
+          className={cn(
+            "grain-overlay pointer-events-none transition-opacity duration-1000",
+            activePersona === "AVIVA"
+              ? "opacity-[0.05] blend-overlay"
+              : "opacity-[0.02]",
+          )}
         />
-        <div className="scanlines" />
-        <div className="fixed inset-0 bg-grid pointer-events-none opacity-20" />
+        <div className="scanlines opacity-50" />
+        <div
+          className={cn(
+            "fixed inset-0 bg-grid pointer-events-none transition-opacity duration-1000",
+            activePersona === "ABBEY" ? "opacity-30" : "opacity-15",
+          )}
+        />
+        
+        {activePersona === "ABBEY" && (
+          <div className="absolute inset-x-0 top-0 overflow-hidden h-40 pointer-events-none opacity-20">
+            <motion.div 
+               animate={{ y: [0, -100] }}
+               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+               className="flex flex-col gap-1 p-4"
+            >
+              {[...Array(20)].map((_, i) => (
+                <div key={i} className="h-[1px] w-full bg-accent/20" />
+              ))}
+            </motion.div>
+          </div>
+        )}
+
+        {activePersona === "AVIVA" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ x: "-100%", opacity: 0 }}
+                animate={{ 
+                  x: ["100%", "-100%"],
+                  opacity: [0, 0.2, 0],
+                  top: [`${Math.random() * 100}%`, `${Math.random() * 100}%`] 
+                }}
+                transition={{ 
+                  duration: 0.2 + Math.random() * 0.5, 
+                  repeat: Infinity, 
+                  repeatDelay: 2 + Math.random() * 5,
+                  delay: i * 1.2
+                }}
+                className="absolute h-px w-full bg-accent/40 shadow-[0_0_8px_var(--color-accent)]"
+              />
+            ))}
+          </div>
+        )}
+
+        {activePersona === "ABI" && (
+          <div className="absolute inset-0 pointer-events-none border-[20px] border-accent/5 overflow-hidden">
+             <div className="absolute top-0 left-0 w-32 h-32 border-l border-t border-accent/20" />
+             <div className="absolute top-0 right-0 w-32 h-32 border-r border-t border-accent/20" />
+             <div className="absolute bottom-0 left-0 w-32 h-32 border-l border-b border-accent/20" />
+             <div className="absolute bottom-0 right-0 w-32 h-32 border-r border-b border-accent/20" />
+          </div>
+        )}
 
         <canvas ref={canvasRef} className="w-full h-full block" />
 
@@ -2802,7 +2898,12 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("landscape")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "landscape" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            className={cn(
+                              "relative px-4 py-2 technical-label transition-all",
+                              activeTab === "landscape" ? "text-white" : "text-text-dim hover:text-white",
+                              activePersona === "ABBEY" && activeTab === "landscape" && "persona-glow",
+                              activePersona === "ABI" && activeTab === "landscape" && "persona-outline"
+                            )}
                           >
                             {activeTab === "landscape" && (
                               <motion.div
