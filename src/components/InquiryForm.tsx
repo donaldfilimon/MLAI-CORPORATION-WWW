@@ -118,19 +118,19 @@ export const InquiryForm = ({
           filter: activePersona === "AVIVA" ? "contrast(1.1) brightness(1.1)" : "none",
         }}
       >
-        <div className="flex border-b border-white/5">
+        <div className="flex border-b border-white/5 overflow-x-auto scrollbar-none">
           {steps.map((s, i) => (
             <div
               key={i}
               className={cn(
-                "flex-1 flex flex-col items-center py-5 px-1 relative transition-all duration-500",
+                "flex-1 min-w-[80px] flex flex-col items-center py-4 md:py-5 px-1 relative transition-all duration-500",
                 step === i ? "opacity-100" : "opacity-40",
                 step > i && "opacity-60",
               )}
             >
               <div
                 className={cn(
-                  "w-7 h-7 rounded-full border flex items-center justify-center text-[11px] font-bold transition-all duration-500",
+                  "w-6 h-6 md:w-7 md:h-7 rounded-full border flex items-center justify-center text-[10px] md:text-[11px] font-bold transition-all duration-500",
                   step === i
                     ? "border-accent text-accent shadow-[0_0_15px_var(--accent)]"
                     : "border-white/10 text-white/40",
@@ -139,11 +139,11 @@ export const InquiryForm = ({
               >
                 {step > i ? "✓" : i + 1}
               </div>
-              <span className="text-[9px] uppercase tracking-widest font-bold mt-2 text-white/40">
+              <span className="text-[8px] md:text-[9px] uppercase tracking-widest font-bold mt-2 text-white/40">
                 {s.title}
               </span>
               {i < 3 && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[1px] h-4 bg-white/5" />
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[1px] h-4 bg-white/5 hidden xs:block" />
               )}
             </div>
           ))}
@@ -156,25 +156,25 @@ export const InquiryForm = ({
           />
         </div>
 
-        <div className="p-8 md:p-10">
+        <div className="p-6 md:p-10 leading-tight">
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              className="space-y-4 md:space-y-6"
             >
               {step < 3 ? (
                 <>
-                  <div className="space-y-2">
-                    <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/30">
+                  <div className="space-y-1 md:space-y-2">
+                    <div className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-white/30">
                       {steps[step].label}
                     </div>
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-xl md:text-2xl font-bold text-white">
                       {steps[step].title}
                     </h3>
-                    <p className="text-text-dim text-sm">{steps[step].sub}</p>
+                    <p className="text-text-dim text-xs md:text-sm">{steps[step].sub}</p>
                   </div>
 
                   <div className="space-y-4 pt-4">

@@ -7,13 +7,13 @@ export const AboutMLAI = () => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-8 rounded-lg bg-black/80 border border-white/10 backdrop-blur-md"
+      className="p-4 md:p-8 rounded-lg bg-black/80 border border-white/10 backdrop-blur-md"
     >
-      <h2 className="text-3xl font-bold mb-6 text-cyan-400 font-mono tracking-tighter">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400 font-mono tracking-tighter">
         MLAI: SECURE NEURAL ARCHITECTURE
       </h2>
       
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <h3 className="text-xl font-semibold text-white flex items-center gap-2">
             <Shield className="text-cyan-500" /> Purpose

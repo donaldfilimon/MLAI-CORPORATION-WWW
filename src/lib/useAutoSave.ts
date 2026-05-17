@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 export function useAutoSave<T>(data: T, key: string, delay: number = 3000) {
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // Skip initial save
@@ -14,11 +14,17 @@ export function useAutoSave<T>(data: T, key: string, delay: number = 3000) {
     setStatus('saving');
 
     timeoutRef.current = setTimeout(() => {
-      localStorage.setItem(key, JSON.stringify(data));
-      setStatus('saved');
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+        setStatus('saved');
+      } catch (e) {
+        setStatus('error');
+      }
     }, delay);
 
-    return () => clearTimeout(timeoutRef.current);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, [data, key, delay]);
 
   return status;

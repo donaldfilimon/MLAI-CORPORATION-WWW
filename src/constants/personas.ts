@@ -1,3 +1,11 @@
+export const PALETTES = [
+  { name: "Cyan", hex: "#00f2ff" },
+  { name: "Purple", hex: "#d900ff" },
+  { name: "Orange", hex: "#ffbb00" },
+  { name: "Emerald", hex: "#10b981" },
+  { name: "Rose", hex: "#f43f5e" },
+] as const;
+
 export const PERSONAS = {
   ABBEY: {
     color: "cyan",

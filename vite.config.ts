@@ -24,6 +24,17 @@ export default defineConfig(({mode}) => {
     },
     build: {
       outDir: 'dist',
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-framer': ['framer-motion'],
+            'vendor-lucide': ['lucide-react'],
+            'vendor-ui': ['clsx', 'tailwind-merge']
+          }
+        }
+      }
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

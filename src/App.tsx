@@ -3,15 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "./lib/utils";
-import { PERSONAS, PersonaType } from "./constants/personas";
+import { PERSONAS, PersonaType, PALETTES } from "./constants/personas";
 import { Tooltip } from "./components/Tooltip";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useAutoSave } from "./lib/useAutoSave";
@@ -20,6 +15,7 @@ import { BrandTab } from "./components/tabs/BrandTab";
 import { FrameworkTab } from "./components/tabs/FrameworkTab";
 import { BenchmarksTab } from "./components/tabs/BenchmarksTab";
 import { AbbeyTab } from "./components/tabs/AbbeyTab";
+import { BlueprintTab } from "./components/tabs/BlueprintTab";
 import { PortfolioTab } from "./components/tabs/PortfolioTab";
 import {
   LineChart,
@@ -85,30 +81,31 @@ export default function App() {
   const lastTimeRef = useRef(performance.now());
 
   // Load initial settings from localStorage once
-  useEffect(() => {
-    const saved = localStorage.getItem('mlai-settings');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.speed !== undefined) setSpeed(parsed.speed);
-      if (parsed.lighting !== undefined) setLighting(parsed.lighting);
-      if (parsed.zoom !== undefined) setZoom(parsed.zoom);
-      if (parsed.yaw !== undefined) setYaw(parsed.yaw);
-      if (parsed.pitch !== undefined) setPitch(parsed.pitch);
-      if (parsed.proximity !== undefined) setProximity(parsed.proximity);
-      if (parsed.wind !== undefined) setWind(parsed.wind);
-      if (parsed.colorMode !== undefined) setColorMode(parsed.colorMode);
-      if (parsed.isPaused !== undefined) setIsPaused(parsed.isPaused);
-      if (parsed.renderMode !== undefined) setRenderMode(parsed.renderMode);
-    }
-  }, []);
+  const [renderMode, setRenderMode] = useState(1); // 0: Mandelbulb, 1: Neural Brain
+  const [neuralActivity, setNeuralActivity] = useState(1.0);
+  const [fps, setFps] = useState(0);
+  const [activePersona, setActivePersona] = useState<PersonaType>("ABBEY");
+  const [isAutoPersona, setIsAutoPersona] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeLandscapeId, setActiveLandscapeId] = useState<string | null>(
+    "brain",
+  );
+  const [abbeyPulse, setAbbeyPulse] = useState(1.0);
+  const [avivaGlitch, setAvivaGlitch] = useState(0.85);
+  const [abiFlicker, setAbiFlicker] = useState(1.0);
+  const [useCustomColor, setUseCustomColor] = useState(false);
+  const [customColor, setCustomColor] = useState("#00f2ff");
 
-  const [speed, setSpeed] = useState(0.2);
-  const [lighting, setLighting] = useState(1.0);
-  const [zoom, setZoom] = useState(1.69);
-  const [yaw, setYaw] = useState(33 * (Math.PI / 180));
-  const [pitch, setPitch] = useState(-17 * (Math.PI / 180));
-  const [proximity, setProximity] = useState(-1.8);
-  const [wind, setWind] = useState(1.0);
+  const [envVolume, setEnvVolume] = useState(0.15);
+  const [envFreq, setEnvFreq] = useState(2500);
+
+  const [speed, setSpeed] = useState(0.3);
+  const [lighting, setLighting] = useState(2.0);
+  const [zoom, setZoom] = useState(2.5);
+  const [yaw, setYaw] = useState(0.45);
+  const [pitch, setPitch] = useState(-0.2);
+  const [proximity, setProximity] = useState(-1.5);
+  const [wind, setWind] = useState(1.2);
   const [colorMode, setColorMode] = useState("cyan");
   const [isPaused, setIsPaused] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -124,24 +121,76 @@ export default function App() {
     | "benchmarks"
     | "abbey"
     | "portfolio"
+    | "security"
+    | "blueprint"
   >("landscape");
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
-  const [renderMode, setRenderMode] = useState(0); // 0: Mandelbulb, 1: Neural Brain
-  const [neuralActivity, setNeuralActivity] = useState(1.0);
-  const [fps, setFps] = useState(0);
-  const [activePersona, setActivePersona] = useState<PersonaType>("ABBEY");
-  const [isAutoPersona, setIsAutoPersona] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [abbeyPulse, setAbbeyPulse] = useState(1.0);
-  const [avivaGlitch, setAvivaGlitch] = useState(0.85);
-  const [abiFlicker, setAbiFlicker] = useState(1.0);
-  
-  const settings = { speed, lighting, zoom, yaw, pitch, proximity, wind, colorMode, isPaused, renderMode };
-  const autoSaveStatus = useAutoSave(settings, 'mlai-settings', 3000);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("mlai-settings");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.speed !== undefined) setSpeed(parsed.speed);
+      if (parsed.lighting !== undefined) setLighting(parsed.lighting);
+      if (parsed.zoom !== undefined) setZoom(parsed.zoom);
+      if (parsed.yaw !== undefined) setYaw(parsed.yaw);
+      if (parsed.pitch !== undefined) setPitch(parsed.pitch);
+      if (parsed.proximity !== undefined) setProximity(parsed.proximity);
+      if (parsed.wind !== undefined) setWind(parsed.wind);
+      if (parsed.colorMode !== undefined) setColorMode(parsed.colorMode);
+      if (parsed.isPaused !== undefined) setIsPaused(parsed.isPaused);
+      if (parsed.renderMode !== undefined) setRenderMode(parsed.renderMode);
+      if (parsed.envVolume !== undefined) setEnvVolume(parsed.envVolume);
+      if (parsed.envFreq !== undefined) setEnvFreq(parsed.envFreq);
+      if (parsed.activeTab !== undefined) setActiveTab(parsed.activeTab);
+      if (parsed.customColor !== undefined) setCustomColor(parsed.customColor);
+      if (parsed.useCustomColor !== undefined) setUseCustomColor(parsed.useCustomColor);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (envGainRef.current && audioContextRef.current) {
+      envGainRef.current.gain.setTargetAtTime(
+        envVolume,
+        audioContextRef.current.currentTime,
+        0.1,
+      );
+    }
+  }, [envVolume]);
+
+  useEffect(() => {
+    if (envFilterRef.current && audioContextRef.current) {
+      envFilterRef.current.frequency.setTargetAtTime(
+        envFreq,
+        audioContextRef.current.currentTime,
+        0.1,
+      );
+    }
+  }, [envFreq]);
+
+  const settings = {
+    speed,
+    lighting,
+    zoom,
+    yaw,
+    pitch,
+    proximity,
+    wind,
+    colorMode,
+    isPaused,
+    renderMode,
+    envVolume,
+    envFreq,
+    activeTab,
+    customColor,
+    useCustomColor,
+  };
+  const autoSaveStatus = useAutoSave(settings, "mlai-settings", 3000);
   const [sequence, setSequence] = useState<"landing" | "connecting" | "active">(
     "landing",
   );
-// Telemetry
+  // Telemetry
   const [telemetryData, setTelemetryData] = useState(
     Array.from({ length: 20 }).map((_, i) => ({
       name: i,
@@ -152,7 +201,10 @@ export default function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setTelemetryData((prev) => {
-        const next = [...prev.slice(1), { name: prev[19].name + 1, value: 50 + Math.random() * 10 }];
+        const next = [
+          ...prev.slice(1),
+          { name: prev[19].name + 1, value: 50 + Math.random() * 10 },
+        ];
         return next;
       });
     }, 1000);
@@ -203,7 +255,13 @@ export default function App() {
       cueGain.connect(cueFilter);
       cueFilter.connect(ctx.destination);
 
-      const playOsc = (freq: number, type: OscillatorType, dur: number, attack: number, volume: number) => {
+      const playOsc = (
+        freq: number,
+        type: OscillatorType,
+        dur: number,
+        attack: number,
+        volume: number,
+      ) => {
         const osc = ctx.createOscillator();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
@@ -219,33 +277,43 @@ export default function App() {
 
       if (persona === "ABBEY") {
         if (type === "SWITCH") {
-            playOsc(523.25, "sine", 0.5, 0.05, 0.05);
-            playOsc(659.25, "sine", 0.5, 0.1, 0.05);
+          playOsc(523.25, "sine", 0.5, 0.05, 0.05);
+          playOsc(659.25, "sine", 0.5, 0.1, 0.05);
         } else if (type === "EVENT_SECURE" || type === "EVENT_SECURITY_ALERT") {
-             const baseFreq = type === "EVENT_SECURITY_ALERT" ? 440 : 783.99;
-             // Rhythmic pulse for alert
-             for (let i = 0; i < (type === "EVENT_SECURITY_ALERT" ? 3 : 1); i++) {
-                setTimeout(() => playOsc(baseFreq, "square", 0.1, 0.01, 0.03), i * 150);
-             }
+          const baseFreq = type === "EVENT_SECURITY_ALERT" ? 440 : 783.99;
+          // Rhythmic pulse for alert
+          for (let i = 0; i < (type === "EVENT_SECURITY_ALERT" ? 3 : 1); i++) {
+            setTimeout(
+              () => playOsc(baseFreq, "square", 0.1, 0.01, 0.03),
+              i * 150,
+            );
+          }
         }
       } else if (persona === "AVIVA") {
         if (type === "SWITCH") {
-           playOsc(150, "sine", 0.3, 0.05, 0.04);
-           playOsc(400, "sine", 0.3, 0.1, 0.04);
+          playOsc(150, "sine", 0.3, 0.05, 0.04);
+          playOsc(400, "sine", 0.3, 0.1, 0.04);
         } else if (type === "EVENT_RESEARCH" || type === "EVENT_DATA_SURGE") {
-           const type_ = type === "EVENT_DATA_SURGE" ? "sawtooth" : "sine";
-           for (let i = 0; i < (type === "EVENT_DATA_SURGE" ? 5 : 1); i++) {
-               setTimeout(() => playOsc(200 + i * 100, type_, 0.2, 0.02, 0.03), i * 50);
-           }
+          const type_ = type === "EVENT_DATA_SURGE" ? "sawtooth" : "sine";
+          for (let i = 0; i < (type === "EVENT_DATA_SURGE" ? 5 : 1); i++) {
+            setTimeout(
+              () => playOsc(200 + i * 100, type_, 0.2, 0.02, 0.03),
+              i * 50,
+            );
+          }
         }
       } else if (persona === "ABI") {
         if (type === "SWITCH") {
           playOsc(800, "triangle", 0.15, 0.02, 0.08);
-        } else if (type === "EVENT_CONFIRM" || type === "EVENT_REGULATORY_NOTIFICATION") {
-           const freq1 = type === "EVENT_REGULATORY_NOTIFICATION" ? 440 : 1200;
-           const freq2 = type === "EVENT_REGULATORY_NOTIFICATION" ? 659.25 : 1200;
-           playOsc(freq1, "square", 0.1, 0.02, 0.05);
-           setTimeout(() => playOsc(freq2, "square", 0.1, 0.02, 0.05), 100);
+        } else if (
+          type === "EVENT_CONFIRM" ||
+          type === "EVENT_REGULATORY_NOTIFICATION"
+        ) {
+          const freq1 = type === "EVENT_REGULATORY_NOTIFICATION" ? 440 : 1200;
+          const freq2 =
+            type === "EVENT_REGULATORY_NOTIFICATION" ? 659.25 : 1200;
+          playOsc(freq1, "square", 0.1, 0.02, 0.05);
+          setTimeout(() => playOsc(freq2, "square", 0.1, 0.02, 0.05), 100);
         }
       }
     },
@@ -253,24 +321,24 @@ export default function App() {
   );
 
   useEffect(() => {
-    const newLogs = [
-      ...logs,
-      ...PERSONA_MESSAGES[activePersona],
-    ].slice(-12);
+    const newLogs = [...logs, ...PERSONA_MESSAGES[activePersona]].slice(-12);
     setLogs(newLogs);
 
     playPersonaCue(activePersona);
   }, [activePersona, playPersonaCue]);
 
   useEffect(() => {
-      // Determine effect based on tab for persona cues
-      if (activePersona === "ABBEY" && activeTab === "security") {
-          playPersonaCue("ABBEY", "EVENT_SECURE");
-      } else if (activePersona === "AVIVA" && (activeTab === "landscape" || activeTab === "telemetry")) {
-          playPersonaCue("AVIVA", "EVENT_RESEARCH");
-      } else if (activePersona === "ABI" && activeTab === "blueprint") {
-          playPersonaCue("ABI", "EVENT_CONFIRM");
-      }
+    // Determine effect based on tab for persona cues
+    if (activePersona === "ABBEY" && activeTab === "security") {
+      playPersonaCue("ABBEY", "EVENT_SECURE");
+    } else if (
+      activePersona === "AVIVA" &&
+      (activeTab === "landscape" || activeTab === "telemetry")
+    ) {
+      playPersonaCue("AVIVA", "EVENT_RESEARCH");
+    } else if (activePersona === "ABI" && activeTab === "blueprint") {
+      playPersonaCue("ABI", "EVENT_CONFIRM");
+    }
   }, [activeTab, activePersona, playPersonaCue]);
 
   useEffect(() => {
@@ -289,7 +357,9 @@ export default function App() {
     const pIdx = personaKeys.indexOf(activePersona);
     (window as any)._shaderPersona = pIdx;
 
-    (window as any)._shaderColor = (colors as any)[colorMode] || [0.0, 0.8, 1.0];
+    (window as any)._shaderColor = (colors as any)[colorMode] || [
+      0.0, 0.8, 1.0,
+    ];
 
     (window as any)._shaderAbbeyPulse = abbeyPulse;
     (window as any)._shaderAvivaGlitch = avivaGlitch;
@@ -312,7 +382,8 @@ export default function App() {
     abiFlicker,
   ]);
 
-  const theme = PERSONAS[activePersona];
+  const baseTheme = PERSONAS[activePersona];
+  const theme = useCustomColor ? { ...baseTheme, hex: customColor } : baseTheme;
 
   const personaConfig = PERSONAS[activePersona];
 
@@ -325,7 +396,7 @@ export default function App() {
 
       const personaKeys = Object.keys(PERSONAS) as PersonaType[];
       const index = parseInt(e.key) - 1;
-      
+
       if (index >= 0 && index < personaKeys.length) {
         setActivePersona(personaKeys[index]);
         setIsAutoPersona(false);
@@ -703,7 +774,7 @@ export default function App() {
             float pFreq = 1.0 + cellHash; // Reduced frequency
             float pulseTime = u_time * (1.0 + (u_persona == 0 ? u_abbey_pulse * 0.2 : 0.0));
             float pulse = sin(pulseTime * pFreq + cellHash * 50.0) * 0.5 + 0.5;
-            float size = 0.02 + pulse * 0.04 * (u_persona == 1 ? 1.5 : (u_persona == 0 ? 0.6 + u_abbey_pulse * 0.3 : 0.6));
+            float size = 0.03 + pulse * 0.05 * (u_persona == 1 ? 1.5 : (u_persona == 0 ? 0.6 + u_abbey_pulse * 0.3 : 0.6));
             
             float s;
             if (u_persona == 0) {
@@ -746,7 +817,7 @@ export default function App() {
               if (u_persona == 1) wiggle = noise(localP * 5.0 + u_time * 3.0) * 0.01;
               if (u_persona == 2) lateralDist += 0.02 * step(0.95, hash(vec3(distAlong))); // Simplified jitter
               
-              float radius = 0.002;
+              float radius = 0.004; // Increased radius for clearer filaments
               float l = (lateralDist + wiggle - radius) / scale;
               
               if (distAlong < 0.0 || distAlong > len) l = 1e10;
@@ -756,9 +827,9 @@ export default function App() {
               float flow = fract(distAlong * 1.0 - u_time * pSpeed);
               float packet = smoothstep(0.1, 0.0, abs(flow - 0.5) - 0.02);
               
-              if (l < 0.05 / scale) {
-                float lInf = smoothstep(0.05 / scale, 0.0, l);
-                totalOrbit += packet * lInf * u_neural_activity;
+              if (l < 0.08 / scale) { // Increased influence radius
+                float lInf = smoothstep(0.08 / scale, 0.0, l);
+                totalOrbit += packet * lInf * u_neural_activity * 1.2; // Slightly stronger packets
               }
             }
           }
@@ -923,7 +994,7 @@ export default function App() {
           float d = map(p, orbit);
           
           if (u_mode == 1) {
-            glow += 0.003 / (0.005 + d * d) * u_neural_activity;
+            glow += 0.002 / (0.002 + d * d) * u_neural_activity;
           } else {
             glow += 0.01 / (0.01 + d * d);
           }
@@ -932,7 +1003,7 @@ export default function App() {
               float warp = noise(p * 0.5 + u_time * 0.2 * u_wind);
               // optimized fbm loop for fog
               float n = noise(p * 1.5 + warp + u_time * 0.4 * u_wind); 
-              fogDensity += n * exp(-d * 6.0) * 0.05;
+              fogDensity += n * exp(-d * 6.0) * 0.02; // Reduced fog density for clearer visibility
           }
 
           if (d < SURF_DIST) {
@@ -946,12 +1017,12 @@ export default function App() {
 
         vec3 haloColor = u_color;
         if (u_mode == 1) {
-          color += haloColor * glow * 0.2; // Stronger glow in brain mode
-          color += haloColor * fogDensity * 0.2;
+          color += haloColor * glow * 0.15; // Slightly reduced ambient glow for clearer structure
+          color += haloColor * fogDensity * 0.15;
           
           // Post-process scanlines or noise based on persona
           if (u_persona == 0) {
-             color *= 0.9 + 0.1 * sin(uv.y * 500.0 + u_time * 10.0); // Abbey scanlines
+             color *= 0.95 + 0.05 * sin(uv.y * 800.0 + u_time * 10.0); // Finer, subtler Abbey scanlines
           } else if (u_persona == 2) {
              if (hash12(floor(uv * 40.0 + u_time)) > 0.98) color += 0.2 * u_color; // Abi digital noise
           }
@@ -963,7 +1034,7 @@ export default function App() {
         if (hit) {
           vec3 p = ro + rd * t;
           vec3 n = getNormal(p);
-          vec3 lightPos = vec3(2.0, 4.0, -3.0);
+          vec3 lightPos = vec3(4.0, 6.0, -2.0); // Moved light for better depth definition
           vec3 lightDir = normalize(lightPos - p);
           
           float ao = calcAO(p, n);
@@ -979,12 +1050,12 @@ export default function App() {
             if (u_persona == 2) personaColor = abiColor;
             else if (u_persona == 1) personaColor = avivaColor;
             
-            baseColor = mix(vec3(0.01, 0.01, 0.02), personaColor, finalOrbit * 3.0);
+            baseColor = mix(vec3(0.01, 0.02, 0.03), personaColor, finalOrbit * 3.5); // Slightly brighter base for contrast
             
             // Add iridescence to base color for that surreal look
             float fresnelOuter = 1.0 - max(dot(n, normalize(ro - p)), 0.0);
             vec3 iridescent = 0.5 + 0.5 * cos(u_time * 0.5 + p.yxy * 2.0 + vec3(0.0, 2.0, 4.0));
-            baseColor += iridescent * pow(fresnelOuter, 3.0) * 0.6 * u_neural_activity;
+            baseColor += iridescent * pow(fresnelOuter, 2.0) * 0.8 * u_neural_activity; // Stronger fresnel edges
             
             // Extra visual flavor
             if (u_persona == 1) {
@@ -998,7 +1069,7 @@ export default function App() {
                 float grid = smoothstep(0.01, 0.0, abs(fract(p.x * 20.0) - 0.5)) + 
                              smoothstep(0.01, 0.0, abs(fract(p.y * 20.0) - 0.5));
                 float calmPulse = 0.8 + 0.3 * sin(u_time * 1.5) * u_abbey_pulse;
-                baseColor += grid * abbeyColor * 0.3 * calmPulse * (1.0 + u_abbey_pulse * 0.5);
+                baseColor += grid * abbeyColor * 0.4 * calmPulse * (1.0 + u_abbey_pulse * 0.5); // Clearer grid lines
             }
             if (u_persona == 2) {
                 // Abi: Binary Stream
@@ -1008,15 +1079,15 @@ export default function App() {
           }
           
           float diff = max(dot(n, lightDir), 0.0);
-          float spec = pow(max(dot(normalize(ro - p), reflect(-lightDir, n)), 0.0), 32.0);
+          float spec = pow(max(dot(normalize(ro - p), reflect(-lightDir, n)), 0.0), 64.0); // Sharper specular
           
-          color = baseColor * (diff * shadow * u_lighting + 0.05) * ao;
+          color = baseColor * (diff * shadow * u_lighting + 0.1) * ao; // Brighter ambient
           // Add a secondary fill light from below
-          vec3 fillLightDir = normalize(vec3(-1.0, -2.0, 1.0));
+          vec3 fillLightDir = normalize(vec3(-2.0, -1.0, 1.0));
           float fillDiff = max(dot(n, fillLightDir), 0.0);
-          color += baseColor * fillDiff * 0.15 * ao * u_color;
+          color += baseColor * fillDiff * 0.25 * ao * u_color; // Stronger fill light
           
-          color += vec3(0.8, 0.9, 1.0) * spec * shadow * 0.6 * u_lighting;
+          color += vec3(0.9, 0.95, 1.0) * spec * shadow * 0.8 * u_lighting; // Brighter, sharper specular
           
           float rim = pow(1.0 - max(dot(n, -rd), 0.0), 3.0);
           color += haloColor * rim * 0.8 * u_lighting;
@@ -1255,6 +1326,8 @@ export default function App() {
   };
 
   const applyLandscape = (landscape: any) => {
+    setIsTransitioning(true);
+    setActiveLandscapeId(landscape.id);
     const settings = landscape.settings;
     if (settings.speed !== undefined) setSpeed(settings.speed);
     if (settings.lighting !== undefined) setLighting(settings.lighting);
@@ -1270,26 +1343,28 @@ export default function App() {
     setIsCollapsed(true);
 
     // Update Environment Audio
-    if (
-      audioContextRef.current &&
-      envFilterRef.current &&
-      envGainRef.current &&
-      landscape.audio
-    ) {
-      const ctx = audioContextRef.current;
+    if (landscape.audio) {
       const audio = landscape.audio;
-      envFilterRef.current.type = audio.type as BiquadFilterType;
-      envFilterRef.current.frequency.setTargetAtTime(
-        audio.freq,
-        ctx.currentTime,
-        0.5,
-      );
-      envFilterRef.current.Q.setTargetAtTime(audio.q, ctx.currentTime, 0.5);
-      envGainRef.current.gain.setTargetAtTime(audio.gain, ctx.currentTime, 0.5);
+      if (audio.freq !== undefined) setEnvFreq(audio.freq);
+      if (audio.gain !== undefined) setEnvVolume(audio.gain);
+
+      if (
+        audioContextRef.current &&
+        envFilterRef.current &&
+        envGainRef.current
+      ) {
+        const ctx = audioContextRef.current;
+        envFilterRef.current.type = audio.type as BiquadFilterType;
+        envFilterRef.current.Q.setTargetAtTime(audio.q, ctx.currentTime, 0.5);
+      }
     }
 
     // Trigger audio movement
     movementRef.current = 1.0;
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 1000);
   };
 
   const landscapes = [
@@ -1391,22 +1466,22 @@ export default function App() {
       image:
         "https://images.unsplash.com/photo-1559757175-5700dde675bc?q=80&w=2071&auto=format&fit=crop",
       settings: {
-        speed: 0.5,
-        lighting: 1.5,
-        zoom: 1.5,
-        yaw: 0,
-        pitch: 0,
-        proximity: -2.0,
-        wind: 1.0,
+        speed: 0.3,
+        lighting: 2.0,
+        zoom: 2.5,
+        yaw: 0.45,
+        pitch: -0.2,
+        proximity: -1.5,
+        wind: 1.2,
         isPaused: false,
         colorMode: "cyan",
         renderMode: 1,
       },
       audio: {
-        freq: 2000,
-        q: 1,
-        type: "highpass",
-        gain: 0.1,
+        freq: 2500,
+        q: 2,
+        type: "bandpass",
+        gain: 0.15,
       },
     },
     {
@@ -1434,6 +1509,49 @@ export default function App() {
     },
   ];
 
+  const getDefaultSetting = (key: string) => {
+    const landscape = activeLandscapeId
+      ? landscapes.find((l) => l.id === activeLandscapeId)
+      : null;
+    if (landscape?.settings && (landscape.settings as any)[key] !== undefined) {
+      return (landscape.settings as any)[key];
+    }
+    if (landscape?.audio) {
+      if (key === "envVolume" && landscape.audio.gain !== undefined)
+        return landscape.audio.gain;
+      if (key === "envFreq" && landscape.audio.freq !== undefined)
+        return landscape.audio.freq;
+    }
+
+    const defaults: Record<string, any> = {
+      speed: 0.3,
+      lighting: 2.0,
+      zoom: 2.5,
+      yaw: 0.45,
+      pitch: -0.2,
+      proximity: -1.5,
+      wind: 1.2,
+      abbeyPulse: 1.0,
+      avivaGlitch: 0.85,
+      abiFlicker: 1.0,
+      envVolume: 0.15,
+      envFreq: 2500,
+    };
+    return defaults[key];
+  };
+
+  const ResetBtn = ({ onReset }: { onReset: () => void }) => (
+    <motion.button
+      onClick={onReset}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      className={`text-[8px] uppercase tracking-widest px-1.5 py-0.5 rounded border opacity-50 transition-colors ${theme.borderClass} hover:opacity-100 hover:bg-white/10`}
+      title="Reset to default"
+    >
+      [RST]
+    </motion.button>
+  );
+
   return (
     <ErrorBoundary>
       <AnimatePresence>
@@ -1455,7 +1573,11 @@ export default function App() {
                   opacity: [0.03, 0.08, 0.03],
                   scale: [1, 1.1, 1],
                 }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-accent blur-[120px]"
               />
               <motion.div
@@ -1463,7 +1585,11 @@ export default function App() {
                   opacity: [0.02, 0.05, 0.02],
                   scale: [1.2, 1, 1.2],
                 }}
-                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 18,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-accent blur-[150px]"
               />
             </div>
@@ -1483,7 +1609,7 @@ export default function App() {
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 1, duration: 1 }}
-              className="absolute top-1/2 -translate-y-1/2 left-8 w-64 hidden xl:block space-y-6 opacity-30 hover:opacity-100 transition-opacity duration-500"
+              className="absolute top-1/2 -translate-y-1/2 left-8 w-64 hidden 2xl:block space-y-6 opacity-30 hover:opacity-100 transition-opacity duration-500"
             >
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-2 border-b border-white/10">
@@ -1555,7 +1681,7 @@ export default function App() {
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
-              className="absolute top-1/2 -translate-y-1/2 right-8 w-64 hidden xl:block space-y-6 opacity-30 hover:opacity-100 transition-opacity duration-500"
+              className="absolute top-1/2 -translate-y-1/2 right-8 w-64 hidden 2xl:block space-y-6 opacity-30 hover:opacity-100 transition-opacity duration-500"
             >
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-2 border-b border-white/10">
@@ -1647,12 +1773,20 @@ export default function App() {
                 />
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                  transition={{
+                    duration: 30,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
                   className={`absolute inset-[-15%] border border-dashed rounded-full ${theme.borderClass} opacity-40`}
                 />
                 <motion.div
                   animate={{ rotate: -360 }}
-                  transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+                  transition={{
+                    duration: 45,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
                   className={`absolute inset-[-30%] border border-dotted rounded-full ${theme.borderClass} opacity-20`}
                 />
                 <div
@@ -1678,7 +1812,7 @@ export default function App() {
                     </span>
                     <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-white/30" />
                   </div>
-                  <h1 className="text-white font-display text-8xl md:text-[12rem] lg:text-[14rem] leading-[0.85] uppercase group cursor-default relative flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 tracking-tighter">
+                  <h1 className="text-white font-display text-5xl sm:text-6xl md:text-8xl lg:text-[12rem] xl:text-[14rem] leading-[0.85] uppercase group cursor-default relative flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 tracking-tighter">
                     <span className="glitch-text relative" data-text="MLAI">
                       MLAI
                       <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-white/5" />
@@ -1708,20 +1842,42 @@ export default function App() {
                     </p>
                     <div className="h-[1px] w-16 bg-gradient-to-l from-transparent to-white/10" />
                   </div>
-                  
+
                   <div className="flex flex-wrap items-center justify-center gap-4">
                     <div className="flex flex-col items-center min-w-[120px] py-4 px-8 border border-white/5 bg-black/40 backdrop-blur-md rounded-[16px]">
-                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">PROTOCOL</span>
-                      <span className="font-mono text-xs text-white tracking-widest font-bold">SECURE_L7</span>
+                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">
+                        PROTOCOL
+                      </span>
+                      <span className="font-mono text-xs text-white tracking-widest font-bold">
+                        SECURE_L7
+                      </span>
                     </div>
                     <div className="flex flex-col items-center min-w-[120px] py-4 px-8 border border-white/5 bg-black/40 backdrop-blur-md rounded-[16px] relative overflow-hidden group">
-                      <div className={cn("absolute inset-0 opacity-10 animate-pulse mix-blend-screen", theme.bgClass)} />
-                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">CORE_STATE</span>
-                      <span className={cn("font-mono text-xs tracking-widest font-bold drop-shadow-md", theme.accentClass)}>ACTIVE</span>
+                      <div
+                        className={cn(
+                          "absolute inset-0 opacity-10 animate-pulse mix-blend-screen",
+                          theme.bgClass,
+                        )}
+                      />
+                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">
+                        CORE_STATE
+                      </span>
+                      <span
+                        className={cn(
+                          "font-mono text-xs tracking-widest font-bold drop-shadow-md",
+                          theme.accentClass,
+                        )}
+                      >
+                        ACTIVE
+                      </span>
                     </div>
                     <div className="flex flex-col items-center min-w-[120px] py-4 px-8 border border-white/5 bg-black/40 backdrop-blur-md rounded-[16px]">
-                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">UPLINK_STS</span>
-                      <span className="font-mono text-xs text-emerald-400 tracking-widest font-bold">ENCRYPTED</span>
+                      <span className="technical-label opacity-40 mb-2 tracking-widest text-[8px]">
+                        UPLINK_STS
+                      </span>
+                      <span className="font-mono text-xs text-emerald-400 tracking-widest font-bold">
+                        ENCRYPTED
+                      </span>
                     </div>
                   </div>
                 </motion.div>
@@ -1751,37 +1907,45 @@ export default function App() {
                     className={cn(
                       "group relative px-12 py-6 bg-white/5 backdrop-blur-md rounded-[20px] transition-all overflow-hidden border",
                       theme.borderClass,
-                      "hover:bg-white/10"
+                      "hover:bg-white/10",
                     )}
                     style={{ boxShadow: `0 0 40px ${theme.hex}22` }}
                   >
-                  <div
-                    className={cn(
-                      "absolute inset-0 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-out opacity-20",
-                      theme.bgClass.replace("/5", "/40"),
-                    )}
-                  />
-                  
-                  {/* Scanning bar effect on hover */}
-                  <div className="absolute top-0 left-0 bottom-0 w-1 bg-white/20 -translate-x-full group-hover:animate-[scan_2s_linear_infinite]" style={{ boxShadow: `0 0 20px ${theme.hex}` }} />
-
-                  <div className="relative z-10 flex flex-col items-center gap-4">
-                    <span
+                    <div
                       className={cn(
-                        "font-mono text-sm tracking-[0.4em] font-bold transition-colors uppercase group-hover:text-white",
-                        theme.accentClass,
+                        "absolute inset-0 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-out opacity-20",
+                        theme.bgClass.replace("/5", "/40"),
                       )}
-                    >
-                      INITIALIZE_UPLINK
-                    </span>
-                    <div className="flex items-center gap-3 w-full max-w-[200px]">
-                      <div className="flex-1 h-[1px] bg-white/10 group-hover:bg-white/30 transition-colors" />
-                      <div className={cn("w-1.5 h-1.5 rounded-full transition-colors")} style={{ backgroundColor: theme.hex }} />
-                      <div className="flex-1 h-[1px] bg-white/10 group-hover:bg-white/30 transition-colors" />
+                    />
+
+                    {/* Scanning bar effect on hover */}
+                    <div
+                      className="absolute top-0 left-0 bottom-0 w-1 bg-white/20 -translate-x-full group-hover:animate-[scan_2s_linear_infinite]"
+                      style={{ boxShadow: `0 0 20px ${theme.hex}` }}
+                    />
+
+                    <div className="relative z-10 flex flex-col items-center gap-4">
+                      <span
+                        className={cn(
+                          "font-mono text-sm tracking-[0.4em] font-bold transition-colors uppercase group-hover:text-white",
+                          theme.accentClass,
+                        )}
+                      >
+                        INITIALIZE_UPLINK
+                      </span>
+                      <div className="flex items-center gap-3 w-full max-w-[200px]">
+                        <div className="flex-1 h-[1px] bg-white/10 group-hover:bg-white/30 transition-colors" />
+                        <div
+                          className={cn(
+                            "w-1.5 h-1.5 rounded-full transition-colors",
+                          )}
+                          style={{ backgroundColor: theme.hex }}
+                        />
+                        <div className="flex-1 h-[1px] bg-white/10 group-hover:bg-white/30 transition-colors" />
+                      </div>
                     </div>
-                  </div>
-                </motion.button>
-              </motion.div>
+                  </motion.button>
+                </motion.div>
               ) : (
                 <motion.div
                   key={sequence}
@@ -1793,17 +1957,30 @@ export default function App() {
                 >
                   <div className="flex flex-col items-center gap-6">
                     <motion.div
-                      animate={{ 
+                      animate={{
                         rotate: 360,
-                        scale: (sequence === "connecting" && activePersona === "ABBEY") ? [1, 1.2, 1] : 1
+                        scale:
+                          sequence === "connecting" && activePersona === "ABBEY"
+                            ? [1, 1.2, 1]
+                            : 1,
                       }}
-                      transition={{ 
-                        rotate: { duration: 1.5, repeat: Infinity, ease: "linear" },
-                        scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                      transition={{
+                        rotate: {
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "linear",
+                        },
+                        scale: {
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        },
                       }}
                       className={cn(
                         "w-16 h-16 border-2 border-t-current border-r-transparent border-b-current border-l-transparent rounded-full",
-                        (sequence === "connecting" && activePersona === "ABBEY") && "animate-pulse"
+                        sequence === "connecting" &&
+                          activePersona === "ABBEY" &&
+                          "animate-pulse",
                       )}
                       style={{ color: theme.hex }}
                     />
@@ -1812,7 +1989,11 @@ export default function App() {
                         <motion.div
                           key={i}
                           animate={{
-                            height: (sequence === "connecting" && activePersona === "ABBEY") ? [24, 80, 24] : [24, 60, 24],
+                            height:
+                              sequence === "connecting" &&
+                              activePersona === "ABBEY"
+                                ? [24, 80, 24]
+                                : [24, 60, 24],
                             opacity: [0.3, 1, 0.3],
                           }}
                           transition={{
@@ -1823,7 +2004,9 @@ export default function App() {
                           }}
                           className={cn(
                             "w-1 bg-accent shadow-[0_0_15px_var(--accent)]",
-                            (sequence === "connecting" && activePersona === "ABBEY") && "w-2 !bg-white shadow-[0_0_20px_white]"
+                            sequence === "connecting" &&
+                              activePersona === "ABBEY" &&
+                              "w-2 !bg-white shadow-[0_0_20px_white]",
                           )}
                         />
                       ))}
@@ -1876,7 +2059,8 @@ export default function App() {
 
       <div
         className={cn(
-          `fixed inset-0 overflow-hidden transition-all duration-1000 theme-${activePersona} selection:bg-accent selection:text-white`,
+          "fixed inset-0 overflow-hidden transition-all duration-1000 selection:bg-accent selection:text-white",
+          `theme-${activePersona}`,
           activePersona === "AVIVA"
             ? "bg-[#0b0614]"
             : activePersona === "ABI"
@@ -1887,13 +2071,8 @@ export default function App() {
           {
             "--accent": theme.hex,
             "--color-accent": theme.hex,
-            "--color-accent-light":
-              activePersona === "AVIVA"
-                ? "#e59bff"
-                : activePersona === "ABI"
-                  ? "#ffd280"
-                  : "#80d4ff",
-          } as any
+            "--color-accent-light": theme.hex,
+          } as React.CSSProperties
         }
       >
         <div
@@ -1911,13 +2090,13 @@ export default function App() {
             activePersona === "ABBEY" ? "opacity-30" : "opacity-15",
           )}
         />
-        
+
         {activePersona === "ABBEY" && (
           <div className="absolute inset-x-0 top-0 overflow-hidden h-40 pointer-events-none opacity-20">
-            <motion.div 
-               animate={{ y: [0, -100] }}
-               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-               className="flex flex-col gap-1 p-4"
+            <motion.div
+              animate={{ y: [0, -100] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="flex flex-col gap-1 p-4"
             >
               {[...Array(20)].map((_, i) => (
                 <div key={i} className="h-[1px] w-full bg-accent/20" />
@@ -1932,16 +2111,16 @@ export default function App() {
               <motion.div
                 key={i}
                 initial={{ x: "-100%", opacity: 0 }}
-                animate={{ 
+                animate={{
                   x: ["100%", "-100%"],
                   opacity: [0, 0.2, 0],
-                  top: [`${Math.random() * 100}%`, `${Math.random() * 100}%`] 
+                  top: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
                 }}
-                transition={{ 
-                  duration: 0.2 + Math.random() * 0.5, 
-                  repeat: Infinity, 
+                transition={{
+                  duration: 0.2 + Math.random() * 0.5,
+                  repeat: Infinity,
                   repeatDelay: 2 + Math.random() * 5,
-                  delay: i * 1.2
+                  delay: i * 1.2,
                 }}
                 className="absolute h-px w-full bg-accent/40 shadow-[0_0_8px_var(--color-accent)]"
               />
@@ -1951,78 +2130,151 @@ export default function App() {
 
         {activePersona === "ABI" && (
           <div className="absolute inset-0 pointer-events-none border-[20px] border-accent/5 overflow-hidden">
-             <div className="absolute top-0 left-0 w-32 h-32 border-l border-t border-accent/20" />
-             <div className="absolute top-0 right-0 w-32 h-32 border-r border-t border-accent/20" />
-             <div className="absolute bottom-0 left-0 w-32 h-32 border-l border-b border-accent/20" />
-             <div className="absolute bottom-0 right-0 w-32 h-32 border-r border-b border-accent/20" />
+            <div className="absolute top-0 left-0 w-32 h-32 border-l border-t border-accent/20" />
+            <div className="absolute top-0 right-0 w-32 h-32 border-r border-t border-accent/20" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 border-l border-b border-accent/20" />
+            <div className="absolute bottom-0 right-0 w-32 h-32 border-r border-b border-accent/20" />
           </div>
         )}
 
-        <canvas ref={canvasRef} className="w-full h-full block touch-none mix-blend-screen opacity-90 transition-opacity duration-1000" />
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full block touch-none mix-blend-screen opacity-90 transition-opacity duration-1000 shadow-[0_0_50px_rgba(0,0,0,0.5)] cursor-crosshair"
+        />
+
+        {/* Aviva Glitch Effects Overlay */}
+        <AnimatePresence>
+          {avivaGlitch > 0.7 && (
+            <motion.div
+              className="fixed inset-0 z-[68] pointer-events-none mix-blend-screen opacity-30"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: avivaGlitch > 0.9 ? 0.6 : 0.3,
+                backgroundPosition: ["0% 0%", "100% 0%", "0% 0%"],
+              }}
+              exit={{ opacity: 0 }}
+              style={{
+                background: "linear-gradient(90deg, #ff00ff, transparent, #00ffff)",
+                backgroundSize: "200% 100%",
+              }}
+              transition={{
+                duration: avivaGlitch > 0.9 ? 0.05 : 0.5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          )}
+          {avivaGlitch > 0.9 && (
+            <motion.div
+              className="fixed inset-0 z-[69] pointer-events-none mix-blend-overlay"
+              initial={{ x: 0 }}
+              animate={{
+                x: [0, -10, 10, 0, 5, -5, 0],
+                opacity: [0, 0.1, 0],
+              }}
+              transition={{
+                duration: 0.1,
+                repeat: Infinity,
+                repeatDelay: Math.random() * 2,
+              }}
+              style={{
+                backgroundColor: "white",
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {isTransitioning && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] bg-black flex items-center justify-center"
+            >
+              <div className="text-accent technical-label tracking-[0.5em] animate-pulse">
+                CALIBRATING_NEURAL_SYNAPSE...
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
 
         {/* System Status Bar */}
-        <div className="fixed top-0 left-0 right-0 z-[60] h-10 flex items-center justify-between px-6 border-b border-white/10 bg-black/60 backdrop-blur-md pointer-events-none">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col items-start">
-                <span className="text-[10px] font-bold text-white tracking-[0.4em]">
+        <div className="fixed top-0 left-0 right-0 z-[60] h-14 md:h-10 flex items-center justify-between px-3 md:px-6 border-b border-white/10 bg-black/60 backdrop-blur-md pointer-events-none">
+          <div className="flex items-center gap-4 md:gap-8">
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="flex flex-col items-start hidden sm:flex">
+                <span className="text-[10px] md:text-[12px] font-bold text-white tracking-[0.4em]">
                   MLAI
                 </span>
                 <span
-                  className={`text-[7px] font-mono leading-none ${theme.accentClass}`}
+                  className={`text-[7px] md:text-[8px] font-mono leading-none ${theme.accentClass}`}
                 >
                   CORP_INFRA
                 </span>
               </div>
-              <div className="w-[1px] h-6 bg-white/10" />
+              <div className="w-[1px] h-6 bg-white/10 hidden sm:block" />
               <div className="flex items-center gap-2">
-                <div className="flex bg-white/[0.02] p-1 rounded-full border border-white/[0.05] gap-1 pointer-events-auto backdrop-blur-md shadow-inner">
+                <div className="flex bg-white/[0.02] p-0.5 md:p-1 rounded-full border border-white/[0.05] gap-0.5 md:gap-1 pointer-events-auto backdrop-blur-md shadow-inner transition-all">
                   {Object.keys(PERSONAS).map((p, index) => {
-                    const personaKey = p as keyof typeof PERSONAS;
+                    const personaKey = p as PersonaType;
                     const config = PERSONAS[personaKey];
-                    const Icon = PERSONA_ICONS[p] || Shield;
+                    const Icon = PERSONA_ICONS[personaKey] || Shield;
 
                     return (
-                      <button
-                        key={p}
+                      <motion.button
+                        key={personaKey}
                         onClick={() => {
-                          setActivePersona(p);
+                          setActivePersona(personaKey);
                           setIsAutoPersona(false);
                         }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         className={cn(
-                          "group flex items-center gap-2 px-3 py-1.5 text-[10px] font-semibold tracking-wide transition-all duration-300 rounded-full border",
-                          activePersona === p
+                          "group flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 text-[8px] md:text-[10px] font-semibold tracking-wide transition-all duration-300 rounded-full border",
+                          activePersona === personaKey
                             ? `${config.bgClass} text-white border-white/30 shadow-[0_0_15px_rgba(255,255,255,0.1)]`
                             : "bg-white/[0.02] text-[#9aa4b2] border-transparent hover:bg-white/[0.06] hover:text-white",
                         )}
-                        style={ activePersona === p ? { boxShadow: `0 0 15px ${config.hex}40` } : {} }
+                        style={
+                          activePersona === personaKey
+                            ? { boxShadow: `0 0 15px ${config.hex}40` }
+                            : {}
+                        }
                       >
                         <Icon
                           className={cn(
-                            "w-3 h-3 transition-transform duration-500",
-                            activePersona === p ? config.animationClass : "opacity-60 group-hover:scale-110",
+                            "w-2.5 h-2.5 md:w-3 md:h-3 transition-transform duration-500",
+                            activePersona === p
+                              ? config.animationClass
+                              : "opacity-60 group-hover:scale-110 group-hover:opacity-100",
                           )}
                         />
-                        {p}
-                        <span className="text-[7px] font-mono opacity-40 ml-1 group-hover:opacity-100 transition-opacity">[{index + 1}]</span>
-                      </button>
+                        <span className="hidden xs:inline-block">{p}</span>
+                        <span className="text-[7px] font-mono opacity-40 ml-0.5 md:ml-1 group-hover:opacity-100 transition-opacity hidden sm:inline-block">
+                          [{index + 1}]
+                        </span>
+                      </motion.button>
                     );
                   })}
                 </div>
-                <button
+                <motion.button
                   onClick={() => setIsAutoPersona(!isAutoPersona)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   className={cn(
-                    "px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] transition-all duration-300 rounded-full border shadow-sm pointer-events-auto active:scale-95 ml-2",
+                    "px-2 md:px-3 py-1 md:py-1.5 text-[8px] md:text-[9px] font-bold tracking-[0.2em] transition-all duration-300 rounded-full border shadow-sm pointer-events-auto ml-1 md:ml-2",
                     isAutoPersona
                       ? "text-[#042024] bg-gradient-to-r from-accent to-[#6ee7cf] border-transparent shadow-[0_0_15px_var(--accent)]"
                       : "bg-white/[0.03] text-[#9aa4b2] border-white/[0.05] hover:bg-white/[0.08] hover:text-white hover:border-white/20",
                   )}
                 >
                   AUTO
-                </button>
+                </motion.button>
               </div>
             </div>
-            <div className="hidden lg:flex items-center gap-8 pointer-events-auto">
+            <div className="hidden md:flex items-center gap-4 lg:gap-8 pointer-events-auto">
               <Tooltip
                 text="NODE_IDENTIFIER / US_WEST_2"
                 activePersona={activePersona}
@@ -2040,7 +2292,7 @@ export default function App() {
                 text="CURRENT_PACKET_LATENCY"
                 activePersona={activePersona}
               >
-                <div className="flex flex-col cursor-help">
+                <div className="flex flex-col cursor-help hidden lg:flex">
                   <span className="technical-label text-text-dim/40 leading-none">
                     Network_Latency
                   </span>
@@ -2051,7 +2303,7 @@ export default function App() {
                 text="PACKET_LOSS_STABILITY"
                 activePersona={activePersona}
               >
-                <div className="flex flex-col cursor-help">
+                <div className="flex flex-col cursor-help hidden xl:flex">
                   <span className="technical-label text-text-dim/40 leading-none">
                     Packet_Loss
                   </span>
@@ -2073,7 +2325,7 @@ export default function App() {
                   </span>
                 </div>
               </Tooltip>
-              <div className="flex items-end gap-[2px] h-4 pb-[2px]">
+              <div className="flex items-end gap-[2px] h-4 pb-[2px] hidden lg:flex">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <motion.div
                     key={i}
@@ -2122,49 +2374,69 @@ export default function App() {
             </div>
             <div className="flex flex-col items-end">
               <div className="flex items-center gap-2 mb-1">
-                {activePersona === "ABBEY" ? (
-                  <motion.div
-                    key="ABBEY-icon"
-                    initial={{ scale: 0, rotate: -90 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                  >
-                    <Shield className="w-3 h-3 text-accent animate-abbey" />
-                  </motion.div>
-                ) : activePersona === "AVIVA" ? (
-                  <motion.div
-                    key="AVIVA-icon"
-                    initial={{ scale: 0, rotate: -90 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                  >
-                    <FlaskConical className="w-3 h-3 text-accent animate-aviva" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="ABI-icon"
-                    initial={{ scale: 0, rotate: -90 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                  >
-                    <Scale className="w-3 h-3 text-accent animate-abi" />
-                  </motion.div>
-                )}
-                <span className="technical-label text-text-dim/40 leading-none">
+                <div className="hidden xs:block">
+                  {activePersona === "ABBEY" ? (
+                    <motion.div
+                      key="ABBEY-icon"
+                      initial={{ scale: 0, rotate: -90 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 10,
+                      }}
+                    >
+                      <Shield className="w-3 h-3 text-accent animate-abbey" />
+                    </motion.div>
+                  ) : activePersona === "AVIVA" ? (
+                    <motion.div
+                      key="AVIVA-icon"
+                      initial={{ scale: 0, rotate: -90 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 10,
+                      }}
+                    >
+                      <FlaskConical className="w-3 h-3 text-accent animate-aviva" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="ABI-icon"
+                      initial={{ scale: 0, rotate: -90 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 10,
+                      }}
+                    >
+                      <Scale className="w-3 h-3 text-accent animate-abi" />
+                    </motion.div>
+                  )}
+                </div>
+                <span className="technical-label text-text-dim/40 leading-none hidden sm:block">
                   Active_Persona
                 </span>
               </div>
               <span
                 className={cn(
-                  "technical-value font-bold uppercase tracking-widest",
+                  "technical-value font-bold uppercase tracking-widest text-[9px] md:text-[11px]",
                   theme.accentLightClass,
                 )}
               >
                 {activePersona}
               </span>
-              <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-[#cbd5e1] opacity-70 mt-1.5 mix-blend-screen flex items-center gap-1">
-                {personaConfig.protocol}
-                <span className="opacity-50">{autoSaveStatus !== 'saved' ? `[${autoSaveStatus}]` : '[saved]'}</span>
+              <span className="text-[7px] md:text-[8px] font-mono uppercase tracking-[0.2em] text-[#cbd5e1] opacity-70 mt-1 sm:mt-1.5 mix-blend-screen flex items-center gap-1">
+                <span className="hidden xs:block">
+                  {personaConfig.protocol}
+                </span>
+                <span className="opacity-50">
+                  {autoSaveStatus !== "saved"
+                    ? `[${autoSaveStatus}]`
+                    : "[saved]"}
+                </span>
               </span>
             </div>
           </div>
@@ -2243,7 +2515,7 @@ export default function App() {
                     </a>
                   </div>
 
-                  <div className="pt-8 border-t border-line flex gap-12">
+                  <div className="pt-8 border-t border-line flex flex-wrap gap-8 md:gap-12">
                     <div>
                       <div className="text-3xl font-display text-white">03</div>
                       <div className="technical-label mt-1">
@@ -2328,7 +2600,7 @@ export default function App() {
 
         {/* UI Panel */}
         <div
-          className={`fixed z-50 ${isCollapsed ? "top-6 right-6" : "inset-0 md:top-6 md:right-6 md:inset-auto"}`}
+          className={`fixed z-50 transition-all duration-700 ease-in-out ${isCollapsed ? "top-[4.5rem] right-4 md:top-14 md:right-6" : "inset-0 top-14 bottom-16 md:inset-auto md:top-14 md:right-6 md:bottom-auto"}`}
         >
           <AnimatePresence>
             {audioStarted && (
@@ -2336,7 +2608,7 @@ export default function App() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
-                className="w-full h-full flex flex-col items-end justify-start"
+                className="w-full h-full flex flex-col items-end justify-start pointer-events-none"
               >
                 {isCollapsed ? (
                   <motion.button
@@ -2346,9 +2618,9 @@ export default function App() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
                     onClick={() => setIsCollapsed(false)}
-                    className="w-10 h-10 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all shadow-2xl group"
+                    className="w-10 h-10 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 hover:border-white/40 transition-all shadow-2xl group pointer-events-auto"
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white/80 transition-colors" />
+                    <div className="w-2 h-2 rounded-full bg-white/60 group-hover:bg-white/100 transition-colors shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
                   </motion.button>
                 ) : (
                   <motion.div
@@ -2359,7 +2631,7 @@ export default function App() {
                       damping: 25,
                       stiffness: 200,
                     }}
-                    className={`w-full h-full md:w-[320px] md:h-auto technical-panel md:rounded-none overflow-hidden flex flex-col border-white/20 transition-all duration-700 ${theme.bgClass}`}
+                    className={`w-full h-full md:w-[360px] md:h-auto md:max-h-[calc(100vh-8rem)] technical-panel md:rounded-lg md:border overflow-hidden flex flex-col border-white/20 transition-all duration-700 pointer-events-auto ${theme.bgClass}`}
                   >
                     <div className={`scanning-bar bg-accent/30`} />
                     {/* Corner Accents */}
@@ -2383,8 +2655,9 @@ export default function App() {
                         className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 -mr-16 -mt-16 pointer-events-none bg-accent`}
                       />
 
-                      <button
+                      <motion.button
                         onClick={() => setIsCollapsed(true)}
+                        whileTap={{ scale: 0.98 }}
                         className="w-full flex items-center justify-between p-4 hover:bg-white/10 transition-colors group relative z-10"
                       >
                         <div className="flex items-center gap-3">
@@ -2398,27 +2671,42 @@ export default function App() {
                         <span className="technical-value opacity-30 group-hover:opacity-100 transition-opacity">
                           [ ESC ]
                         </span>
-                      </button>
+                      </motion.button>
 
-                      <div className="flex px-4 pt-2 gap-6 overflow-x-auto scrollbar-none">
+                      <div className="flex px-4 pt-2 pb-2 gap-4 md:gap-6 overflow-x-auto scrollbar-none touch-pan-x">
                         <Tooltip
                           text="BROWSE_LANDSCAPES"
                           activePersona={activePersona}
                         >
                           <motion.button
                             onClick={() => setActiveTab("landscape")}
+                            role="tab"
+                            aria-selected={activeTab === "landscape"}
+                            aria-label="View Landscape tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
                             className={cn(
-                              "relative px-4 py-2 technical-label transition-all",
-                              activeTab === "landscape" ? "text-white" : "text-text-dim hover:text-white",
-                              activePersona === "ABBEY" && activeTab === "landscape" && "persona-glow",
-                              activePersona === "ABI" && activeTab === "landscape" && "persona-outline"
+                              "relative px-4 py-2 technical-label transition-all whitespace-nowrap",
+                              activeTab === "landscape"
+                                ? "text-white"
+                                : "text-text-dim hover:text-white",
+                              activePersona === "ABBEY" &&
+                                activeTab === "landscape" &&
+                                "persona-glow",
+                              activePersona === "ABI" &&
+                                activeTab === "landscape" &&
+                                "persona-outline",
                             )}
                           >
                             {activeTab === "landscape" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Landscape</span>
@@ -2430,13 +2718,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("controls")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "controls" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "controls"}
+                            aria-label="View Controls tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "controls" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "controls" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Controls</span>
@@ -2448,13 +2745,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("minimap")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "minimap" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "minimap"}
+                            aria-label="View Scanner tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "minimap" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "minimap" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Scanner</span>
@@ -2466,13 +2772,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("telemetry")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "telemetry" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "telemetry"}
+                            aria-label="View Telemetry tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "telemetry" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "telemetry" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Telemetry</span>
@@ -2484,13 +2799,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("brand")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "brand" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "brand"}
+                            aria-label="View Brand tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "brand" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "brand" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Brand</span>
@@ -2502,13 +2826,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("framework")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "framework" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "framework"}
+                            aria-label="View Framework tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "framework" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "framework" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Framework</span>
@@ -2520,13 +2853,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("benchmarks")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "benchmarks" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "benchmarks"}
+                            aria-label="View Benchmarks tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "benchmarks" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "benchmarks" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Benchmarks</span>
@@ -2538,13 +2880,22 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("abbey")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "abbey" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "abbey"}
+                            aria-label="View Abbey tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "abbey" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "abbey" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Abbey</span>
@@ -2556,16 +2907,52 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("archive")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "archive" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "archive"}
+                            aria-label="View Archive tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "archive" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "archive" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Archive</span>
+                          </motion.button>
+                        </Tooltip>
+                        <Tooltip
+                          text="SYSTEM_BLUEPRINT"
+                          activePersona={activePersona}
+                        >
+                          <motion.button
+                            onClick={() => setActiveTab("blueprint")}
+                            role="tab"
+                            aria-selected={activeTab === "blueprint"}
+                            aria-label="View Blueprint tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "blueprint" ? "text-white" : "text-text-dim hover:text-white"}`}
+                          >
+                            {activeTab === "blueprint" && (
+                              <motion.div
+                                layoutId="activeTabIndicator"
+                                className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
+                              />
+                            )}
+                            <span className="relative z-10">Blueprint</span>
                           </motion.button>
                         </Tooltip>
                         <Tooltip
@@ -2574,22 +2961,58 @@ export default function App() {
                         >
                           <motion.button
                             onClick={() => setActiveTab("portfolio")}
-                            className={`relative px-4 py-2 technical-label transition-all ${activeTab === "portfolio" ? "text-white" : "text-text-dim hover:text-white"}`}
+                            role="tab"
+                            aria-selected={activeTab === "portfolio"}
+                            aria-label="View Portfolio tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "portfolio" ? "text-white" : "text-text-dim hover:text-white"}`}
                           >
                             {activeTab === "portfolio" && (
                               <motion.div
                                 layoutId="activeTabIndicator"
                                 className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
                               />
                             )}
                             <span className="relative z-10">Portfolio</span>
                           </motion.button>
                         </Tooltip>
+                        <Tooltip
+                          text="SECURITY_POSTURE"
+                          activePersona={activePersona}
+                        >
+                          <motion.button
+                            onClick={() => setActiveTab("security")}
+                            role="tab"
+                            aria-selected={activeTab === "security"}
+                            aria-label="View Security tab"
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-4 py-2 technical-label transition-all whitespace-nowrap ${activeTab === "security" ? "text-white" : "text-text-dim hover:text-white"}`}
+                          >
+                            {activeTab === "security" && (
+                              <motion.div
+                                layoutId="activeTabIndicator"
+                                className="absolute inset-0 bg-white/5 border border-white/20 rounded-md"
+                                transition={{
+                                  type: "spring",
+                                  bounce: 0.2,
+                                  duration: 0.6,
+                                }}
+                              />
+                            )}
+                            <span className="relative z-10">Security</span>
+                          </motion.button>
+                        </Tooltip>
                       </div>
                     </div>
 
-                    <div className="px-6 pb-6 space-y-6 flex-1 md:max-h-[600px] overflow-y-auto">
+                    <div className="px-6 pb-6 space-y-6 flex-1 overflow-y-auto scrollbar-none custom-scrollbar">
                       <AnimatePresence mode="wait">
                         <motion.div
                           key={activeTab}
@@ -2605,12 +3028,14 @@ export default function App() {
                                 <span className="technical-label">
                                   Auto-Rotation
                                 </span>
-                                <button
+                                <motion.button
                                   onClick={() => setIsPaused(!isPaused)}
-                                  className={`px-3 py-1 rounded-md technical-label transition-all ${isPaused ? "bg-white/5 text-text-dim border border-white/5" : "bg-accent/20 text-accent-light border border-accent/40"}`}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className={`px-3 py-1 rounded-md technical-label transition-colors ${isPaused ? "bg-white/5 text-text-dim border border-white/5 hover:bg-white/10" : "bg-accent/20 text-accent-light border border-accent/40 hover:bg-accent/30"}`}
                                 >
                                   {isPaused ? "Paused" : "Active"}
-                                </button>
+                                </motion.button>
                               </div>
 
                               {/* Speed Control */}
@@ -2619,9 +3044,16 @@ export default function App() {
                                   <span className="technical-label">
                                     Temporal Speed
                                   </span>
-                                  <span className="technical-value">
-                                    {speed.toFixed(2)}x
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {speed.toFixed(2)}x
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setSpeed(getDefaultSetting("speed"))
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2647,9 +3079,18 @@ export default function App() {
                                       Luminance
                                     </span>
                                   </Tooltip>
-                                  <span className="technical-value">
-                                    {lighting.toFixed(2)}x
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {lighting.toFixed(2)}x
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setLighting(
+                                          getDefaultSetting("lighting"),
+                                        )
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2664,35 +3105,176 @@ export default function App() {
                                 />
                               </div>
 
+                              {/* Ambient Audio Controls */}
+                              <div className="space-y-4 pt-4 border-t border-white/5">
+                                <span className="technical-label text-[10px] opacity-50">
+                                  AMBIENT_AUDIO
+                                </span>
+
+                                {/* Volume */}
+                                <div className="space-y-2">
+                                  <div className="flex justify-between text-[10px]">
+                                    <span className="technical-label">
+                                      Volume
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {envVolume.toFixed(2)}
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setEnvVolume(
+                                            getDefaultSetting("envVolume"),
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    value={envVolume}
+                                    onChange={(e) =>
+                                      setEnvVolume(parseFloat(e.target.value))
+                                    }
+                                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
+                                  />
+                                </div>
+                                {/* Frequency */}
+                                <div className="space-y-2">
+                                  <div className="flex justify-between text-[10px]">
+                                    <span className="technical-label">
+                                      Filter Freq
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {envFreq.toFixed(0)} Hz
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setEnvFreq(
+                                            getDefaultSetting("envFreq"),
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min="50"
+                                    max="5000"
+                                    step="1"
+                                    value={envFreq}
+                                    onChange={(e) =>
+                                      setEnvFreq(parseFloat(e.target.value))
+                                    }
+                                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
+                                  />
+                                </div>
+                              </div>
+
                               {/* Persona Effect Controls */}
                               <div className="space-y-4 pt-4 border-t border-white/5">
-                                <span className="technical-label text-[10px] opacity-50">PERSONA_EFFECTS</span>
-                                
+                                <span className="technical-label text-[10px] opacity-50">
+                                  PERSONA_EFFECTS
+                                </span>
+
                                 {/* Abbey Pulse */}
                                 <div className="space-y-2">
                                   <div className="flex justify-between text-[10px]">
-                                    <span className="technical-label">Abbey Pulse Intensity</span>
-                                    <span className="technical-value">{abbeyPulse.toFixed(2)}x</span>
+                                    <span className="technical-label">
+                                      Abbey Pulse Intensity
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {abbeyPulse.toFixed(2)}x
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setAbbeyPulse(
+                                            getDefaultSetting("abbeyPulse"),
+                                          )
+                                        }
+                                      />
+                                    </div>
                                   </div>
-                                  <input type="range" min="0" max="2" step="0.01" value={abbeyPulse} onChange={(e) => setAbbeyPulse(parseFloat(e.target.value))} className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent" />
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="2"
+                                    step="0.01"
+                                    value={abbeyPulse}
+                                    onChange={(e) =>
+                                      setAbbeyPulse(parseFloat(e.target.value))
+                                    }
+                                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
+                                  />
                                 </div>
-                                
+
                                 {/* Aviva Glitch */}
                                 <div className="space-y-2">
                                   <div className="flex justify-between text-[10px]">
-                                    <span className="technical-label">Aviva Glitch</span>
-                                    <span className="technical-value">{avivaGlitch.toFixed(2)}</span>
+                                    <span className="technical-label">
+                                      Aviva Glitch
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {avivaGlitch.toFixed(2)}
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setAvivaGlitch(
+                                            getDefaultSetting("avivaGlitch"),
+                                          )
+                                        }
+                                      />
+                                    </div>
                                   </div>
-                                  <input type="range" min="0" max="1" step="0.01" value={avivaGlitch} onChange={(e) => setAvivaGlitch(parseFloat(e.target.value))} className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent" />
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    value={avivaGlitch}
+                                    onChange={(e) =>
+                                      setAvivaGlitch(parseFloat(e.target.value))
+                                    }
+                                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
+                                  />
                                 </div>
-                                
+
                                 {/* Abi Flicker */}
                                 <div className="space-y-2">
                                   <div className="flex justify-between text-[10px]">
-                                    <span className="technical-label">Abi Flicker</span>
-                                    <span className="technical-value">{abiFlicker.toFixed(2)}</span>
+                                    <span className="technical-label">
+                                      Abi Flicker
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {abiFlicker.toFixed(2)}
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setAbiFlicker(
+                                            getDefaultSetting("abiFlicker"),
+                                          )
+                                        }
+                                      />
+                                    </div>
                                   </div>
-                                  <input type="range" min="0" max="2" step="0.01" value={abiFlicker} onChange={(e) => setAbiFlicker(parseFloat(e.target.value))} className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent" />
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="2"
+                                    step="0.01"
+                                    value={abiFlicker}
+                                    onChange={(e) =>
+                                      setAbiFlicker(parseFloat(e.target.value))
+                                    }
+                                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
+                                  />
                                 </div>
                               </div>
 
@@ -2707,9 +3289,16 @@ export default function App() {
                                       Focal Zoom
                                     </span>
                                   </Tooltip>
-                                  <span className="technical-value">
-                                    {zoom.toFixed(2)}
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {zoom.toFixed(2)}
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setZoom(getDefaultSetting("zoom"))
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2779,9 +3368,18 @@ export default function App() {
                                       Proximity
                                     </span>
                                   </Tooltip>
-                                  <span className="technical-value">
-                                    {proximity.toFixed(2)}
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {proximity.toFixed(2)}
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setProximity(
+                                          getDefaultSetting("proximity"),
+                                        )
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2807,9 +3405,16 @@ export default function App() {
                                       Wind Intensity
                                     </span>
                                   </Tooltip>
-                                  <span className="technical-value">
-                                    {wind.toFixed(2)}x
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {wind.toFixed(2)}x
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setWind(getDefaultSetting("wind"))
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2846,9 +3451,18 @@ export default function App() {
                                         Abbey Pulse Intensity
                                       </span>
                                     </Tooltip>
-                                    <span className="technical-value">
-                                      {abbeyPulse.toFixed(2)}x
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {abbeyPulse.toFixed(2)}x
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setAbbeyPulse(
+                                            getDefaultSetting("abbeyPulse"),
+                                          )
+                                        }
+                                      />
+                                    </div>
                                   </div>
                                   <input
                                     type="range"
@@ -2874,9 +3488,18 @@ export default function App() {
                                         Aviva Glitch
                                       </span>
                                     </Tooltip>
-                                    <span className="technical-value">
-                                      {avivaGlitch.toFixed(2)}x
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {avivaGlitch.toFixed(2)}x
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setAvivaGlitch(
+                                            getDefaultSetting("avivaGlitch"),
+                                          )
+                                        }
+                                      />
+                                    </div>
                                   </div>
                                   <input
                                     type="range"
@@ -2902,9 +3525,18 @@ export default function App() {
                                         Abi Flicker
                                       </span>
                                     </Tooltip>
-                                    <span className="technical-value">
-                                      {abiFlicker.toFixed(2)}x
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="technical-value">
+                                        {abiFlicker.toFixed(2)}x
+                                      </span>
+                                      <ResetBtn
+                                        onReset={() =>
+                                          setAbiFlicker(
+                                            getDefaultSetting("abiFlicker"),
+                                          )
+                                        }
+                                      />
+                                    </div>
                                   </div>
                                   <input
                                     type="range"
@@ -2931,9 +3563,16 @@ export default function App() {
                                       Horizontal Axis
                                     </span>
                                   </Tooltip>
-                                  <span className="technical-value">
-                                    {(yaw * (180 / Math.PI)).toFixed(0)}°
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {(yaw * (180 / Math.PI)).toFixed(0)}°
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setYaw(getDefaultSetting("yaw"))
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2959,9 +3598,16 @@ export default function App() {
                                       Vertical Axis
                                     </span>
                                   </Tooltip>
-                                  <span className="technical-value">
-                                    {(pitch * (180 / Math.PI)).toFixed(0)}°
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="technical-value">
+                                      {(pitch * (180 / Math.PI)).toFixed(0)}°
+                                    </span>
+                                    <ResetBtn
+                                      onReset={() =>
+                                        setPitch(getDefaultSetting("pitch"))
+                                      }
+                                    />
+                                  </div>
                                 </div>
                                 <input
                                   type="range"
@@ -2976,7 +3622,46 @@ export default function App() {
                                 />
                               </div>
 
-                              {/* Color Mode Control */}
+                              {/* Theme Color Control */}
+                              <div className="space-y-3">
+                                <Tooltip
+                                  text="SELECT_SYSTEM_THEME"
+                                  activePersona={activePersona}
+                                >
+                                  <span className="technical-label cursor-help border-b border-dotted border-white/20">
+                                    Accent Color
+                                  </span>
+                                </Tooltip>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <input 
+                                       type="checkbox" 
+                                       checked={useCustomColor}
+                                       onChange={(e) => setUseCustomColor(e.target.checked)}
+                                       className="accent-accent"
+                                    />
+                                    <span className="technical-label text-[10px]">Enable Custom Hex</span>
+                                </div>
+                                <div className="grid grid-cols-5 gap-2">
+                                  {PALETTES.map((p) => (
+                                    <motion.button
+                                      key={p.hex}
+                                      onClick={() => { setCustomColor(p.hex); setUseCustomColor(true); }}
+                                      whileHover={{ scale: 1.1 }}
+                                      whileTap={{ scale: 0.9 }}
+                                      className={`h-6 w-6 rounded-full border ${customColor === p.hex && useCustomColor ? 'border-white ring-1 ring-white' : 'border-transparent'}`}
+                                      style={{ backgroundColor: p.hex }}
+                                    />
+                                  ))}
+                                </div>
+                                <input 
+                                  type="color"
+                                  value={customColor}
+                                  onChange={(e) => { setCustomColor(e.target.value); setUseCustomColor(true); }}
+                                  className="w-full h-8 bg-transparent border-none cursor-pointer"
+                                />
+                              </div>
+
+                              {/* Atmospheric Hue Control */}
                               <div className="space-y-3">
                                 <Tooltip
                                   text="SELECT_ENVIRONMENT_ATMOSPHERE"
@@ -2993,9 +3678,11 @@ export default function App() {
                                       text={`ACTIVATE_${mode.toUpperCase()}_SPECTRAL_RANGE`}
                                       activePersona={activePersona}
                                     >
-                                      <button
+                                      <motion.button
                                         onClick={() => setColorMode(mode)}
-                                        className={`h-8 w-full rounded-md border transition-all ${
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`h-8 w-full rounded-md border transition-colors ${
                                           colorMode === mode
                                             ? "border-accent ring-1 ring-accent/20"
                                             : "border-white/5 hover:border-white/20"
@@ -3012,7 +3699,18 @@ export default function App() {
                           )}
 
                           {activeTab === "landscape" && (
-                            <div className="grid grid-cols-1 gap-4 pt-6">
+                            <motion.div
+                              initial="hidden"
+                              animate="visible"
+                              variants={{
+                                hidden: { opacity: 0 },
+                                visible: {
+                                  opacity: 1,
+                                  transition: { staggerChildren: 0.05 }
+                                }
+                              }}
+                              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-4 pt-6"
+                            >
                               <input
                                 type="text"
                                 placeholder="Search infrastructure nodes..."
@@ -3021,67 +3719,79 @@ export default function App() {
                                 className="w-full bg-black/40 border border-white/10 p-2 text-white text-xs font-mono placeholder:text-white/20 focus:border-accent outline-none"
                               />
                               {landscapes
-                                .filter((l) => l.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                                .filter((l) =>
+                                  l.name
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase()),
+                                )
                                 .map((landscape) => (
-                                  <button
+                                  <motion.button
                                     key={landscape.id}
+                                    variants={{
+                                      hidden: { opacity: 0, y: 10 },
+                                      visible: { opacity: 1, y: 0 }
+                                    }}
+                                    whileHover={{ scale: 1.02, x: 5 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => applyLandscape(landscape)}
                                     className="w-full text-left group overflow-hidden"
                                   >
-                                  <div className="relative aspect-[21/9] w-full rounded-none overflow-hidden border border-white/10 bg-black/40 card-hover flex">
-                                    <div className="w-1/3 h-full overflow-hidden border-r border-white/5 relative">
-                                      <img
-                                        src={landscape.image}
-                                        alt={landscape.name}
-                                        className="w-full h-full object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
-                                        referrerPolicy="no-referrer"
-                                      />
-                                      <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-20 transition-opacity" />
-                                    </div>
-                                    <div className="flex-1 p-4 flex flex-col justify-between bg-black/20">
-                                      <div className="flex justify-between items-start">
-                                        <h3
-                                          className={cn(
-                                            "technical-label text-white text-[11px] transition-colors",
-                                            theme.accentLightClass.replace(
-                                              "text-",
-                                              "group-hover:text-",
-                                            ),
-                                          )}
-                                        >
-                                          {landscape.name}
-                                        </h3>
-                                        <span className="technical-label text-[8px] opacity-20 font-light tracking-widest">
-                                          REF_{landscape.id.toUpperCase()}_0X
-                                        </span>
+                                    <div className="relative aspect-[21/9] w-full rounded-none overflow-hidden border border-white/10 bg-black/40 card-hover flex transition-colors group-hover:border-white/30">
+                                      <div className="w-1/3 h-full overflow-hidden border-r border-white/5 relative">
+                                        <img
+                                          src={landscape.image}
+                                          alt={landscape.name}
+                                          className="w-full h-full object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
+                                          referrerPolicy="no-referrer"
+                                        />
+                                        <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-20 transition-opacity" />
                                       </div>
-                                      <div className="space-y-1">
-                                        <div className="flex gap-1 mb-2">
-                                          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                                            <div
-                                              key={i}
-                                              className={`w-3 h-0.5 ${i <= 3 ? "bg-accent/60" : "bg-white/5"}`}
-                                            />
-                                          ))}
-                                        </div>
-                                        <Tooltip
-                                          text={`LOAD_SEQUENCE_${landscape.id.toUpperCase()}`}
-                                          activePersona={activePersona}
-                                        >
-                                          <span className="technical-label text-accent font-bold tracking-[0.2em] group-hover:animate-pulse">
-                                            [ EXECUTE_SEQUENCE ]
+                                      <div className="flex-1 p-4 flex flex-col justify-between bg-black/20">
+                                        <div className="flex justify-between items-start">
+                                          <h3
+                                            className={cn(
+                                              "technical-label text-white text-[11px] transition-colors",
+                                              theme.accentLightClass.replace(
+                                                "text-",
+                                                "group-hover:text-",
+                                              ),
+                                            )}
+                                          >
+                                            {landscape.name}
+                                          </h3>
+                                          <span className="technical-label text-[8px] opacity-20 font-light tracking-widest transition-opacity group-hover:opacity-60">
+                                            REF_{landscape.id.toUpperCase()}_0X
                                           </span>
-                                        </Tooltip>
+                                        </div>
+                                        <div className="space-y-1">
+                                          <div className="flex gap-1 mb-2">
+                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(
+                                              (i) => (
+                                                <div
+                                                  key={i}
+                                                  className={`w-3 h-0.5 ${i <= 3 ? "bg-accent/60 transition-colors group-hover:bg-accent" : "bg-white/5 transition-colors group-hover:bg-white/20"}`}
+                                                />
+                                              ),
+                                            )}
+                                          </div>
+                                          <Tooltip
+                                            text={`LOAD_SEQUENCE_${landscape.id.toUpperCase()}`}
+                                            activePersona={activePersona}
+                                          >
+                                            <span className="technical-label text-accent font-bold tracking-[0.2em] group-hover:animate-pulse">
+                                              [ EXECUTE_SEQUENCE ]
+                                            </span>
+                                          </Tooltip>
+                                        </div>
+                                      </div>
+                                      {/* Geometric scanning decoration */}
+                                      <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity">
+                                        <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-accent" />
                                       </div>
                                     </div>
-                                    {/* Geometric scanning decoration */}
-                                    <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity">
-                                      <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-accent" />
-                                    </div>
-                                  </div>
-                                </button>
-                              ))}
-                            </div>
+                                  </motion.button>
+                                ))}
+                            </motion.div>
                           )}
 
                           {activeTab === "minimap" && (
@@ -3247,7 +3957,7 @@ export default function App() {
 
                           {activeTab === "telemetry" && (
                             <div className="pt-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <div className="grid grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="p-4 bg-white/5 border border-white/10 industrial-border space-y-4">
                                   <div className="flex items-center justify-between">
                                     <span className="technical-label opacity-40">
@@ -3263,10 +3973,11 @@ export default function App() {
                                     </span>
                                   </div>
                                   <div className="h-32 w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <LineChart
-                                        data={telemetryData}
-                                      >
+                                    <ResponsiveContainer
+                                      width="100%"
+                                      height="100%"
+                                    >
+                                      <LineChart data={telemetryData}>
                                         <Line
                                           type="monotone"
                                           dataKey="value"
@@ -3291,11 +4002,16 @@ export default function App() {
                                     </span>
                                   </div>
                                   <div className="h-32 w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                    <ResponsiveContainer
+                                      width="100%"
+                                      height="100%"
+                                    >
                                       <BarChart
-                                        data={Array.from({ length: 15 }).map((_, i) => ({
-                                          v: 80 + Math.random() * 20,
-                                        }))}
+                                        data={Array.from({ length: 15 }).map(
+                                          (_, i) => ({
+                                            v: 80 + Math.random() * 20,
+                                          }),
+                                        )}
                                       >
                                         <Bar dataKey="v" fill={theme.hex} />
                                       </BarChart>
@@ -3316,18 +4032,28 @@ export default function App() {
                                   </span>
                                 </div>
                                 <div className="grid grid-cols-1 gap-2 h-24">
-                                  <ResponsiveContainer width="100%" height="100%">
+                                  <ResponsiveContainer
+                                    width="100%"
+                                    height="100%"
+                                  >
                                     <BarChart
                                       layout="vertical"
                                       data={[
-                                        { name: 'Layer 1', v: 100 },
-                                        { name: 'Layer 2', v: 60 },
-                                        { name: 'Layer 3', v: 40 },
+                                        { name: "Layer 1", v: 100 },
+                                        { name: "Layer 2", v: 60 },
+                                        { name: "Layer 3", v: 40 },
                                       ]}
                                     >
                                       <XAxis type="number" hide />
-                                      <YAxis dataKey="name" type="category" hide />
-                                      <Bar dataKey="v" fill={theme.hex.replace("text-", "bg-")} />
+                                      <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        hide
+                                      />
+                                      <Bar
+                                        dataKey="v"
+                                        fill={theme.hex.replace("text-", "bg-")}
+                                      />
                                     </BarChart>
                                   </ResponsiveContainer>
                                 </div>
@@ -3377,8 +4103,12 @@ export default function App() {
                           )}
 
                           {activeTab === "brand" && <BrandTab theme={theme} />}
-                          {activeTab === "framework" && <FrameworkTab theme={theme} />}
-                          {activeTab === "benchmarks" && <BenchmarksTab theme={theme} />}
+                          {activeTab === "framework" && (
+                            <FrameworkTab theme={theme} />
+                          )}
+                          {activeTab === "benchmarks" && (
+                            <BenchmarksTab theme={theme} />
+                          )}
                           {activeTab === "abbey" && <AbbeyTab theme={theme} />}
                           {activeTab === "archive" && (
                             <div className="pt-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -3488,19 +4218,29 @@ export default function App() {
                             </div>
                           )}
 
-                          {activeTab === "portfolio" && <PortfolioTab theme={theme} />}
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                          {/*
+                          {activeTab === "blueprint" && <BlueprintTab theme={theme} />}
+                          {activeTab === "portfolio" && (
+                            <PortfolioTab theme={theme} />
+                          )}
+                          */}
+                          {activeTab === "security" && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="p-6 space-y-6"
+                              role="tabpanel"
+                            >
+                              <div className="flex items-center gap-2 text-red-500">
+                                <ShieldAlert size={20} />
+                                <h3 className="technical-label text-md">System Security Posture</h3>
+                              </div>
+                            </motion.div>
+                          )}
+        
         {/* Interactive HUD - Zoom Shortcuts */}
         {audioStarted && (
-          <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-3 technical-panel bg-black/60 backdrop-blur-xl border border-white/10">
+          <div className="fixed bottom-[3.5rem] md:bottom-12 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-2 md:py-3 technical-panel bg-black/60 backdrop-blur-xl border border-white/10 text-[8px] md:text-[10px]">
             <div className="corner-accent top-0 left-0 border-t-2 border-l-2" />
             <div className="corner-accent bottom-0 right-0 border-b-2 border-r-2" />
 
@@ -3510,17 +4250,17 @@ export default function App() {
             >
               <button
                 onClick={() => setZoom((prev) => Math.max(0.5, prev - 0.25))}
-                className="w-10 h-10 flex items-center justify-center technical-label text-white hover:text-accent transition-colors border border-white/5 bg-white/5"
+                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center technical-label text-white hover:text-accent transition-colors border border-white/5 bg-white/5"
               >
                 -
               </button>
             </Tooltip>
             <div className="h-4 w-[1px] bg-white/10" />
-            <div className="flex flex-col items-center min-w-[80px]">
-              <span className="technical-label text-[8px] opacity-30">
+            <div className="flex flex-col items-center min-w-[60px] md:min-w-[80px]">
+              <span className="technical-label text-[7px] md:text-[8px] opacity-30">
                 MAG_LEVEL
               </span>
-              <span className="technical-value text-accent">
+              <span className="technical-value text-accent text-xs md:text-sm">
                 {zoom.toFixed(2)}x
               </span>
             </div>
@@ -3531,7 +4271,7 @@ export default function App() {
             >
               <button
                 onClick={() => setZoom((prev) => Math.min(8.0, prev + 0.25))}
-                className="w-10 h-10 flex items-center justify-center technical-label text-white hover:text-accent transition-colors border border-white/5 bg-white/5"
+                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center technical-label text-white hover:text-accent transition-colors border border-white/5 bg-white/5"
               >
                 +
               </button>
@@ -3588,10 +4328,10 @@ export default function App() {
         </div>
 
         {/* Global Footer */}
-        <div className="fixed bottom-0 left-0 right-0 z-[60] h-8 flex items-center justify-between px-6 border-t border-white/5 bg-black/40 backdrop-blur-md pointer-events-none">
-          <div className="flex items-center gap-6">
-            <span className="technical-label text-text-dim/40">
-              © 2026 MLAI CORPORATION / MLAI FOUNDATION
+        <div className="fixed bottom-0 left-0 right-0 z-[60] h-10 md:h-8 flex items-center justify-between px-3 md:px-6 border-t border-white/5 bg-black/60 backdrop-blur-md pointer-events-none">
+          <div className="flex items-center gap-3 md:gap-6 w-full justify-between md:justify-start">
+            <span className="technical-label text-text-dim/40 text-[8px] sm:text-[10px]">
+              © 2026 MLAI CORP<span className="hidden sm:inline">ORATION / FOUNDATION</span>
             </span>
             <div className="hidden md:flex items-center gap-4">
               <span className="technical-label text-text-dim/40 hover:text-white cursor-pointer pointer-events-auto transition-colors">
@@ -3601,9 +4341,70 @@ export default function App() {
                 Privacy_Protocol
               </span>
             </div>
+            
+            <div className="flex md:hidden items-center gap-2">
+              <span className="technical-label text-text-dim/40 text-[8px]">
+                Save:
+              </span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={autoSaveStatus}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className={`technical-value text-[8px] ${
+                    autoSaveStatus === "error"
+                      ? "text-red-500"
+                      : autoSaveStatus === "saving"
+                        ? "text-amber-500 animate-pulse"
+                        : "text-emerald-500/50"
+                  }`}
+                >
+                  {autoSaveStatus === "saving"
+                    ? "SAVING..."
+                    : autoSaveStatus === "error"
+                      ? "ERROR"
+                      : "SAVED"}
+                </motion.span>
+              </AnimatePresence>
+              <div className="w-[1px] h-3 bg-white/10" />
+              <span className="technical-label text-text-dim/40 text-[8px]">
+                Status:
+              </span>
+              <span className="technical-value text-emerald-500 text-[8px]">
+                OPTIMAL
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">
             <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="technical-label text-text-dim/40">
+                  Save:
+                </span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={autoSaveStatus}
+                    initial={{ opacity: 0, y: 2 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -2 }}
+                    className={`technical-value uppercase ${
+                      autoSaveStatus === "error"
+                        ? "text-red-500"
+                        : autoSaveStatus === "saving"
+                          ? "text-amber-500 animate-pulse"
+                          : "text-emerald-500/50"
+                    }`}
+                  >
+                    {autoSaveStatus === "saving"
+                      ? "Saving..."
+                      : autoSaveStatus === "error"
+                        ? "Error"
+                        : "Saved"}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+              <div className="w-[1px] h-3 bg-white/10" />
               <div className="flex items-center gap-2">
                 <span className="technical-label text-text-dim/40">
                   Status:
@@ -3631,6 +4432,7 @@ export default function App() {
             />
           )}
         </AnimatePresence>
+      </motion.div>
       </div>
     </ErrorBoundary>
   );
