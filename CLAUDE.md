@@ -55,5 +55,9 @@ These govern the *content* of the benchmark visualizations, which mirror sibling
 - **Swift 6.3**: Abbey AI benchmarks should reflect latest concurrency-safe framework metrics.
 - **Bun**: Always prefer Bun APIs over Node.js polyfills.
 
+## Repository hygiene
+- The working tree carries scratch/experiment files at the repo root — `debug_string*.ts`, `massive_content.json`, `new_publications.json`, `sidebar_block.txt`. None are imported by `src/`, `server.ts`, or the build; treat them as throwaway, not source of truth, and don't wire them into the app.
+- `src/pages/TFPoseDemo.tsx` (route `/tf-pose-demo`) is the only consumer of the heavy `@tensorflow/tfjs` + `@tensorflow-models/posenet` dependencies. It's a standalone demo, not part of the marketing/console product — keep it isolated so it doesn't pull TF into the main bundle path.
+
 ## AI Tooling Sync
 This repo follows the global `ai-tooling-sync` skill. `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` are kept in sync (GEMINI.md additionally `@`-imports local skills from `./skills/`). When you change durable instructions here, update the others to match.

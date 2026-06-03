@@ -1,7 +1,8 @@
 {
-  "name": "react-example",
+  "name": "mlai-corporation-www",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "packageManager": "bun@1.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
@@ -10,32 +11,41 @@
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
   },
-  "trustedDependencies": [
-    "better-sqlite3"
-  ],
   "dependencies": {
-    "@google/genai": "^1.29.0",
-    "@tailwindcss/vite": "^4.1.14",
-    "@vitejs/plugin-react": "^5.0.4",
-    "better-sqlite3": "^12.4.1",
+    "@base-ui/react": "^1.5.0",
+    "@fontsource-variable/geist": "^5.2.9",
+    "@hono/node-server": "^2.0.3",
+    "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-virtual": "^3.11.2",
+    "@tensorflow-models/posenet": "^2.2.2",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@workos-inc/node": "^9.3.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "dotenv": "^17.2.3",
-    "express": "^4.21.2",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^0.546.0",
+    "framer-motion": "^12.40.0",
+    "hono": "^4.12.22",
+    "iron-session": "^8.0.4",
+    "lucide-react": "^1.16.0",
     "react": "19.2.5",
     "react-dom": "19.2.5",
-    "recharts": "^3.8.1",
-    "tailwind-merge": "^3.5.0",
-    "vite": "^6.2.0"
+    "react-router-dom": "^7.15.1",
+    "regl": "^2.1.1",
+    "shadcn": "^4.8.0",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.14.0",
-    "autoprefixer": "^10.4.21",
-    "tailwindcss": "^4.1.14",
-    "tsx": "^4.21.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "autoprefixer": "^10.5.0",
+    "tailwindcss": "^4.3.0",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
   }
 }
