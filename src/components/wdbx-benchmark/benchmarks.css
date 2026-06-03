@@ -1,0 +1,180 @@
+/* MLAI Brand tokens */
+:root {
+  --void:    #05080f;
+  --carbon:  #0a0e1a;
+  --slate:   #131a2e;
+  --orange:  #D97757;
+  --orange2: #f0a28a;
+  --blue:    #6A9BCC;
+  --green:   #788C5D;
+  --linen:   #FAF9F5;
+  --muted:   #64748b;
+  --text:    #f8fafc;
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --border:  rgba(255, 255, 255, 0.06);
+  --shadow:  0 10px 40px rgba(0, 0, 0, 0.6);
+  --radius:  16px;
+}
+
+[data-theme="light"] {
+  --void:    #f8fafc;
+  --carbon:  #ffffff;
+  --slate:   #f1f5f9;
+  --text:    #0f172a;
+  --muted:   #64748b;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --border:  rgba(0, 0, 0, 0.08);
+  --shadow:  0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.shell {
+  min-height: 100vh;
+  background: var(--void);
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.shell code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85em;
+  color: var(--orange);
+  background: rgba(217, 119, 87, 0.10);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Main grid */
+.shell .main {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+  padding: 0 32px 64px;
+  align-items: start;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.shell .content-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .shell .main { grid-template-columns: 1fr; padding: 0 16px 40px; }
+  .shell .sidebar { position: static; max-height: none; }
+}
+
+/* Sidebar */
+.shell .sidebar {
+  position: sticky;
+  top: 110px;
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  padding-bottom: 20px;
+}
+
+/* Stats Bar */
+.shell .stats-bar-container {
+  background: linear-gradient(135deg, var(--slate), var(--carbon));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.shell .stats-bar-container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  opacity: 0.3;
+}
+
+.shell .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+}
+
+.shell .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.shell .stat-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -12px; top: 10%; height: 80%;
+  width: 1px; background: var(--border);
+}
+
+@media (max-width: 600px) {
+  .shell .stat-item::after { display: none; }
+}
+
+.shell .stat-val {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--orange);
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.shell .stat-lbl {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 8px;
+}
+
+.shell .stat-sub {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* Chart grid */
+.shell .charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .shell .charts-grid { grid-template-columns: 1fr; }
+}
+
+.shell canvas.bar-canvas {
+  width: 100% !important;
+  height: 240px !important;
+}
+
+.shell canvas.spark-canvas {
+  width: 100px !important;
+  height: 34px !important;
+}
+
+/* Footer */
+.shell .footer {
+  padding: 40px 0 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}

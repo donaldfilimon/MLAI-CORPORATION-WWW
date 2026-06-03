@@ -1,26 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Mandelbulb Explorer</title>
-    <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
-        canvas { display: block; width: 100vw; height: 100vh; }
-        #ui {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            pointer-events: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLAI Corporation | Advanced AI Research</title>
+  <meta name="description" content="MLAI Corporation builds private, traceable AI infrastructure for teams moving agents, retrieval, and evaluation from demos to governed production systems.">
+  <meta name="theme-color" content="#09090b">
+
+  <!-- Resource Hints for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
 </head>
-<body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+<body class="bg-[#09090b] text-[#fafafa] antialiased selection:bg-blue-500/30">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

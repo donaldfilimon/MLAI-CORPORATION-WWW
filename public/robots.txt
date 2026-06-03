@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /console
+Disallow: /login
+Disallow: /signup
+Disallow: /profile
+
+Sitemap: https://mlai-corp.com/sitemap.xml
