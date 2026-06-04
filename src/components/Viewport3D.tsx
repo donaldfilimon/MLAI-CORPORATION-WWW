@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export const Viewport3D = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -7,7 +7,7 @@ export const Viewport3D = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     if (!context) return;
 
     const nodes = Array.from({ length: 72 }, (_, index) => ({
@@ -52,10 +52,12 @@ export const Viewport3D = () => {
         for (let j = i + 1; j < points.length; j += 9) {
           const a = points[i];
           const b = points[j];
+          if (!a || !b) continue;
+
           const distance = Math.hypot(a.x - b.x, a.y - b.y);
           if (distance > radius * 0.5) continue;
 
-          context.strokeStyle = `rgba(96, 165, 250, ${Math.max(0, 0.16 - distance / radius * 0.18)})`;
+          context.strokeStyle = `rgba(96, 165, 250, ${Math.max(0, 0.16 - (distance / radius) * 0.18)})`;
           context.lineWidth = 1;
           context.beginPath();
           context.moveTo(a.x, a.y);
@@ -65,9 +67,9 @@ export const Viewport3D = () => {
       }
 
       const core = context.createRadialGradient(0, 0, 0, 0, 0, radius * 0.6);
-      core.addColorStop(0, 'rgba(125, 211, 252, 0.4)');
-      core.addColorStop(0.45, 'rgba(37, 99, 235, 0.16)');
-      core.addColorStop(1, 'rgba(37, 99, 235, 0)');
+      core.addColorStop(0, "rgba(125, 211, 252, 0.4)");
+      core.addColorStop(0.45, "rgba(37, 99, 235, 0.16)");
+      core.addColorStop(1, "rgba(37, 99, 235, 0)");
       context.fillStyle = core;
       context.beginPath();
       context.arc(0, 0, radius * 0.62, 0, Math.PI * 2);

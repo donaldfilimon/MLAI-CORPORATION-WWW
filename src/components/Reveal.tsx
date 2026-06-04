@@ -1,15 +1,26 @@
-import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
-export const Reveal = ({ children, width = "fit-content" }: { children: React.ReactNode, width?: "fit-content" | "100%" }) => {
+export const Reveal = ({
+  children,
+  width = "fit-content",
+}: {
+  children: ReactNode;
+  width?: "fit-content" | "100%";
+}) => {
   const shouldReduceMotion = useReducedMotion();
+  const motionProps = shouldReduceMotion
+    ? { initial: false }
+    : {
+        initial: { opacity: 0, y: 30 },
+        whileInView: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: "easeOut" as const },
+      };
 
   return (
     <motion.div
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
-      whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+      {...motionProps}
       viewport={{ once: true, margin: "-100px" }}
-      transition={shouldReduceMotion ? undefined : { duration: 0.6, ease: "easeOut" }}
       style={{ width }}
     >
       {children}

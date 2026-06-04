@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export const HeroScene = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -7,9 +7,11 @@ export const HeroScene = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     if (!context) return;
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
 
     let frame = 0;
     let animationId = 0;
@@ -34,9 +36,9 @@ export const HeroScene = () => {
       context.rotate(frame * 0.004);
 
       const glow = context.createRadialGradient(0, 0, 0, 0, 0, radius * 2.8);
-      glow.addColorStop(0, 'rgba(56, 189, 248, 0.28)');
-      glow.addColorStop(0.4, 'rgba(59, 130, 246, 0.12)');
-      glow.addColorStop(1, 'rgba(59, 130, 246, 0)');
+      glow.addColorStop(0, "rgba(56, 189, 248, 0.28)");
+      glow.addColorStop(0.4, "rgba(59, 130, 246, 0.12)");
+      glow.addColorStop(1, "rgba(59, 130, 246, 0)");
       context.fillStyle = glow;
       context.beginPath();
       context.arc(0, 0, radius * 2.8, 0, Math.PI * 2);
@@ -49,12 +51,20 @@ export const HeroScene = () => {
         context.strokeStyle = `rgba(125, 211, 252, ${0.28 - ring * 0.04})`;
         context.lineWidth = 1.2;
         context.beginPath();
-        context.ellipse(0, 0, radius * (1.35 + ring * 0.28), radius * (1.35 + ring * 0.28), 0, 0, Math.PI * 2);
+        context.ellipse(
+          0,
+          0,
+          radius * (1.35 + ring * 0.28),
+          radius * (1.35 + ring * 0.28),
+          0,
+          0,
+          Math.PI * 2,
+        );
         context.stroke();
         context.restore();
       }
 
-      context.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+      context.strokeStyle = "rgba(255, 255, 255, 0.22)";
       context.lineWidth = 1;
       for (let i = 0; i < 18; i++) {
         const angle = (Math.PI * 2 * i) / 18 + frame * 0.006;
@@ -66,8 +76,8 @@ export const HeroScene = () => {
         context.stroke();
       }
 
-      context.fillStyle = 'rgba(15, 23, 42, 0.78)';
-      context.strokeStyle = 'rgba(96, 165, 250, 0.8)';
+      context.fillStyle = "rgba(15, 23, 42, 0.78)";
+      context.strokeStyle = "rgba(96, 165, 250, 0.8)";
       context.lineWidth = 1.5;
       context.beginPath();
       for (let i = 0; i < 6; i++) {

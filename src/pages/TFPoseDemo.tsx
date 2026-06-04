@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { PageHeader } from '@/components/PageHeader';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef, useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
+import { Button } from "@/components/ui/button";
 
 const TFPoseDemo = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -19,13 +19,13 @@ const TFPoseDemo = () => {
         setIsLoading(true);
         setError(null);
 
-        // Dynamically load TensorFlowJS and the pose detection model
-        const tf = await import('@tensorflow/tfjs');
+        // Dynamically load TensorFlowJS and the pose detection model.
+        await import("@tensorflow/tfjs");
         // Using MoveNet for pose detection (lightweight and accurate)
-        const { load } = await import('@tensorflow-models/posenet');
+        const { load } = await import("@tensorflow-models/posenet");
 
         const net = await load({
-          architecture: 'MobileNetV1',
+          architecture: "MobileNetV1",
           outputStride: 16,
           inputResolution: 200,
           multiplier: 0.5,
@@ -36,12 +36,12 @@ const TFPoseDemo = () => {
         const video = videoRef.current;
         const canvas = canvasRef.current;
         if (!video || !canvas) {
-          throw new Error('Media elements not found');
+          throw new Error("Media elements not found");
         }
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (!ctx) {
-          throw new Error('Could not get canvas context');
+          throw new Error("Could not get canvas context");
         }
 
         // Set canvas size to match video
@@ -52,7 +52,7 @@ const TFPoseDemo = () => {
 
         resizeHandler = setCanvasSize;
         setCanvasSize();
-        window.addEventListener('resize', resizeHandler);
+        window.addEventListener("resize", resizeHandler);
 
         const detectPose = async () => {
           if (!mounted) return;
@@ -69,11 +69,13 @@ const TFPoseDemo = () => {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             // Draw keypoints
-            ctx.fillStyle = 'rgba(0, 255, 0, 0.8)';
-            pose.keypoints.forEach((keypoint: any) => {
+            ctx.fillStyle = "rgba(0, 255, 0, 0.8)";
+            pose.keypoints.forEach((keypoint) => {
               if (keypoint.score > 0.5) {
-                const x = (keypoint.position.x / video.videoWidth) * canvas.width;
-                const y = (keypoint.position.y / video.videoHeight) * canvas.height;
+                const x =
+                  (keypoint.position.x / video.videoWidth) * canvas.width;
+                const y =
+                  (keypoint.position.y / video.videoHeight) * canvas.height;
                 ctx.beginPath();
                 ctx.arc(x, y, 5, 0, 2 * Math.PI);
                 ctx.fill();
@@ -81,21 +83,39 @@ const TFPoseDemo = () => {
             });
 
             // Draw skeleton (optional)
-            ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+            ctx.strokeStyle = "rgba(255, 0, 0, 0.6)";
             ctx.lineWidth = 2;
-            const skeleton = [
-              [5, 7], [7, 9], [6, 8], [8, 10], // Arms
-              [5, 6], [5, 11], [6, 12], [11, 12], // Torso
-              [11, 13], [13, 15], [12, 14], [14, 16] // Legs
+            const skeleton: ReadonlyArray<readonly [number, number]> = [
+              [5, 7],
+              [7, 9],
+              [6, 8],
+              [8, 10], // Arms
+              [5, 6],
+              [5, 11],
+              [6, 12],
+              [11, 12], // Torso
+              [11, 13],
+              [13, 15],
+              [12, 14],
+              [14, 16], // Legs
             ];
             skeleton.forEach(([i, j]) => {
               const keypointI = pose.keypoints[i];
               const keypointJ = pose.keypoints[j];
-              if (keypointI.score > 0.5 && keypointJ.score > 0.5) {
-                const x1 = (keypointI.position.x / video.videoWidth) * canvas.width;
-                const y1 = (keypointI.position.y / video.videoHeight) * canvas.height;
-                const x2 = (keypointJ.position.x / video.videoWidth) * canvas.width;
-                const y2 = (keypointJ.position.y / video.videoHeight) * canvas.height;
+              if (
+                keypointI &&
+                keypointJ &&
+                keypointI.score > 0.5 &&
+                keypointJ.score > 0.5
+              ) {
+                const x1 =
+                  (keypointI.position.x / video.videoWidth) * canvas.width;
+                const y1 =
+                  (keypointI.position.y / video.videoHeight) * canvas.height;
+                const x2 =
+                  (keypointJ.position.x / video.videoWidth) * canvas.width;
+                const y2 =
+                  (keypointJ.position.y / video.videoHeight) * canvas.height;
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
@@ -108,7 +128,7 @@ const TFPoseDemo = () => {
               requestAnimationFrame(detectPose);
             }
           } catch (err) {
-            console.error('Pose detection error:', err);
+            console.error("Pose detection error:", err);
             // Continue trying
             if (detectionRequested.current && mounted) {
               requestAnimationFrame(detectPose);
@@ -117,21 +137,28 @@ const TFPoseDemo = () => {
         };
 
         // Start video stream
-        if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (
+          navigator.mediaDevices &&
+          typeof navigator.mediaDevices.getUserMedia === "function"
+        ) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
           video.srcObject = stream;
 
-          video.play().then(() => {
-            setIsLoading(false);
-            detectionRequested.current = true;
-            requestAnimationFrame(detectPose);
-          }).catch((err) => {
-            throw new Error(`Could not play video: ${err}`);
-          });
+          video
+            .play()
+            .then(() => {
+              setIsLoading(false);
+              detectionRequested.current = true;
+              requestAnimationFrame(detectPose);
+            })
+            .catch((err) => {
+              throw new Error(`Could not play video: ${err}`);
+            });
         } else {
-          throw new Error('Webcam not available');
+          throw new Error("Webcam not available");
         }
-
       } catch (err) {
         if (mounted) {
           setError(err instanceof Error ? err.message : String(err));
@@ -141,10 +168,13 @@ const TFPoseDemo = () => {
     };
 
     // Check if webcam is available
-    if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
+    if (
+      navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === "function"
+    ) {
       loadModelAndDetect();
     } else {
-      setError('Webcam not available on this device');
+      setError("Webcam not available on this device");
       setIsLoading(false);
     }
 
@@ -155,12 +185,12 @@ const TFPoseDemo = () => {
       if (videoRef.current) {
         const stream = videoRef.current.srcObject as MediaStream | null;
         if (stream) {
-          stream.getTracks().forEach(track => track.stop());
+          stream.getTracks().forEach((track) => track.stop());
         }
       }
       // Remove resize listener
       if (resizeHandler) {
-        window.removeEventListener('resize', resizeHandler);
+        window.removeEventListener("resize", resizeHandler);
       }
     };
   }, []);
@@ -193,14 +223,10 @@ const TFPoseDemo = () => {
           subtitle="Real-time human pose estimation using TensorFlowJS and your webcam."
         />
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-          <p className="text-red-700">
-            Error: {error}
-          </p>
+          <p className="text-red-700">Error: {error}</p>
         </div>
         <div className="text-center py-12">
-          <Button onClick={() => window.location.reload()}>
-            Try Again
-          </Button>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
     );
@@ -216,16 +242,25 @@ const TFPoseDemo = () => {
       />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden">
-          <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="bg-gray-50 rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">How it works</h3>
           <p className="mb-4">
-            This demo uses TensorFlowJS and the PoseNet model to detect human pose in real-time from your webcam feed.
-            The model identifies key points on the body (like shoulders, elbows, knees, etc.) and draws them on the canvas.
+            This demo uses TensorFlowJS and the PoseNet model to detect human
+            pose in real-time from your webcam feed. The model identifies key
+            points on the body (like shoulders, elbows, knees, etc.) and draws
+            them on the canvas.
           </p>
           <p className="mb-4">
-            <strong>Note:</strong> No video or personal data leaves your browser. All processing happens locally.
+            <strong>Note:</strong> No video or personal data leaves your
+            browser. All processing happens locally.
           </p>
           <div className="mt-6">
             <Button

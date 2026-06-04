@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
-export const Magnetic = ({ children }: { children: React.ReactNode }) => {
+export const Magnetic = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const shouldReduceMotion = useReducedMotion();
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (shouldReduceMotion) return;
     const { clientX, clientY } = e;
     if (ref.current) {
@@ -23,14 +23,19 @@ export const Magnetic = ({ children }: { children: React.ReactNode }) => {
   };
 
   const { x, y } = position;
+  const motionProps = shouldReduceMotion
+    ? {}
+    : {
+        animate: { x, y },
+        transition: { type: "spring", stiffness: 150, damping: 15, mass: 0.1 },
+      };
 
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      animate={shouldReduceMotion ? undefined : { x, y }}
-      transition={shouldReduceMotion ? undefined : { type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+      {...motionProps}
     >
       {children}
     </motion.div>

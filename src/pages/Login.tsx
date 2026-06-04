@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/lib/auth';
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
 
 export function Login() {
   const { user, loading, login, signup } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const error = params.get('error');
-  const mode = params.get('mode') === 'signup' ? 'signup' : 'signin';
+  const error = params.get("error");
+  const mode = params.get("mode") === "signup" ? "signup" : "signin";
 
   // Already signed in — go home
   useEffect(() => {
-    if (!loading && user) navigate('/');
+    if (!loading && user) navigate("/");
   }, [user, loading, navigate]);
 
   return (
@@ -33,13 +33,29 @@ export function Login() {
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
               WORKOS PROTECTED
             </div>
-            <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white mb-6 leading-tight">Secure access for private AI workflows.</h1>
-            <p className="text-sm leading-relaxed text-text-dim">Create an MLAI account to access protected LLM APIs, private orchestration tools, and future team workspaces behind AuthKit sessions.</p>
+            <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white mb-6 leading-tight">
+              Secure access for private AI workflows.
+            </h1>
+            <p className="text-sm leading-relaxed text-text-dim">
+              Create an MLAI account to access protected LLM APIs, private
+              orchestration tools, and future team workspaces behind AuthKit
+              sessions.
+            </p>
           </div>
           <div className="mt-12 grid gap-4">
-            {['Hosted sign-in and sign-up via WorkOS AuthKit', 'HttpOnly encrypted MLAI session cookie', 'Protected API routes for LLM workflow features'].map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/5 bg-bg/40 p-4 text-xs text-text-dim font-mono">
-                <Sparkles className="h-4 w-4 shrink-0 text-blue-400" aria-hidden="true" />
+            {[
+              "Hosted sign-in and sign-up via WorkOS AuthKit",
+              "HttpOnly encrypted MLAI session cookie",
+              "Protected API routes for LLM workflow features",
+            ].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-3 rounded-2xl border border-white/5 bg-bg/40 p-4 text-xs text-text-dim font-mono"
+              >
+                <Sparkles
+                  className="h-4 w-4 shrink-0 text-blue-400"
+                  aria-hidden="true"
+                />
                 {item}
               </div>
             ))}
@@ -57,10 +73,14 @@ export function Login() {
               </Link>
             </div>
             <h2 className="text-2xl font-display font-bold text-white mb-2">
-              {mode === 'signup' ? 'Create your MLAI account' : 'Welcome to MLAI'}
+              {mode === "signup"
+                ? "Create your MLAI account"
+                : "Welcome to MLAI"}
             </h2>
             <p className="text-sm text-text-dim mb-6">
-              {mode === 'signup' ? 'Sign up with AuthKit to enter the private console' : 'Sign in with your preferred provider via AuthKit'}
+              {mode === "signup"
+                ? "Sign up with AuthKit to enter the private console"
+                : "Sign in with your preferred provider via AuthKit"}
             </p>
           </div>
 
@@ -71,13 +91,13 @@ export function Login() {
                 animate={{ opacity: 1, y: 0 }}
                 className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-400"
               >
-                {error === 'auth_failed'
-                  ? 'Authentication failed. Please try again.'
-                  : error === 'auth_not_configured'
-                  ? 'Authentication is not configured on this server.'
-                  : error === 'missing_code'
-                  ? 'The authentication callback was missing a code. Please retry.'
-                  : 'An error occurred. Please try again.'}
+                {error === "auth_failed"
+                  ? "Authentication failed. Please try again."
+                  : error === "auth_not_configured"
+                    ? "Authentication is not configured on this server."
+                    : error === "missing_code"
+                      ? "The authentication callback was missing a code. Please retry."
+                      : "An error occurred. Please try again."}
               </motion.div>
             )}
 
@@ -89,18 +109,24 @@ export function Login() {
               <div className="space-y-3">
                 <Button
                   id="workos-primary-auth-btn"
-                  onClick={() => mode === 'signup' ? signup('/console') : login('/console')}
+                  onClick={() =>
+                    mode === "signup" ? signup("/console") : login("/console")
+                  }
                   className="w-full py-6 text-base font-semibold bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-3 rounded-xl transition-all cursor-pointer"
                 >
-                  {mode === 'signup' ? 'Create Account' : 'Continue to Console'}
+                  {mode === "signup" ? "Create Account" : "Continue to Console"}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => mode === 'signup' ? login('/console') : signup('/console')}
+                  onClick={() =>
+                    mode === "signup" ? login("/console") : signup("/console")
+                  }
                   className="w-full py-6 text-base font-semibold rounded-xl border-white/10 bg-white/[0.03] text-white hover:bg-white/10 cursor-pointer"
                 >
-                  {mode === 'signup' ? 'I already have an account' : 'Create a new account'}
+                  {mode === "signup"
+                    ? "I already have an account"
+                    : "Create a new account"}
                 </Button>
               </div>
             )}
@@ -112,8 +138,11 @@ export function Login() {
 
           <div className="flex justify-center pt-6 border-t border-white/5">
             <p className="text-xs text-text-dim">
-              By continuing you agree to our{' '}
-              <Link to="/terms" className="text-primary hover:text-white transition-colors">
+              By continuing you agree to our{" "}
+              <Link
+                to="/terms"
+                className="text-primary hover:text-white transition-colors"
+              >
                 Terms of Service
               </Link>
             </p>
@@ -122,7 +151,7 @@ export function Login() {
 
         {/* WorkOS branding */}
         <p className="text-center text-[11px] text-text-dim/40 mt-4 lg:col-span-2">
-          Secured by{' '}
+          Secured by{" "}
           <a
             href="https://workos.com"
             target="_blank"

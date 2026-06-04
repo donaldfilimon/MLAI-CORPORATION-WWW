@@ -1,9 +1,8 @@
-import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { useUI } from '@/lib/ui-context';
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useUI } from "@/lib/ui-context";
 
 export const Footer = () => {
   const { openInquiry } = useUI();
@@ -16,49 +15,157 @@ export const Footer = () => {
               <div className="w-7 h-7 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center font-display font-black text-white text-xs shadow-md shadow-blue-500/20">
                 M
               </div>
-              <span className="font-display font-bold text-lg tracking-tighter text-white">MLAI CORP</span>
+              <span className="font-display font-bold text-lg tracking-tighter text-white">
+                MLAI CORP
+              </span>
             </Link>
             <p className="text-sm text-text-dim leading-relaxed">
-              Leading the transition to high-integrity, resilient AI orchestration frameworks. Based in Palo Alto, California.
+              Leading the transition to high-integrity, resilient AI
+              orchestration frameworks. Based in Palo Alto, California.
             </p>
             <div className="flex items-center gap-3">
-              <a href="https://twitter.com/mlai_corp" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-white hover:bg-white/10 hover:border-white/20 transition-all" aria-label="Twitter">
-                <span className="text-xs font-bold" aria-hidden="true">X</span>
+              <a
+                href="https://twitter.com/mlai_corp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
+                aria-label="Twitter"
+              >
+                <span className="text-xs font-bold" aria-hidden="true">
+                  X
+                </span>
               </a>
-              <a href="https://linkedin.com/company/mlai-corp" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-white hover:bg-white/10 hover:border-white/20 transition-all" aria-label="LinkedIn">
-                <span className="text-xs font-bold" aria-hidden="true">in</span>
+              <a
+                href="https://linkedin.com/company/mlai-corp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
+                aria-label="LinkedIn"
+              >
+                <span className="text-xs font-bold" aria-hidden="true">
+                  in
+                </span>
               </a>
-              <a href="https://github.com/mlai-corp" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-white hover:bg-white/10 hover:border-white/20 transition-all" aria-label="GitHub">
-                <span className="text-[10px] font-bold" aria-hidden="true">GH</span>
+              <a
+                href="https://github.com/mlai-corp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
+                aria-label="GitHub"
+              >
+                <span className="text-[10px] font-bold" aria-hidden="true">
+                  GH
+                </span>
               </a>
             </div>
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">Research</h4>
+            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+              Research
+            </h4>
             <ul className="space-y-3 text-sm text-text-dim">
-              <li><Link to="/research" className="hover:text-blue-400 transition-colors flex items-center gap-1 group">WDBX Engine <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
-              <li><Link to="/research" className="hover:text-blue-400 transition-colors flex items-center gap-1 group">Multi-Persona Framework <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
-              <li><Link to="/benchmarks" className="hover:text-blue-400 transition-colors flex items-center gap-1 group">WDBX Benchmarks <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
-              <li><Link to="/research" className="hover:text-blue-400 transition-colors flex items-center gap-1 group">Publications <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
+              <li>
+                <Link
+                  to="/research"
+                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                >
+                  WDBX Engine{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/research"
+                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                >
+                  Multi-Persona Framework{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/benchmarks"
+                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                >
+                  WDBX Benchmarks{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/research"
+                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                >
+                  Publications{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">Company</h4>
+            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+              Company
+            </h4>
             <ul className="space-y-3 text-sm text-text-dim">
-              <li><Link to="/about" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-              <li><Link to="/team" className="hover:text-blue-400 transition-colors">Leadership</Link></li>
-              <li><button onClick={openInquiry} className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer">Careers</button></li>
-              <li><button onClick={openInquiry} className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer">Contact</button></li>
-              <li><button onClick={openInquiry} className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer">Press Kit</button></li>
+              <li>
+                <Link
+                  to="/about"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/team"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Leadership
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={openInquiry}
+                  className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer"
+                >
+                  Careers
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={openInquiry}
+                  className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer"
+                >
+                  Contact
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={openInquiry}
+                  className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer"
+                >
+                  Press Kit
+                </button>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">Newsletter</h4>
-            <p className="text-sm text-text-dim mb-4">Newsletter signup is not connected yet. For release updates, use the inquiry form and include "updates" in your message.</p>
-            <Button type="button" variant="outline" onClick={openInquiry} className="h-11 rounded-xl">
+            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+              Newsletter
+            </h4>
+            <p className="text-sm text-text-dim mb-4">
+              Newsletter signup is not connected yet. For release updates, use
+              the inquiry form and include "updates" in your message.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openInquiry}
+              className="h-11 rounded-xl"
+            >
               Request Updates
             </Button>
           </div>
@@ -71,9 +178,24 @@ export const Footer = () => {
             © {new Date().getFullYear()} MLAI CORPORATION. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-8">
-            <Link to="/privacy" className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors">Terms of Service</Link>
-            <Link to="/security" className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors">Security</Link>
+            <Link
+              to="/privacy"
+              className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              to="/terms"
+              className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors"
+            >
+              Terms of Service
+            </Link>
+            <Link
+              to="/security"
+              className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors"
+            >
+              Security
+            </Link>
           </div>
         </div>
       </div>

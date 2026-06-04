@@ -1,18 +1,18 @@
-import * as React from "react"
-import { Toast as ToastPrimitive } from "@base-ui/react/toast"
-import { XIcon } from "lucide-react"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { Toast as ToastPrimitive } from "@base-ui/react/toast";
+import { XIcon } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-const ToastProvider = ToastPrimitive.Provider
+const ToastProvider = ToastPrimitive.Provider;
 
 const ToastViewport = (props: ToastPrimitive.Viewport.Props) => (
   <ToastPrimitive.Viewport
-    className="fixed top-0 z-100 flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"
+    className="fixed top-0 z-100 flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-105"
     {...props}
   />
-)
+);
 
 const toastVariants = cva(
   "group pointer-events-auto relative flex w-full items-center justify-between space-x-2 overflow-hidden rounded-xl border p-4 pr-6 shadow-lg transition-all data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
@@ -22,30 +22,37 @@ const toastVariants = cva(
         default: "border bg-background text-foreground",
         destructive:
           "destructive group border-destructive bg-destructive text-destructive-foreground",
-        success:
-          "border-emerald-500/50 bg-emerald-500/10 text-emerald-500",
+        success: "border-emerald-500/50 bg-emerald-500/10 text-emerald-500",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
-const Toast = React.forwardRef<
-  HTMLDivElement,
-  any
->(({ className, variant, ...props }, ref) => {
-  return (
-    <ToastPrimitive.Root
-      ref={ref}
-      toast={{} as any}
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    />
-  )
-})
-Toast.displayName = "Toast"
+type InternalToast = ToastPrimitive.Root.Props["toast"];
+
+type ToastProps = Omit<ToastPrimitive.Root.Props, "toast"> &
+  VariantProps<typeof toastVariants> & {
+    toast?: InternalToast;
+  };
+
+const FALLBACK_TOAST: InternalToast = { id: "standalone-toast" };
+
+const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
+  ({ className, variant, toast, ...props }, ref) => {
+    return (
+      <ToastPrimitive.Root
+        ref={ref}
+        toast={toast ?? FALLBACK_TOAST}
+        className={cn(toastVariants({ variant }), className)}
+        {...props}
+      />
+    );
+  },
+);
+Toast.displayName = "Toast";
 
 const ToastAction = React.forwardRef<
   HTMLButtonElement,
@@ -55,12 +62,12 @@ const ToastAction = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary focus:outline-none focus:ring-1 focus:ring-ring disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
-      className
+      className,
     )}
     {...props}
   />
-))
-ToastAction.displayName = "ToastAction"
+));
+ToastAction.displayName = "ToastAction";
 
 const ToastClose = React.forwardRef<
   HTMLButtonElement,
@@ -70,15 +77,15 @@ const ToastClose = React.forwardRef<
     ref={ref}
     className={cn(
       "absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-1 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
-      className
+      className,
     )}
     toast-close=""
     {...props}
   >
     <XIcon className="h-4 w-4" />
   </button>
-))
-ToastClose.displayName = "ToastClose"
+));
+ToastClose.displayName = "ToastClose";
 
 const ToastTitle = React.forwardRef<
   HTMLDivElement,
@@ -89,23 +96,19 @@ const ToastTitle = React.forwardRef<
     className={cn("text-sm font-semibold [&+div]:text-xs", className)}
     {...props}
   />
-))
-ToastTitle.displayName = "ToastTitle"
+));
+ToastTitle.displayName = "ToastTitle";
 
 const ToastDescription = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm opacity-90", className)}
-    {...props}
-  />
-))
-ToastDescription.displayName = "ToastDescription"
+  <div ref={ref} className={cn("text-sm opacity-90", className)} {...props} />
+));
+ToastDescription.displayName = "ToastDescription";
 
-export type ToastProps = ToastPrimitive.Root.Props
-export type ToastActionElement = React.ReactElement<typeof ToastAction>
+export type { ToastProps };
+export type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 export {
   ToastProvider,
@@ -115,4 +118,4 @@ export {
   ToastDescription,
   ToastAction,
   ToastClose,
-}
+};

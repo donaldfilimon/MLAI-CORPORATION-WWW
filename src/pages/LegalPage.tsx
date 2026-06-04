@@ -1,6 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Shield, Lock, FileText } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface LegalPageProps {
   title: string;
@@ -9,7 +8,12 @@ interface LegalPageProps {
   content: React.ReactNode;
 }
 
-export function LegalPage({ title, lastUpdated, icon, content }: LegalPageProps) {
+export function LegalPage({
+  title,
+  lastUpdated,
+  icon,
+  content,
+}: LegalPageProps) {
   return (
     <div className="container-custom pt-32 pb-20 min-h-screen font-sans">
       <motion.div
@@ -23,8 +27,12 @@ export function LegalPage({ title, lastUpdated, icon, content }: LegalPageProps)
               {icon}
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold text-white leading-tight">{title}</h1>
-              <p className="text-[10px] font-mono text-text-dim mt-1.5 uppercase tracking-widest">Last Updated: {lastUpdated}</p>
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-white leading-tight">
+                {title}
+              </h1>
+              <p className="text-[10px] font-mono text-text-dim mt-1.5 uppercase tracking-widest">
+                Last Updated: {lastUpdated}
+              </p>
             </div>
           </div>
 

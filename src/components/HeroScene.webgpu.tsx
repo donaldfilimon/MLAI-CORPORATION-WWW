@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import regl from 'regl';
+import { useEffect, useRef } from "react";
+import regl from "regl";
 
 // HeroScene.webgpu.tsx - A WebGL2-based hero scene using regl
 // This version aims to replicate the original HeroScene effect using WebGL2 via regl.
@@ -15,12 +15,14 @@ const HeroSceneWebGPU = () => {
     // Initialize regl (WebGL2 wrapper)
     const reglInstance = regl({
       canvas,
-      extensions: ['OES_vertex_array_object'],
+      extensions: ["OES_vertex_array_object"],
       pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
     });
 
     // Reduced motion check
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
     if (reducedMotionQuery.matches) {
       // For reduced motion, render a simple static version (transparent)
       reglInstance.frame(() => {
@@ -29,8 +31,8 @@ const HeroSceneWebGPU = () => {
         });
       });
       return () => {
-	    reglInstance.destroy();
-	  };
+        reglInstance.destroy();
+      };
     }
 
     // Precompute geometry for rings (as line loops)
@@ -45,7 +47,7 @@ const HeroSceneWebGPU = () => {
         vertices.push(
           Math.cos(angle) * scale,
           Math.sin(angle) * scale * 0.32 + ring * 0.1, // Note: original had y offset per ring
-          0
+          0,
         );
       }
       ringVertices.push(vertices);
@@ -57,11 +59,7 @@ const HeroSceneWebGPU = () => {
     for (let i = 0; i <= CORE_SEGMENTS; i++) {
       const angle = (Math.PI * 2 * i) / CORE_SEGMENTS;
       const radius = 0.58; // Matches original core radius
-      coreVertices.push(
-        Math.cos(angle) * radius,
-        Math.sin(angle) * radius,
-        0
-      );
+      coreVertices.push(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
     }
 
     // Precompute geometry for radial lines (as lines from inner to outer radius)
@@ -107,14 +105,15 @@ const HeroSceneWebGPU = () => {
         }
       `,
       attributes: {
-        position: [] // Will be set dynamically per ring
+        position: [], // Will be set dynamically per ring
       },
       count: RADIAL_SEGMENTS + 1, // +1 to close the loop
-      primitive: 'line loop',
+      primitive: "line loop",
       uniforms: {
         projection: () => {
           const projection = new Float32Array(16);
-          const aspect = reglInstance._gl.canvas.width / reglInstance._gl.canvas.height;
+          const aspect =
+            reglInstance._gl.canvas.width / reglInstance._gl.canvas.height;
           projection[0] = 2 / (aspect * 2);
           projection[5] = 2 / 2;
           projection[10] = -1;
@@ -123,14 +122,17 @@ const HeroSceneWebGPU = () => {
         },
         view: () => {
           const view = new Float32Array(16);
-          view[0] = 1; view[5] = 1; view[10] = 1; view[15] = 1;
+          view[0] = 1;
+          view[5] = 1;
+          view[10] = 1;
+          view[15] = 1;
           return view;
         },
         rotation: ({ tick }) => tick * 0.004,
         scale: 1.0, // Will be set per ring in the attributes
         ringYOffset: 0.0, // Will be set per ring
-        color: () => [0.49, 0.83, 0.99, 0.28] // rgba(125, 211, 252, 0.28)
-      }
+        color: () => [0.49, 0.83, 0.99, 0.28], // rgba(125, 211, 252, 0.28)
+      },
     });
 
     const drawCore = reglInstance({
@@ -156,14 +158,15 @@ const HeroSceneWebGPU = () => {
         }
       `,
       attributes: {
-        position: [] // Will be set to coreVertices
+        position: [], // Will be set to coreVertices
       },
       count: CORE_SEGMENTS + 2, // Center point + perimeter points
-      primitive: 'triangle fan',
+      primitive: "triangle fan",
       uniforms: {
         projection: () => {
           const projection = new Float32Array(16);
-          const aspect = reglInstance._gl.canvas.width / reglInstance._gl.canvas.height;
+          const aspect =
+            reglInstance._gl.canvas.width / reglInstance._gl.canvas.height;
           projection[0] = 2 / (aspect * 2);
           projection[5] = 2 / 2;
           projection[10] = -1;
@@ -172,12 +175,15 @@ const HeroSceneWebGPU = () => {
         },
         view: () => {
           const view = new Float32Array(16);
-          view[0] = 1; view[5] = 1; view[10] = 1; view[15] = 1;
+          view[0] = 1;
+          view[5] = 1;
+          view[10] = 1;
+          view[15] = 1;
           return view;
         },
         rotation: ({ tick }) => tick * 0.004,
-        color: () => [0.49, 0.83, 0.99, 0.4] // rgba(125, 211, 252, 0.4) - approximate glow
-      }
+        color: () => [0.49, 0.83, 0.99, 0.4], // rgba(125, 211, 252, 0.4) - approximate glow
+      },
     });
 
     const drawLines = reglInstance({
@@ -203,14 +209,15 @@ const HeroSceneWebGPU = () => {
         }
       `,
       attributes: {
-        position: [] // Will be set to lineVertices
+        position: [], // Will be set to lineVertices
       },
       count: LINE_COUNT * 2, // Two points per line
-      primitive: 'lines',
+      primitive: "lines",
       uniforms: {
         projection: () => {
           const projection = new Float32Array(16);
-          const aspect = reglInstance._gl.canvas.width / reglInstance._gl.canvas.height;
+          const aspect =
+            reglInstance._gl.canvas.width / reglInstance._gl.canvas.height;
           projection[0] = 2 / (aspect * 2);
           projection[5] = 2 / 2;
           projection[10] = -1;
@@ -219,50 +226,53 @@ const HeroSceneWebGPU = () => {
         },
         view: () => {
           const view = new Float32Array(16);
-          view[0] = 1; view[5] = 1; view[10] = 1; view[15] = 1;
+          view[0] = 1;
+          view[5] = 1;
+          view[10] = 1;
+          view[15] = 1;
           return view;
         },
         rotation: ({ tick }) => tick * 0.004,
-        color: () => [1.0, 1.0, 1.0, 0.22] // rgba(255, 255, 255, 0.22)
-      }
+        color: () => [1.0, 1.0, 1.0, 0.22], // rgba(255, 255, 255, 0.22)
+      },
     });
 
     let frame = 0;
 
     // Main render loop
-    reglInstance.frame(({ tick }) => {
+    reglInstance.frame(() => {
       // Clear with transparent background
-	  reglInstance.clear({
-	    color: [0, 0, 0, 0],
-	  });
+      reglInstance.clear({
+        color: [0, 0, 0, 0],
+      });
 
       // Draw rings
       for (let ring = 0; ring < RING_COUNT; ring++) {
         drawRing({
           // Update the attributes for this ring
           attributes: {
-            position: ringVertices[ring]
+            position: ringVertices[ring],
           },
           // Update uniforms that change per ring
           uniforms: {
             ringYOffset: ring * 0.1, // Match original y offset per ring
-            scale: 1 + ring * 0.1 // Match original scale per ring
-          }
+            scale: 1 + ring * 0.1, // Match original scale per ring
+          },
         });
       }
 
       // Draw core
       drawCore({
         attributes: {
-          position: coreVertices
-        }
+          position: coreVertices,
+        },
       });
 
       // Draw lines
       drawLines({
         attributes: {
-          position: lineVertices
-        }
+          position: lineVertices,
+        },
       });
 
       frame += 1;
@@ -271,9 +281,21 @@ const HeroSceneWebGPU = () => {
     // Handle canvas resize
     const resizeObserver = new ResizeObserver(() => {
       if (reglInstance) {
-	    reglInstance._gl.canvas.width = Math.max(1, Math.floor(canvas.getBoundingClientRect().width * Math.min(window.devicePixelRatio || 1, 2)));
-	    reglInstance._gl.canvas.height = Math.max(1, Math.floor(canvas.getBoundingClientRect().height * Math.min(window.devicePixelRatio || 1, 2)));
-	    reglInstance({});
+        reglInstance._gl.canvas.width = Math.max(
+          1,
+          Math.floor(
+            canvas.getBoundingClientRect().width *
+              Math.min(window.devicePixelRatio || 1, 2),
+          ),
+        );
+        reglInstance._gl.canvas.height = Math.max(
+          1,
+          Math.floor(
+            canvas.getBoundingClientRect().height *
+              Math.min(window.devicePixelRatio || 1, 2),
+          ),
+        );
+        reglInstance({});
       }
     });
     resizeObserver.observe(canvas);
@@ -281,7 +303,7 @@ const HeroSceneWebGPU = () => {
     // Cleanup function
     return () => {
       resizeObserver.disconnect();
-	  reglInstance.destroy();
+      reglInstance.destroy();
     };
   }, []);
 
