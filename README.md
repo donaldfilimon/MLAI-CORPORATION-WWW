@@ -9,7 +9,7 @@ A production-grade, research-focused platform for MLAI Corporation, featuring ad
 ## 🚀 Tech Stack
 
 - **Frontend**: React 19, Vite, TailwindCSS (v4), Framer Motion, Lucide React.
-- **Backend**: Hono (Node.js/Bun compatible), iron-session.
+- **Backend**: Hono/Bun production server today, with a Rust 2024 Axum migration target in `rust/server`.
 - **Auth**: WorkOS AuthKit (SSO, MFA ready).
 - **Design**: Premium Research Aesthetic (Dark Mode, Glassmorphism, Semantic HTML5).
 - **Visualization**: Custom Canvas-based High-Performance Charts (WDBX Engine Benchmarks).
@@ -24,7 +24,8 @@ A production-grade, research-focused platform for MLAI Corporation, featuring ad
 ## 🛠 Setup & Development
 
 ### Prerequisites
-- Node.js 20+ or Bun 1.1+
+- Bun 1.1+ for the Vite/React frontend toolchain
+- Rust 1.85+ for the Rust 2024 Axum server (`cargo run -p mlai-www-server`)
 - WorkOS Account (for AuthKit)
 
 ### Installation
@@ -35,7 +36,7 @@ A production-grade, research-focused platform for MLAI Corporation, featuring ad
    ```
 2. Install dependencies:
    ```bash
-   npm install
+   bun install
    ```
 3. Configure Environment Variables:
    Copy `.env.example` to `.env` and fill in your WorkOS credentials and a session secret.
@@ -44,8 +45,27 @@ A production-grade, research-focused platform for MLAI Corporation, featuring ad
    ```
 4. Run in Development Mode:
    ```bash
-   npm run dev
+   bun run dev
    ```
+
+### Rust 2024 Server
+
+The Rust migration lives in `rust/server` and mirrors the Bun/Hono API surface:
+
+- WorkOS AuthKit redirects and callback handling
+- encrypted private cookie sessions
+- protected LLM and billing endpoints
+- SQLite-backed inquiry storage
+- static `dist/` SPA serving
+
+Useful commands:
+
+```bash
+bun run build          # build the SPA into dist/
+bun run check:rust     # cargo check -p mlai-www-server
+bun run server:rust    # run the Rust 2024 Axum server
+./start_rust.sh        # build frontend, then run Rust server
+```
 
 ## 🚢 Deployment
 
@@ -53,14 +73,14 @@ The application is optimized for **Google Cloud Run**.
 
 1. **Build the project**:
    ```bash
-   npm run build
+   bun run build
    ```
 2. **Deploy to Cloud Run**:
-   Use the `gcloud` CLI or the Cloud Run MCP server to deploy the containerized application. Ensure `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET` are configured as environment secrets.
+   Use the `gcloud` CLI or the Cloud Run MCP server to deploy the containerized application. Ensure `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET` are configured as environment secrets. Use `Dockerfile` for the Bun server or `Dockerfile.rust` for the Rust 2024 Axum server.
 
 ## ⏭ Next Steps
 
-- [ ] **Backend Finalization**: Implement the Hono endpoint for `submitInquiry` to store lead data in a secure database.
+- [ ] **Rust Backend Hardening**: Run `bun run check:rust` with a complete Rust toolchain, then exercise WorkOS callback/session flows against the Axum server before promoting it over `server.ts`.
 - [ ] **Content Expansion**: Populate `/blog` and `/docs` with actual research PDFs and Markdown documentation for the WDBX V2 release.
 - [ ] **MFA Integration**: Enable Multi-Factor Authentication via WorkOS Dashboard for administrative access.
 - [ ] **Visual Polish**: Add more micro-interactions to the `HeroScene` for improved interactive storytelling of the neural backtrace process.

@@ -7,3 +7,11 @@ coverage/
 .env*
 !.env.example
 inquiries.db
+target/
+.codex/
+debug_string*.ts
+massive_content.json
+new_publications.json
+sidebar_block.txt
+__pycache__/
+*.py[cod]

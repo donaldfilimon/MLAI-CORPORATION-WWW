@@ -1,0 +1,22 @@
+FROM oven/bun:1.4-slim AS frontend-builder
+WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+COPY . .
+RUN bun run build
+
+FROM rust:1.85-slim-bookworm AS rust-builder
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends pkg-config ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY Cargo.toml Cargo.lock ./
+COPY rust ./rust
+RUN cargo build --release -p mlai-www-server
+
+FROM debian:bookworm-slim AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY --from=frontend-builder /app/dist ./dist
+COPY --from=rust-builder /app/target/release/mlai-www-server ./mlai-www-server
+EXPOSE 3001
+CMD ["./mlai-www-server"]

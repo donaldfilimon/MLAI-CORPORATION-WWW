@@ -1,6 +1,6 @@
-import React, { ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RotateCcw } from 'lucide-react';
-import { Button } from './ui/button';
+import React, { ErrorInfo, ReactNode } from "react";
+import { AlertTriangle, RotateCcw } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface Props {
   children: ReactNode;
@@ -12,7 +12,6 @@ interface State {
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
-  props!: Props;
   public state: State = {
     hasError: false,
     error: null,
@@ -38,13 +37,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <div className="w-20 h-20 mx-auto bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20">
               <AlertTriangle className="w-10 h-10 text-red-400" />
             </div>
-            
+
             <div className="space-y-3">
               <h2 className="text-3xl font-display font-bold text-white">
                 Something went wrong
               </h2>
               <p className="text-text-dim leading-relaxed">
-                An unexpected error occurred while rendering the application. Our team has been notified. Please try refreshing the page.
+                An unexpected error occurred while rendering the application.
+                Our team has been notified. Please try refreshing the page.
               </p>
             </div>
 
