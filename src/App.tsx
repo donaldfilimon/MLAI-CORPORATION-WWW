@@ -24,6 +24,11 @@ const ResearchPaper = lazy(() =>
 const Team = lazy(() =>
   import("./pages/Team").then((module) => ({ default: module.Team })),
 );
+const FounderProfile = lazy(() =>
+  import("./pages/FounderProfile").then((module) => ({
+    default: module.FounderProfile,
+  })),
+);
 const Blog = lazy(() =>
   import("./pages/Blog").then((module) => ({ default: module.Blog })),
 );
@@ -118,6 +123,7 @@ function App() {
                 </div>
               }
             />
+            <Route path="team/:slug" element={<FounderProfile />} />
             <Route path="blog" element={<Blog />} />
             <Route path="blog/:slug" element={<BlogPost />} />
             <Route path="docs" element={<Docs />} />
