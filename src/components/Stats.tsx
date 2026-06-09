@@ -102,7 +102,7 @@ const StatCard = ({ stat, index }: StatCardProps) => {
           <div className="text-white font-semibold mb-2 group-hover:text-emerald-400 transition-colors">
             {stat.label}
           </div>
-          <div className="text-xs text-text-dim leading-relaxed">
+          <div className="text-sm text-text-dim leading-relaxed">
             {stat.detail}
           </div>
         </CardContent>
@@ -120,17 +120,17 @@ export const Stats = () => {
     >
       <div className="container-custom">
         <div className="text-center mb-16">
-          <div className="label-chip mx-auto mb-6 w-fit">VERIFIED METRICS</div>
+          <div className="label-chip mx-auto mb-6 w-fit">ENGINEERING TARGETS</div>
           <h2 id="stats-heading" className="section-title">
-            Verified Impact
+            What we engineer toward
           </h2>
           <p className="section-subtitle mx-auto">
-            Production metrics demonstrating the structural reliability of the
-            MLAI architecture under real-world conditions.
+            Performance and readiness targets that shape the MLAI architecture —
+            objectives we build and benchmark against, not guaranteed results.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {content.stats.map((stat, i) => (
             <StatCard key={i} stat={stat} index={i} />
           ))}

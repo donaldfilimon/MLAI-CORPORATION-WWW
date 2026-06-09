@@ -48,11 +48,11 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? "py-4" : "py-6"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "py-4" : "py-6"}`}
     >
       <div className="container-custom">
         <div
-          className={`relative flex items-center justify-between px-6 py-3 rounded-2xl border transition-all duration-500 ${isScrolled ? "bg-bg/80 backdrop-blur-xl border-white/10 shadow-2xl" : "bg-transparent border-transparent"}`}
+          className={`relative flex items-center justify-between px-6 py-3 rounded-2xl border transition-all duration-300 ${isScrolled ? "bg-bg/80 backdrop-blur-xl border-white/10 shadow-lg" : "bg-transparent border-transparent"}`}
         >
           <div className="flex items-center gap-12">
             <Logo size="md" />
@@ -63,7 +63,7 @@ export const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `text-sm font-medium transition-colors ${isActive ? "text-white" : "text-text-dim hover:text-white"}`
+                    `relative text-sm font-medium transition-colors ${isActive ? "text-white after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:bg-emerald-400/60" : "text-text-dim hover:text-white"}`
                   }
                 >
                   {item.label}
@@ -136,7 +136,7 @@ export const Navbar = () => {
             <Magnetic>
               <Button
                 onClick={openInquiry}
-                className="bg-white text-black hover:bg-emerald-50 hover:scale-105 transition-all font-bold px-6"
+                className="bg-white text-black hover:bg-emerald-50 transition-colors font-bold px-6"
               >
                 Start Inquiry
               </Button>

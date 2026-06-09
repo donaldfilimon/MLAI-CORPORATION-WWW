@@ -36,7 +36,7 @@
   <text x="96" y="430" font-family="Outfit, Geist, system-ui, sans-serif" font-size="78" font-weight="700" fill="url(#accent)">resilient intelligence.</text>
 
   <!-- subline -->
-  <text x="96" y="512" font-family="Geist, system-ui, sans-serif" font-size="30" fill="#98A2B0">Private, traceable AI infrastructure · WDBX · Abbey · Aviva · Abi</text>
+  <text x="96" y="512" font-family="Geist, system-ui, sans-serif" font-size="30" fill="#98A2B0">Private, traceable AI infrastructure for production teams.</text>
 
   <!-- chips -->
   <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="17" letter-spacing="0.5" fill="#6EE7B7">

@@ -256,7 +256,7 @@ export function FounderProfile() {
 
         {/* Long-form sections */}
         {member.body && member.body.length > 0 && (
-          <div className="mt-20 space-y-12">
+          <div className="mt-20 space-y-12 max-w-3xl">
             {member.body.map((section, i) => (
               <motion.section
                 key={section.heading ?? `section-${i}`}
