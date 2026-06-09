@@ -38,43 +38,48 @@ const HeroSceneWebGPU = () => {
     // Precompute geometry for rings (as line loops)
     const RING_COUNT = 4;
     const RADIAL_SEGMENTS = 64; // More segments for smoother rings
+    // Unit ring geometry (vec2, 2 floats/vertex). Per-ring scale and Y offset
+    // are applied once, in the shader, via uniforms — not baked here.
     const ringVertices: number[][] = []; // Array of arrays, each for a ring
     for (let ring = 0; ring < RING_COUNT; ring++) {
-      const scale = 1 + ring * 0.1; // Matches original: scale increases per ring
       const vertices: number[] = [];
       for (let i = 0; i <= RADIAL_SEGMENTS; i++) {
         const angle = (Math.PI * 2 * i) / RADIAL_SEGMENTS;
-        vertices.push(
-          Math.cos(angle) * scale,
-          Math.sin(angle) * scale * 0.32 + ring * 0.1, // Note: original had y offset per ring
-          0,
-        );
+        vertices.push(Math.cos(angle), Math.sin(angle) * 0.32); // squashed unit ring
       }
       ringVertices.push(vertices);
     }
 
     // Precompute geometry for core (as a triangle fan - approximating a circle)
     const CORE_SEGMENTS = 32;
-    const coreVertices: number[] = [0, 0, 0]; // Center point
+    const coreVertices: number[] = [0, 0]; // Center point (vec2)
     for (let i = 0; i <= CORE_SEGMENTS; i++) {
       const angle = (Math.PI * 2 * i) / CORE_SEGMENTS;
-      const radius = 0.58; // Matches original core radius
-      coreVertices.push(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+      const radius = 0.36; // contained core radius
+      coreVertices.push(Math.cos(angle) * radius, Math.sin(angle) * radius);
     }
 
     // Precompute geometry for radial lines (as lines from inner to outer radius)
     const LINE_COUNT = 18;
-    const LINE_INNER_RADIUS = 0.4 * 0.58; // Match original: inner radius of the line
-    const LINE_OUTER_RADIUS = 1.0 * 0.58; // Match original: outer radius of the line
+    const LINE_INNER_RADIUS = 0.4 * 0.36; // inner radius of the line
+    const LINE_OUTER_RADIUS = 1.0 * 0.36; // outer radius of the line
     const lineVertices: number[] = [];
     for (let i = 0; i < LINE_COUNT; i++) {
       const angle = (Math.PI * 2 * i) / LINE_COUNT;
-      const x1 = Math.cos(angle) * LINE_INNER_RADIUS;
-      const y1 = Math.sin(angle) * LINE_INNER_RADIUS;
-      const x2 = Math.cos(angle) * LINE_OUTER_RADIUS;
-      const y2 = Math.sin(angle) * LINE_OUTER_RADIUS;
-      lineVertices.push(x1, y1, 0, x2, y2, 0); // Two points per line
+      lineVertices.push(
+        Math.cos(angle) * LINE_INNER_RADIUS,
+        Math.sin(angle) * LINE_INNER_RADIUS,
+        Math.cos(angle) * LINE_OUTER_RADIUS,
+        Math.sin(angle) * LINE_OUTER_RADIUS,
+      ); // two vec2 points per line
     }
+
+    // Per-draw geometry, supplied to the regl commands via closures (regl
+    // evaluates these functions at draw time, so the buffers actually bind).
+    let curPos: number[] = [];
+    let curCount = 0;
+    let curScale = 1;
+    let curYOffset = 0;
 
     // Create regl draw calls for rings, core, and lines
     const drawRing = reglInstance({
@@ -105,9 +110,9 @@ const HeroSceneWebGPU = () => {
         }
       `,
       attributes: {
-        position: [], // Will be set dynamically per ring
+        position: () => curPos, // set per ring in the frame loop
       },
-      count: RADIAL_SEGMENTS + 1, // +1 to close the loop
+      count: () => curCount,
       primitive: "line loop",
       uniforms: {
         projection: () => {
@@ -129,9 +134,9 @@ const HeroSceneWebGPU = () => {
           return view;
         },
         rotation: ({ tick }) => tick * 0.004,
-        scale: 1.0, // Will be set per ring in the attributes
-        ringYOffset: 0.0, // Will be set per ring
-        color: () => [0.49, 0.83, 0.99, 0.28], // rgba(94, 234, 212, 0.28)
+        scale: () => curScale,
+        ringYOffset: () => curYOffset,
+        color: () => [0.49, 0.55, 0.96, 0.3], // indigo line, rgba(125,140,245,0.3)
       },
     });
 
@@ -158,9 +163,9 @@ const HeroSceneWebGPU = () => {
         }
       `,
       attributes: {
-        position: [], // Will be set to coreVertices
+        position: () => curPos, // coreVertices, set in the frame loop
       },
-      count: CORE_SEGMENTS + 2, // Center point + perimeter points
+      count: () => curCount,
       primitive: "triangle fan",
       uniforms: {
         projection: () => {
@@ -209,9 +214,9 @@ const HeroSceneWebGPU = () => {
         }
       `,
       attributes: {
-        position: [], // Will be set to lineVertices
+        position: () => curPos, // lineVertices, set in the frame loop
       },
-      count: LINE_COUNT * 2, // Two points per line
+      count: () => curCount,
       primitive: "lines",
       uniforms: {
         projection: () => {
@@ -246,34 +251,24 @@ const HeroSceneWebGPU = () => {
         color: [0, 0, 0, 0],
       });
 
-      // Draw rings
+      // Draw rings — set the per-ring geometry/uniform closures, then draw.
       for (let ring = 0; ring < RING_COUNT; ring++) {
-        drawRing({
-          // Update the attributes for this ring
-          attributes: {
-            position: ringVertices[ring],
-          },
-          // Update uniforms that change per ring
-          uniforms: {
-            ringYOffset: ring * 0.1, // Match original y offset per ring
-            scale: 1 + ring * 0.1, // Match original scale per ring
-          },
-        });
+        curPos = ringVertices[ring] ?? [];
+        curCount = curPos.length / 2; // vec2 → 2 floats per vertex
+        curScale = (1 + ring * 0.1) * 0.62;
+        curYOffset = ring * 0.1;
+        drawRing();
       }
 
       // Draw core
-      drawCore({
-        attributes: {
-          position: coreVertices,
-        },
-      });
+      curPos = coreVertices;
+      curCount = coreVertices.length / 2;
+      drawCore();
 
       // Draw lines
-      drawLines({
-        attributes: {
-          position: lineVertices,
-        },
-      });
+      curPos = lineVertices;
+      curCount = lineVertices.length / 2;
+      drawLines();
 
       frame += 1;
     });
