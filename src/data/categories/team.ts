@@ -35,6 +35,6 @@ export const team: Team = TeamSchema.parse([
     name: "Sophia Varma",
     role: "Product Architecture Lead",
     bio: "Shapes developer experience, integration patterns, and calm control surfaces for complex AI systems used by operational teams.",
-    image: "https://images.unsplash.com/photo-1594744188884-d2c379b5736f?auto=format&fit=crop&q=80&w=400&h=400"
+    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400&h=400"
   }
 ]);

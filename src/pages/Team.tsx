@@ -1,9 +1,44 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Users, ExternalLink } from "lucide-react";
 import { content } from "../data";
 import { Button, Card } from "@/components/ui";
 import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
+
+/** Team photo with a graceful initials fallback if the image fails to load. */
+function TeamPhoto({ name, image }: { name: string; image: string }) {
+  const [failed, setFailed] = useState(false);
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("");
+
+  return (
+    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl mb-5">
+      {failed ? (
+        <div
+          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-500/25 to-teal-500/10"
+          aria-label={name}
+        >
+          <span className="font-display text-4xl font-bold text-emerald-200/80">
+            {initials}
+          </span>
+        </div>
+      ) : (
+        <img
+          src={image}
+          alt={name}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-70" />
+    </div>
+  );
+}
 
 export const Team = () => {
   return (
@@ -31,15 +66,7 @@ export const Team = () => {
             >
               <div className="group relative bg-transparent border-0 overflow-visible shadow-none">
                 <div className="p-0">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-2xl mb-5">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      loading="lazy"
-                      className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-70" />
-                  </div>
+                  <TeamPhoto name={member.name} image={member.image} />
 
                   <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
                     {member.name}
