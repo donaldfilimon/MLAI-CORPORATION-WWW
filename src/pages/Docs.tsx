@@ -11,8 +11,23 @@ import {
   ServerCog,
   ShieldCheck,
   Terminal,
+  ArrowRight,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+
+/** Inline "read the paper" cross-link from Docs into the research archive. */
+function PaperLink({ to, children }: { to: string; children: string }) {
+  return (
+    <Link
+      to={to}
+      className="mt-5 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-indigo-400 hover:text-indigo-300 transition-colors"
+    >
+      {children}
+      <ArrowRight className="h-3 w-3" />
+    </Link>
+  );
+}
 
 const docSections = [
   {
@@ -284,6 +299,9 @@ export function Docs() {
                   </div>
                 ))}
               </div>
+              <PaperLink to="/research/wdbx-weighted-backtrace-memory-store">
+                Read the paper: WDBX weighted-backtrace store
+              </PaperLink>
             </section>
 
             {/* Personas */}
@@ -309,6 +327,9 @@ export function Docs() {
                   </div>
                 ))}
               </div>
+              <PaperLink to="/research/policy-locked-tool-use-multi-agent">
+                Read the paper: policy-locked tool use
+              </PaperLink>
             </section>
 
             {/* Protected API */}

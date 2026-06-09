@@ -2,6 +2,137 @@ import { BlogSchema, type Blog } from '../schemas';
 
 export const blog: Blog = BlogSchema.parse([
   {
+    slug: "inside-wdbx-hybrid-ranker",
+    tag: "ENGINEERING",
+    title: "Inside the WDBX Hybrid Ranker: Four Factors, One Score",
+    excerpt:
+      "Semantic similarity is only the first of four factors. Here is the exact score WDBX uses to rank retrieval candidates — and why every factor is bounded to [0,1].",
+    date: "June 6, 2026",
+    readTime: "8 min read",
+    author: "MLAI Research · WDBX Core",
+    body: [
+      {
+        paragraphs: [
+          "Plain top-k vector search answers one question: what is closest to the query in embedding space? That is a fine question, and a poor stopping point. A record can be a near-perfect semantic match and still be the wrong thing to retrieve — because it is two years stale, because it sits far from the query in the causal graph, or because the active persona should not be weighting it heavily.",
+          "The WDBX hybrid ranker, which companions our paper on the weighted-backtrace store, answers the harder question by combining four independent factors into a single bounded score. This note walks through that score the way you would read it during an incident review.",
+        ],
+      },
+      {
+        heading: "The four factors",
+        paragraphs: [
+          "Every candidate j is ranked by the product of four terms, each living in the unit interval. Because they multiply, any one factor collapsing toward zero pulls the whole score down — there is no averaging away a fatal weakness:",
+        ],
+        math: ["s_{ij} \\;=\\; \\sigma_j \\,\\cdot\\, \\tau_j \\,\\cdot\\, \\gamma_j \\,\\cdot\\, \\pi_j"],
+        list: [
+          "σ — semantic similarity (cosine distance between query and candidate, via a SIMD path with a deterministic CPU fallback).",
+          "τ — temporal weight (exponential recency decay).",
+          "γ — causal weight (proximity along the backtrace graph).",
+          "π — persona weight, supplied by the router for the active profile.",
+        ],
+      },
+      {
+        heading: "Recency and relatedness, written down",
+        paragraphs: [
+          "Recency is an exponential half-life decay: a record's temporal weight halves every t½, clamped so future-dated records cannot exceed one. Causal weight decays with the number of graph hops h between the query focus and the candidate, but bottoms out at a floor so unrelated records are down-weighted, not erased:",
+        ],
+        math: [
+          "\\tau_j \\;=\\; \\max\\!\\Big(0,\\ \\min\\!\\big(1,\\ 2^{-(t_0 - t_j)/t_{1/2}}\\big)\\Big)",
+          "\\gamma_j \\;=\\; \\max\\!\\big(c_{\\mathrm{floor}},\\ c_{\\mathrm{decay}}^{\\,h_j}\\big), \\qquad c_{\\mathrm{decay}} = 0.6,\\ c_{\\mathrm{floor}} = 0.25",
+        ],
+      },
+      {
+        heading: "Why a product beats a weighted sum",
+        paragraphs: [
+          "A weighted sum lets a high score on one axis paper over a near-zero on another — exactly the failure that produces confident, stale, off-topic retrievals. The product makes each factor a veto: low semantic support, ancient timestamps, or distant causal paths each independently sink the rank. That is the behaviour you want from a store whose whole point is to be defensible after the fact.",
+          "And because the factors are stored alongside the rank, the ranker is its own explanation. You never have to reconstruct why a record surfaced — the four numbers that decided it are right there in the trace.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "what-the-model-sees-sea",
+    tag: "RESEARCH",
+    title: "How Sparse Evidence Attention Decides What the Model Sees",
+    excerpt:
+      "Before a model reasons, something must choose which records reach the context window. SEA scores eight criteria, then packs greedily under a hard token budget.",
+    date: "June 4, 2026",
+    readTime: "7 min read",
+    author: "MLAI Research · Abbey",
+    body: [
+      {
+        paragraphs: [
+          "A bigger context window does not remove the decision of what to put in it; it raises the cost of deciding badly. Sparse Evidence Attention (SEA) is the layer that chooses which durable records become part of a context pack. It is deliberately not a single similarity sort — it scores eight heterogeneous criteria so that a record which is strong on one axis but weak on another is caught.",
+        ],
+      },
+      {
+        heading: "Eight criteria, one weighted score",
+        paragraphs: [
+          "Each candidate c is scored on semantic similarity, keyword overlap, metadata fit, recency, source authority, graph connectivity, an explicit contradiction flag, and task-fit. The eight scores combine under a fixed weight vector, clamped to the unit interval — most mass on semantics, but never enough for one criterion to dominate:",
+        ],
+        math: [
+          "\\mathrm{score}(c) \\;=\\; \\mathrm{clamp}_{[0,1]}\\!\\Big(\\textstyle\\sum_{i} w_i\\, s_i(c)\\Big)",
+          "w \\;=\\; (0.30,\\ 0.15,\\ 0.15,\\ 0.10,\\ 0.10,\\ 0.10,\\ 0.05,\\ 0.05)",
+        ],
+      },
+      {
+        heading: "Packing under a hard budget",
+        paragraphs: [
+          "Scoring ranks the candidates; selection respects the window. SEA admits records greedily by score, but rejects any that would exceed the token budget B or violate a per-cluster diversity cap. Token cost is estimated from length, and the budget is a hard ceiling — the pack never overflows:",
+        ],
+        math: [
+          "\\mathrm{tok}(x) = \\max\\!\\big(1,\\ \\lceil |x|/4 \\rceil\\big), \\qquad \\sum_{c \\in S} \\mathrm{tok}(c) \\;\\le\\; B",
+        ],
+      },
+      {
+        heading: "Auditable by construction",
+        paragraphs: [
+          "SEA returns the rejected set and the reason each candidate was dropped — budget, diversity, or score — alongside the selection. That turns context assembly into something an operator can review: you can see why a record that 'should' have been included was not. Naive top-k stuffing cannot answer that, because it never made the decision explicit.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "weights-behind-the-personas",
+    tag: "SAFETY",
+    title: "The Weights Behind Abbey, Aviva, and Abi",
+    excerpt:
+      "Persona routing is not a hidden model call. It is a normalized weight vector with hard policy overrides and an inspectable strategy decision.",
+    date: "June 2, 2026",
+    readTime: "6 min read",
+    author: "MLAI Safety Engineering",
+    body: [
+      {
+        paragraphs: [
+          "The Abbey–Aviva–Abi system routes each request to a persona — Abbey the empathetic polymath, Aviva the direct expert, Abi the adaptive moderator. The important property is not which persona answers; it is that the choice is a transparent, weight-based decision rather than an opaque model call. Every routing decision is itself a trace event you can read.",
+        ],
+      },
+      {
+        heading: "From signals to weights",
+        paragraphs: [
+          "Routing starts from a baseline weight per persona and adjusts it from inspectable input signals — task keywords, emotional cues, and policy risk. The adjusted weights are normalized to a distribution, and the highest becomes the primary; its share is the routing confidence:",
+        ],
+        math: [
+          "w'_i \\;=\\; \\frac{\\max(0,\\ w_i)}{\\sum_j \\max(0,\\ w_j)}, \\qquad \\mathrm{primary} = \\arg\\max_i\\, w'_i",
+        ],
+      },
+      {
+        heading: "One, several, or all three",
+        paragraphs: [
+          "The confidence then selects a strategy. A clear winner runs a single persona; a contested decision runs personas in parallel; a genuinely split one escalates to consensus. The thresholds are explicit, so an operator can see why a request fanned out instead of resolving to one voice:",
+        ],
+        math: [
+          "\\mathrm{strategy} = \\begin{cases} \\textsf{single} & w'_{\\max} > 0.90 \\\\ \\textsf{parallel} & 0.50 \\le w'_{\\max} \\le 0.90 \\\\ \\textsf{consensus} & w'_{\\max} < 0.50 \\end{cases}",
+        ],
+      },
+      {
+        heading: "Policy wins, always",
+        paragraphs: [
+          "Signals nudge the weights; policy overrides them. When the control plane flags risk, weight shifts hard toward Abi, the moderating profile — and a disallowed action collapses the distribution to Abi outright, regardless of how the keywords scored. \"No autonomous write without an observable policy boundary\" is enforced here as arithmetic, not etiquette.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "explainable-last-move",
     tag: "FIELD NOTE",
     title: "Designing AI Systems That Can Explain Their Last Move",
