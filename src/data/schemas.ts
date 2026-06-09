@@ -61,6 +61,32 @@ export const TeamSchema = z.array(z.object({
   role: z.string(),
   bio: z.string(),
   image: z.string(),
+  // Optional fields that promote a member to a dedicated profile page at
+  // /team/:slug. Only populated members get a "Read profile" link.
+  slug: z.string().optional(),
+  tagline: z.string().optional(),
+  location: z.string().optional(),
+  socials: z
+    .object({
+      github: z.string().optional(),
+      x: z.string().optional(),
+      web: z.string().optional(),
+    })
+    .optional(),
+  focusAreas: z
+    .array(z.object({ title: z.string(), description: z.string() }))
+    .optional(),
+  projects: z
+    .array(
+      z.object({
+        name: z.string(),
+        description: z.string(),
+        url: z.string().optional(),
+        lang: z.string().optional(),
+      }),
+    )
+    .optional(),
+  body: z.array(BlogSectionSchema).optional(),
 }));
 
 export const StatsSchema = z.array(z.object({
