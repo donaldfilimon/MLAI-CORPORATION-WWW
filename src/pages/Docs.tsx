@@ -327,6 +327,40 @@ export function Docs() {
                   </div>
                 ))}
               </div>
+
+              <div className="glass-card mt-4 p-6">
+                <h3 className="text-base font-bold text-white mb-3">How a profile is selected</h3>
+                <p className="text-sm leading-relaxed text-text-dim mb-4">
+                  Routing starts from a baseline weight per profile, then adjusts
+                  it from inspectable input signals. The adjusted weights are
+                  normalized to a distribution; the largest becomes primary and
+                  its share is the routing confidence (which in turn picks a
+                  single, parallel, or consensus strategy). Take{" "}
+                  <span className="text-fuchsia-300">Aviva</span>, the direct
+                  expert — she gains weight when the request reads as hands-on or
+                  time-pressed:
+                </p>
+                <ul className="space-y-2.5 text-sm text-text-dim">
+                  <li className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-fuchsia-400" aria-hidden="true" />
+                    <span><span className="text-white">Technical execution</span> — debug, fix, error, build, compile, code, test cues steer toward Aviva.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-fuchsia-400" aria-hidden="true" />
+                    <span><span className="text-white">Directness</span> — urgent, quick, concise, direct, or fast cues raise her weight further.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
+                    <span><span className="text-white">Policy overrides win</span> — when the control plane flags risk, weight shifts hard toward Abi, and a disallowed action routes to Abi outright regardless of the keyword signals.</span>
+                  </li>
+                </ul>
+                <p className="text-sm leading-relaxed text-text-dim mt-4">
+                  Aviva plans and proposes; she holds no autonomous write or
+                  execute authority — that boundary belongs to Abi, and only on
+                  plans that have cleared review.
+                </p>
+              </div>
+
               <PaperLink to="/research/policy-locked-tool-use-multi-agent">
                 Read the paper: policy-locked tool use
               </PaperLink>
