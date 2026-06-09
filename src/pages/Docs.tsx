@@ -97,40 +97,80 @@ const deploymentChecklist = [
   "Run evaluation gates before allowing autonomous write actions or external tool calls.",
 ];
 
+// Single source of truth for the docs section nav — drives both the desktop
+// sidebar and the mobile section bar. Every anchor maps to a real section id.
+const docNav = [
+  {
+    group: "Getting Started",
+    items: [
+      { id: "intro", label: "Introduction" },
+      { id: "runtime", label: "ABI Runtime" },
+      { id: "deployment", label: "Deployment" },
+    ],
+  },
+  {
+    group: "Platform",
+    items: [
+      { id: "mcp", label: "MCP Server" },
+      { id: "wdbx", label: "WDBX Retrieval" },
+      { id: "personas", label: "Persona Routing" },
+    ],
+  },
+  {
+    group: "Console",
+    items: [{ id: "api", label: "Protected API" }],
+  },
+];
+
 export function Docs() {
   return (
-    <div className="container-custom pt-32 pb-20 min-h-screen flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 pr-8 hidden md:block">
-        <nav className="space-y-6 sticky top-32">
-          <div>
-            <h3 className="font-semibold text-white mb-3">Getting Started</h3>
-            <ul className="space-y-2 text-text-dim text-sm">
-              <li><a href="#intro" className="hover:text-primary transition-colors">Introduction</a></li>
-              <li><a href="#runtime" className="hover:text-primary transition-colors">ABI Runtime</a></li>
-              <li><a href="#deployment" className="hover:text-primary transition-colors">Deployment Modes</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-3">Platform</h3>
-            <ul className="space-y-2 text-text-dim text-sm">
-              <li><a href="#mcp" className="hover:text-primary transition-colors">MCP Server</a></li>
-              <li><a href="#wdbx" className="hover:text-primary transition-colors">WDBX Retrieval</a></li>
-              <li><a href="#personas" className="hover:text-primary transition-colors">Persona Routing</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-3">Console</h3>
-            <ul className="space-y-2 text-text-dim text-sm">
-              <li><a href="#api" className="hover:text-primary transition-colors">Protected API</a></li>
-              <li><a href="#deployment" className="hover:text-primary transition-colors">Deployment Checklist</a></li>
-            </ul>
-          </div>
-        </nav>
-      </aside>
+    <div className="container-custom pt-32 pb-20 min-h-screen">
+      {/* Mobile section nav — the desktop sidebar is hidden < md, so small
+          screens get a horizontally scrollable bar of section anchors. */}
+      <nav
+        className="md:hidden mb-8 -mx-5 overflow-x-auto px-5"
+        aria-label="Documentation sections"
+      >
+        <ul className="flex w-max gap-2">
+          {docNav.flatMap((g) => g.items).map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className="inline-flex whitespace-nowrap rounded-full border border-white/10 px-3.5 py-1.5 text-xs font-medium text-text-dim transition-colors hover:border-emerald-500/30 hover:text-emerald-400"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-4xl pl-0 md:pl-12 flex">
+      <div className="flex overflow-hidden">
+        {/* Sidebar (desktop) */}
+        <aside className="w-64 pr-8 hidden md:block">
+          <nav className="space-y-6 sticky top-32" aria-label="Documentation">
+            {docNav.map((g) => (
+              <div key={g.group}>
+                <h3 className="font-semibold text-white mb-3">{g.group}</h3>
+                <ul className="space-y-2 text-text-dim text-sm">
+                  {g.items.map((item) => (
+                    <li key={item.id}>
+                      <a
+                        href={`#${item.id}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 max-w-4xl pl-0 md:pl-12 flex">
         <Separator orientation="vertical" className="hidden md:block mr-8 h-auto bg-white/10" />
         <div className="flex-1">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -314,7 +354,8 @@ export function Docs() {
             </section>
           </motion.div>
         </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

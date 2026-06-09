@@ -183,11 +183,12 @@ export const Footer = () => {
 
           <div>
             <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
-              Newsletter
+              Stay in the loop
             </h4>
             <p className="text-sm text-text-dim mb-4">
-              Newsletter signup is not connected yet. For release updates, use
-              the inquiry form and include "updates" in your message.
+              For release notes, benchmarks, and research updates, send an
+              inquiry with &ldquo;updates&rdquo; in your message and we&apos;ll
+              keep you posted.
             </p>
             <Button
               type="button"

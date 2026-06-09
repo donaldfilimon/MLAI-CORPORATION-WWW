@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { Reveal } from '../components/Reveal';
 import { Stats } from '../components/Stats';
+import { FAQ } from '../components/FAQ';
 import { Button } from '@/components/ui/button';
 import { content } from '../data';
 import { useUI } from '@/lib/ui-context';
@@ -248,6 +249,8 @@ export function Home() {
       </section>
 
       <Stats />
+
+      <FAQ />
 
       <section className="w-full px-6 py-24" aria-labelledby="home-cta-heading">
         <Reveal width="100%">

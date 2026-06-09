@@ -62,6 +62,9 @@ const Security = lazy(() =>
   import("./pages/Security").then((module) => ({ default: module.Security })),
 );
 const TFPoseDemo = lazy(() => import("./pages/TFPoseDemo"));
+const NotFound = lazy(() =>
+  import("./pages/NotFound").then((module) => ({ default: module.NotFound })),
+);
 
 function App() {
   return (
@@ -136,6 +139,7 @@ function App() {
             <Route path="terms" element={<Terms />} />
             <Route path="security" element={<Security />} />
             <Route path="tf-pose-demo" element={<TFPoseDemo />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </Router>

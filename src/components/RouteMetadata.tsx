@@ -88,6 +88,18 @@ const routeMetadata: Record<string, RouteMeta> = {
     description: "Manage your MLAI account profile.",
     noindex: true,
   },
+  "/tf-pose-demo": {
+    title: "Pose Detection Demo | MLAI Corporation",
+    description:
+      "An isolated TensorFlow.js pose-detection prototype, separate from the MLAI platform.",
+    noindex: true,
+  },
+};
+
+const NOT_FOUND_META: RouteMeta = {
+  title: "Page Not Found | MLAI Corporation",
+  description: "The page you are looking for could not be found.",
+  noindex: true,
 };
 
 function resolveMeta(pathname: string): RouteMeta {
@@ -128,7 +140,8 @@ function resolveMeta(pathname: string): RouteMeta {
     }
   }
 
-  return DEFAULT_ROUTE_META;
+  // Any path that matches no known static route or valid dynamic slug is a 404.
+  return NOT_FOUND_META;
 }
 
 export function RouteMetadata() {
