@@ -7,6 +7,7 @@ import {
   AI_CHARTS,
   ALL_LABELS,
   AI_MODELS,
+  BENCHMARK_DISCLAIMER,
   type ChartDef,
 } from "./charts";
 import { Button } from "@/components/ui/button";
@@ -90,10 +91,10 @@ const StatsBar = memo(({ activeTab }: { activeTab: "wdbx" | "ai" }) => {
       }, 0);
 
       return [
-        { label: "Overall Score", value: "99%", sub: "Composite" },
-        { label: "Category Wins", value: `${wdbxWins}/15`, sub: "First place" },
-        { label: "p95 Latency", value: "0.8ms", sub: "ANN Search" },
-        { label: "Peak QPS", value: "16.5k", sub: "10M vectors" },
+        { label: "Composite Target", value: "Top-tier", sub: "Design goal" },
+        { label: "Category Leads", value: `${wdbxWins}/15`, sub: "In this dataset" },
+        { label: "p95 Latency Target", value: "0.8ms", sub: "ANN, illustrative" },
+        { label: "Peak QPS Target", value: "16.5k", sub: "10M vectors, illustrative" },
         { label: "Databases", value: "22", sub: "Compared" },
       ];
     } else {
@@ -103,11 +104,11 @@ const StatsBar = memo(({ activeTab }: { activeTab: "wdbx" | "ai" }) => {
       }, 0);
 
       return [
-        { label: "Model Leader", value: "Abbey", sub: "Multi-Profile" },
-        { label: "Benchmark Wins", value: `${abbeyWins}/11`, sub: "Top Tier" },
-        { label: "Throughput", value: "120", sub: "req/s" },
-        { label: "SQuAD 1.1", value: "94.5", sub: "F1 Score" },
-        { label: "Empathy", value: "0.92", sub: "EQ Score" },
+        { label: "Model Focus", value: "Abbey", sub: "Multi-Profile" },
+        { label: "Benchmark Leads", value: `${abbeyWins}/11`, sub: "In this dataset" },
+        { label: "Throughput Target", value: "120", sub: "req/s, illustrative" },
+        { label: "SQuAD 1.1 Target", value: "94.5", sub: "F1, illustrative" },
+        { label: "Empathy Target", value: "0.92", sub: "EQ, illustrative" },
       ];
     }
   }, [activeTab]);
@@ -217,7 +218,7 @@ const ChartCard = memo(
           </CardContent>
           <CardFooter className="flex justify-between items-center bg-transparent border-t border-white/5 mt-2">
             <span className="text-xs text-text-dim font-mono uppercase tracking-wider">
-              Metrics validated
+              Illustrative target
             </span>
             <Button variant="outline" size="sm" onClick={download}>
               Export PNG
@@ -461,6 +462,8 @@ export function Dashboard() {
               </Button>
             </div>
 
+            <p className="mb-4 text-xs text-text-dim">{BENCHMARK_DISCLAIMER}</p>
+
             <StatsBar activeTab={activeTab} />
 
             <div className="charts-grid mt-8">
@@ -478,8 +481,8 @@ export function Dashboard() {
           </Tabs>
 
           <footer className="footer">
-            © {new Date().getFullYear()} MLAI Corporation · Precision Vector
-            Engineering
+            © {new Date().getFullYear()} MLAI Corporation · Illustrative
+            performance targets · not independently audited
           </footer>
         </div>
       </main>

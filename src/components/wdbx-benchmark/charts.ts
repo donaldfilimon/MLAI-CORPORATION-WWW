@@ -10,6 +10,12 @@ export interface ChartDef {
   data: number[];
 }
 
+// Benchmark figures below are internal performance targets and illustrative
+// comparisons used for design and positioning — not independently audited
+// results. Surface this disclaimer wherever the numbers are displayed.
+export const BENCHMARK_DISCLAIMER =
+  "Figures are internal performance targets and illustrative comparisons, not independently audited results. Data set as of 2026-06.";
+
 export const ALL_LABELS = [
   "WDBX", "Redis", "Pinecone", "Faiss", "SingleStore", "Qdrant",
   "Weaviate", "Milvus", "Deep Lake", "Vespa", "Chroma", "MongoDB Atlas",
