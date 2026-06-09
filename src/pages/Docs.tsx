@@ -59,24 +59,24 @@ const docSections = [
 const personas = [
   {
     name: "Aviva",
-    role: "Expert",
+    role: "Direct Expert",
     accent: "#d946ef",
     description:
-      "Direct, creative, and exploratory. Generates plans and alternative approaches for idea generation.",
+      "Direct, creative, and exploratory. Generates plans, analysis, and alternative approaches — the framework's research and planning voice. Proposes; never executes on its own.",
   },
   {
     name: "Abbey",
-    role: "Polymath",
+    role: "Empathetic Polymath",
     accent: "#38bdf8",
     description:
-      "Analytical and supportive. Handles structured explanation and safety-oriented review of proposed work.",
+      "Analytical and supportive, pairing broad technical expertise with emotional intelligence. Handles structured explanation and safety-oriented review of proposed work.",
   },
   {
     name: "Abi",
-    role: "Moderator",
+    role: "Adaptive Moderator",
     accent: "#818cf8",
     description:
-      "Concise and action-oriented. Context- and policy-aware routing and execution once a plan clears review.",
+      "Concise and policy-aware. Mediates, routes, and executes — but only once a plan clears review. The governance layer of the framework.",
   },
 ];
 
@@ -311,9 +311,11 @@ export function Docs() {
                 <h2 className="text-2xl font-bold text-white">Persona Routing</h2>
               </div>
               <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                Instead of one agent that plans, reviews, and executes, the Abbey–Aviva–Abi
-                framework separates those roles. Routing between profiles is deterministic and
-                weight-based — an inspectable trace event, not a hidden model call.
+                The Abbey–Aviva–Abi framework answers one question: how do you get
+                advanced capability without giving up governance? Instead of one agent
+                that plans, reviews, and executes, it separates those roles across three
+                persona profiles. Routing between them is deterministic and weight-based —
+                an inspectable trace event, not a hidden model call.
               </p>
               <div className="grid gap-4 sm:grid-cols-3">
                 {personas.map((p) => (
