@@ -53,7 +53,7 @@ export function Login() {
                 className="flex items-center gap-3 rounded-2xl border border-white/5 bg-bg/40 p-4 text-xs text-text-dim font-mono"
               >
                 <Sparkles
-                  className="h-4 w-4 shrink-0 text-blue-400"
+                  className="h-4 w-4 shrink-0 text-emerald-400"
                   aria-hidden="true"
                 />
                 {item}
@@ -67,7 +67,7 @@ export function Login() {
             <div className="flex justify-center mb-6">
               <Link
                 to="/"
-                className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl font-display font-black text-white text-xl shadow-lg"
+                className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl font-display font-black text-white text-xl shadow-lg"
               >
                 M
               </Link>

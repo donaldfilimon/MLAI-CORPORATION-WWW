@@ -20,7 +20,7 @@ export const FAQ = () => {
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-32">
               <div
-                className="flex items-center gap-2 text-blue-400 font-mono text-sm mb-4"
+                className="flex items-center gap-2 text-emerald-400 font-mono text-sm mb-4"
                 aria-hidden="true"
               >
                 <HelpCircle className="w-4 h-4" />
@@ -45,7 +45,7 @@ export const FAQ = () => {
                   value={`item-${i}`}
                   className="border-white/5"
                 >
-                  <AccordionTrigger className="text-lg font-semibold text-white hover:text-blue-400 hover:no-underline transition-colors py-6 pr-8 text-left">
+                  <AccordionTrigger className="text-lg font-semibold text-white hover:text-emerald-400 hover:no-underline transition-colors py-6 pr-8 text-left">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-text-dim leading-relaxed pb-6 pr-12 text-base">

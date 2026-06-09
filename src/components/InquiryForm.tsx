@@ -306,7 +306,7 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               Prefer direct contact? Email{" "}
               <a
                 href="mailto:partnerships@mlai-corp.com"
-                className="text-blue-400 hover:text-white transition-colors"
+                className="text-emerald-400 hover:text-white transition-colors"
               >
                 partnerships@mlai-corp.com
               </a>

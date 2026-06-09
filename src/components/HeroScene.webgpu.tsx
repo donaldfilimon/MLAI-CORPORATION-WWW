@@ -131,7 +131,7 @@ const HeroSceneWebGPU = () => {
         rotation: ({ tick }) => tick * 0.004,
         scale: 1.0, // Will be set per ring in the attributes
         ringYOffset: 0.0, // Will be set per ring
-        color: () => [0.49, 0.83, 0.99, 0.28], // rgba(125, 211, 252, 0.28)
+        color: () => [0.49, 0.83, 0.99, 0.28], // rgba(94, 234, 212, 0.28)
       },
     });
 
@@ -182,7 +182,7 @@ const HeroSceneWebGPU = () => {
           return view;
         },
         rotation: ({ tick }) => tick * 0.004,
-        color: () => [0.49, 0.83, 0.99, 0.4], // rgba(125, 211, 252, 0.4) - approximate glow
+        color: () => [0.49, 0.83, 0.99, 0.4], // rgba(94, 234, 212, 0.4) - approximate glow
       },
     });
 

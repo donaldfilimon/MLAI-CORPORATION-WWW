@@ -9,12 +9,12 @@ import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
 
 const icons = [
-  <Shield className="w-6 h-6 text-blue-400" />,
-  <Zap className="w-6 h-6 text-blue-400" />,
-  <Target className="w-6 h-6 text-blue-400" />,
-  <Globe className="w-6 h-6 text-blue-400" />,
-  <Activity className="w-6 h-6 text-blue-400" />,
-  <Users className="w-6 h-6 text-blue-400" />,
+  <Shield className="w-6 h-6 text-emerald-400" />,
+  <Zap className="w-6 h-6 text-emerald-400" />,
+  <Target className="w-6 h-6 text-emerald-400" />,
+  <Globe className="w-6 h-6 text-emerald-400" />,
+  <Activity className="w-6 h-6 text-emerald-400" />,
+  <Users className="w-6 h-6 text-emerald-400" />,
 ];
 
 export const About = () => {
@@ -37,33 +37,33 @@ export const About = () => {
             />
 
             <ul
-              className="space-y-4 font-mono text-sm text-blue-400/80 mb-8"
+              className="space-y-4 font-mono text-sm text-emerald-400/80 mb-8"
               role="list"
             >
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-blue-400"
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                   aria-hidden="true"
                 />
                 ESTABLISHED 2024 · PALO ALTO, CA
               </li>
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-blue-400"
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                   aria-hidden="true"
                 />
                 PIONEERING WDBX ARCHITECTURE
               </li>
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-blue-400"
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                   aria-hidden="true"
                 />
                 TRACEABLE RETRIEVAL AND AGENT SAFETY FOCUS
               </li>
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-blue-400"
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                   aria-hidden="true"
                 />
                 AUDIT-READY SECURITY CONTROLS
@@ -92,7 +92,7 @@ export const About = () => {
                 >
                   <Card variant="glass" className="h-full p-6">
                     <div
-                      className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4"
+                      className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4"
                       aria-hidden="true"
                     >
                       {icons[i]}
@@ -111,13 +111,13 @@ export const About = () => {
         </div>
       </div>
       <div className="container-custom mt-32 relative z-10">
-        <div className="bg-gradient-to-br from-blue-600/20 to-cyan-500/10 border border-white/10 rounded-[2.5rem] p-12 md:p-20 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 blur-[100px] -mr-48 -mt-48 group-hover:bg-blue-400/30 transition-all duration-700" />
+        <div className="bg-gradient-to-br from-emerald-600/20 to-teal-500/10 border border-white/10 rounded-[2.5rem] p-12 md:p-20 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 blur-[100px] -mr-48 -mt-48 group-hover:bg-emerald-400/30 transition-all duration-700" />
           <div className="max-w-3xl relative z-10">
             <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-8">
               Our Mission: <br />
               Ensuring the Safety of{" "}
-              <span className="text-blue-400">Autonomous Progress.</span>
+              <span className="text-emerald-400">Autonomous Progress.</span>
             </h2>
             <p className="text-xl text-text-dim leading-relaxed mb-10">
               As AI systems transition from generative tools to autonomous
@@ -132,7 +132,7 @@ export const About = () => {
                 <div className="text-3xl font-display font-bold text-white mb-1">
                   2024
                 </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-blue-400">
+                <div className="text-xs font-mono uppercase tracking-widest text-emerald-400">
                   Founded
                 </div>
               </div>
@@ -140,7 +140,7 @@ export const About = () => {
                 <div className="text-3xl font-display font-bold text-white mb-1">
                   100%
                 </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-blue-400">
+                <div className="text-xs font-mono uppercase tracking-widest text-emerald-400">
                   Private-First Patterns
                 </div>
               </div>
@@ -148,7 +148,7 @@ export const About = () => {
                 <div className="text-3xl font-display font-bold text-white mb-1">
                   Global
                 </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-blue-400">
+                <div className="text-xs font-mono uppercase tracking-widest text-emerald-400">
                   Research Network
                 </div>
               </div>

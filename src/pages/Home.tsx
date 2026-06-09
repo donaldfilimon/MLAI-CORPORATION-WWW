@@ -12,12 +12,12 @@ const Technology = React.lazy(() => import('../components/Technology').then(modu
 
 const capabilities = [
   {
-    icon: <BrainCircuit className="w-6 h-6 text-blue-400" />,
+    icon: <BrainCircuit className="w-6 h-6 text-emerald-400" />,
     title: 'Agentic orchestration',
     description: 'Coordinate Abbey, Aviva, and Abi personas with auditable task handoffs, bounded autonomy, and clear operator control.',
   },
   {
-    icon: <DatabaseZap className="w-6 h-6 text-cyan-300" />,
+    icon: <DatabaseZap className="w-6 h-6 text-teal-300" />,
     title: 'WDBX retrieval core',
     description: 'Weighted backtrace graphs preserve context, reduce hallucination surfaces, and keep high-throughput retrieval explainable.',
   },
@@ -46,7 +46,7 @@ export function Home() {
       <Hero />
 
       <section className="relative w-full py-24" aria-labelledby="home-capabilities-heading">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" aria-hidden="true" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" aria-hidden="true" />
         <Reveal width="100%">
           <div className="container-custom">
             <div className="mb-14 max-w-3xl">
@@ -88,7 +88,7 @@ export function Home() {
                 We start with the operational risk profile, then build only the layers needed to make your system observable, governable, and fast enough for real users.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild className="rounded-full bg-white px-5 font-bold text-black hover:bg-blue-50">
+                <Button asChild className="rounded-full bg-white px-5 font-bold text-black hover:bg-emerald-50">
                   <Link to="/services">See Services <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
                 </Button>
                 <Button variant="outline" onClick={openInquiry} className="rounded-full border-white/10 bg-white/[0.03] px-5 text-white hover:bg-white/10 hover:text-white">
@@ -97,11 +97,11 @@ export function Home() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-blue-950/20 backdrop-blur">
+            <div className="rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-emerald-950/20 backdrop-blur">
               <ol className="grid gap-3" aria-label="MLAI delivery workflow">
                 {workflow.map((step, index) => (
                   <li key={step} className="flex gap-4 rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 font-mono text-sm font-bold text-blue-300 ring-1 ring-blue-400/20">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 font-mono text-sm font-bold text-emerald-300 ring-1 ring-emerald-400/20">
                       0{index + 1}
                     </span>
                     <p className="pt-1 text-sm leading-relaxed text-text-dim">{step}</p>
@@ -135,7 +135,7 @@ export function Home() {
                 return (
                   <div key={item.title} className="glass-card h-full flex flex-col justify-between">
                     <div>
-                      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
+                      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300">
                         <Icon className="h-5 w-5" aria-hidden="true" />
                       </div>
                       <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
@@ -185,22 +185,29 @@ export function Home() {
                 <h2 id="home-research-heading" className="section-title">Selected architecture notes.</h2>
                 <p className="section-subtitle mb-0">A focused preview of the research themes behind MLAI systems.</p>
               </div>
-              <Button asChild variant="link" className="h-auto justify-start p-0 text-blue-300 hover:text-blue-200">
+              <Button asChild variant="link" className="h-auto justify-start p-0 text-emerald-300 hover:text-emerald-200">
                 <Link to="/research">View research archive <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
               </Button>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
               {featuredResearch.map((item) => (
-                <div key={item.title} className="glass-card flex h-full flex-col">
-                  <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-blue-300">
+                <Link
+                  key={item.title}
+                  to={`/research/${item.slug}`}
+                  className="glass-card group flex h-full flex-col transition-colors hover:border-emerald-500/20"
+                >
+                  <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-300">
                     <span>{item.tag}</span>
                     <span className="h-1 w-1 rounded-full bg-white/30" aria-hidden="true" />
                     <span className="text-text-dim/70">{item.date}</span>
                   </div>
-                  <h3 className="text-xl font-display font-bold leading-tight text-white mb-3">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-text-dim">{item.abstract}</p>
-                </div>
+                  <h3 className="text-xl font-display font-bold leading-tight text-white mb-3 group-hover:text-emerald-300 transition-colors">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-text-dim mb-4">{item.abstract}</p>
+                  <span className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-300">
+                    Read paper <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -222,9 +229,9 @@ export function Home() {
             <div className="grid gap-6 md:grid-cols-2">
               {featuredServices.map((service) => (
                 <div key={service.title} className="glass-card group flex gap-5 items-start">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-400 transition-transform group-hover:scale-110" aria-hidden="true" />
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-emerald-400 transition-transform group-hover:scale-110" aria-hidden="true" />
                   <div>
-                    <h3 className="font-display text-lg font-bold text-white group-hover:text-blue-300 transition-colors">{service.title}</h3>
+                    <h3 className="font-display text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">{service.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-text-dim">{service.description}</p>
                   </div>
                 </div>
@@ -245,8 +252,8 @@ export function Home() {
       <section className="w-full px-6 py-24" aria-labelledby="home-cta-heading">
         <Reveal width="100%">
           <div className="container-custom">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-blue-600/20 via-bg to-cyan-500/10 p-8 md:p-14">
-              <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-400/20 blur-[90px]" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-emerald-600/20 via-bg to-teal-500/10 p-8 md:p-14">
+              <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-emerald-400/20 blur-[90px]" aria-hidden="true" />
               <div className="relative z-10 max-w-3xl">
                 <div className="label-chip mb-6">
                   <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
@@ -257,7 +264,7 @@ export function Home() {
                   Share the workflow you want to automate, the failure modes you cannot accept, and the infrastructure constraints we need to respect.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
-                  <Button onClick={openInquiry} className="h-11 rounded-full bg-white px-6 font-bold text-black hover:bg-blue-50">Start Inquiry</Button>
+                  <Button onClick={openInquiry} className="h-11 rounded-full bg-white px-6 font-bold text-black hover:bg-emerald-50">Start Inquiry</Button>
                   <Button asChild variant="ghost" className="h-11 rounded-full border border-white/10 px-6 text-white hover:bg-white/10 hover:text-white">
                     <Link to="/benchmarks">Review Benchmarks</Link>
                   </Button>

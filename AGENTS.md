@@ -16,12 +16,13 @@ Server is currently a Bun-native Hono app handling WorkOS AuthKit and static fil
 ## Critical Setup
 - Copy `.env.example` to `.env` and fill in WorkOS credentials and session secret
 - Type checking: `bun run lint` (runs `tsc --noEmit`)
-- Environment: Requires Bun 1.1+ (preferred over Node.js)
+- Environment: Requires Bun 1.4+ (`packageManager: bun@1.4.0`, text `bun.lock`; preferred over Node.js)
 
 ## Architecture Overview
 - **Frontend**: React 19 SPA in `src/` using `react-router-dom`
 - **Backend**: `server.ts` (Hono/Bun) + `server/` (session management with iron-session); Rust 2024 Axum migration target in `rust/server/` mirrors the API/static-serving surface
-- **Styling**: TailwindCSS v4 (via `@tailwindcss/vite`) + custom glassmorphism and utility classes (`.glass-card`, `.container-custom`, `.section-title`, etc.)
+- **Styling**: TailwindCSS v4 (via `@tailwindcss/vite`) + custom glassmorphism and utility classes (`.glass-card`, `.container-custom`, `.section-title`, etc.). **Brand = "Signal" (2026 redesign):** emerald primary + teal secondary on neutral near-black, driven by OKLCH semantic tokens in `:root` re-exposed via `@theme inline` (shadcn Tailwind v4 structure — re-value tokens to re-skin, don't restructure). Brand uses Tailwind `emerald`/`teal` ramps (not `blue`/`cyan`). Logo is a reusable component (`src/components/Logo.tsx`). Body font self-hosted Geist; Outfit/JetBrains Mono load async from `index.html`.
+- **Performance**: `vite.config.ts` `manualChunks` splits heavy libs out of the shared `vendor` chunk (`tensorflow`/`motion`/`react`) so TensorFlow only loads on `/tf-pose-demo`. Keep route-isolated heavy deps out of the eager path.
 - **Auth**: WorkOS AuthKit integration via `src/lib/auth.tsx`
 - **State**: `UIProvider` in `src/lib/ui-context.tsx` for global modals
 
@@ -33,7 +34,8 @@ Server is currently a Bun-native Hono app handling WorkOS AuthKit and static fil
 - SVG icons from Lucide React
 - Animation via Framer Motion
 - UI quirks: `Button` supports `asChild` prop to avoid nesting bugs; `Card`, `Dialog`, `Select`, `Input` use `min-w-0` and safe text wrapping for responsive scaling; dark theme set via `:root` tokens; `.dark` class only sets `color-scheme: dark` to avoid overriding MLAI palette
-- Content: single source of truth at `src/data/index.ts`, aggregating domain modules in `src/data/categories/*` (services, research, blog, team, FAQ, platform, industries)
+- Content: single source of truth at `src/data/index.ts`, aggregating domain modules in `src/data/categories/*` (services, research, blog, team, FAQ, platform, industries). **Blog posts and research publications are data, not JSX**: each carries a `slug` + structured `body: BlogSection[]` (`{ heading?, paragraphs[], list? }`) and renders as a detail page — `BlogPost.tsx` at `/blog/:slug`, `ResearchPaper.tsx` at `/research/:slug`. Add a fully-bodied entry to the data module; don't hardcode prose in components. Per-route SEO is derived from `content` in `src/components/RouteMetadata.tsx`.
+- Content claims constraint: per the sibling `abi` repo's `docs/contracts/external-claims-audit.md`, do not cite specific QPS/latency/accuracy/benchmark numbers, distributed sharding, certifications, or non-existent stacks unless a repo artifact proves them. Frame metrics as targets (see `src/data/categories/stats.ts`); ground copy in verifiable architecture (real `abi` CLI, MCP tools, WDBX stores, Abbey/Aviva/Abi routing).
 
 ## Modernization Standards
 - **Zig 0.17**: WDBX benchmarks in `src/components/wdbx-benchmark/charts.ts` should reflect latest engine performance

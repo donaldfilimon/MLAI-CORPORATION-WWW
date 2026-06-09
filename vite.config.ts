@@ -26,7 +26,22 @@ export default defineConfig(() => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            return id.includes('node_modules') ? 'vendor' : undefined;
+            if (!id.includes('node_modules')) return undefined;
+            // Keep heavy, route-isolated libs out of the shared vendor chunk so
+            // they only load when their lazy route is visited.
+            if (id.includes('@tensorflow')) return 'tensorflow';
+            if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils')) {
+              return 'motion';
+            }
+            if (
+              id.includes('/react/') ||
+              id.includes('/react-dom/') ||
+              id.includes('/react-router') ||
+              id.includes('/scheduler/')
+            ) {
+              return 'react';
+            }
+            return 'vendor';
           },
         },
       },

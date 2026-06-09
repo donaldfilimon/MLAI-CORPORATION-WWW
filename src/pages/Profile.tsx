@@ -129,7 +129,7 @@ export function Profile() {
 
           <div className="glass-card flex flex-col justify-between">
             <div>
-              <KeyRound className="mb-4 h-8 w-8 text-blue-400" />
+              <KeyRound className="mb-4 h-8 w-8 text-emerald-400" />
               <h3 className="text-lg font-bold text-white mb-1">2FA, Passkeys, Cookies</h3>
               <p className="text-xs text-text-dim mb-6">Hosted AuthKit handles MFA/passkeys once enabled in WorkOS.</p>
             </div>
@@ -146,7 +146,7 @@ export function Profile() {
         {billing?.plans.map((plan) => (
           <div key={plan.id} className="glass-card flex flex-col justify-between">
             <div>
-              <CreditCard className="mb-4 h-8 w-8 text-cyan-400" />
+              <CreditCard className="mb-4 h-8 w-8 text-teal-400" />
               <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
               <p className="text-xs text-text-dim mb-4">{plan.price}</p>
               <p className="mb-6 text-sm leading-relaxed text-text-dim">{plan.description}</p>

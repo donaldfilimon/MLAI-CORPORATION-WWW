@@ -205,7 +205,7 @@ const TFPoseDemo = () => {
           subtitle="Real-time human pose estimation using TensorFlowJS and your webcam."
         />
         <div className="text-center py-12">
-          <div className="inline-flex items-center px-4 py-2 mr-2 text-sm font-medium text-white bg-blue-600 rounded-lg">
+          <div className="inline-flex items-center px-4 py-2 mr-2 text-sm font-medium text-white bg-emerald-600 rounded-lg">
             Loading model and accessing webcam...
           </div>
         </div>

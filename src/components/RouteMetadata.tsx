@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import { content } from "@/data";
 
 const SITE_URL = "https://mlai-corp.com";
 
@@ -89,9 +90,38 @@ const routeMetadata: Record<string, RouteMeta> = {
   },
 };
 
+function resolveMeta(pathname: string): RouteMeta {
+  const exact = routeMetadata[pathname];
+  if (exact) return exact;
+
+  if (pathname.startsWith("/blog/")) {
+    const slug = pathname.slice("/blog/".length);
+    const post = content.blog.find((p) => p.slug === slug);
+    if (post) {
+      return {
+        title: `${post.title} | MLAI Lab Notes`,
+        description: post.excerpt,
+      };
+    }
+  }
+
+  if (pathname.startsWith("/research/")) {
+    const slug = pathname.slice("/research/".length);
+    const paper = content.research.publications.find((p) => p.slug === slug);
+    if (paper) {
+      return {
+        title: `${paper.title} | MLAI Research`,
+        description: paper.abstract,
+      };
+    }
+  }
+
+  return DEFAULT_ROUTE_META;
+}
+
 export function RouteMetadata() {
   const { pathname } = useLocation();
-  const metadata = routeMetadata[pathname] ?? DEFAULT_ROUTE_META;
+  const metadata = resolveMeta(pathname);
   const canonical = `${SITE_URL}${pathname === "/" ? "" : pathname}`;
 
   return (

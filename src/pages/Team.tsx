@@ -41,10 +41,10 @@ export const Team = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-70" />
                   </div>
 
-                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
                     {member.name}
                   </h3>
-                  <div className="text-blue-400 font-mono text-[10px] uppercase tracking-[0.15em] mb-3">
+                  <div className="text-emerald-400 font-mono text-[10px] uppercase tracking-[0.15em] mb-3">
                     {member.role}
                   </div>
                   <p className="text-sm text-text-dim leading-relaxed">
@@ -64,10 +64,10 @@ export const Team = () => {
           >
             <Card
               variant="glass"
-              className="h-full border border-dashed border-blue-500/20 bg-blue-500/5 flex flex-col items-center justify-center p-12 text-center group hover:bg-blue-500/10 hover:border-blue-500/30 transition-all duration-500"
+              className="h-full border border-dashed border-emerald-500/20 bg-emerald-500/5 flex flex-col items-center justify-center p-12 text-center group hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all duration-500"
             >
-              <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                <Users className="w-8 h-8 text-blue-400" />
+              <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                <Users className="w-8 h-8 text-emerald-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">
                 Join the Mission
@@ -81,7 +81,7 @@ export const Team = () => {
                 onClick={() =>
                   (window.location.href = "mailto:careers@mlai-corp.com")
                 }
-                className="text-xs font-mono uppercase tracking-[0.2em] text-blue-400 hover:text-white transition-colors flex items-center gap-2"
+                className="text-xs font-mono uppercase tracking-[0.2em] text-emerald-400 hover:text-white transition-colors flex items-center gap-2"
               >
                 View Openings <ExternalLink className="w-3 h-3" />
               </Button>

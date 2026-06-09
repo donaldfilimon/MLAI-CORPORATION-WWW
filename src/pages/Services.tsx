@@ -18,15 +18,15 @@ import { CardGrid } from "@/components/CardGrid";
 import { Card, CardContent } from "@/components/ui";
 
 const icons = [
-  <Cpu className="w-7 h-7 text-blue-400" />,
-  <Network className="w-7 h-7 text-blue-400" />,
-  <Database className="w-7 h-7 text-blue-400" />,
-  <Layers className="w-7 h-7 text-blue-400" />,
-  <BarChart3 className="w-7 h-7 text-blue-400" />,
-  <Lock className="w-7 h-7 text-blue-400" />,
-  <Globe className="w-7 h-7 text-blue-400" />,
-  <Shield className="w-7 h-7 text-blue-400" />,
-  <Code className="w-7 h-7 text-blue-400" />,
+  <Cpu className="w-7 h-7 text-emerald-400" />,
+  <Network className="w-7 h-7 text-emerald-400" />,
+  <Database className="w-7 h-7 text-emerald-400" />,
+  <Layers className="w-7 h-7 text-emerald-400" />,
+  <BarChart3 className="w-7 h-7 text-emerald-400" />,
+  <Lock className="w-7 h-7 text-emerald-400" />,
+  <Globe className="w-7 h-7 text-emerald-400" />,
+  <Shield className="w-7 h-7 text-emerald-400" />,
+  <Code className="w-7 h-7 text-emerald-400" />,
 ];
 
 export const Services = () => {
@@ -71,12 +71,12 @@ export const Services = () => {
                 >
                   <CardContent className="p-8">
                     <div
-                      className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6 group-hover:bg-blue-500/20 group-hover:border-blue-500/30 transition-all"
+                      className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 transition-all"
                       aria-hidden="true"
                     >
                       {icons[i]}
                     </div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors mb-3">
+                    <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors mb-3">
                       {service.title}
                     </h3>
                     <p className="text-text-dim leading-relaxed text-sm mb-6">
@@ -100,7 +100,7 @@ export const Services = () => {
                   <div className="mt-auto p-6 border-t border-white/5 bg-white/[0.02]">
                     <button
                       onClick={openInquiry}
-                      className="text-sm font-semibold text-blue-400 flex items-center gap-2 hover:gap-3 transition-all opacity-85 group-hover:opacity-100 cursor-pointer"
+                      className="text-sm font-semibold text-emerald-400 flex items-center gap-2 hover:gap-3 transition-all opacity-85 group-hover:opacity-100 cursor-pointer"
                     >
                       Discuss Service{" "}
                       <span className="text-lg leading-none" aria-hidden="true">

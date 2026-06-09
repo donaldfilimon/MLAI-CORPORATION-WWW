@@ -16,6 +16,12 @@ export const PlatformSchema = z.array(z.object({
 
 export const IndustriesSchema = z.array(z.string());
 
+export const BlogSectionSchema = z.object({
+  heading: z.string().optional(),
+  paragraphs: z.array(z.string()).default([]),
+  list: z.array(z.string()).optional(),
+});
+
 export const ServicesSchema = z.array(z.object({
   title: z.string(),
   description: z.string(),
@@ -28,20 +34,26 @@ export const ResearchSchema = z.object({
     description: z.string(),
   })),
   publications: z.array(z.object({
+    slug: z.string(),
     tag: z.string(),
     title: z.string(),
     date: z.string(),
     abstract: z.string(),
     readTime: z.string(),
+    authors: z.string().optional(),
+    body: z.array(BlogSectionSchema).default([]),
   })),
 });
 
 export const BlogSchema = z.array(z.object({
+  slug: z.string(),
   tag: z.string(),
   title: z.string(),
   excerpt: z.string(),
   date: z.string(),
   readTime: z.string(),
+  author: z.string().optional(),
+  body: z.array(BlogSectionSchema).default([]),
 }));
 
 export const TeamSchema = z.array(z.object({

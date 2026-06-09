@@ -57,7 +57,7 @@ export const Viewport3D = () => {
           const distance = Math.hypot(a.x - b.x, a.y - b.y);
           if (distance > radius * 0.5) continue;
 
-          context.strokeStyle = `rgba(96, 165, 250, ${Math.max(0, 0.16 - (distance / radius) * 0.18)})`;
+          context.strokeStyle = `rgba(52, 211, 153, ${Math.max(0, 0.16 - (distance / radius) * 0.18)})`;
           context.lineWidth = 1;
           context.beginPath();
           context.moveTo(a.x, a.y);
@@ -67,16 +67,16 @@ export const Viewport3D = () => {
       }
 
       const core = context.createRadialGradient(0, 0, 0, 0, 0, radius * 0.6);
-      core.addColorStop(0, "rgba(125, 211, 252, 0.4)");
-      core.addColorStop(0.45, "rgba(37, 99, 235, 0.16)");
-      core.addColorStop(1, "rgba(37, 99, 235, 0)");
+      core.addColorStop(0, "rgba(94, 234, 212, 0.4)");
+      core.addColorStop(0.45, "rgba(5, 150, 105, 0.16)");
+      core.addColorStop(1, "rgba(5, 150, 105, 0)");
       context.fillStyle = core;
       context.beginPath();
       context.arc(0, 0, radius * 0.62, 0, Math.PI * 2);
       context.fill();
 
       points.forEach((point) => {
-        context.fillStyle = `rgba(147, 197, 253, ${point.alpha})`;
+        context.fillStyle = `rgba(110, 231, 183, ${point.alpha})`;
         context.beginPath();
         context.arc(point.x, point.y, 1.8, 0, Math.PI * 2);
         context.fill();
@@ -102,7 +102,7 @@ export const Viewport3D = () => {
     <div className="group relative h-full w-full">
       <canvas ref={canvasRef} className="h-full w-full outline-none" />
       <div className="pointer-events-none absolute bottom-4 left-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-blue-400/60">
+        <p className="text-[10px] font-mono uppercase tracking-widest text-emerald-400/60">
           LIVE ARCHITECTURE MAP
         </p>
       </div>

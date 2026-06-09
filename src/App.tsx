@@ -16,11 +16,19 @@ const Services = lazy(() =>
 const Research = lazy(() =>
   import("./pages/Research").then((module) => ({ default: module.Research })),
 );
+const ResearchPaper = lazy(() =>
+  import("./pages/ResearchPaper").then((module) => ({
+    default: module.ResearchPaper,
+  })),
+);
 const Team = lazy(() =>
   import("./pages/Team").then((module) => ({ default: module.Team })),
 );
 const Blog = lazy(() =>
   import("./pages/Blog").then((module) => ({ default: module.Blog })),
+);
+const BlogPost = lazy(() =>
+  import("./pages/BlogPost").then((module) => ({ default: module.BlogPost })),
 );
 const Docs = lazy(() =>
   import("./pages/Docs").then((module) => ({ default: module.Docs })),
@@ -93,6 +101,7 @@ function App() {
                 </div>
               }
             />
+            <Route path="research/:slug" element={<ResearchPaper />} />
             <Route
               path="services"
               element={
@@ -110,6 +119,7 @@ function App() {
               }
             />
             <Route path="blog" element={<Blog />} />
+            <Route path="blog/:slug" element={<BlogPost />} />
             <Route path="docs" element={<Docs />} />
             <Route path="benchmarks" element={<Benchmarks />} />
             <Route path="login" element={<Login />} />

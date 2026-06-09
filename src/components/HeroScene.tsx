@@ -36,9 +36,9 @@ export const HeroScene = () => {
       context.rotate(frame * 0.004);
 
       const glow = context.createRadialGradient(0, 0, 0, 0, 0, radius * 2.8);
-      glow.addColorStop(0, "rgba(56, 189, 248, 0.28)");
-      glow.addColorStop(0.4, "rgba(59, 130, 246, 0.12)");
-      glow.addColorStop(1, "rgba(59, 130, 246, 0)");
+      glow.addColorStop(0, "rgba(45, 212, 191, 0.28)");
+      glow.addColorStop(0.4, "rgba(16, 185, 129, 0.12)");
+      glow.addColorStop(1, "rgba(16, 185, 129, 0)");
       context.fillStyle = glow;
       context.beginPath();
       context.arc(0, 0, radius * 2.8, 0, Math.PI * 2);
@@ -48,7 +48,7 @@ export const HeroScene = () => {
         context.save();
         context.rotate(ring * 0.78 + frame * (0.002 + ring * 0.0004));
         context.scale(1, 0.32 + ring * 0.1);
-        context.strokeStyle = `rgba(125, 211, 252, ${0.28 - ring * 0.04})`;
+        context.strokeStyle = `rgba(94, 234, 212, ${0.28 - ring * 0.04})`;
         context.lineWidth = 1.2;
         context.beginPath();
         context.ellipse(
@@ -77,7 +77,7 @@ export const HeroScene = () => {
       }
 
       context.fillStyle = "rgba(15, 23, 42, 0.78)";
-      context.strokeStyle = "rgba(96, 165, 250, 0.8)";
+      context.strokeStyle = "rgba(52, 211, 153, 0.8)";
       context.lineWidth = 1.5;
       context.beginPath();
       for (let i = 0; i < 6; i++) {

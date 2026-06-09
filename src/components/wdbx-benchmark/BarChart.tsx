@@ -1,7 +1,7 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 
-const WDBX_COLOR = "#D97757";
-const COMP_COLOR = "#6A9BCC";
+const WDBX_COLOR = "#10b981";
+const COMP_COLOR = "#64748b";
 
 interface Props {
   labels: string[];

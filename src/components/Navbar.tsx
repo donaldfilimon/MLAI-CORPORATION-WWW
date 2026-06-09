@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Magnetic } from "./Magnetic";
+import { Logo } from "./Logo";
 import { useAuth } from "@/lib/auth";
 import { useUI } from "@/lib/ui-context";
 
@@ -54,14 +55,7 @@ export const Navbar = () => {
           className={`relative flex items-center justify-between px-6 py-3 rounded-2xl border transition-all duration-500 ${isScrolled ? "bg-bg/80 backdrop-blur-xl border-white/10 shadow-2xl" : "bg-transparent border-transparent"}`}
         >
           <div className="flex items-center gap-12">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center font-display font-black text-white text-sm shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-                M
-              </div>
-              <span className="font-display font-bold text-xl tracking-tighter text-white">
-                MLAI CORP
-              </span>
-            </Link>
+            <Logo size="md" />
 
             <div className="hidden lg:flex items-center gap-8">
               {navItems.map((item) => (
@@ -98,7 +92,7 @@ export const Navbar = () => {
                     variant="ghost"
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
-                    <User className="w-4 h-4 text-blue-400" />
+                    <User className="w-4 h-4 text-emerald-400" />
                     <span className="text-xs font-medium text-text-dim max-w-[100px] truncate">
                       {user.email}
                     </span>
@@ -142,7 +136,7 @@ export const Navbar = () => {
             <Magnetic>
               <Button
                 onClick={openInquiry}
-                className="bg-white text-black hover:bg-blue-50 hover:scale-105 transition-all font-bold px-6"
+                className="bg-white text-black hover:bg-emerald-50 hover:scale-105 transition-all font-bold px-6"
               >
                 Start Inquiry
               </Button>
@@ -178,7 +172,7 @@ export const Navbar = () => {
                     key={item.to}
                     to={item.to}
                     className={({ isActive }) =>
-                      `text-lg font-medium py-3 transition-colors ${isActive ? "text-blue-400" : "text-white"}`
+                      `text-lg font-medium py-3 transition-colors ${isActive ? "text-emerald-400" : "text-white"}`
                     }
                   >
                     {item.label}

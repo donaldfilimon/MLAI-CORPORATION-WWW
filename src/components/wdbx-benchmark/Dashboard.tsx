@@ -31,8 +31,8 @@ import { Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import "./benchmarks.css";
 
-const WDBX_COLOR = "#D97757";
-const COMP_COLOR = "#6A9BCC";
+const WDBX_COLOR = "#10b981";
+const COMP_COLOR = "#64748b";
 
 type ChartEntry = {
   label: string;

@@ -94,12 +94,12 @@ const StatCard = ({ stat, index }: StatCardProps) => {
 
   return (
     <motion.div ref={ref} viewport={{ once: true }} {...motionProps}>
-      <Card className="text-center p-8 border-white/5 bg-white/2 hover:bg-white/4 hover:border-blue-500/20 transition-all duration-300 group h-full">
+      <Card className="text-center p-8 border-white/5 bg-white/2 hover:bg-white/4 hover:border-emerald-500/20 transition-all duration-300 group h-full">
         <CardContent className="p-0 flex flex-col justify-center h-full">
-          <div className="text-4xl md:text-5xl font-display font-black text-transparent bg-clip-text bg-linear-to-br from-blue-400 to-cyan-300 mb-3 tabular-nums">
+          <div className="text-4xl md:text-5xl font-display font-black text-transparent bg-clip-text bg-linear-to-br from-emerald-400 to-teal-300 mb-3 tabular-nums">
             {displayValue}
           </div>
-          <div className="text-white font-semibold mb-2 group-hover:text-blue-400 transition-colors">
+          <div className="text-white font-semibold mb-2 group-hover:text-emerald-400 transition-colors">
             {stat.label}
           </div>
           <div className="text-xs text-text-dim leading-relaxed">

@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Logo } from "./Logo";
 import { useUI } from "@/lib/ui-context";
 
 export const Footer = () => {
@@ -9,16 +10,9 @@ export const Footer = () => {
   return (
     <footer className="pt-20 pb-12 bg-bg border-t border-white/5 relative noise-overlay">
       <div className="container-custom relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center font-display font-black text-white text-xs shadow-md shadow-blue-500/20">
-                M
-              </div>
-              <span className="font-display font-bold text-lg tracking-tighter text-white">
-                MLAI CORP
-              </span>
-            </Link>
+            <Logo size="sm" />
             <p className="text-sm text-text-dim leading-relaxed">
               Leading the transition to high-integrity, resilient AI
               orchestration frameworks. Based in Palo Alto, California.
@@ -68,7 +62,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
                 >
                   WDBX Engine{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -77,7 +71,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
                 >
                   Multi-Persona Framework{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -86,7 +80,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/benchmarks"
-                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
                 >
                   WDBX Benchmarks{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -95,9 +89,44 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-blue-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
                 >
                   Publications{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+              Resources
+            </h4>
+            <ul className="space-y-3 text-sm text-text-dim">
+              <li>
+                <Link
+                  to="/docs"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                >
+                  Documentation{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/blog"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                >
+                  Lab Notes{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/console"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                >
+                  Console{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
@@ -112,7 +141,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/about"
-                  className="hover:text-blue-400 transition-colors"
+                  className="hover:text-emerald-400 transition-colors"
                 >
                   About Us
                 </Link>
@@ -120,7 +149,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/team"
-                  className="hover:text-blue-400 transition-colors"
+                  className="hover:text-emerald-400 transition-colors"
                 >
                   Leadership
                 </Link>
@@ -128,7 +157,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-emerald-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Careers
                 </button>
@@ -136,7 +165,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-emerald-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Contact
                 </button>
@@ -144,7 +173,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-blue-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-emerald-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Press Kit
                 </button>
