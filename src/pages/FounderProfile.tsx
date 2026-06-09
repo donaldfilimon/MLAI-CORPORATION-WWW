@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight, Globe, MapPin } from "lucide-react";
 import { Button, Card, Separator } from "@/components/ui";
 import { content } from "@/data";
 import { useUI } from "@/lib/ui-context";
+import { ArticleSections } from "@/components/article";
 
 /** Profile portrait with a graceful initials fallback if the image fails. */
 function ProfilePhoto({ name, image }: { name: string; image: string }) {
@@ -256,48 +257,8 @@ export function FounderProfile() {
 
         {/* Long-form sections */}
         {member.body && member.body.length > 0 && (
-          <div className="mt-20 space-y-12 max-w-3xl">
-            {member.body.map((section, i) => (
-              <motion.section
-                key={section.heading ?? `section-${i}`}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.4 }}
-              >
-                {section.heading && (
-                  <h2 className="text-2xl font-display font-bold text-white mb-5 leading-tight">
-                    {section.heading}
-                  </h2>
-                )}
-                <div className="space-y-5">
-                  {section.paragraphs.map((para, p) => (
-                    <p
-                      key={p}
-                      className="text-base md:text-lg text-text-dim leading-relaxed"
-                    >
-                      {para}
-                    </p>
-                  ))}
-                </div>
-                {section.list && (
-                  <ul className="mt-6 space-y-3">
-                    {section.list.map((item, l) => (
-                      <li
-                        key={l}
-                        className="flex gap-3 text-base text-text-dim leading-relaxed"
-                      >
-                        <span
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400"
-                          aria-hidden="true"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </motion.section>
-            ))}
+          <div className="mt-20 max-w-3xl">
+            <ArticleSections body={member.body} />
           </div>
         )}
 

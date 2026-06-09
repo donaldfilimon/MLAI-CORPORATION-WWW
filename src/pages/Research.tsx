@@ -5,15 +5,7 @@ import { Card, CardContent, Separator } from "@/components/ui";
 import { content } from "@/data";
 import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
-
-const tagColors: Record<string, string> = {
-  "CORE ARCHITECTURE": "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  "ETHICS & SAFETY": "text-teal-400 bg-teal-500/10 border-teal-500/20",
-  SCALABILITY: "text-violet-400 bg-violet-500/10 border-violet-500/20",
-  ENGINEERING: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-  RESEARCH: "text-sky-400 bg-sky-500/10 border-sky-500/20",
-  SAFETY: "text-rose-400 bg-rose-500/10 border-rose-400/20",
-};
+import { tagColor } from "@/lib/tag-colors";
 
 export const Research = () => {
   const publications = content.research.publications;
@@ -80,7 +72,7 @@ export const Research = () => {
                     <CardContent className="p-8">
                       <div className="flex items-center gap-4 mb-4">
                         <span
-                          className={`text-[10px] font-mono font-bold tracking-[0.2em] px-2 py-0.5 rounded-sm uppercase ${tagColors[item.tag] || "text-emerald-400 bg-emerald-500/10"}`}
+                          className={`text-[10px] font-mono font-bold tracking-[0.2em] px-2 py-0.5 rounded-sm uppercase ${tagColor(item.tag)}`}
                         >
                           {item.tag}
                         </span>
