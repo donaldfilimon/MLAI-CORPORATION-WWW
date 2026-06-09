@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Users, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Users, ExternalLink, ArrowRight } from "lucide-react";
 import { content } from "../data";
 import { Button, Card } from "@/components/ui";
 import { PageHeader } from "@/components/PageHeader";
@@ -66,10 +67,24 @@ export const Team = () => {
             >
               <div className="group relative bg-transparent border-0 overflow-visible shadow-none">
                 <div className="p-0">
-                  <TeamPhoto name={member.name} image={member.image} />
+                  {member.slug ? (
+                    <Link
+                      to={`/team/${member.slug}`}
+                      className="block"
+                      aria-label={`Read ${member.name}'s profile`}
+                    >
+                      <TeamPhoto name={member.name} image={member.image} />
+                    </Link>
+                  ) : (
+                    <TeamPhoto name={member.name} image={member.image} />
+                  )}
 
                   <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
-                    {member.name}
+                    {member.slug ? (
+                      <Link to={`/team/${member.slug}`}>{member.name}</Link>
+                    ) : (
+                      member.name
+                    )}
                   </h3>
                   <div className="text-emerald-400 font-mono text-[10px] uppercase tracking-[0.15em] mb-3">
                     {member.role}
@@ -77,6 +92,15 @@ export const Team = () => {
                   <p className="text-sm text-text-dim leading-relaxed">
                     {member.bio}
                   </p>
+                  {member.slug && (
+                    <Link
+                      to={`/team/${member.slug}`}
+                      className="mt-4 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-white hover:text-emerald-400 transition-colors"
+                    >
+                      Read profile
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>

@@ -105,6 +105,18 @@ function resolveMeta(pathname: string): RouteMeta {
     }
   }
 
+  if (pathname.startsWith("/team/")) {
+    const slug = pathname.slice("/team/".length);
+    const member = content.team.find((m) => m.slug === slug);
+    if (member) {
+      return {
+        title: `${member.name} | ${member.role}, MLAI Corporation`,
+        description:
+          member.tagline ?? `${member.name}, ${member.role} at MLAI Corporation. ${member.bio}`,
+      };
+    }
+  }
+
   if (pathname.startsWith("/research/")) {
     const slug = pathname.slice("/research/".length);
     const paper = content.research.publications.find((p) => p.slug === slug);
