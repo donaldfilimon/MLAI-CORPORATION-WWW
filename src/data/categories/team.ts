@@ -32,6 +32,11 @@ export const team: Team = TeamSchema.parse([
           "Working close to the metal across Zig, Rust, Swift, and TypeScript: databases, GPU-oriented runtimes, CLIs, and developer tooling.",
       },
       {
+        title: "Compiler & low-level optimization",
+        description:
+          "AI-driven compiler optimization and MLIR/Zig systems work — tuning the layers beneath the model, not just the model itself.",
+      },
+      {
         title: "Agent orchestration & safety",
         description:
           "The ABI runtime and the Abbey–Aviva–Abi persona system for bounded, observable autonomy with explicit operator control.",
@@ -60,13 +65,6 @@ export const team: Team = TeamSchema.parse([
         lang: "Swift",
       },
       {
-        name: "mlaix-app",
-        description:
-          "MLAI's Swift application surface for on-device AI experiences.",
-        url: "https://github.com/donaldfilimon/mlaix-app",
-        lang: "Swift",
-      },
-      {
         name: "Nyon",
         description:
           "A voxel 3D world experiment exploring a novel hexa-gravity system and creator-first game development.",
@@ -79,7 +77,7 @@ export const team: Team = TeamSchema.parse([
         heading: "Building close to the metal",
         paragraphs: [
           "Donald is a polyglot systems engineer who works deliberately low in the stack. His public projects span Zig, Rust, Swift, TypeScript, and Python — databases, GPU-oriented runtimes, agent frameworks, and the tooling that holds them together — because the guarantees MLAI cares about (latency, provenance, data residency) are won or lost at that level.",
-          "That range is intentional, not scattered. Each language is chosen for where it pays off: Zig for the performance-critical core of the ABI runtime and WDBX, Rust for safe systems surfaces, Swift and MLX for on-device inference on Apple Silicon, and TypeScript for the operator-facing layers.",
+          "That range is intentional, not scattered. Each language is chosen for where it pays off: Zig for the performance-critical core of the ABI runtime and WDBX, Rust for safe systems surfaces, Swift and MLX for on-device inference on Apple Silicon, and TypeScript for the operator-facing layers. The same instinct runs down to the compiler itself — projects like Cellstrap extend Zig toward MLIR, in line with his stated focus on AI-driven compiler optimization.",
         ],
       },
       {
@@ -92,8 +90,8 @@ export const team: Team = TeamSchema.parse([
       {
         heading: "Autonomy with a boundary",
         paragraphs: [
-          "On top of retrieval sits the Abbey–Aviva–Abi persona system — Abbey the empathetic polymath, Aviva the direct expert, and Abi the adaptive router — operating under one motto: \"Care first. Clarity always. Competence throughout.\"",
-          "The orchestration is built around bounded execution and explicit approvals: no autonomous write action without an observable policy boundary, and escalation, review, and override flows kept visible so the people responsible stay in control. Safety before scale is the founding constraint, not a later addition.",
+          "On top of retrieval, MLAI's orchestration layer adds the Abbey–Aviva–Abi persona system — Abbey the empathetic polymath, Aviva the direct expert, and Abi the adaptive router — operating under one motto: \"Care first. Clarity always. Competence throughout.\"",
+          "It is built around bounded execution and explicit approvals: no autonomous write action without an observable policy boundary, and escalation, review, and override flows kept visible so the people responsible stay in control. Safety before scale is the founding constraint, not a later addition.",
         ],
       },
     ],
