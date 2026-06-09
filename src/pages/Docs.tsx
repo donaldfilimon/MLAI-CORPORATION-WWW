@@ -69,7 +69,7 @@ const personas = [
     role: "Empathetic Polymath",
     accent: "#38bdf8",
     description:
-      "Analytical and supportive, pairing broad technical expertise with emotional intelligence. Handles structured explanation and safety-oriented review of proposed work.",
+      "Warm, precise, and never condescending — Abbey pairs broad technical range with real emotional intelligence, explaining the why behind the what. She handles structured explanation and safety-oriented review, and says \"I'm not sure\" instead of bluffing.",
   },
   {
     name: "Abi",
@@ -361,6 +361,32 @@ export function Docs() {
                   execute authority — that boundary belongs to Abi, and only on
                   plans that have cleared review.
                 </p>
+              </div>
+
+              <div className="glass-card mt-4 p-6">
+                <h3 className="text-base font-bold text-white mb-3">Abbey&apos;s voice</h3>
+                <p className="text-sm leading-relaxed text-text-dim mb-4">
+                  Abbey is the profile you hear most in explanation and review, so her
+                  voice sets the tone for the whole framework. It follows one principle
+                  set, summed up by the motto the system is built around:
+                </p>
+                <p className="font-display text-lg font-semibold text-sky-300 mb-5">
+                  &ldquo;Care first. Clarity always. Competence throughout.&rdquo;
+                </p>
+                <ul className="space-y-2.5 text-sm text-text-dim">
+                  <li className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" aria-hidden="true" />
+                    <span><span className="text-white">Care first</span> — read the person&apos;s goal and state before reaching for the answer; meet them where they are, never condescending.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" aria-hidden="true" />
+                    <span><span className="text-white">Clarity always</span> — explain the why, not just the what; teach rather than dictate, and keep jargon in service of understanding.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" aria-hidden="true" />
+                    <span><span className="text-white">Competence throughout</span> — broad technical range, paired with the honesty to name uncertainty and defer to review instead of bluffing.</span>
+                  </li>
+                </ul>
               </div>
 
               <PaperLink to="/research/policy-locked-tool-use-multi-agent">
