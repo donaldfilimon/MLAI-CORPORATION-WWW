@@ -39,7 +39,7 @@ const features: Feature[] = [
 
 export const Technology = () => {
   return (
-    <section id="technology" className="py-24 bg-surface/30 relative noise-overlay" aria-labelledby="tech-heading">
+    <section id="technology" className="section-y bg-surface/30 relative noise-overlay" aria-labelledby="tech-heading">
       <div className="container-custom relative z-10">
         <div className="flex flex-col lg:flex-row-reverse gap-16 items-center">
           <div className="lg:w-1/2">

@@ -46,7 +46,7 @@ export function Home() {
     <div className="home-page flex flex-col items-center overflow-hidden">
       <Hero />
 
-      <section className="relative w-full py-24" aria-labelledby="home-capabilities-heading">
+      <section className="relative w-full section-y" aria-labelledby="home-capabilities-heading">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" aria-hidden="true" />
         <Reveal width="100%">
           <div className="container-custom">
@@ -76,7 +76,7 @@ export function Home() {
         </Reveal>
       </section>
 
-      <section className="relative w-full py-24 bg-surface/20 noise-overlay" aria-labelledby="home-workflow-heading">
+      <section className="relative w-full section-y bg-surface/20 noise-overlay" aria-labelledby="home-workflow-heading">
         <Reveal width="100%">
           <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
@@ -118,7 +118,7 @@ export function Home() {
         <Technology />
       </React.Suspense>
 
-      <section className="w-full py-24 bg-surface/20" aria-labelledby="home-platform-heading">
+      <section className="w-full section-y bg-surface/20" aria-labelledby="home-platform-heading">
         <Reveal width="100%">
           <div className="container-custom">
             <div className="mb-14 max-w-3xl">
@@ -151,7 +151,7 @@ export function Home() {
         </Reveal>
       </section>
 
-      <section className="w-full py-24" aria-labelledby="home-industries-heading">
+      <section className="w-full section-y" aria-labelledby="home-industries-heading">
         <Reveal width="100%">
           <div className="container-custom grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
             <div>
@@ -174,7 +174,7 @@ export function Home() {
         </Reveal>
       </section>
 
-      <section className="w-full py-24" aria-labelledby="home-research-heading">
+      <section className="w-full section-y" aria-labelledby="home-research-heading">
         <Reveal width="100%">
           <div className="container-custom">
             <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -215,7 +215,7 @@ export function Home() {
         </Reveal>
       </section>
 
-      <section className="w-full py-24 bg-surface/20" aria-labelledby="home-services-heading">
+      <section className="w-full section-y bg-surface/20" aria-labelledby="home-services-heading">
         <Reveal width="100%">
           <div className="container-custom">
             <div className="mb-14 max-w-3xl">
@@ -252,7 +252,7 @@ export function Home() {
 
       <FAQ />
 
-      <section className="w-full px-6 py-24" aria-labelledby="home-cta-heading">
+      <section className="w-full px-6 section-y" aria-labelledby="home-cta-heading">
         <Reveal width="100%">
           <div className="container-custom">
             <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-600/20 via-bg to-sky-500/10 p-8 md:p-14">

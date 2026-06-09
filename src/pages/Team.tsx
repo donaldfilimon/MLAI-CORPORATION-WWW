@@ -45,7 +45,7 @@ export const Team = () => {
   return (
     <section
       id="team"
-      className="py-24 bg-surface/20 relative noise-overlay"
+      className="section-y bg-surface/20 relative noise-overlay"
       aria-labelledby="team-heading"
     >
       <div className="container-custom relative z-10">

@@ -36,7 +36,7 @@ export const Services = () => {
   return (
     <section
       id="services"
-      className="py-24 relative overflow-hidden font-sans"
+      className="section-y relative overflow-hidden font-sans"
       aria-labelledby="services-heading"
     >
       <div className="container-custom">

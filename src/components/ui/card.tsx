@@ -18,7 +18,7 @@ function Card({
       data-variant={variant}
       className={cn(
         "group/card flex min-w-0 flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
-        variant === "glass" && "bg-surface/30 backdrop-blur-xl border-white/5 shadow-2xl hover:bg-surface/40 transition-all duration-500",
+        variant === "glass" && "bg-surface/30 ring-0 border border-white/[0.06] backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.2),inset_0_1px_0_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:bg-surface/40 hover:border-indigo-400/20 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_0_rgba(0,0,0,0.32),inset_0_1px_0_0_rgba(255,255,255,0.09)]",
         className
       )}
       {...props}

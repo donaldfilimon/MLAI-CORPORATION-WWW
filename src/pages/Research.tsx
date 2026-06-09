@@ -14,7 +14,7 @@ export const Research = () => {
   return (
     <section
       id="research"
-      className="min-h-screen py-24 bg-bg relative overflow-hidden font-sans"
+      className="min-h-screen section-y bg-bg relative overflow-hidden font-sans"
       aria-labelledby="research-heading"
     >
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/10 to-transparent -z-10" />

@@ -22,7 +22,7 @@ export const About = () => {
   return (
     <section
       id="about"
-      className="py-24 bg-surface/50 relative overflow-hidden noise-overlay"
+      className="section-y bg-surface/50 relative overflow-hidden noise-overlay"
       aria-labelledby="about-heading"
     >
       <div className="container-custom relative z-10">

@@ -85,6 +85,11 @@
     @apply mx-auto max-w-[68ch];
   }
 
+  /* Formalized vertical rhythm for primary sections (modular spacing scale) */
+  .section-y {
+    @apply py-20 md:py-24 lg:py-28;
+  }
+
   .min-w-0-container {
     @apply min-w-0;
   }
@@ -98,7 +103,7 @@
   }
 
   .section-title {
-    @apply text-h3 sm:text-h2 md:text-h1 font-display font-bold tracking-tight mb-6 text-balance text-white leading-tight;
+    @apply text-h3 sm:text-h2 md:text-h1 font-display font-bold tracking-tight mb-6 text-balance text-white leading-[1.08] [text-wrap:balance];
   }
 
   .section-subtitle {
@@ -112,7 +117,11 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-2xl);
     padding: 2rem;
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    /* Depth = drop shadow + a 1px top-edge highlight that reads as light
+       catching the glass rim (premium glassmorphism). */
+    box-shadow:
+      0 4px 16px 0 rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.055);
     transition:
       border-color 0.28s ease-out,
       background 0.28s ease-out,
@@ -122,9 +131,12 @@
 
   .glass-card:hover {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-    border-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3);
+    border-color: rgba(129, 140, 248, 0.18);
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 32px 0 rgba(0, 0, 0, 0.32),
+      0 0 0 1px rgba(129, 140, 248, 0.06),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
   }
 
   .section-divider {

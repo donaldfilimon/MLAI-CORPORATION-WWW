@@ -115,7 +115,7 @@ export const Stats = () => {
   return (
     <section
       id="impact"
-      className="py-24 bg-surface/20 relative"
+      className="section-y bg-surface/20 relative"
       aria-labelledby="stats-heading"
     >
       <div className="container-custom">

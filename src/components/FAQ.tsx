@@ -11,7 +11,7 @@ export const FAQ = () => {
   return (
     <section
       id="faq"
-      className="py-24 bg-bg relative"
+      className="section-y bg-bg relative"
       aria-labelledby="faq-heading"
     >
       <div className="container-custom">

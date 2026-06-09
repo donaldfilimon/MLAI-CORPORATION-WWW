@@ -10,7 +10,7 @@ export const ContactCTA = ({
   onOpenInquiry: () => void;
 }) => {
   return (
-    <section id="contact" className="py-24 relative overflow-hidden">
+    <section id="contact" className="section-y relative overflow-hidden">
       <div className="bg-orb w-[800px] h-[800px] bg-indigo-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
       <div className="container-custom relative z-10">
