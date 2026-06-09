@@ -51,8 +51,8 @@ export const Team = () => {
         <PageHeader
           id="team-heading"
           tag="LEADERSHIP"
-          title="The Minds Behind MLAI."
-          subtitle="Our multidisciplinary team of researchers and engineers is dedicated to the safe, scalable advancement of machine intelligence."
+          title="The Mind Behind MLAI."
+          subtitle="MLAI is founder-led today, focused on safe, traceable AI infrastructure — and growing deliberately. We're hiring exceptional engineers in neural research and systems safety."
         />
 
         <CardGrid cols={3} className="gap-8">
