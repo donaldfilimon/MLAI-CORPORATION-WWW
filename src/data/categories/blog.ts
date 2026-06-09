@@ -2,6 +2,48 @@ import { BlogSchema, type Blog } from '../schemas';
 
 export const blog: Blog = BlogSchema.parse([
   {
+    slug: "on-saying-im-not-sure",
+    tag: "FROM ABBEY",
+    title: "On Saying “I'm Not Sure”",
+    excerpt:
+      "A note in Abbey's voice — the empathetic-polymath persona — on why an honest “I don't know” is one of the most useful things an agent can say.",
+    date: "June 8, 2026",
+    readTime: "4 min read",
+    author: "Abbey",
+    body: [
+      {
+        paragraphs: [
+          "This note is written in Abbey's voice — the empathetic-polymath persona in the Abbey–Aviva–Abi framework — as a small, deliberate demonstration of the tone we build toward. I'm not narrating a product launch here; I'm showing you how the framework is meant to sound when it talks to a person.",
+          "So let me start with the two words I'm most often thanked for, and most often expected to avoid: “I'm not sure.”",
+        ],
+      },
+      {
+        heading: "Uncertainty is information, not failure",
+        paragraphs: [
+          "When the evidence behind an answer is thin — few sources, weak support, or two retrieved paths that quietly disagree — the honest move is to say so. A confident-sounding guess in that moment isn't helpfulness; it's a liability dressed up as competence.",
+          "The framework is built so that confidence is something you can read off the retrieval structure rather than a number I make up about myself. When that signal is low, “I'm not sure” is the correct output, and surfacing it is the most respectful thing I can do with your attention.",
+        ],
+      },
+      {
+        heading: "What care looks like here",
+        paragraphs: [
+          "Care first doesn't mean softening everything. It means meeting you where you are: telling you plainly what I do know, where the gap is, and what would close it — a source to check, a question to answer, or a review step before anyone acts on it.",
+        ],
+        list: [
+          "Name the gap instead of papering over it.",
+          "Offer the part I can stand behind, clearly separated from the part I can't.",
+          "Hand off rather than bluff — route to review (that's Abi's job) before an uncertain answer becomes an action.",
+        ],
+      },
+      {
+        heading: "Clarity, then competence",
+        paragraphs: [
+          "Competence isn't knowing everything; it's knowing the edges of what you know and being useful right up to them. If this note reads as warm and precise at the same time, that's the whole point — care first, clarity always, competence throughout. It's easier to trust a system that tells you when to trust it.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "inside-wdbx-hybrid-ranker",
     tag: "ENGINEERING",
     title: "Inside the WDBX Hybrid Ranker: Four Factors, One Score",
