@@ -60,21 +60,21 @@ const personas = [
   {
     name: "Aviva",
     role: "Expert",
-    accent: "#ff3366",
+    accent: "#d946ef",
     description:
       "Direct, creative, and exploratory. Generates plans and alternative approaches for idea generation.",
   },
   {
     name: "Abbey",
     role: "Polymath",
-    accent: "#00f2ff",
+    accent: "#38bdf8",
     description:
       "Analytical and supportive. Handles structured explanation and safety-oriented review of proposed work.",
   },
   {
     name: "Abi",
     role: "Moderator",
-    accent: "#00ff9d",
+    accent: "#818cf8",
     description:
       "Concise and action-oriented. Context- and policy-aware routing and execution once a plan clears review.",
   },
