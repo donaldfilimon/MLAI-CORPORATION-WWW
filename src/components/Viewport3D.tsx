@@ -102,7 +102,7 @@ export const Viewport3D = () => {
     <div className="group relative h-full w-full">
       <canvas ref={canvasRef} className="h-full w-full outline-none" />
       <div className="pointer-events-none absolute bottom-4 left-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-emerald-400/60">
+        <p className="text-[10px] font-mono uppercase tracking-widest text-indigo-400/60">
           LIVE ARCHITECTURE MAP
         </p>
       </div>

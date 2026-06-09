@@ -63,7 +63,7 @@ export const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `relative text-sm font-medium transition-colors ${isActive ? "text-white after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:bg-emerald-400/60" : "text-text-dim hover:text-white"}`
+                    `relative text-sm font-medium transition-colors ${isActive ? "text-white after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:bg-indigo-400/60" : "text-text-dim hover:text-white"}`
                   }
                 >
                   {item.label}
@@ -92,7 +92,7 @@ export const Navbar = () => {
                     variant="ghost"
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
-                    <User className="w-4 h-4 text-emerald-400" />
+                    <User className="w-4 h-4 text-indigo-400" />
                     <span className="text-xs font-medium text-text-dim max-w-[100px] truncate">
                       {user.email}
                     </span>
@@ -136,7 +136,7 @@ export const Navbar = () => {
             <Magnetic>
               <Button
                 onClick={openInquiry}
-                className="bg-white text-black hover:bg-emerald-50 transition-colors font-bold px-6"
+                className="bg-white text-black hover:bg-indigo-50 transition-colors font-bold px-6"
               >
                 Start Inquiry
               </Button>
@@ -172,7 +172,7 @@ export const Navbar = () => {
                     key={item.to}
                     to={item.to}
                     className={({ isActive }) =>
-                      `text-lg font-medium py-3 transition-colors ${isActive ? "text-emerald-400" : "text-white"}`
+                      `text-lg font-medium py-3 transition-colors ${isActive ? "text-indigo-400" : "text-white"}`
                     }
                   >
                     {item.label}

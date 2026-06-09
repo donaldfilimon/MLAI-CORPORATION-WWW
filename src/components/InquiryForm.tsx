@@ -151,7 +151,7 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
 
         {state.success ? (
           <div className="text-center py-6 space-y-6">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
               <CheckCircle2 className="h-8 w-8" />
             </div>
             <div className="space-y-2">
@@ -306,7 +306,7 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               Prefer direct contact? Email{" "}
               <a
                 href="mailto:partnerships@mlai-corp.com"
-                className="text-emerald-400 hover:text-white transition-colors"
+                className="text-indigo-400 hover:text-white transition-colors"
               >
                 partnerships@mlai-corp.com
               </a>

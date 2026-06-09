@@ -20,6 +20,8 @@ export const BlogSectionSchema = z.object({
   heading: z.string().optional(),
   paragraphs: z.array(z.string()).default([]),
   list: z.array(z.string()).optional(),
+  // Optional block (display-mode) LaTeX equations, rendered via KaTeX.
+  math: z.array(z.string()).optional(),
 });
 
 export const ServicesSchema = z.array(z.object({

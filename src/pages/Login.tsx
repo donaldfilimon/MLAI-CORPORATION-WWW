@@ -54,7 +54,7 @@ export function Login() {
                 className="flex items-center gap-3 rounded-2xl border border-white/5 bg-bg/40 p-4 text-xs text-text-dim font-mono"
               >
                 <Sparkles
-                  className="h-4 w-4 shrink-0 text-emerald-400"
+                  className="h-4 w-4 shrink-0 text-indigo-400"
                   aria-hidden="true"
                 />
                 {item}

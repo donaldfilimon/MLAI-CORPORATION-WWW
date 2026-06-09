@@ -66,7 +66,7 @@ export const Hero = () => {
     >
       {/* Background Orbs — react to mouse position */}
       <div
-        className="bg-orb w-[600px] h-[600px] bg-emerald-500/20 -top-20 -right-20 animate-float"
+        className="bg-orb w-[600px] h-[600px] bg-indigo-500/20 -top-20 -right-20 animate-float"
         style={{
           transform: `translate(${mouseOffset.x * 0.8}px, ${mouseOffset.y * 0.8}px)`,
           transition: "transform 0.3s ease-out",
@@ -81,7 +81,7 @@ export const Hero = () => {
         }}
       />
       <div
-        className="bg-orb w-[300px] h-[300px] bg-teal-400/5 top-1/3 left-1/4 animate-float"
+        className="bg-orb w-[300px] h-[300px] bg-sky-400/5 top-1/3 left-1/4 animate-float"
         style={{
           animationDelay: "-3s",
           transform: `translate(${mouseOffset.x * 1.2}px, ${mouseOffset.y * 1.2}px)`,
@@ -94,8 +94,8 @@ export const Hero = () => {
           <motion.div variants={stagger} initial="hidden" animate="visible">
             <motion.div variants={fadeUp} className="label-chip mb-8">
               <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
               </span>
               <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
               SAFETY-CRITICAL AI INFRASTRUCTURE
@@ -107,7 +107,7 @@ export const Hero = () => {
               className="text-5xl sm:text-6xl md:text-8xl font-display font-bold tracking-tight text-white mb-8 leading-[1.02] max-w-5xl"
             >
               Infrastructure for{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 animate-gradient">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-sky-300 to-indigo-500 animate-gradient">
                 resilient intelligence.
               </span>
             </motion.h1>
@@ -129,7 +129,7 @@ export const Hero = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-emerald-50"
+                  className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-indigo-50"
                 >
                   <Link to="/research">
                     Explore Our Research
@@ -150,7 +150,7 @@ export const Hero = () => {
                 >
                   <Link to="/benchmarks">
                     <div
-                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center transition-all group-hover:border-emerald-400/50 group-hover:bg-emerald-400/5"
+                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center transition-all group-hover:border-indigo-400/50 group-hover:bg-indigo-400/5"
                       aria-hidden="true"
                     >
                       <Play className="w-4 h-4 fill-current" />

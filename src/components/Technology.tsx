@@ -18,19 +18,19 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    icon: <Activity className="w-6 h-6 text-emerald-400" />,
+    icon: <Activity className="w-6 h-6 text-indigo-400" />,
     title: "Adaptive Context Windows",
     description: "Dynamic resource allocation ensures the model maintains focus on critical parameters without computational waste. Context windows scale from 4K to 128K tokens based on task complexity.",
     glossary: "DynaCon™ technology automatically adjusts the attention span of the neural engine based on the detected density of the information stream."
   },
   {
-    icon: <ShieldCheck className="w-6 h-6 text-emerald-400" />,
+    icon: <ShieldCheck className="w-6 h-6 text-indigo-400" />,
     title: "State-Lock Enforcement",
     description: "Hardware-level isolation of ethical guardrails ensures system integrity even under extreme research conditions. Immutable safety constraints cannot be overridden by inference.",
     glossary: "Hard-wired safety logic that operates at the circuit level, separate from the primary inference paths, preventing 'jailbreaking' at the physical layer."
   },
   {
-    icon: <GitBranch className="w-6 h-6 text-emerald-400" />,
+    icon: <GitBranch className="w-6 h-6 text-indigo-400" />,
     title: "Directed Backtrace Graph",
     description: "Every inference decision is logged as a node in a weighted directed graph. When uncertainty exceeds thresholds, the engine backtraces to the last high-confidence state and re-evaluates.",
     glossary: "A recursive verification algorithm that maps every token generation back to its weighted source parameters, ensuring verifiable logic paths."
@@ -63,13 +63,13 @@ export const Technology = () => {
                     transition={{ delay: i * 0.1 }}
                     className="flex gap-6 group"
                   >
-                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 transition-all">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all">
                       {feat.icon}
                     </div>
                     <div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <h4 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors cursor-help flex items-center gap-2">
+                          <h4 className="text-lg font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors cursor-help flex items-center gap-2">
                             {feat.title}
                             <Info className="w-3.5 h-3.5 opacity-30 group-hover:opacity-100 transition-opacity" />
                           </h4>
@@ -88,7 +88,7 @@ export const Technology = () => {
 
           <div className="lg:w-1/2 relative aspect-square">
             {/* Lightweight canvas rendering keeps this section fast on first load. */}
-            <div className="absolute inset-0 bg-emerald-500/5 rounded-[40px] border border-white/5 overflow-hidden">
+            <div className="absolute inset-0 bg-indigo-500/5 rounded-[40px] border border-white/5 overflow-hidden">
                <div className="absolute inset-0 bg-grid opacity-10" />
                <div className="absolute inset-0 flex items-center justify-center">
                   <Viewport3D />

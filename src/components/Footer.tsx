@@ -62,7 +62,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   WDBX Engine{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -71,7 +71,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   Multi-Persona Framework{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -80,7 +80,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/benchmarks"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   WDBX Benchmarks{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -89,7 +89,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   Publications{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -106,7 +106,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/docs"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   Documentation{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -115,7 +115,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/blog"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   Lab Notes{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -124,7 +124,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/console"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
                 >
                   Console{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -141,7 +141,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/about"
-                  className="hover:text-emerald-400 transition-colors"
+                  className="hover:text-indigo-400 transition-colors"
                 >
                   About Us
                 </Link>
@@ -149,7 +149,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/team"
-                  className="hover:text-emerald-400 transition-colors"
+                  className="hover:text-indigo-400 transition-colors"
                 >
                   Leadership
                 </Link>
@@ -157,7 +157,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-emerald-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-indigo-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Careers
                 </button>
@@ -165,7 +165,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-emerald-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-indigo-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Contact
                 </button>
@@ -173,7 +173,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-emerald-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-indigo-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Press Kit
                 </button>

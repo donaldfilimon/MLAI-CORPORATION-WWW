@@ -20,10 +20,10 @@ function TeamPhoto({ name, image }: { name: string; image: string }) {
     <div className="relative aspect-[3/4] overflow-hidden rounded-2xl mb-5">
       {failed ? (
         <div
-          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-500/25 to-teal-500/10"
+          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500/25 to-sky-500/10"
           aria-label={name}
         >
-          <span className="font-display text-4xl font-bold text-emerald-200/80">
+          <span className="font-display text-4xl font-bold text-indigo-200/80">
             {initials}
           </span>
         </div>
@@ -79,14 +79,14 @@ export const Team = () => {
                     <TeamPhoto name={member.name} image={member.image} />
                   )}
 
-                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors">
                     {member.slug ? (
                       <Link to={`/team/${member.slug}`}>{member.name}</Link>
                     ) : (
                       member.name
                     )}
                   </h3>
-                  <div className="text-emerald-400 font-mono text-[10px] uppercase tracking-[0.15em] mb-3">
+                  <div className="text-indigo-400 font-mono text-[10px] uppercase tracking-[0.15em] mb-3">
                     {member.role}
                   </div>
                   <p className="text-sm text-text-dim leading-relaxed">
@@ -95,7 +95,7 @@ export const Team = () => {
                   {member.slug && (
                     <Link
                       to={`/team/${member.slug}`}
-                      className="mt-4 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-white hover:text-emerald-400 transition-colors"
+                      className="mt-4 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-white hover:text-indigo-400 transition-colors"
                     >
                       Read profile
                       <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -115,10 +115,10 @@ export const Team = () => {
           >
             <Card
               variant="glass"
-              className="h-full border border-dashed border-emerald-500/20 bg-emerald-500/5 flex flex-col items-center justify-center p-12 text-center group hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all duration-500"
+              className="h-full border border-dashed border-indigo-500/20 bg-indigo-500/5 flex flex-col items-center justify-center p-12 text-center group hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-all duration-500"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                <Users className="w-8 h-8 text-emerald-400" />
+              <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                <Users className="w-8 h-8 text-indigo-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">
                 Join the Mission
@@ -132,7 +132,7 @@ export const Team = () => {
                 onClick={() =>
                   (window.location.href = "mailto:careers@mlai-corp.com")
                 }
-                className="text-xs font-mono uppercase tracking-[0.2em] text-emerald-400 hover:text-white transition-colors flex items-center gap-2"
+                className="text-xs font-mono uppercase tracking-[0.2em] text-indigo-400 hover:text-white transition-colors flex items-center gap-2"
               >
                 View Openings <ExternalLink className="w-3 h-3" />
               </Button>

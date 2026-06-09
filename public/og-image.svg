@@ -1,20 +1,20 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="canvas" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#08090C"/>
-      <stop offset="1" stop-color="#0B1210"/>
+      <stop stop-color="#0A0B12"/>
+      <stop offset="1" stop-color="#0B0D1A"/>
     </linearGradient>
     <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(980 120) rotate(130) scale(620)" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#10B981" stop-opacity="0.28"/>
-      <stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+      <stop stop-color="#6366F1" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#6366F1" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="mark" x1="96" y1="96" x2="208" y2="208" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#34D399"/>
-      <stop offset="1" stop-color="#0D9488"/>
+      <stop stop-color="#818CF8"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
     </linearGradient>
     <linearGradient id="accent" x1="96" y1="0" x2="760" y2="0" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#6EE7B7"/>
+      <stop offset="1" stop-color="#A5B4FC"/>
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#canvas)"/>
@@ -39,12 +39,12 @@
   <text x="96" y="512" font-family="Geist, system-ui, sans-serif" font-size="30" fill="#98A2B0">Private, traceable AI infrastructure for production teams.</text>
 
   <!-- chips -->
-  <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="17" letter-spacing="0.5" fill="#6EE7B7">
-    <rect x="96" y="546" width="262" height="44" rx="22" fill="#10B981" fill-opacity="0.08" stroke="#10B981" stroke-opacity="0.25"/>
+  <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="17" letter-spacing="0.5" fill="#A5B4FC">
+    <rect x="96" y="546" width="262" height="44" rx="22" fill="#6366F1" fill-opacity="0.08" stroke="#6366F1" stroke-opacity="0.25"/>
     <text x="122" y="574">TRACEABLE RETRIEVAL</text>
-    <rect x="374" y="546" width="190" height="44" rx="22" fill="#10B981" fill-opacity="0.08" stroke="#10B981" stroke-opacity="0.25"/>
+    <rect x="374" y="546" width="190" height="44" rx="22" fill="#6366F1" fill-opacity="0.08" stroke="#6366F1" stroke-opacity="0.25"/>
     <text x="400" y="574">AGENT SAFETY</text>
-    <rect x="580" y="546" width="222" height="44" rx="22" fill="#10B981" fill-opacity="0.08" stroke="#10B981" stroke-opacity="0.25"/>
+    <rect x="580" y="546" width="222" height="44" rx="22" fill="#6366F1" fill-opacity="0.08" stroke="#6366F1" stroke-opacity="0.25"/>
     <text x="606" y="574">PRIVATE RUNTIME</text>
   </g>
 </svg>

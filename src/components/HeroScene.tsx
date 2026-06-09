@@ -37,8 +37,8 @@ export const HeroScene = () => {
 
       const glow = context.createRadialGradient(0, 0, 0, 0, 0, radius * 2.8);
       glow.addColorStop(0, "rgba(45, 212, 191, 0.28)");
-      glow.addColorStop(0.4, "rgba(16, 185, 129, 0.12)");
-      glow.addColorStop(1, "rgba(16, 185, 129, 0)");
+      glow.addColorStop(0.4, "rgba(99, 102, 241, 0.12)");
+      glow.addColorStop(1, "rgba(99, 102, 241, 0)");
       context.fillStyle = glow;
       context.beginPath();
       context.arc(0, 0, radius * 2.8, 0, Math.PI * 2);

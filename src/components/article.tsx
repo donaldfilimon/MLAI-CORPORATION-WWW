@@ -3,11 +3,13 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button, Separator } from "@/components/ui";
+import { BlockMath } from "@/components/Math";
 
 export type ArticleSection = {
   heading?: string;
   paragraphs: string[];
   list?: string[];
+  math?: string[];
 };
 
 /** Renders a structured article body (heading + paragraphs + bullet list).
@@ -38,6 +40,13 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
               </p>
             ))}
           </div>
+          {section.math && section.math.length > 0 && (
+            <div className="mt-6 space-y-3">
+              {section.math.map((tex, m) => (
+                <BlockMath key={m} tex={tex} />
+              ))}
+            </div>
+          )}
           {section.list && (
             <ul className="mt-6 space-y-3">
               {section.list.map((item, l) => (
@@ -46,7 +55,7 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
                   className="flex gap-3 text-base text-text-dim leading-relaxed"
                 >
                   <span
-                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400"
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400"
                     aria-hidden="true"
                   />
                   <span>{item}</span>
@@ -77,14 +86,14 @@ export function ArticleNotFound({
   return (
     <div className="container-custom pt-32 pb-20 min-h-screen font-sans" role="main">
       <div className="mx-auto max-w-2xl text-center">
-        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-emerald-400 uppercase">
+        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-indigo-400 uppercase">
           {eyebrow}
         </span>
         <h1 className="mt-4 text-3xl font-display font-bold text-white">{title}</h1>
         {body && <p className="mt-4 text-text-dim">{body}</p>}
         <Link
           to={backTo}
-          className="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-emerald-400 transition-colors"
+          className="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-indigo-400 transition-colors"
         >
           <ArrowLeft className="w-3 h-3" /> {backLabel}
         </Link>
@@ -194,7 +203,7 @@ export function ArticleLayout({
               <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/50">
                 {next.label}
               </span>
-              <span className="mt-2 flex items-center justify-end gap-2 text-sm font-bold text-white group-hover:text-emerald-400 transition-colors leading-snug">
+              <span className="mt-2 flex items-center justify-end gap-2 text-sm font-bold text-white group-hover:text-indigo-400 transition-colors leading-snug">
                 {next.title}
                 <ArrowRight className="w-3 h-3 shrink-0 group-hover:translate-x-1 transition-transform" />
               </span>

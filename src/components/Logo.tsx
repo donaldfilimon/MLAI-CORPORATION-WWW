@@ -21,7 +21,7 @@ function Mark({ size = "md" }: { size?: "sm" | "md" }) {
   return (
     <span
       className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm shadow-emerald-500/15 ring-1 ring-white/10 transition-transform group-hover:scale-[1.03]",
+        "relative flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-sky-500 shadow-sm shadow-indigo-500/15 ring-1 ring-white/10 transition-transform group-hover:scale-[1.03]",
         box,
       )}
       aria-hidden="true"

@@ -23,7 +23,7 @@ export function LegalPage({
       >
         <div className="glass-card">
           <div className="flex items-center gap-4 mb-8 pb-6 border-b border-white/5">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
               {icon}
             </div>
             <div>

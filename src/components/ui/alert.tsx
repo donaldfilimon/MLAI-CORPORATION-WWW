@@ -12,7 +12,7 @@ const alertVariants = cva(
         destructive:
           "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/5",
         success:
-          "border-emerald-500/50 text-emerald-500 dark:border-emerald-500 [&>svg]:text-emerald-500 bg-emerald-500/5",
+          "border-indigo-500/50 text-indigo-500 dark:border-indigo-500 [&>svg]:text-indigo-500 bg-indigo-500/5",
         warning:
           "border-yellow-500/50 text-yellow-500 dark:border-yellow-500 [&>svg]:text-yellow-500 bg-yellow-500/5",
       },

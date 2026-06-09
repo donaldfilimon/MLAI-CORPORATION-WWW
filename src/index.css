@@ -8,12 +8,12 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  MLAI "Signal" brand system (2026 redesign).
-  Identity: emerald/jade PRIMARY + teal SECONDARY on a neutral near-black canvas,
-  with violet reserved as a rare "trace/provenance" accent. Replaces the prior
-  blue→cyan identity. Brand color is driven by the semantic OKLCH tokens in
+  MLAI "Signal" brand system (Indigo redesign).
+  Identity: indigo PRIMARY + sky/ice SECONDARY on a slate near-black canvas,
+  with fuchsia reserved as a rare "trace/provenance" accent. Replaces the prior
+  emerald→teal identity. Brand color is driven by the semantic OKLCH tokens in
   :root (re-exposed to Tailwind via `@theme inline`), so a palette change
-  propagates from here. Tailwind's `emerald`/`teal` utility ramps are the
+  propagates from here. Tailwind's `indigo`/`sky` utility ramps are the
   brand families used across components.
 */
 @theme {
@@ -21,12 +21,12 @@
   --font-display: "Outfit", "Geist Variable", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --color-bg: #08090c;
-  --color-surface: #111319;
-  --color-primary: #10b981;
-  --color-primary-hover: #059669;
-  --color-text: #fafafa;
-  --color-text-dim: #98a2b0;
+  --color-bg: #0a0b12;
+  --color-surface: #15161f;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-text: #f5f6fb;
+  --color-text-dim: #9aa0b8;
   --color-border: rgba(255, 255, 255, 0.08);
 
   /* Typography Modular Scale (Major Third 1.250) */
@@ -64,7 +64,7 @@
   }
 
   ::selection {
-    @apply bg-emerald-500/20;
+    @apply bg-indigo-500/20;
   }
   * {
     @apply border-border outline-ring/50;
@@ -90,7 +90,7 @@
   }
 
   .btn-primary {
-    @apply px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium transition-all duration-200 hover:bg-primary-hover hover:scale-[1.01] active:scale-[0.99] shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 focus-visible:ring-offset-4;
+    @apply px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium transition-all duration-200 hover:bg-primary-hover hover:scale-[1.01] active:scale-[0.99] shadow-md shadow-indigo-500/10 hover:shadow-indigo-500/20 focus-visible:ring-offset-4;
   }
 
   .btn-secondary {
@@ -133,7 +133,7 @@
 
   /* Subtle gradient label chip */
   .label-chip {
-    @apply inline-flex max-w-full items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/5 px-3.5 py-1.5 text-xs font-semibold text-emerald-300 tracking-wider uppercase;
+    @apply inline-flex max-w-full items-center gap-2 rounded-full border border-indigo-400/15 bg-indigo-400/5 px-3.5 py-1.5 text-xs font-semibold text-indigo-300 tracking-wider uppercase;
   }
 }
 
@@ -236,44 +236,44 @@
 }
 
 /*
-  Semantic tokens — "Signal" palette. Neutral near-black canvas (faint cool
-  undertone), emerald/jade primary, teal-leaning accent. All values OKLCH so
-  lightness/contrast is predictable; primary-foreground is intentionally dark
-  to keep ≥4.5:1 (WCAG AA) text contrast on the bright emerald primary.
+  Semantic tokens — Indigo palette. Slate near-black canvas (cool indigo
+  undertone), indigo primary, ice/slate-blue accent. All values OKLCH so
+  lightness/contrast is predictable; primary-foreground is light to keep
+  ≥4.5:1 (WCAG AA) text contrast on the mid-dark indigo primary.
 */
 :root {
-  --background: oklch(0.145 0.006 270);
-  --foreground: oklch(0.95 0.004 250);
-  --card: oklch(0.19 0.008 270 / 0.80);
-  --card-foreground: oklch(0.985 0.003 250);
-  --popover: oklch(0.17 0.009 270);
-  --popover-foreground: oklch(0.985 0.003 250);
-  --primary: oklch(0.8 0.155 166);
-  --primary-foreground: oklch(0.21 0.04 166);
-  --secondary: oklch(0.25 0.012 270);
-  --secondary-foreground: oklch(0.96 0.005 250);
-  --muted: oklch(0.25 0.012 270 / 0.80);
-  --muted-foreground: oklch(0.74 0.02 215);
-  --accent: oklch(0.3 0.05 192);
-  --accent-foreground: oklch(0.96 0.02 192);
+  --background: oklch(0.15 0.015 270);
+  --foreground: oklch(0.95 0.005 265);
+  --card: oklch(0.2 0.016 270 / 0.80);
+  --card-foreground: oklch(0.97 0.005 265);
+  --popover: oklch(0.18 0.016 270);
+  --popover-foreground: oklch(0.97 0.005 265);
+  --primary: oklch(0.58 0.18 270);
+  --primary-foreground: oklch(0.985 0.01 270);
+  --secondary: oklch(0.26 0.016 270);
+  --secondary-foreground: oklch(0.96 0.006 265);
+  --muted: oklch(0.26 0.016 270 / 0.80);
+  --muted-foreground: oklch(0.74 0.025 265);
+  --accent: oklch(0.33 0.05 258);
+  --accent-foreground: oklch(0.96 0.02 250);
   --destructive: oklch(0.68 0.21 25);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.8 0.155 166);
-  --chart-1: oklch(0.8 0.155 166);
-  --chart-2: oklch(0.78 0.12 200);
-  --chart-3: oklch(0.65 0.2 295);
+  --ring: oklch(0.58 0.18 270);
+  --chart-1: oklch(0.58 0.18 270);
+  --chart-2: oklch(0.72 0.13 235);
+  --chart-3: oklch(0.7 0.17 320);
   --chart-4: oklch(0.82 0.16 85);
-  --chart-5: oklch(0.72 0.15 230);
+  --chart-5: oklch(0.78 0.08 240);
   --radius: 0.7rem;
-  --sidebar: oklch(0.17 0.009 270);
-  --sidebar-foreground: oklch(0.985 0.003 250);
-  --sidebar-primary: oklch(0.8 0.155 166);
-  --sidebar-primary-foreground: oklch(0.21 0.04 166);
-  --sidebar-accent: oklch(0.25 0.012 270);
-  --sidebar-accent-foreground: oklch(0.96 0.005 250);
+  --sidebar: oklch(0.18 0.016 270);
+  --sidebar-foreground: oklch(0.97 0.005 265);
+  --sidebar-primary: oklch(0.58 0.18 270);
+  --sidebar-primary-foreground: oklch(0.985 0.01 270);
+  --sidebar-accent: oklch(0.26 0.016 270);
+  --sidebar-accent-foreground: oklch(0.96 0.006 265);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.8 0.155 166);
+  --sidebar-ring: oklch(0.58 0.18 270);
 }
 
 .dark {

@@ -212,7 +212,7 @@ export function Console() {
           <div className="grid gap-4">
             <Card variant="glass" className="flex flex-col justify-between">
               <CardHeader>
-                <ShieldCheck className="mb-4 h-8 w-8 text-emerald-400" />
+                <ShieldCheck className="mb-4 h-8 w-8 text-indigo-400" />
                 <CardTitle>Session</CardTitle>
                 <CardDescription>Signed in via WorkOS AuthKit.</CardDescription>
               </CardHeader>
@@ -228,7 +228,7 @@ export function Console() {
 
             <Card variant="glass" className="flex flex-col justify-between">
               <CardHeader>
-                <Terminal className="mb-4 h-8 w-8 text-emerald-400" />
+                <Terminal className="mb-4 h-8 w-8 text-indigo-400" />
                 <CardTitle>LLM API</CardTitle>
                 <CardDescription>Server-side provider status.</CardDescription>
               </CardHeader>
@@ -252,8 +252,8 @@ export function Console() {
           >
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10">
-                  <Bot className="h-6 w-6 text-emerald-400" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
+                  <Bot className="h-6 w-6 text-indigo-400" />
                 </div>
                 <CardTitle className="text-xl">MLAI API Test</CardTitle>
                 <CardDescription>
@@ -303,7 +303,7 @@ export function Console() {
               {reply && (
                 <div className="mt-6 rounded-2xl border border-white/5 bg-bg/50 p-5 relative group">
                   <div className="flex justify-between items-center mb-3">
-                    <div className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-400">
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-indigo-400">
                       Response
                     </div>
                     <Button
@@ -314,7 +314,7 @@ export function Console() {
                       aria-label="Copy response"
                     >
                       {copied ? (
-                        <Check className="h-3 w-3 text-emerald-400" />
+                        <Check className="h-3 w-3 text-indigo-400" />
                       ) : (
                         <Copy className="h-3 w-3" />
                       )}
@@ -386,7 +386,7 @@ export function Console() {
                             {inq.company}
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-mono uppercase">
+                            <span className="inline-block px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-mono uppercase">
                               {inq.project_type}
                             </span>
                           </td>

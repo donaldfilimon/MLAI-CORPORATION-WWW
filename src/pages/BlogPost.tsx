@@ -30,7 +30,7 @@ export function BlogPost() {
       backLabel="Lab Notes"
       headingId="post-heading"
       tag={
-        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-emerald-400 uppercase">
+        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-indigo-400 uppercase">
           {post.tag}
         </span>
       }

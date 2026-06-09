@@ -17,7 +17,7 @@ export const Research = () => {
       className="min-h-screen py-24 bg-bg relative overflow-hidden font-sans"
       aria-labelledby="research-heading"
     >
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-emerald-900/10 to-transparent -z-10" />
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/10 to-transparent -z-10" />
       <div className="container-custom">
         <PageHeader
           id="research-heading"
@@ -29,7 +29,7 @@ export const Research = () => {
         <CardGrid cols={3} className="mb-16">
           {content.research.tracks.map((track, index) => (
             <Card key={track.name} variant="glass" className="p-6">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-500/10 text-indigo-300">
                 {index === 0 ? (
                   <GitBranch className="h-5 w-5" />
                 ) : index === 1 ? (
@@ -67,7 +67,7 @@ export const Research = () => {
                 <Link to={`/research/${item.slug}`} className="block">
                   <Card
                     variant="glass"
-                    className="group flex flex-col justify-between hover:border-emerald-500/20 transition-all duration-300 p-0 overflow-hidden"
+                    className="group flex flex-col justify-between hover:border-indigo-500/20 transition-all duration-300 p-0 overflow-hidden"
                   >
                     <CardContent className="p-8">
                       <div className="flex items-center gap-4 mb-4">
@@ -84,7 +84,7 @@ export const Research = () => {
                           {item.date}
                         </span>
                       </div>
-                      <h3 className="text-2xl font-display font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight mb-4">
+                      <h3 className="text-2xl font-display font-bold text-white group-hover:text-indigo-400 transition-colors leading-tight mb-4">
                         {item.title}
                       </h3>
                       <p className="text-sm md:text-base text-text-dim leading-relaxed mb-6">
@@ -95,7 +95,7 @@ export const Research = () => {
                       <span className="text-xs font-mono text-text-dim/40 uppercase tracking-widest">
                         {item.readTime}
                       </span>
-                      <span className="text-white group-hover:text-emerald-400 font-bold uppercase tracking-widest text-xs gap-2 inline-flex items-center transition-all">
+                      <span className="text-white group-hover:text-indigo-400 font-bold uppercase tracking-widest text-xs gap-2 inline-flex items-center transition-all">
                         Read Paper{" "}
                         <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                       </span>

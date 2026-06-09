@@ -11,20 +11,20 @@ export const ContactCTA = ({
 }) => {
   return (
     <section id="contact" className="py-24 relative overflow-hidden">
-      <div className="bg-orb w-[800px] h-[800px] bg-emerald-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+      <div className="bg-orb w-[800px] h-[800px] bg-indigo-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
       <div className="container-custom relative z-10">
-        <Card className="max-w-5xl mx-auto p-12 md:p-20 text-center border-emerald-500/10 relative overflow-hidden bg-surface/50">
+        <Card className="max-w-5xl mx-auto p-12 md:p-20 text-center border-indigo-500/10 relative overflow-hidden bg-surface/50">
           {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-emerald-500/20">
-              <MessageSquare className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-sky-500/10 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-indigo-500/20">
+              <MessageSquare className="w-8 h-8 text-indigo-400" />
             </div>
             <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 leading-tight">
               Ready to evolve your <br />

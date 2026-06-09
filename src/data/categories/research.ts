@@ -17,6 +17,139 @@ export const research: Research = ResearchSchema.parse({
   ],
   publications: [
     {
+      slug: "wdbx-weighted-backtrace-memory-store",
+      tag: "CORE ARCHITECTURE",
+      title: "WDBX: A Weighted-Backtrace Memory Store for Traceable Retrieval",
+      date: "JUNE 2026",
+      abstract: "The formal data model and scoring math behind WDBX — hierarchical vector search, temporal–causal reranking, authority-weighted records, and a hash-chained audit log — as implemented in the ABI runtime.",
+      readTime: "14 min read",
+      authors: "MLAI Research · WDBX Core",
+      body: [
+        {
+          paragraphs: [
+            "WDBX is the durable memory store underneath the ABI runtime. It is designed so that retrieval is not a black box: every record carries provenance, every ranking decision decomposes into named factors, and every write lands in a hash-chained log that can be re-verified later. This note states the model and the scoring math precisely, so the behaviour of the store can be reasoned about rather than inferred from outputs.",
+            "The formalism below mirrors the reference implementation. Where the design names a target it is labelled as such; none of the equations encode measured benchmark results."
+          ]
+        },
+        {
+          heading: "Records and authority",
+          paragraphs: [
+            "A memory record is a tuple of an embedding, a kind (note, constraint, decision, contradiction, …), a source authority, and bookkeeping for supersession. Authority is the trust the store assigns a record by the reliability of its source — an inferred guess is not treated like a system-pinned fact:"
+          ],
+          math: [
+            "\\mathrm{trust}(a) = \\begin{cases} 0.30 & a = \\textsf{inferred} \\\\ 0.78 & a = \\textsf{user\\_stated} \\\\ 0.86 & a = \\textsf{tool\\_verified} \\\\ 0.90 & a = \\textsf{file\\_verified} \\\\ 1.00 & a = \\textsf{system\\_pinned} \\end{cases}"
+          ]
+        },
+        {
+          heading: "Semantic search",
+          paragraphs: [
+            "Records are indexed in a hierarchical navigable small-world (HNSW) graph and retrieved by cosine similarity between the query embedding q and each candidate v_j. The store keeps a SIMD path and a deterministic CPU fallback that compute the same quantity:"
+          ],
+          math: [
+            "\\sigma_j \\;=\\; \\cos(q, v_j) \\;=\\; \\frac{\\langle q, v_j\\rangle}{\\lVert q\\rVert\\,\\lVert v_j\\rVert} \\;=\\; \\frac{\\sum_{d} q_d\\, v_{j,d}}{\\sqrt{\\sum_d q_d^2}\\,\\sqrt{\\sum_d v_{j,d}^2}}"
+          ]
+        },
+        {
+          heading: "Temporal–causal reranking",
+          paragraphs: [
+            "Semantic similarity alone ignores recency and relatedness. WDBX reranks candidates with an exponential recency decay (half-life t½) and a causal-hop weight that decays with graph distance h_j from the query focus but never falls below a floor, so unrelated records are down-weighted rather than erased:"
+          ],
+          math: [
+            "\\tau_j \\;=\\; \\max\\!\\Big(0,\\ \\min\\!\\big(1,\\ 2^{-(t_0 - t_j)/t_{1/2}}\\big)\\Big)",
+            "\\gamma_j \\;=\\; \\max\\!\\big(c_{\\mathrm{floor}},\\ c_{\\mathrm{decay}}^{\\,h_j}\\big), \\qquad c_{\\mathrm{decay}} = 0.6,\\ \\ c_{\\mathrm{floor}} = 0.25"
+          ]
+        },
+        {
+          heading: "The hybrid score",
+          paragraphs: [
+            "The final rank of candidate j with respect to query focus i is the product of four bounded factors — semantic, temporal, causal, and a persona weight π_j supplied by the router. Because each factor lies in [0,1], the product is well-behaved and every contribution is individually inspectable:"
+          ],
+          math: [
+            "s_{ij} \\;=\\; \\sigma_j \\,\\cdot\\, \\tau_j \\,\\cdot\\, \\gamma_j \\,\\cdot\\, \\pi_j, \\qquad \\sigma_j,\\tau_j,\\gamma_j,\\pi_j \\in [0,1]"
+          ],
+          list: [
+            "Provenance falls out of the structure: the factors that produced a rank are stored with it, so a result can be explained after the fact.",
+            "Confidence is a property of the same factors — low semantic support or contradictory causal paths show up as low s, not as a separate self-reported number."
+          ]
+        },
+        {
+          heading: "A hash-chained audit log",
+          paragraphs: [
+            "Conversation events are appended as blocks, each hashing the previous block together with its own timestamp, sequence number, persona label, and metadata. Any later mutation of the chain's contents invalidates every subsequent hash, so the log is verifiable without a trusted third party:"
+          ],
+          math: [
+            "H_i \\;=\\; \\mathrm{SHA256}\\big(H_{i-1} \\,\\Vert\\, t_i \\,\\Vert\\, \\mathrm{seq}_i \\,\\Vert\\, p_i \\,\\Vert\\, m_i\\big), \\qquad H_0 = \\mathbf{0}"
+          ]
+        },
+        {
+          heading: "What the model buys you",
+          paragraphs: [
+            "Stating retrieval this way turns three operational questions — why was this returned, how confident should we be, and what depended on a record we now distrust — into reads over a stored structure rather than guesses about a ranked list. That is the property the rest of the ABI runtime is built to exploit."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "sparse-evidence-attention-context-assembly",
+      tag: "RESEARCH",
+      title: "Sparse Evidence Attention for Bounded Context Assembly",
+      date: "JUNE 2026",
+      abstract: "SEA selects which durable records enter a context pack by scoring each candidate across eight independent criteria, then packing greedily under a hard token budget and a diversity constraint. The full scoring and selection math, as implemented.",
+      readTime: "13 min read",
+      authors: "MLAI Research · Abbey",
+      body: [
+        {
+          paragraphs: [
+            "Long-context models do not remove the need to choose what goes in the context — they raise the cost of choosing badly. Sparse Evidence Attention (SEA) is the selection layer that decides which durable WDBX records become part of a context pack. It scores each candidate across eight independent criteria, combines them under a fixed weight vector, and then packs greedily under a hard token budget with a per-cluster diversity cap.",
+            "The criteria are deliberately heterogeneous so they fail differently: a semantically perfect but stale record, or a high-authority but off-task one, is caught by a criterion other than the one that ranked it highly."
+          ]
+        },
+        {
+          heading: "Eight criteria",
+          paragraphs: [
+            "Each candidate c (a record evaluated against query q and task context) receives eight scores. Two representative ones: keyword overlap is the fraction of query terms present in the record, and recency decays smoothly with the record's age in days:"
+          ],
+          math: [
+            "s_{\\mathrm{kw}}(q, c) \\;=\\; \\frac{\\big|\\,\\mathrm{terms}(q) \\cap \\mathrm{terms}(c)\\,\\big|}{\\big|\\,\\mathrm{terms}(q)\\,\\big|}",
+            "s_{\\mathrm{rec}}(c) \\;=\\; \\frac{1}{1 + \\mathrm{age}_{\\mathrm{days}}(c)/30}"
+          ],
+          list: [
+            "Semantic, keyword, and metadata fit; recency and source authority; graph connectivity; an explicit contradiction flag; and task-fit against the inferred task type.",
+            "Authority reuses the WDBX trust scale; contradiction is a hard signal so conflicting records can be surfaced rather than buried."
+          ]
+        },
+        {
+          heading: "Weighted combination",
+          paragraphs: [
+            "The criteria combine into a single score by a fixed weight vector w over the eight dimensions, clamped to the unit interval. The default weights put most mass on semantic similarity but never let a single criterion dominate:"
+          ],
+          math: [
+            "\\mathrm{score}(c) \\;=\\; \\mathrm{clamp}_{[0,1]}\\!\\Big(\\textstyle\\sum_{i \\in \\mathcal{D}} w_i\\, s_i(c)\\Big), \\quad \\mathcal{D} = \\{s,k,m,r,a,g,c,t\\}",
+            "w \\;=\\; (0.30,\\ 0.15,\\ 0.15,\\ 0.10,\\ 0.10,\\ 0.10,\\ 0.05,\\ 0.05)"
+          ]
+        },
+        {
+          heading: "Selection under budget",
+          paragraphs: [
+            "Candidates are sorted by score and admitted greedily. A candidate is rejected if its cluster already holds enough high-scoring members (unless its own score clears a high bar), if the record cap is reached, or if admitting it would exceed the token budget B. Token cost is estimated from length:"
+          ],
+          math: [
+            "\\mathrm{tok}(x) \\;=\\; \\max\\!\\big(1,\\ \\lceil |x| / 4 \\rceil\\big), \\qquad \\sum_{c \\in S} \\mathrm{tok}(c) \\;\\le\\; B"
+          ],
+          list: [
+            "The token budget is a hard constraint, not a soft preference — the pack never overflows the window it is built for.",
+            "The per-cluster cap enforces evidence diversity, so the pack is not eight paraphrases of the same record."
+          ]
+        },
+        {
+          heading: "Why sparsity is the point",
+          paragraphs: [
+            "SEA returns not just the selected set but the rejected set and the reason each candidate was dropped. That makes context assembly auditable: an operator can see why a record that 'should' have been included was not — budget, diversity, or score — which is exactly the kind of decision that is invisible in a naive top-k stuffing approach."
+          ]
+        }
+      ]
+    },
+    {
       slug: "wdbx-graph-weights-traceable-retrieval",
       tag: "CORE ARCHITECTURE",
       title: "WDBX Graph Weights for Traceable Neural Retrieval",
@@ -87,6 +220,11 @@ export const research: Research = ResearchSchema.parse({
           paragraphs: [
             "A tool is not simply available to an agent; it is bound to a permission, an approval threshold, and a review role before execution can reach production data. Routing between profiles is deterministic and weight-based rather than a hidden model call, which means the choice of role is itself an inspectable trace event. An operator can see not just what the system did, but which profile decided to do it and under which policy.",
             "The connector layer enforces the boundary at the edge: Discord credentials are validated for printable non-whitespace content and snowflake-like IDs; Twilio payloads are checked for account/token shape, transport, and escaping before any live dispatch. A policy lock that the connector does not enforce is a suggestion, not a control."
+          ],
+          math: [
+            "w^{(0)} = (w_{\\text{Abbey}},\\ w_{\\text{Aviva}},\\ w_{\\text{Abi}}) = (0.45,\\ 0.35,\\ 0.20)",
+            "w'_i = \\frac{\\max(0,\\ w_i)}{\\sum_j \\max(0,\\ w_j)}, \\qquad \\mathrm{primary} = \\arg\\max_i\\, w'_i",
+            "\\mathrm{strategy} = \\begin{cases} \\textsf{single} & w'_{\\max} > 0.90 \\\\ \\textsf{parallel} & 0.50 \\le w'_{\\max} \\le 0.90 \\\\ \\textsf{consensus} & w'_{\\max} < 0.50 \\end{cases}"
           ]
         },
         {
@@ -127,6 +265,10 @@ export const research: Research = ResearchSchema.parse({
             "Model calls — the largest and most variable line item; budgeted with explicit timeouts and degradation paths rather than open-ended waits.",
             "Safety checks — gated and parallelized where possible so review cost does not serialize behind the model.",
             "UI feedback — budgeted first, because perceived latency is a product surface: progressive disclosure and streamed feedback buy real headroom for the stages behind them."
+          ],
+          math: [
+            "L_{\\mathrm{total}} = L_{\\mathrm{api}} + L_{\\mathrm{model}} + L_{\\mathrm{db}} + L_{\\mathrm{moderation}}",
+            "T = \\frac{C \\cdot N_{\\mathrm{shards}} \\cdot N_{\\mathrm{gpu}}}{L_{\\mathrm{total}}}"
           ]
         },
         {
@@ -161,6 +303,9 @@ export const research: Research = ResearchSchema.parse({
             "Graph distance — how far the supporting evidence sits from the query along the backtrace path; distant support is weaker support.",
             "Contradiction checks — whether competing paths in the graph disagree, which should lower confidence even when coverage is high.",
             "Model uncertainty — the model's own signal, used as one input among four rather than the verdict."
+          ],
+          math: [
+            "\\kappa(a) = \\mathrm{clamp}_{[0,1]}\\!\\Big(\\textstyle\\sum_{k=1}^{4} \\lambda_k\\, \\phi_k(a)\\Big), \\qquad \\textstyle\\sum_{k} \\lambda_k = 1"
           ]
         },
         {
