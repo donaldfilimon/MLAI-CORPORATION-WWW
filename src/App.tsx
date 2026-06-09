@@ -68,7 +68,7 @@ function App() {
           "@type": "Organization",
           name: "MLAI Corporation",
           url: "https://mlai-corp.com",
-          logo: "https://mlai-corp.com/logo.png",
+          logo: "https://mlai-corp.com/logo.svg",
           description:
             "Leading AI and ML research lab providing high-integrity frameworks for neural AI orchestration.",
           address: {

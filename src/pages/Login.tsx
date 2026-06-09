@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
 import { useAuth } from "@/lib/auth";
 
 export function Login() {
@@ -65,12 +66,7 @@ export function Login() {
         <div className="glass-card flex flex-col justify-between">
           <div className="text-center pb-2">
             <div className="flex justify-center mb-6">
-              <Link
-                to="/"
-                className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl font-display font-black text-white text-xl shadow-lg"
-              >
-                M
-              </Link>
+              <Logo withWordmark={false} />
             </div>
             <h2 className="text-2xl font-display font-bold text-white mb-2">
               {mode === "signup"

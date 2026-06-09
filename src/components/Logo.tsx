@@ -27,23 +27,25 @@ function Mark({ size = "md" }: { size?: "sm" | "md" }) {
       aria-hidden="true"
     >
       <svg
-        viewBox="0 0 24 24"
+        viewBox="0 0 32 32"
         fill="none"
-        className={size === "sm" ? "h-4 w-4" : "h-5 w-5"}
+        className={size === "sm" ? "h-[18px] w-[18px]" : "h-[22px] w-[22px]"}
+        aria-hidden="true"
       >
-        {/* weighted backtrace edges */}
+        {/* M-shaped weighted directed backtrace (the WDBX mark) */}
         <path
-          d="M6.5 16.5 L12 7.5 L17.5 13.5"
+          d="M8 23 L8 10 L16 16 L24 10 L24 23"
           stroke="white"
-          strokeWidth="1.6"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
           opacity="0.95"
         />
-        {/* nodes */}
-        <circle cx="6.5" cy="16.5" r="2.1" fill="white" />
-        <circle cx="12" cy="7.5" r="2.1" fill="white" />
-        <circle cx="17.5" cy="13.5" r="2.1" fill="white" opacity="0.85" />
+        <circle cx="8" cy="23" r="2.7" fill="white" />
+        <circle cx="8" cy="10" r="2.3" fill="white" />
+        <circle cx="16" cy="16" r="2" fill="white" />
+        <circle cx="24" cy="10" r="2.3" fill="white" />
+        <circle cx="24" cy="23" r="2.7" fill="white" opacity="0.92" />
       </svg>
     </span>
   );
