@@ -1,6 +1,6 @@
-import { TeamSchema, type Team } from '../schemas';
+import type { Team } from '../schemas';
 
-export const team: Team = TeamSchema.parse([
+export const team: Team = ([
   {
     name: "Donald Filimon",
     role: "Founder & Systems Architect",

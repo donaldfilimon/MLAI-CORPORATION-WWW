@@ -1,6 +1,6 @@
-import { IndustriesSchema, type Industries } from '../schemas';
+import type { Industries } from '../schemas';
 
-export const industries: Industries = IndustriesSchema.parse([
+export const industries: Industries = ([
   "Regulated software teams shipping AI copilots into customer workflows.",
   "Research organizations that need private retrieval over sensitive technical corpora.",
   "Security and compliance teams evaluating tool-using autonomous agents.",

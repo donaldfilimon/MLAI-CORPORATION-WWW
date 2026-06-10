@@ -1,6 +1,6 @@
-import { PlatformSchema, type Platform } from '../schemas';
+import type { Platform } from '../schemas';
 
-export const platform: Platform = PlatformSchema.parse([
+export const platform: Platform = ([
   {
     title: "Trace Layer",
     description: "Captures retrieval paths, policy checks, model decisions, tool calls, and operator interventions as inspectable events.",

@@ -1,6 +1,6 @@
-import { AboutSchema, type About } from '../schemas';
+import type { About } from '../schemas';
 
-export const about: About = AboutSchema.parse({
+export const about: About = ({
   values: [
     {
       title: "Safety Before Scale",

@@ -1,6 +1,6 @@
-import { ServicesSchema, type Services } from '../schemas';
+import type { Services } from '../schemas';
 
-export const services: Services = ServicesSchema.parse([
+export const services: Services = ([
   {
     title: "Autonomy Readiness Audit",
     description: "Map workflows, prompt surfaces, data paths, and approval gates to determine which tasks are safe to automate and which need human review.",

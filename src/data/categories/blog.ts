@@ -1,6 +1,72 @@
-import { BlogSchema, type Blog } from '../schemas';
+import type { Blog } from '../schemas';
 
-export const blog: Blog = BlogSchema.parse([
+export const blog: Blog = ([
+  {
+    slug: "wdbx-v2-release",
+    tag: "RELEASE",
+    title: "WDBX V2: Observable Memory, Multimodal Inputs, and Research Alignment",
+    excerpt:
+      "The second iteration of the WDBX runtime ships an observable pipeline: block-chain memory with temporal queries, multimodal input fusion, an async neural job queue, and a research-alignment telemetry layer that scores every turn against the constitution.",
+    date: "June 9, 2026",
+    readTime: "7 min read",
+    author: "MLAI Research",
+    body: [
+      {
+        paragraphs: [
+          "WDBX V2 is the second iteration of the Abbey/WDBX runtime — the Rust implementation of the durable memory substrate underneath the three personas. The headline is not a benchmark; it is observability: V2 makes the pipeline inspectable end to end, from guardrails through routing, retrieval, generation, constitutional validation, and the memory write, with telemetry attached at every stage.",
+          "Everything described below is shipped, inspectable code in the wdbx repository. Where a capability is scaffolding or design rather than a finished subsystem, it is labeled that way — the same discipline the rest of this site follows. The full Markdown documentation set is mirrored under /docs (see the WDBX V2 section), including an explicit limitations page.",
+        ],
+      },
+      {
+        heading: "Block-chain memory with temporal queries",
+        paragraphs: [
+          "Every memory write lands in an append-only chain: each block carries its parent hash (SHA-256), a timestamp, and record metadata, with MVCC-style versioning on top. verify_chain() re-validates integrity at any point, and get_version(block_id, at_timestamp) retrieves a block's state at a past moment — point-in-time recovery for an AI's memory, not just for a database.",
+          "This is the substrate that makes backtrace debugging possible: when a model drifts mid-session, the chain holds an immutable timeline of what the system believed and when it believed it.",
+        ],
+      },
+      {
+        heading: "Multimodal input fusion",
+        paragraphs: [
+          "V2 routes non-text inputs through dedicated processors — vision, audio, and IoT telemetry — that each produce embeddings compatible with WDBX retrieval, so a sensor reading and a sentence can land in the same memory space. Text bypasses fusion and goes through guardrails directly.",
+          "Honest framing: the current processors use deterministic projections as the embedding stage — prototype scaffolding that establishes the fusion pipeline's shape. Swapping in learned encoders is the designed next step, not a shipped one.",
+        ],
+      },
+      {
+        heading: "An async neural path and scaling hooks",
+        paragraphs: [
+          "Teaching and optimization no longer block the conversational turn: V2 introduces a neural job queue (teach and optimize jobs over a channel to a dedicated worker), so the pipeline sends work instead of waiting on it. The shard router exposes dynamic vnode scaling hooks driven by observed latency — designed so capacity reacts to measured pressure rather than configuration guesses.",
+          "The stress targets for this design are stated in the spec and are exactly that — targets, published before the numbers, not after.",
+        ],
+      },
+      {
+        heading: "Research alignment, scored every turn",
+        paragraphs: [
+          "The V2 telemetry layer reports an ethical-compliance score alongside operational metrics on every pipeline turn, decomposed across four named principles:",
+        ],
+        math: [
+          "S_{align} = \\alpha \\cdot \\mathrm{Autonomy} + \\beta \\cdot \\mathrm{NonMaleficence} + \\gamma \\cdot \\mathrm{Beneficence} + \\delta \\cdot \\mathrm{Justice}"
+        ],
+      },
+      {
+        paragraphs: [
+          "Governance is versioned the way code is: the active policy version and system-prompt version ride along in telemetry, so an audit can state precisely which constitution evaluated which turn.",
+        ],
+      },
+      {
+        heading: "Acceleration: what's real, what's roadmap",
+        paragraphs: [
+          "The authoritative compute backend today is CPU: dot product, normalization, cosine, and batched cosine, with validation that rejects NaN and length mismatches. WGSL compute shaders for the same kernels exist as static assets — WebGPU and TPU enums are declared but not yet dispatched. They become real when the runtime probing lands, and not before.",
+          "That is also why this post contains no throughput or latency numbers: the repository's own claims audit prohibits publishing performance figures without a reproducible artifact behind them. When the benchmark harness ships, the numbers will come with their workload, hardware, and environment attached.",
+        ],
+      },
+      {
+        heading: "Where to read more",
+        paragraphs: [
+          "The complete V2 documentation — architecture, persistence, acceleration, API, CLI, protocols, and limitations — is mirrored as Markdown under /docs, and the underlying research notes are on the research page, with PDF copies available for offline review.",
+        ],
+      },
+    ],
+  },
   {
     slug: "on-saying-im-not-sure",
     tag: "FROM ABBEY",
