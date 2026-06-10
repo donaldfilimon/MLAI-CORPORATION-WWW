@@ -1,5 +1,5 @@
 import { useRef, useState, type MouseEvent, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 
 export const Magnetic = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,13 +36,13 @@ export const Magnetic = ({ children }: { children: ReactNode }) => {
       };
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       {...motionProps}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };

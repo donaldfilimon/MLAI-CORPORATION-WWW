@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, memo, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { BarChart } from "./BarChart";
 import { Sparkline } from "./Sparkline";
 import {
@@ -116,7 +116,7 @@ const StatsBar = memo(({ activeTab }: { activeTab: "wdbx" | "ai" }) => {
   return (
     <div className="stats-bar-container">
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={activeTab}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,7 +130,7 @@ const StatsBar = memo(({ activeTab }: { activeTab: "wdbx" | "ai" }) => {
               <span className="stat-sub">{s.sub}</span>
             </div>
           ))}
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </div>
   );
@@ -177,7 +177,7 @@ const ChartCard = memo(
     }, [chart, targetName]);
 
     return (
-      <motion.div
+      <m.div
         layout
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -225,7 +225,7 @@ const ChartCard = memo(
             </Button>
           </CardFooter>
         </Card>
-      </motion.div>
+      </m.div>
     );
   },
 );

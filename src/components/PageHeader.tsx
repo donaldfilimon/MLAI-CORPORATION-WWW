@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -53,31 +53,31 @@ export const PageHeader = ({
       )}
     >
       {tag && (
-        <motion.div {...tagMotionProps}>
+        <m.div {...tagMotionProps}>
           <Badge
             variant="outline"
             className="bg-primary/5 text-primary border-primary/20 px-4 py-1 uppercase tracking-widest text-[10px] font-bold"
           >
             {tag}
           </Badge>
-        </motion.div>
+        </m.div>
       )}
 
-      <motion.h1
+      <m.h1
         id={id}
         className="text-4xl md:text-6xl font-display font-bold text-white tracking-tight leading-[1.1]"
         {...titleMotionProps}
       >
         {title}
-      </motion.h1>
+      </m.h1>
 
       {subtitle && (
-        <motion.p
+        <m.p
           className="text-lg md:text-xl text-text-dim max-w-2xl leading-relaxed"
           {...subtitleMotionProps}
         >
           {subtitle}
-        </motion.p>
+        </m.p>
       )}
     </div>
   );

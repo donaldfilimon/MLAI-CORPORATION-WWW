@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from "framer-motion";
 import { Activity, ShieldCheck, Zap, GitBranch, Info } from 'lucide-react';
 import { Viewport3D } from './Viewport3D';
 import {
@@ -55,7 +55,7 @@ export const Technology = () => {
             <div className="space-y-8">
               <TooltipProvider>
                 {features.map((feat, i) => (
-                  <motion.div
+                  <m.div
                     key={feat.title}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -80,7 +80,7 @@ export const Technology = () => {
                       </Tooltip>
                       <p className="text-text-dim text-sm leading-relaxed">{feat.description}</p>
                     </div>
-                  </motion.div>
+                  </m.div>
                 ))}
               </TooltipProvider>
             </div>

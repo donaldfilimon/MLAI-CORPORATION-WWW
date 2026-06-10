@@ -1,5 +1,5 @@
 import { HelpCircle } from "lucide-react";
-import { content } from "../data";
+import { faq } from '@/data/categories/faq';
 import {
   Accordion,
   AccordionContent,
@@ -39,7 +39,7 @@ export const FAQ = () => {
           {/* Right Column — Accordion */}
           <div className="lg:col-span-8">
             <Accordion defaultValue={["item-0"]} className="w-full">
-              {content.faq.map((item, i) => (
+              {faq.map((item, i) => (
                 <AccordionItem
                   key={i}
                   value={`item-${i}`}

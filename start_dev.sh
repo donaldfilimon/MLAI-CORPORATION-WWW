@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
+# Single-process dev: Next.js serves pages AND /api/* route handlers.
+# (The old two-process Vite + Hono model is retired — see .retired/.)
 set -euo pipefail
-
-bun server.ts &
-SERVER_PID=$!
-
-cleanup() {
-  kill "$SERVER_PID" 2>/dev/null || true
-}
-
-trap cleanup EXIT INT TERM
 
 bun run dev

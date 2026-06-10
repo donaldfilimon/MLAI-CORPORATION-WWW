@@ -21,12 +21,23 @@ const staticEntries: Entry[] = [
   { path: "/blog", changefreq: "weekly", priority: "0.7" },
   { path: "/docs", changefreq: "monthly", priority: "0.8" },
   { path: "/benchmarks", changefreq: "monthly", priority: "0.8" },
+  { path: "/showcase", changefreq: "monthly", priority: "0.8" },
+  { path: "/showcase/film", changefreq: "monthly", priority: "0.6" },
+  { path: "/showcase/trailer", changefreq: "monthly", priority: "0.6" },
+  { path: "/showcase/mega", changefreq: "monthly", priority: "0.6" },
+  { path: "/showcase/explainer", changefreq: "monthly", priority: "0.6" },
+  { path: "/showcase/design", changefreq: "monthly", priority: "0.6" },
   { path: "/privacy", changefreq: "yearly", priority: "0.4" },
   { path: "/terms", changefreq: "yearly", priority: "0.4" },
   { path: "/security", changefreq: "yearly", priority: "0.4" },
 ];
 
 const dynamicEntries: Entry[] = [
+  ...content.products.map((p) => ({
+    path: `/products/${p.slug}`,
+    changefreq: "monthly",
+    priority: "0.8",
+  })),
   ...content.research.publications.map((p) => ({
     path: `/research/${p.slug}`,
     changefreq: "yearly",

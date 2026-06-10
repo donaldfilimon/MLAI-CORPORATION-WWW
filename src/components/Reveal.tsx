@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 
 export const Reveal = ({
   children,
@@ -18,12 +18,12 @@ export const Reveal = ({
       };
 
   return (
-    <motion.div
+    <m.div
       {...motionProps}
       viewport={{ once: true, margin: "-100px" }}
       style={{ width }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
