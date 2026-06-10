@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This repository is a Bun-run Next.js 15 App Router site. Route entries live in `app/`, with API handlers under `app/api/*`. Client page implementations are in `src/views/` and are routed through `app/pages-client.tsx`. Shared UI and primitives live in `src/components/`, server helpers in `src/lib/server/`, hooks in `src/hooks/`, and structured site content in `src/data/categories/*`.
+This repository is a Bun-run Next.js 15 App Router site. Route entries live in `app/`, with API handlers under `app/api/*`. Client page implementations are in `src/views/` and are routed through per-route `app/<route>/client.tsx` re-exports (the "use client" boundary). Shared UI and primitives live in `src/components/`, server helpers in `src/lib/server/`, hooks in `src/hooks/`, and structured site content in `src/data/categories/*`.
 
 Tests are in `src/__tests__/`. Static assets are in `public/`. Scripts such as sitemap generation and smoke checks live in `scripts/`. The Vite/Hono/Rust migration paths are abandoned; do not revive retired stacks.
 
