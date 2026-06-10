@@ -245,6 +245,44 @@ export function Docs() {
                 modules are selected at build time via <code className="text-indigo-300">-Dfeat-*</code> flags
                 (ai, wdbx, gpu, accelerator, shader, mlir, os-control, tui, hash enabled by default).
               </p>
+
+              <div className="mt-8 grid gap-4 lg:grid-cols-2">
+                <div className="glass-card p-5">
+                  <h3 className="text-sm font-bold text-white mb-3">Module map</h3>
+                  <dl className="space-y-2">
+                    {[
+                      ["database/", "WDBX vector/block memory, indexes, persistence, and query-path primitives"],
+                      ["mcp/", "Tool-facing ABI surfaces for agent workflows"],
+                      ["ai/agents/", "Abbey · Aviva · Abi persona vocabulary and routing contracts"],
+                      ["ai/llm/", "Provider adapters and local inference integration points"],
+                      ["runtime/", "Schedulers, allocators, telemetry, and execution primitives"],
+                      ["shared/", "Shared contracts, types, and cross-module utilities"],
+                    ].map(([mod, desc]) => (
+                      <div key={mod} className="flex gap-3 text-sm">
+                        <dt className="w-24 shrink-0 font-mono text-xs text-indigo-300">{mod}</dt>
+                        <dd className="text-text-dim leading-snug">{desc}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+                <div className="glass-card p-5">
+                  <h3 className="text-sm font-bold text-white mb-3">Design decisions</h3>
+                  <ul className="space-y-2.5 text-sm text-text-dim leading-relaxed">
+                    <li className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
+                      <span><span className="text-white">SIMD-native vector math</span> — <code className="text-indigo-300">@Vector</code> builtins compile distance kernels to the target ISA (AVX-512 on x86, NEON on Apple Silicon) from one source.</span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
+                      <span><span className="text-white">One build, every platform</span> — <code className="text-indigo-300">zig build</code> cross-compiles static binaries for macOS arm64/x86_64, Linux, and Windows. No container, no runtime, no GC pauses.</span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
+                      <span><span className="text-white">TLS at the edge</span> — Zig's std TLS server is still pending upstream (ziglang #14171), so deployments terminate TLS at a reverse proxy by design rather than shipping an unvetted stack.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </section>
 
             {/* MCP Server */}
