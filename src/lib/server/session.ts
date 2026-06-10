@@ -8,8 +8,21 @@ import { sealData, unsealData } from "iron-session";
 const COOKIE_NAME = "mlai_session";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET ?? "development-only-change-me-32-characters-minimum";
+// Fail closed in production: a guessable session secret means forgeable
+// sessions. The dev fallback exists only so local work runs without setup.
+const SESSION_SECRET = (() => {
+  const secret = process.env.SESSION_SECRET;
+  if (secret && secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SESSION_SECRET (≥32 chars) is required in production — generate with: openssl rand -base64 32",
+    );
+  }
+  if (secret) {
+    console.warn("[Auth] SESSION_SECRET is shorter than 32 chars — using dev fallback.");
+  }
+  return "development-only-change-me-32-characters-minimum";
+})();
 
 export interface SessionData {
   userId: string;
@@ -32,10 +45,16 @@ export function toPublicUser(data: SessionData): PublicSessionUser {
   return publicUser;
 }
 
+// X-Forwarded-For is only trustworthy behind a proxy that overwrites it
+// (Cloud Run does). Use the leftmost entry — the original client — so a
+// spoofed multi-hop header can't manufacture a "matching" IP string.
 function clientIpOf(req: Request): string {
-  return (
-    req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown"
-  );
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) {
+    const first = xff.split(",")[0]?.trim();
+    if (first) return first;
+  }
+  return req.headers.get("x-real-ip") || "unknown";
 }
 
 export async function setSessionCookie(req: Request, data: SessionData): Promise<string> {

@@ -20,10 +20,12 @@ import { useAuth } from "@/lib/auth";
 import {
   getInquiries,
   getLlmStatus,
+  getTelemetrySummary,
   sendLlmMessage,
   type ChatMessage,
   type Inquiry,
   type LlmStatus,
+  type TelemetrySummary,
 } from "@/lib/api";
 
 function isChatMessage(value: unknown): value is ChatMessage {
@@ -62,6 +64,22 @@ export function Console() {
   const [copied, setCopied] = useState(false);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loadingInquiries, setLoadingInquiries] = useState(false);
+  const [telemetry, setTelemetry] = useState<TelemetrySummary | null>(null);
+  const [telemetryError, setTelemetryError] = useState("");
+
+  const fetchTelemetry = useCallback(async () => {
+    const result = await getTelemetrySummary();
+    if (result.ok) {
+      setTelemetry(result.data);
+      setTelemetryError("");
+    } else {
+      setTelemetry(null);
+      // 403 = the ADMIN_REQUIRE_MFA gate — a state worth showing, not hiding.
+      setTelemetryError(
+        result.status === 403 ? result.error : "Could not load telemetry summary.",
+      );
+    }
+  }, []);
 
   const fetchInquiries = useCallback(async () => {
     setLoadingInquiries(true);
@@ -80,8 +98,9 @@ export function Console() {
   useEffect(() => {
     if (user) {
       fetchInquiries();
+      fetchTelemetry();
     }
-  }, [user, fetchInquiries]);
+  }, [user, fetchInquiries, fetchTelemetry]);
 
   useEffect(() => {
     localStorage.setItem("mlai_console_history", JSON.stringify(messages));
@@ -236,6 +255,54 @@ export function Console() {
                 <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
                   Configured: {status?.llm.configured ? "yes" : "fallback mode"}
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card variant="glass" className="flex flex-col justify-between">
+              <CardHeader>
+                <BarChart3 className="mb-4 h-8 w-8 text-indigo-400" />
+                <CardTitle>Inquiry Conversion</CardTitle>
+                <CardDescription>
+                  Privacy-respecting telemetry — event counts only, no
+                  identifiers stored.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-text-dim">
+                {telemetryError ? (
+                  <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5 text-xs leading-relaxed text-amber-200/80">
+                    {telemetryError}
+                  </div>
+                ) : telemetry ? (
+                  <>
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        ["Opens", telemetry.conversion.opens],
+                        ["Submits", telemetry.events["inquiry_submit"] ?? 0],
+                        ["Successes", telemetry.conversion.successes],
+                      ].map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="rounded-xl border border-white/5 bg-bg/50 p-3.5 text-center"
+                        >
+                          <div className="text-xl font-bold text-white">{value}</div>
+                          <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-text-dim">
+                            {label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
+                      Conversion (open → success):{" "}
+                      {telemetry.conversion.rate === null
+                        ? "no opens yet"
+                        : `${(telemetry.conversion.rate * 100).toFixed(1)}%`}
+                    </div>
+                  </>
+                ) : (
+                  <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
+                    loading
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

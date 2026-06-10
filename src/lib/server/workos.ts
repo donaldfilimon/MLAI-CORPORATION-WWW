@@ -28,6 +28,37 @@ export function redirectToFrontend(path = "/") {
   return new URL(getReturnTo(path), FRONTEND_URL).toString();
 }
 
+// ── Admin identity ───────────────────────────────────────────────────────────
+// Admin reads (inquiries, telemetry summary) expose PII/aggregates, so a valid
+// session alone is not enough — the user must be on the ADMIN_EMAILS allowlist
+// (comma-separated env var). Unset allowlist: open in development so local
+// work runs without setup; DENIED in production (fail closed).
+
+const ADMIN_EMAILS = new Set(
+  (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean),
+);
+
+export function checkAdminIdentity(
+  user: SessionData,
+): { ok: true } | { ok: false; error: string } {
+  if (ADMIN_EMAILS.size === 0) {
+    if (process.env.NODE_ENV === "production") {
+      return { ok: false, error: "Administrative access is not configured" };
+    }
+    console.warn(
+      "[Auth] ADMIN_EMAILS is unset — allowing admin reads in development only.",
+    );
+    return { ok: true };
+  }
+  if (!ADMIN_EMAILS.has(user.email.toLowerCase())) {
+    return { ok: false, error: "Administrative access required" };
+  }
+  return { ok: true };
+}
+
 // ── MFA for administrative access ────────────────────────────────────────────
 // Policy lives in the WorkOS Dashboard (docs/mfa-workos-runbook.md). When
 // ADMIN_REQUIRE_MFA=true, admin reads require ≥1 enrolled factor; fails closed.
