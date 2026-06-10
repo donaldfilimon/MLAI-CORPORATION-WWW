@@ -1,0 +1,22 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MLAI">
+  <defs>
+    <linearGradient id="mlaiChip" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE"></stop>
+      <stop offset="0.48" stop-color="#3B82F6"></stop>
+      <stop offset="1" stop-color="#A855F7"></stop>
+    </linearGradient>
+    <radialGradient id="mlaiSheen" cx="0.3" cy="0.12" r="0.7">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"></stop>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  <rect width="128" height="128" rx="36" fill="url(#mlaiChip)"></rect>
+  <rect x="6.4" y="6.4" width="115.2" height="115.2" rx="29" fill="none" stroke="#FFFFFF" stroke-opacity="0.28"></rect>
+  <rect width="128" height="128" rx="36" fill="url(#mlaiSheen)"></rect>
+  <text x="64" y="60" text-anchor="middle" dominant-baseline="central" font-family="Outfit, sans-serif" font-weight="800" font-size="64" letter-spacing="-3.2" fill="#FFFFFF">M</text>
+  
+  <line x1="38.4" y1="102.4" x2="89.6" y2="102.4" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="1.8"></line>
+  <circle cx="38.4" cy="102.4" r="5.6" fill="#34D399"></circle>
+  <circle cx="64" cy="102.4" r="5.6" fill="#FFFFFF"></circle>
+  <circle cx="89.6" cy="102.4" r="5.6" fill="#C4B5FD"></circle>
+</svg>

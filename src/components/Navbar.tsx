@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, GitBranch, LogOut, User } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,6 +29,7 @@ export const Navbar = () => {
     { to: "/about", label: "About" },
     { to: "/team", label: "Team" },
     { to: "/blog", label: "Blog" },
+    { to: "/showcase", label: "Showcase" },
     { to: "/benchmarks", label: "Benchmarks" },
     { to: "/docs", label: "Docs" },
     { to: "/console", label: "Console" },
@@ -158,7 +159,7 @@ export const Navbar = () => {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
+          <m.div
             id="mobile-navigation"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -222,7 +223,7 @@ export const Navbar = () => {
                 </Button>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </nav>
