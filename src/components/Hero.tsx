@@ -1,10 +1,13 @@
 import { Suspense, useRef, useEffect, useState, useCallback } from "react";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { m, useReducedMotion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, ShieldCheck } from "lucide-react";
 import { Magnetic } from "./Magnetic";
-import HeroSceneWebGPU from "./HeroScene.webgpu";
+import dynamic from "next/dynamic";
+
+// Decorative WebGL canvas — loaded after first paint, never in first-load JS.
+const HeroSceneWebGPU = dynamic(() => import("./HeroScene.webgpu"), { ssr: false });
 
 const TRUSTED_LOGOS = [
   "Private retrieval",
@@ -91,17 +94,17 @@ export const Hero = () => {
 
       <div className="container-custom relative z-10 py-20 md:py-28">
         <div className="max-w-4xl lg:max-w-5xl">
-          <motion.div variants={stagger} initial="hidden" animate="visible">
-            <motion.div variants={fadeUp} className="label-chip mb-8">
+          <m.div variants={stagger} initial="hidden" animate="visible">
+            <m.div variants={fadeUp} className="label-chip mb-8">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
               </span>
               <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
               SAFETY-CRITICAL AI INFRASTRUCTURE
-            </motion.div>
+            </m.div>
 
-            <motion.h1
+            <m.h1
               variants={fadeUp}
               id="hero-heading"
               className="text-5xl sm:text-6xl md:text-8xl font-display font-bold tracking-tight text-white mb-8 leading-[1.02] max-w-5xl"
@@ -110,18 +113,18 @@ export const Hero = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-sky-300 to-indigo-500 animate-gradient">
                 resilient intelligence.
               </span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUp}
               className="text-lg md:text-2xl text-text-dim mb-12 max-w-3xl leading-relaxed"
             >
               MLAI Corporation builds WDBX, Abbey, Aviva, and Abi:
               high-integrity systems for teams that need AI agents to explain
               decisions, enforce constraints, and perform under production load.
-            </motion.p>
+            </m.p>
 
-            <motion.div
+            <m.div
               variants={fadeUp}
               className="flex flex-wrap gap-4 sm:gap-6 mb-16"
             >
@@ -159,10 +162,10 @@ export const Hero = () => {
                   </Link>
                 </Button>
               </Magnetic>
-            </motion.div>
+            </m.div>
 
             {/* Trust Strip */}
-            <motion.div
+            <m.div
               variants={fadeUp}
               className="pt-8 border-t border-white/5"
             >
@@ -179,8 +182,8 @@ export const Hero = () => {
                   </span>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </div>
 
