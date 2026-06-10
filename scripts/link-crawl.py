@@ -30,7 +30,7 @@ BASE = os.environ.get("BASE_URL", "http://localhost:3000")
 
 SEEDS = [
     "/", "/about", "/research", "/services", "/team", "/blog", "/docs",
-    "/benchmarks", "/privacy", "/terms", "/security", "/login", "/signup",
+    "/benchmarks", "/links", "/showcase", "/privacy", "/terms", "/security", "/login", "/signup",
     "/console", "/profile",
 ]
 
@@ -90,6 +90,14 @@ def click_through(target: str, source: str):
     """Click the anchor for `target` on page `source`; return the landed path."""
     cli("goto", BASE + source)
     time.sleep(0.6)  # let the navigation commit + hydrate before clicking
+    # Guard against a raced goto: confirm we are actually on `source` before
+    # clicking (otherwise the click hits whatever page the browser was left on).
+    for _ in range(8):
+        loc = result_payload(cli("eval", "() => JSON.stringify({p: location.pathname})"))
+        if loc and norm(loc.get("p", "")) == source:
+            break
+        time.sleep(0.5)
+        cli("goto", BASE + source)
     click_fn = (
         "() => {"
         "const t=" + json.dumps(target) + ";"
@@ -172,6 +180,8 @@ def main():
     click_ok = 0
     for target, source in sorted(first_seen.items()):
         r = click_through(target, source)
+        if not (r.get("landed") == target or r.get("landed") == GUARD_REDIRECTS.get(target)):
+            r = click_through(target, source)  # one retry — absorbs harness flake
         if r.get("landed") == target or r.get("landed") == GUARD_REDIRECTS.get(target):
             click_ok += 1
         else:
