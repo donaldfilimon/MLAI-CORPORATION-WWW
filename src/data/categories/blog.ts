@@ -521,4 +521,185 @@ export const blog: Blog = ([
       },
     ],
   },
+  {
+    slug: "neural-backtracking",
+    tag: "FIELD NOTE",
+    title: "Neural Backtracking: What a Block Chain Buys an AI Memory",
+    excerpt:
+      "Hallucination debugging is archaeology. WDBX chains every interaction block to its parent so you can walk back to the exact moment a model drifted — and prove nobody edited the record.",
+    date: "February 18, 2026",
+    readTime: "7 min read",
+    author: "MLAI Research · WDBX Core",
+    body: [
+      {
+        paragraphs: [
+          "When a long-running agent goes off the rails, the question is never whether it drifted — it's when, and from what. Stateless logging can't answer that. Logs get rotated, reordered, and quietly edited. If the model's memory is the product, the integrity of that memory is the product too.",
+          "WDBX borrows exactly one idea from blockchains and discards the rest: every data block's header carries a cryptographic hash of the previous block's header. No proof-of-work, no consensus theater, no tokens. Just a strictly ordered, tamper-evident timeline of what the system knew and said.",
+        ],
+      },
+      {
+        heading: "Drift is a geometric event",
+        paragraphs: [
+          "Each block stores the interaction's embedding alongside its content. That means drift detection becomes vector math: walk the chain backwards and measure the semantic distance between each block and the conversation's anchor context. The divergence point shows up as a discontinuity — the block where cosine similarity to ground truth falls off a cliff.",
+        ],
+        code: [
+          {
+            lang: "zig",
+            file: "database/backtrack.zig",
+            code: `// walk the chain until similarity to the anchor recovers
+pub fn findDivergence(chain: *const Chain, anchor: Vec) ?BlockRef {
+    var it = chain.iterateBack();
+    var prev_sim: f32 = 1.0;
+    while (it.next()) |block| {
+        const sim = cosine(block.embedding, anchor);
+        if (prev_sim - sim > DRIFT_THRESHOLD) return block.ref;
+        prev_sim = sim;
+    }
+    return null;
+}`,
+          },
+        ],
+      },
+      {
+        paragraphs: [
+          "Once you have the divergence block, you have options a stateless system doesn't: rewind the context window to the last good block, regenerate from there, or surface the exact exchange to a human reviewer. We call the whole capability neural backtracking, and it only works because the chain guarantees order.",
+        ],
+      },
+      {
+        heading: "Audit is the same feature wearing a suit",
+        paragraphs: [
+          "In regulated deployments the chain stops being a debugging tool and becomes the compliance story. No administrator can retroactively alter a prompt or a response without breaking every downstream hash. The decision trail is mathematically self-verifying — which is the difference between \u201cwe log everything\u201d and \u201cwe can prove the log.\u201d",
+          "Immutability raises an obvious product question: what about the right to erasure? The honest answer is that retention and deletion semantics must be designed alongside the chain, then verified in source and security review before the site treats them as shipped compliance behavior. Design rule: do not promote privacy mechanics as guarantees until the implementation and threat model are linked.",
+          "The result is a memory layer where forgetting is a key ceremony and lying is detectable. That's a stronger foundation for agents than any amount of log discipline.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "zig-016-migration",
+    tag: "ENGINEERING",
+    title: "Surviving Writergate: Migrating ABI to Zig 0.16",
+    excerpt:
+      "Zig 0.16 rebuilt std.io around vtable-based Reader and Writer interfaces. Ninety-five files later, here's what the migration actually looked like — and the patterns we standardized on.",
+    date: "January 8, 2026",
+    readTime: "6 min read",
+    author: "MLAI Runtime Engineering",
+    body: [
+      {
+        paragraphs: [
+          "Zig 0.16's I/O overhaul — the community calls it Writergate — replaced the old generic reader/writer plumbing with explicit vtable-based std.io.Reader and std.io.Writer interfaces. For a codebase like ABI, where the database, the network layer, and the GPU pipeline all stream bytes, that change touched everything: 95 files modified before the build went green again.",
+        ],
+      },
+      {
+        heading: "What actually broke",
+        paragraphs: [],
+        list: [
+          "Every anytype writer parameter — the old duck-typing pattern — needed an explicit interface type.",
+          "Buffering moved into the caller's hands; the new interfaces make the buffer visible instead of hiding it behind generics.",
+          "Error sets narrowed. Code that relied on inferred error unions through generic writers had to name its failures.",
+          "Container init churn landed at the same time: we standardized on ArrayListUnmanaged.empty and explicit allocator passing at every call site.",
+        ],
+        code: [
+          {
+            lang: "zig",
+            file: "before → after",
+            code: `// 0.15 — generic duck typing
+fn serialize(self: *Block, writer: anytype) !void {
+    try writer.writeAll(self.header());
+}
+
+// 0.16 — explicit vtable interface
+fn serialize(self: *Block, writer: *std.io.Writer) !void {
+    try writer.writeAll(self.header());
+}`,
+          },
+        ],
+      },
+      {
+        paragraphs: [
+          "The migration was mechanical but not mindless. The new interfaces are better — buffer ownership is explicit, error sets are honest, and the vtable indirection costs less than the comptime bloat the old pattern generated across 95 instantiation sites.",
+        ],
+      },
+      {
+        heading: "Pin everything",
+        paragraphs: [
+          "The operational lesson: dev-channel Zig moves fast enough that unpinned CI is a time bomb. We pin the exact toolchain in build.zig.zon, mirror the pin in CI, and gate merges on a version-check script that fails loudly when the local compiler drifts from the pin. The same discipline now applies to 0.17.0-dev as that migration begins.",
+        ],
+        code: [
+          {
+            lang: "bash",
+            file: "ci — version gate",
+            code: `# fail fast when the toolchain drifts from the pin
+zig version | grep -q "0.16.0-dev" || {
+  echo "toolchain drift: expected pinned 0.16.0-dev"; exit 1;
+}
+./build.sh check`,
+          },
+        ],
+      },
+      {
+        paragraphs: [
+          "Ninety-five files sounds like a war story, but the honest summary is gentler: Zig's churn is loud, shallow, and finite. The language keeps trading short-term breakage for long-term explicitness — and for a database that promises deterministic latency, explicitness is the whole brand.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "why-zig",
+    tag: "FIELD NOTE",
+    title: "Why WDBX Is Written in Zig",
+    excerpt:
+      "Garbage collection pauses are invisible in the mean and fatal in the tail. WDBX is Zig because a real-time vector database is a p99 product, not a p50 product.",
+    date: "November 30, 2025",
+    readTime: "6 min read",
+    author: "MLAI Runtime Engineering",
+    body: [
+      {
+        paragraphs: [
+          "Every database benchmark leads with average latency, and average latency is the least interesting number in the file. Users don't experience the mean — they experience the worst request of their session. A vector store backing real-time inference is a p99 product, and the p99 is where garbage collectors live.",
+        ],
+      },
+      {
+        heading: "The case against the GC",
+        paragraphs: [
+          "A GC pause is a latency spike you didn't schedule, can't fully predict, and pay at the worst time — under memory pressure, which is to say under load. Java and Go runtimes have spent decades engineering the pause down, and the engineering is genuinely impressive. But small-and-unpredictable still loses to zero-and-deterministic when the SLA is single-digit milliseconds.",
+          "Zig gives us manual, deterministic memory management with allocator discipline the language actually enforces — every allocation site names its allocator, every structure owns its lifetime. The p99 stays glued to the mean because nothing runs that we didn't write.",
+        ],
+      },
+      {
+        heading: "Comptime is the quiet superpower",
+        paragraphs: [
+          "Zig executes code at compile time, which for a vector engine means hot paths can be specialized before they ship. Distance kernels, lookup tables, and SIMD choices should be tied to the build target and verified in source rather than implied by marketing copy.",
+        ],
+        code: [
+          {
+            lang: "zig",
+            file: "database/kernel.zig",
+            code: `// dimension-specialized at compile time — no runtime branching
+pub fn CosineKernel(comptime dim: usize) type {
+    return struct {
+        pub fn dot(a: *const [dim]f32, b: *const [dim]f32) f32 {
+            var acc: @Vector(8, f32) = @splat(0);
+            comptime var i: usize = 0;
+            inline while (i < dim) : (i += 8) {
+                const va: @Vector(8, f32) = a[i..][0..8].*;
+                const vb: @Vector(8, f32) = b[i..][0..8].*;
+                acc += va * vb;
+            }
+            return @reduce(.Add, acc);
+        }
+    };
+}`,
+          },
+        ],
+      },
+      {
+        paragraphs: [
+          "And because Zig speaks C natively, the boundary to BLAS, Metal, and CUDA kernels costs nothing. We get the ecosystem without the FFI tax.",
+          "The honest tradeoff: dev-channel Zig churns, and we pay a migration tax roughly twice a year. We pay it gladly — the alternative is paying a GC tax on every request, forever.",
+          "Language choices are bets about what a system will be punished for. WDBX will be punished for tail latency. So we chose the language with nothing in the tail.",
+        ],
+      },
+    ],
+  },
 ]);

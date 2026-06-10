@@ -57,6 +57,11 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "Review WDBX benchmark dashboards, workload summaries, and performance context for traceable retrieval infrastructure.",
   },
+  "/changelog": {
+    title: "Changelog | MLAI Corporation",
+    description:
+      "Release history across the ABI runtime, WDBX storage engine, and the Abbey training stack — milestone markers aligned to documented project history.",
+  },
   "/links": {
     title: "Link Hub | MLAI Corporation",
     description:

@@ -71,6 +71,24 @@ const LINK_SECTIONS: LinkSection[] = [
         href: "/blog",
         label: "/blog",
       },
+      {
+        title: "Changelog",
+        body: "Release history across the runtime, storage engine, and training stack — milestone markers, evidence-first.",
+        href: "/changelog",
+        label: "/changelog",
+      },
+      {
+        title: "Hosted abi docs",
+        body: "The generated documentation site for the abi repository, published from source.",
+        href: "https://donaldfilimon.github.io/abi/",
+        label: "donaldfilimon.github.io/abi",
+      },
+      {
+        title: "Framework specification",
+        body: "The canonical Abbey–Aviva–Abi framework spec, hosted with the abi docs.",
+        href: "https://donaldfilimon.github.io/abi/spec/abbey-aviva-abi-framework.html",
+        label: "abi/spec/abbey-aviva-abi-framework",
+      },
     ],
   },
   {

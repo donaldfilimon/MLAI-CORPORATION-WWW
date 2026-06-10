@@ -22,7 +22,31 @@ export const BlogSectionSchema = z.object({
   list: z.array(z.string()).optional(),
   // Optional block (display-mode) LaTeX equations, rendered via KaTeX.
   math: z.array(z.string()).optional(),
+  // Optional code blocks (rendered monospace; `file` is a caption label).
+  code: z
+    .array(
+      z.object({
+        lang: z.string().optional(),
+        file: z.string().optional(),
+        code: z.string(),
+      }),
+    )
+    .optional(),
 });
+
+export const ChangelogSchema = z.array(
+  z.object({
+    version: z.string(),
+    date: z.string(),
+    title: z.string(),
+    items: z.array(
+      z.object({
+        cat: z.enum(["added", "changed", "perf", "fixed"]),
+        text: z.string(),
+      }),
+    ),
+  }),
+);
 
 export const ServicesSchema = z.array(z.object({
   title: z.string(),
@@ -141,6 +165,7 @@ export const ContentSchema = z.object({
   stats: StatsSchema,
   faq: FAQSchema,
   products: ProductsSchema,
+  changelog: ChangelogSchema,
 });
 
 export type About = z.infer<typeof AboutSchema>;
@@ -153,4 +178,5 @@ export type Team = z.infer<typeof TeamSchema>;
 export type Stats = z.infer<typeof StatsSchema>;
 export type FAQ = z.infer<typeof FAQSchema>;
 export type Products = z.infer<typeof ProductsSchema>;
+export type Changelog = z.infer<typeof ChangelogSchema>;
 export type Content = z.infer<typeof ContentSchema>;

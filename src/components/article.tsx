@@ -11,6 +11,7 @@ export type ArticleSection = {
   paragraphs: string[];
   list?: string[];
   math?: string[];
+  code?: { lang?: string; file?: string; code: string }[];
 };
 
 /** Renders a structured article body (heading + paragraphs + bullet list).
@@ -45,6 +46,22 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
             <div className="mt-6 space-y-3">
               {section.math.map((tex, m) => (
                 <BlockMath key={m} tex={tex} />
+              ))}
+            </div>
+          )}
+          {section.code && section.code.length > 0 && (
+            <div className="mt-6 space-y-4">
+              {section.code.map((block, c) => (
+                <figure key={c} className="overflow-hidden rounded-lg border border-white/5 bg-white/[0.02]">
+                  {block.file && (
+                    <figcaption className="border-b border-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-dim/60">
+                      {block.file}
+                    </figcaption>
+                  )}
+                  <pre className="overflow-x-auto px-4 py-3.5 text-[13px] leading-relaxed text-indigo-50/85">
+                    <code>{block.code}</code>
+                  </pre>
+                </figure>
               ))}
             </div>
           )}
