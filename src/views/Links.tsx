@@ -108,6 +108,12 @@ const LINK_SECTIONS: LinkSection[] = [
         label: "/products/abbey",
       },
       {
+        title: "Live demo",
+        body: "Run the WDBX miniature in your browser — cosine search, shard routing, and a hash-chained query log.",
+        href: "/demo",
+        label: "/demo",
+      },
+      {
         title: "Showcase",
         body: "The cinematic surfaces — film, trailer, and design lab experiments.",
         href: "/showcase",

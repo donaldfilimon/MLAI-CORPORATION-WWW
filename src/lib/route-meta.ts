@@ -57,6 +57,11 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "Review WDBX benchmark dashboards, workload summaries, and performance context for traceable retrieval infrastructure.",
   },
+  "/demo": {
+    title: "Live Demo | WDBX In-Browser Miniature",
+    description:
+      "Run a faithful in-browser miniature of the WDBX query path — real cosine search over deterministic embeddings, shard routing, MVCC snapshots, and a hash-chained query log.",
+  },
   "/changelog": {
     title: "Changelog | MLAI Corporation",
     description:
