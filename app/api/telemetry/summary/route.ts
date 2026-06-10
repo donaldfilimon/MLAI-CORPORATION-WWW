@@ -1,12 +1,12 @@
 import { getDb } from "@/lib/server/db";
 import { getSession } from "@/lib/server/session";
-import { checkAdminMfa } from "@/lib/server/workos";
+import { checkAdminAccess } from "@/lib/server/workos";
 
 export async function GET(req: Request) {
   const user = await getSession(req);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  const mfa = await checkAdminMfa(user);
-  if (!mfa.ok) return Response.json({ error: mfa.error }, { status: 403 });
+  const admin = await checkAdminAccess(user);
+  if (!admin.ok) return Response.json({ error: admin.error }, { status: 403 });
 
   try {
     const rows = getDb()

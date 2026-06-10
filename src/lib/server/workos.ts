@@ -105,3 +105,11 @@ export async function checkAdminMfa(
   }
   return { ok: true };
 }
+
+export async function checkAdminAccess(
+  user: SessionData,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const identity = checkAdminIdentity(user);
+  if (!identity.ok) return identity;
+  return checkAdminMfa(user);
+}

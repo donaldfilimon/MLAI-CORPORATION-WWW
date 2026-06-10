@@ -65,7 +65,7 @@ export const PageHeader = ({
 
       <m.h1
         id={id}
-        className="text-4xl md:text-6xl font-display font-bold text-white tracking-tight leading-[1.1]"
+        className="section-title mb-0"
         {...titleMotionProps}
       >
         {title}
@@ -73,7 +73,7 @@ export const PageHeader = ({
 
       {subtitle && (
         <m.p
-          className="text-lg md:text-xl text-text-dim max-w-2xl leading-relaxed"
+          className="section-subtitle mb-0"
           {...subtitleMotionProps}
         >
           {subtitle}

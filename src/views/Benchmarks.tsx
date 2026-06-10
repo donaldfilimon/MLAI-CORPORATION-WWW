@@ -14,8 +14,8 @@ const ARCH_ROWS: [string, string, string, string][] = [
 
 export function Benchmarks() {
   return (
-    <div className="w-full bg-bg min-h-screen pt-24">
-      <div className="container-custom mb-12">
+    <div className="w-full bg-bg min-h-screen pt-32 pb-20 relative overflow-hidden noise-overlay">
+      <div className="container-custom relative z-10 mb-12">
         <div className="label-chip mb-6">PERFORMANCE LAB</div>
         <h1 className="section-title">Benchmarks with operating context.</h1>
         <p className="section-subtitle max-w-3xl">

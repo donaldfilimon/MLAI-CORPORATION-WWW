@@ -91,7 +91,7 @@ export const About = () => {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Card variant="glass" className="h-full p-6">
+                  <div className="glass-card h-full p-6">
                     <div
                       className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4"
                       aria-hidden="true"
@@ -104,7 +104,7 @@ export const About = () => {
                     <p className="text-sm text-text-dim leading-relaxed">
                       {item.description}
                     </p>
-                  </Card>
+                  </div>
                 </m.div>
               ))}
             </CardGrid>
@@ -112,10 +112,10 @@ export const About = () => {
         </div>
       </div>
       <div className="container-custom mt-32 relative z-10">
-        <div className="bg-gradient-to-br from-indigo-600/20 to-sky-500/10 border border-white/10 rounded-[2.5rem] p-12 md:p-20 relative overflow-hidden group">
+        <div className="glass-card relative overflow-hidden p-10 md:p-14 lg:p-20 group">
           <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 blur-[100px] -mr-48 -mt-48 group-hover:bg-indigo-400/30 transition-all duration-700" />
           <div className="max-w-3xl relative z-10">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-8">
+            <h2 className="section-title">
               Our Mission: <br />
               Ensuring the Safety of{" "}
               <span className="text-indigo-400">Autonomous Progress.</span>
@@ -139,7 +139,7 @@ export const About = () => {
               </div>
               <div>
                 <div className="text-3xl font-display font-bold text-white mb-1">
-                  100%
+                  Local
                 </div>
                 <div className="text-xs font-mono uppercase tracking-widest text-indigo-400">
                   Private-First Patterns

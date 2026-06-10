@@ -66,8 +66,8 @@ export const Team = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <div className="group relative bg-transparent border-0 overflow-visible shadow-none">
-                <div className="p-0">
+              <div className="glass-card group h-full p-5">
+                <div>
                   {member.slug ? (
                     <Link
                       to={`/team/${member.slug}`}
