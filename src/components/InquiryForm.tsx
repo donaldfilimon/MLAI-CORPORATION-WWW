@@ -1,5 +1,6 @@
 import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
+import { track } from "@/lib/telemetry";
 import { Send, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +59,7 @@ async function submitInquiry(
   }
 
   try {
+    track("inquiry_submit");
     const response = await fetch("/api/inquiries", {
       method: "POST",
       headers: {
@@ -74,6 +76,7 @@ async function submitInquiry(
 
     const result = await response.json();
     if (response.ok && result.ok) {
+      track("inquiry_success");
       return {
         success: true,
         errors: {},

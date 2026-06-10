@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Button, Separator } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { BlockMath } from "@/components/Math";
 
 export type ArticleSection = {
@@ -18,7 +19,7 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
   return (
     <div className="space-y-12">
       {body.map((section, i) => (
-        <motion.section
+        <m.section
           key={section.heading ?? `section-${i}`}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -63,7 +64,7 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
               ))}
             </ul>
           )}
-        </motion.section>
+        </m.section>
       ))}
     </div>
   );
@@ -149,7 +150,7 @@ export function ArticleLayout({
           <ArrowLeft className="w-3 h-3" /> {backLabel}
         </Link>
 
-        <motion.header
+        <m.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -178,7 +179,7 @@ export function ArticleLayout({
               {meta}
             </p>
           )}
-        </motion.header>
+        </m.header>
 
         <ArticleSections body={body} />
 

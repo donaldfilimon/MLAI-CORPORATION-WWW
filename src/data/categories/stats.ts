@@ -1,6 +1,6 @@
-import { StatsSchema, type Stats } from '../schemas';
+import type { Stats } from '../schemas';
 
-export const stats: Stats = StatsSchema.parse([
+export const stats: Stats = ([
   { value: "295x", label: "GPU Speedup Target", detail: "Matrix workload benchmark track" },
   { value: "0.8ms", label: "Search Latency Goal", detail: "1M-vector local retrieval target" },
   { value: "16.5k", label: "Throughput Target", detail: "WDBX stress-test objective" },

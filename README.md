@@ -61,10 +61,8 @@ The Rust migration lives in `rust/server` and mirrors the Bun/Hono API surface:
 Useful commands:
 
 ```bash
-bun run build          # build the SPA into dist/
-bun run check:rust     # cargo check -p mlai-www-server
-bun run server:rust    # run the Rust 2024 Axum server
-./start_rust.sh        # build frontend, then run Rust server
+bun run build          # generate sitemap, then next build
+bun run start          # run the Next.js production server
 ```
 
 ## 🚢 Deployment
@@ -76,11 +74,10 @@ The application is optimized for **Google Cloud Run**.
    bun run build
    ```
 2. **Deploy to Cloud Run**:
-   Use the `gcloud` CLI or the Cloud Run MCP server to deploy the containerized application. Ensure `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET` are configured as environment secrets. Use `Dockerfile` for the Bun server or `Dockerfile.rust` for the Rust 2024 Axum server.
+   Use the `gcloud` CLI or the Cloud Run MCP server to deploy the containerized application. Ensure `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET` are configured as environment secrets. Use `Dockerfile` for the Next.js server.
 
 ## ⏭ Next Steps
 
-- [ ] **Rust Backend Hardening**: Run `bun run check:rust` with a complete Rust toolchain, then exercise WorkOS callback/session flows against the Axum server before promoting it over `server.ts`.
 - [ ] **Content Expansion**: Populate `/blog` and `/docs` with actual research PDFs and Markdown documentation for the WDBX V2 release.
 - [ ] **MFA Integration**: Enable Multi-Factor Authentication via WorkOS Dashboard for administrative access.
 - [ ] **Visual Polish**: Add more micro-interactions to the `HeroScene` for improved interactive storytelling of the neural backtrace process.

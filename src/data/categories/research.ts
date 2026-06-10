@@ -1,6 +1,6 @@
-import { ResearchSchema, type Research } from '../schemas';
+import type { Research } from '../schemas';
 
-export const research: Research = ResearchSchema.parse({
+export const research: Research = ({
   tracks: [
     {
       name: "WDBX Core",
@@ -499,6 +499,71 @@ export const research: Research = ResearchSchema.parse({
           heading: "Why drills beat audits",
           paragraphs: [
             "A drill catalog turns prompt-injection resilience into a release gate. Because role separation already scopes permissions per profile — planning reads but cannot write, review blocks but cannot execute — many of these drills are testing that the boundaries hold under adversarial pressure, not that they exist. When a drill fails, it fails loudly in CI, with a concrete trace to reproduce from, rather than quietly in production."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "multi-persona-routing-policy-weights",
+      tag: "ROUTING",
+      title: "Multi-Persona Routing Under Uncertainty: Policy Weights and Request Classification",
+      date: "JUNE 2026",
+      abstract: "Beyond role-based separation, the runtime layer that decides which persona handles an inbound request: soft policy weights, confidence-thresholded routing strategies, and an auditable decision trail that keeps every routing choice explainable and human-overridable.",
+      readTime: "9 min read",
+      authors: "MLAI Research · Agent Safety",
+      body: [
+        {
+          paragraphs: [
+            "The Abbey/Aviva/Abi separation defines what each persona is allowed to do. This note covers the layer in front of that: deciding which persona — or which blend of personas — should handle an inbound request in the first place. Request classification is lossy. A message can be forty percent technical question and sixty percent frustrated human, and a hard arg-max over personas throws that structure away. The router described here keeps it.",
+            "As elsewhere in this series, the equations state the design as implemented in the routing layer; none of them encode measured benchmark results."
+          ]
+        },
+        {
+          heading: "Soft policy weights",
+          paragraphs: [
+            "The router scores each persona against the input I and conversation context C, then normalizes the scores into a weight vector rather than a single winner:"
+          ],
+          math: [
+            "P(p \\mid I, C) = \\mathrm{softmax}\\big( f_\\theta(I, C) / \\tau \\big)"
+          ]
+        },
+        {
+          paragraphs: [
+            "The temperature τ controls how decisive the router is: low τ sharpens toward a single persona, high τ preserves ambiguity for the strategies below. Keeping the full weight vector — not just its arg-max — is what makes blending and escalation possible downstream:"
+          ],
+          math: [
+            "R_{\\text{final}} = \\alpha \\cdot R_{\\text{Abbey}} + (1 - \\alpha) \\cdot R_{\\text{Aviva}}, \\quad \\alpha = P(\\text{Abbey} \\mid I, C)"
+          ]
+        },
+        {
+          heading: "Three routing strategies",
+          paragraphs: [
+            "The maximum weight w_max selects between three regimes, so the router degrades gracefully as classification confidence falls:"
+          ],
+          list: [
+            "Single-winner (w_max above the high threshold) — one persona clearly fits; it handles the request with its full capability set.",
+            "Blend (intermediate w_max) — no persona dominates; the response combines the factual core of one persona with the delivery style of another, weighted by α.",
+            "Consensus escalation (w_max below the low threshold) — classification is genuinely uncertain; the request escalates to the moderator persona (Abi), which can ask a clarifying question instead of guessing."
+          ]
+        },
+        {
+          heading: "Classification features",
+          paragraphs: [
+            "The scoring function f_θ consumes named features rather than an opaque embedding alone, because named features are what make the audit trail legible:"
+          ],
+          list: [
+            "Sentiment and frustration signals from the input text.",
+            "Technical-domain density — how much of the message is code, identifiers, or domain vocabulary.",
+            "Task-type inference: support, expert answer, moderation, or planning.",
+            "Source authority of the requesting channel.",
+            "Historical persona fit on similar past requests, retrieved from the WDBX store."
+          ]
+        },
+        {
+          heading: "Every decision leaves a trail",
+          paragraphs: [
+            "Each routing decision is logged with its full weight vector and the feature scores that produced it. An operator can answer why a request went to Aviva instead of Abbey by reading the decision record, not by re-running the classifier. When the routed persona fails — timeout, out-of-domain answer, moderation flag — the moderator re-routes from the recorded weights without re-classifying, so the fallback path is deterministic.",
+            "This is the same governance posture as the rest of the stack: the router is allowed to be uncertain, but it is never allowed to be unexplainable. Misclassification is treated as a recoverable, inspectable event — a re-route plus a log entry — rather than a silent quality drop."
           ]
         }
       ]

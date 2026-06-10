@@ -102,6 +102,34 @@ export const FAQSchema = z.array(z.object({
   answer: z.string(),
 }));
 
+// Product deep-dive pages (/products/:slug) — structured narrative content
+// ported from the MLAI mega-site. Equations are LaTeX (KaTeX block render);
+// accents bind to the persona palette already used by the Docs persona dots.
+export const ProductsSchema = z.array(z.object({
+  slug: z.string(),
+  kicker: z.string(),
+  name: z.string(),
+  intro: z.string(),
+  accent: z.enum(['abbey', 'aviva', 'abi']),
+  sections: z.array(z.object({
+    eyebrow: z.string(),
+    title: z.string(),
+    sub: z.string().optional(),
+    paragraphs: z.array(z.string()).default([]),
+    equations: z.array(z.object({ tex: z.string(), note: z.string() })).optional(),
+    pillars: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+      eq: z.string().optional(),
+      accent: z.enum(['abbey', 'aviva', 'abi']).optional(),
+    })).optional(),
+    steps: z.array(z.object({ n: z.string(), title: z.string(), description: z.string() })).optional(),
+    blendTable: z.array(z.object({ range: z.string(), meaning: z.string(), accent: z.enum(['abbey', 'aviva', 'abi']) })).optional(),
+    demo: z.enum(['persona-router', 'cosine-sim', 'sharding-latency']).optional(),
+    chips: z.array(z.string()).optional(),
+  })),
+}));
+
 export const ContentSchema = z.object({
   about: AboutSchema,
   platform: PlatformSchema,
@@ -112,6 +140,7 @@ export const ContentSchema = z.object({
   team: TeamSchema,
   stats: StatsSchema,
   faq: FAQSchema,
+  products: ProductsSchema,
 });
 
 export type About = z.infer<typeof AboutSchema>;
@@ -123,4 +152,5 @@ export type Blog = z.infer<typeof BlogSchema>;
 export type Team = z.infer<typeof TeamSchema>;
 export type Stats = z.infer<typeof StatsSchema>;
 export type FAQ = z.infer<typeof FAQSchema>;
+export type Products = z.infer<typeof ProductsSchema>;
 export type Content = z.infer<typeof ContentSchema>;

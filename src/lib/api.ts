@@ -94,6 +94,47 @@ export function updateProfile(payload: { firstName?: string; lastName?: string; 
   });
 }
 
+export type TelemetrySummary = {
+  ok: boolean;
+  events: Record<string, number>;
+  conversion: { opens: number; successes: number; rate: number | null };
+};
+
+export type MfaStatus = {
+  ok: boolean;
+  configured: boolean;
+  adminEnforcement: boolean;
+  authenticationMethod?: string | null;
+  factors: Array<{ id: string; type: string; createdAt: string }>;
+};
+
+/** Like apiJson, but 401/403 resolve to a typed failure instead of throwing —
+ *  the MFA gate on admin reads is an expected state the UI must render. */
+async function apiJsonGated<T>(
+  path: string,
+): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string }> {
+  const res = await fetch(path, { headers: { "Content-Type": "application/json" } });
+  if (!res.ok) {
+    let error = `Request failed: ${res.status}`;
+    try {
+      const body = await res.json();
+      if (typeof body?.error === "string") error = body.error;
+    } catch {
+      /* non-JSON error body — keep the status message */
+    }
+    return { ok: false, status: res.status, error };
+  }
+  return { ok: true, data: (await res.json()) as T };
+}
+
+export function getTelemetrySummary() {
+  return apiJsonGated<TelemetrySummary>("/api/telemetry/summary");
+}
+
+export function getMfaStatus() {
+  return apiJsonGated<MfaStatus>("/api/auth/mfa-status");
+}
+
 export function getBillingPlans() {
   return apiJson<{
     ok: boolean;

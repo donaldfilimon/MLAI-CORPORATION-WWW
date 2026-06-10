@@ -17,3 +17,9 @@ __pycache__/
 *.py[cod]
 .playwright-cli/
 output/playwright/
+.retired/
+inquiries.db
+.playwright-cli/
+.next/
+tsconfig.tsbuildinfo
+nohup.out

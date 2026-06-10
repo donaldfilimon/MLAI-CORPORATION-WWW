@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { MessageSquare, ArrowRight, Shield } from "lucide-react";
 import { Magnetic } from "./Magnetic";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export const ContactCTA = ({
           {/* Top accent line */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -54,7 +54,7 @@ export const ContactCTA = ({
                 </Button>
               </Magnetic>
             </div>
-          </motion.div>
+          </m.div>
         </Card>
       </div>
     </section>

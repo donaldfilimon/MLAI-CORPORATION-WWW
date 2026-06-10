@@ -1,0 +1,193 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   MLAI DESIGN-SYSTEM TOKENS · scoped port from the brand-site design system
+   ──────────────────────────────────────────────────────────────────────────
+   Scoped under .mlai-ds (NOT :root) so these variables never collide with
+   the site's own tokens (--font-sans/--font-mono/--text-h* already exist at
+   :root with different values). Wrap any ported design board or cinematic
+   surface in <div className="mlai-ds"> and the boards' module-level <style>
+   blocks resolve these via inheritance.
+
+   Fonts: the site self-hosts Geist and async-loads Outfit + JetBrains Mono;
+   no render-blocking @import here (site policy).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mlai-ds {
+  /* raw brand palette */
+  --mlai-blue: #3b82f6;
+  --mlai-blue-lo: #1d4ed8;
+  --mlai-blue-hi: #60a5fa;
+  --mlai-cyan: #22d3ee;
+  --mlai-cyan-hi: #67e8f9;
+  --mlai-violet: #a855f7;
+  --mlai-violet-hi: #c084fc;
+  --mlai-green: #34d399;
+  --mlai-amber: #fbbf24;
+  --mlai-red: #f87171;
+
+  /* action (interaction only) */
+  --action: var(--mlai-blue);
+  --action-hover: #2563eb;
+  --action-press: var(--mlai-blue-lo);
+  --action-soft: rgba(59, 130, 246, 0.14);
+  --action-ring: rgba(59, 130, 246, 0.45);
+  --action-grad: linear-gradient(180deg, #3b82f6, #2563eb);
+
+  /* spectrum (identity & data) */
+  --spectrum-cyan: var(--mlai-cyan);
+  --spectrum-blue: var(--mlai-blue-hi);
+  --spectrum-violet: var(--mlai-violet);
+  --spectrum-grad: linear-gradient(100deg, #67e8f9, #60a5fa, #c084fc);
+  --spectrum-grad-135: linear-gradient(135deg, #22d3ee 0%, #3b82f6 48%, #a855f7 100%);
+
+  /* persona ↔ color binding */
+  --persona-abbey: var(--mlai-green);
+  --persona-aviva: var(--mlai-violet);
+  --persona-abi: var(--mlai-cyan);
+
+  /* semantic */
+  --proof: var(--mlai-green);
+  --proof-soft: rgba(52, 211, 153, 0.12);
+  --signal: var(--mlai-amber);
+  --signal-soft: rgba(251, 191, 36, 0.12);
+  --danger: var(--mlai-red);
+  --danger-soft: rgba(248, 113, 113, 0.12);
+
+  /* neutral */
+  --text: #fafafa;
+  --text-dim: #a1a1aa;
+  --text-faint: #6b6b76;
+  --hair: rgba(255, 255, 255, 0.08);
+  --hair-hi: rgba(255, 255, 255, 0.14);
+  --hair-strong: var(--hair-hi);
+
+  /* elevation — 4-tier surface ramp */
+  --surface-0: #050509;
+  --surface-1: #08090f;
+  --surface-2: #0e0f18;
+  --surface-3: #161721; /* source had a stray 8-digit hex (#16172124); spec value restored */
+  --surface-4: #1d1e2a;
+
+  --border-1: rgba(255, 255, 255, 0.05);
+  --border-2: rgba(255, 255, 255, 0.08);
+  --border-3: rgba(255, 255, 255, 0.11);
+  --border-4: rgba(255, 255, 255, 0.14);
+
+  --shadow-1: inset 0 2px 14px rgba(0, 0, 0, 0.55);
+  --shadow-2: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 14px 44px rgba(0, 0, 0, 0.5);
+  --shadow-4: 0 28px 80px rgba(0, 0, 0, 0.7);
+
+  /* glass recipe */
+  --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01));
+  --glass-fill-hi: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+  --glass-blur: blur(14px);
+  --glass-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* one declared light direction */
+  --light-key: radial-gradient(55% 45% at 50% -8%, rgba(34, 211, 238, 0.16), transparent 70%);
+  --light-fill: radial-gradient(40% 50% at 95% 108%, rgba(168, 85, 247, 0.14), transparent 70%);
+  --light-ambient:
+    radial-gradient(50% 35% at 60% -5%, rgba(34, 211, 238, 0.07), transparent 70%),
+    radial-gradient(40% 40% at 100% 100%, rgba(168, 85, 247, 0.06), transparent 70%);
+
+  /* spacing — 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  --space-section: clamp(4rem, 9vw, 8rem);
+  --space-block: 3rem;
+  --space-card: 2rem;
+  --space-stack: 1.5rem;
+  --space-inline: 0.75rem;
+
+  /* radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* type — families (Inter falls back to the site's self-hosted Geist) */
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-sans: "Inter", "Geist Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* type — Major-Third scale (1.25) */
+  --text-h00: 4.768rem;
+  --text-h0: 3.815rem;
+  --text-h1: 3.052rem;
+  --text-h2: 2.441rem;
+  --text-h3: 1.953rem;
+  --text-h4: 1.563rem;
+  --text-h5: 1.25rem;
+  --text-base: 1rem;
+  --text-sm: 0.875rem;
+  --text-mono: 0.75rem;
+
+  --leading-display: 1.02;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.6;
+
+  --tracking-display: -0.03em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-mono: 0.18em;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 300ms;
+  --dur-slow: 500ms;
+
+  --grain-opacity: 0.022;
+
+  background: var(--surface-0);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* helper classes actually consumed by the ported boards */
+.mlai-ds .glass {
+  background: var(--glass-fill);
+  border: 1px solid var(--border-2);
+  box-shadow: var(--shadow-2), var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+}
+
+.mlai-ds .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--spectrum-cyan);
+}
+
+.mlai-ds .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--hair-hi);
+  color: var(--text-dim);
+}

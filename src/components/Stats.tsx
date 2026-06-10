@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { content } from "../data";
+import { m, useReducedMotion } from "framer-motion";
+import { stats } from '@/data/categories/stats';
 import { Card, CardContent } from "@/components/ui/card";
 
 function useCountUp(
@@ -61,7 +61,7 @@ function useCountUp(
 
 interface StatCardProps {
   key?: React.Key;
-  stat: (typeof content.stats)[0];
+  stat: (typeof stats)[0];
   index: number;
 }
 
@@ -93,7 +93,7 @@ const StatCard = ({ stat, index }: StatCardProps) => {
       };
 
   return (
-    <motion.div ref={ref} viewport={{ once: true }} {...motionProps}>
+    <m.div ref={ref} viewport={{ once: true }} {...motionProps}>
       <Card className="text-center p-8 border-white/5 bg-white/2 hover:bg-white/4 hover:border-indigo-500/20 transition-all duration-300 group h-full">
         <CardContent className="p-0 flex flex-col justify-center h-full">
           <div className="text-4xl md:text-5xl font-display font-black text-transparent bg-clip-text bg-linear-to-br from-indigo-400 to-sky-300 mb-3 tabular-nums">
@@ -107,7 +107,7 @@ const StatCard = ({ stat, index }: StatCardProps) => {
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -131,7 +131,7 @@ export const Stats = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {content.stats.map((stat, i) => (
+          {stats.map((stat, i) => (
             <StatCard key={i} stat={stat} index={i} />
           ))}
         </div>

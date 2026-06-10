@@ -3,50 +3,47 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Context
-Production-grade marketing + private-console website for MLAI Corporation. React 19 SPA (Vite) on the frontend; a Bun-native Hono app (`server.ts`) currently handles WorkOS AuthKit, protected LLM/billing APIs, inquiry storage, and serving the built SPA. A Rust 2024 Axum migration target now lives in `rust/server` and mirrors that API/static-serving surface.
+Production-grade marketing + private-console website for MLAI Corporation. **Next.js 15 (App Router) + React 19, run on Bun** — one process serves pages AND the `/api/*` route handlers (WorkOS AuthKit, protected LLM/billing APIs, inquiry storage, telemetry). The previous Vite SPA + Bun/Hono stack and the Rust/Axum migration target are RETIRED: old entrypoints are parked in `.retired/` (git history has everything), and the `rust/` directory is inactive — do not extend it.
 
 ## Essential Commands
 - `bun install` — Install dependencies (Bun 1.4+; `bun.lock` text lockfile)
-- `bun run dev` — Vite dev server only, port 3000
-- `bun server.ts` — Bun-native API/SPA server only, port 3001
-- `./start_dev.sh` — **Run both together (use this for development)**; the Vite server proxies `/api/*` to the Bun server, so auth and all API calls are broken if only one is running
-- `bun run build` — Build production SPA into `dist/`. **Runs `bun run sitemap` first** (so detail-page URLs never drift), then `vite build`.
-- `bun run lint` — Type-check (`tsc --noEmit`); the primary frontend gate.
-- `bun run test` — Vitest smoke suite ([src/__tests__/content.test.ts](src/__tests__/content.test.ts)): validates the content against the Zod schema and asserts every blog/research/team slug is unique + URL-safe with a non-empty body. Single file: `bunx vitest run src/__tests__/content.test.ts`.
-- `bun run sitemap` — Regenerate `public/sitemap.xml` from the content layer ([scripts/generate-sitemap.ts](scripts/generate-sitemap.ts)) — every indexable static route + blog/research/team detail slug.
-- `bun run check:rust` — Type-check the Rust 2024 Axum server (`cargo check -p mlai-www-server`; requires a complete Rust toolchain).
-- `bun run server:rust` / `./start_rust.sh` — Run the Rust 2024 Axum server target after building the SPA.
-
-Before `bun server.ts` can serve anything useful it needs a `dist/` build (it serves `dist/index.html` as the SPA fallback and 404s otherwise).
+- `bun run dev` — Next.js dev server, port 3000 (pages + `/api/*` in one process; `./start_dev.sh` is now just this)
+- `bun run build` — **Runs `bun run sitemap` first** (so detail-page URLs never drift), then `next build`.
+- `bun run start` — Production server (`next start`, port 3000); needs a build first.
+- `bun run lint` — Type-check (`tsc --noEmit`); the primary gate.
+- `bun run test` — Vitest smoke suite ([src/__tests__/content.test.ts](src/__tests__/content.test.ts)): validates the content against the Zod schema and asserts every blog/research/team slug is unique + URL-safe with a non-empty body.
+- `bun run sitemap` — Regenerate `public/sitemap.xml` from the content layer ([scripts/generate-sitemap.ts](scripts/generate-sitemap.ts)).
 
 ## Architecture
 
-### Two-process dev model (the key thing to understand)
-In development, Vite (3000) serves the React app and proxies `/api/*` to the Bun Hono server (3001) — see [vite.config.ts](vite.config.ts) `server.proxy`. In production, there is one process: `server.ts` serves both the API and the static `dist/` SPA. So API/auth behavior differs only by origin, not by code path.
+### Single-process model (the key thing to understand)
+Next.js serves pages and `/api/*` route handlers from one process in both dev and prod — no proxy, no port split. Route handlers live under [app/api/](app/api/) and share server logic from `src/lib/server/` (session, db, workos, rate-limit, llm).
 
-### Frontend (`src/`)
-- React 19 SPA, routes in [src/App.tsx](src/App.tsx) via `react-router-dom` v7. Every page except `Home` is `lazy()`-loaded; all routes nest under a single `Layout`. A catch-all `*` route renders [src/pages/NotFound.tsx](src/pages/NotFound.tsx); the founder profile is `/team/:slug` ([src/pages/FounderProfile.tsx](src/pages/FounderProfile.tsx)).
-- Provider stack is wired in [src/main.tsx](src/main.tsx): `QueryClientProvider` (TanStack Query, 5-min `staleTime`) → `AuthProvider` → `UIProvider` → `App`.
-- `AuthProvider` ([src/lib/auth.tsx](src/lib/auth.tsx)) holds client auth state, hydrated from `GET /api/auth/me`; `login`/`signup` are full-page redirects to `/api/auth/*`.
-- `UIProvider` ([src/lib/ui-context.tsx](src/lib/ui-context.tsx)) owns **only** the global Inquiry modal (`openInquiry`/`closeInquiry`). Toast notifications are separate: `<Toaster />` in `App.tsx` + the `use-toast` hook.
+### Frontend (`app/` + `src/`)
+- **App Router**: route files live in `app/` (one `page.tsx` per route, dynamic `[slug]` dirs for blog/research/team/products). Each route file is a thin server component that exports metadata and renders the real page component from [src/views/](src/views/) through the client barrel [app/pages-client.tsx](app/pages-client.tsx) (the `"use client"` boundary). Cinematic surfaces + the TF demo cross via `next/dynamic` `ssr:false` — they touch browser APIs.
+- **`src/views/` was `src/pages/`** — renamed because Next treats `src/pages/` as the Pages Router. Don't recreate `src/pages/`.
+- **react-router compat shim**: the view components still import from `"react-router-dom"`, which is aliased (tsconfig `paths` + `next.config.ts` webpack/turbopack alias) to [src/lib/router-compat.tsx](src/lib/router-compat.tsx) — Link/NavLink/useLocation/useNavigate/useParams/useSearchParams over next/navigation. The npm `react-router-dom` package is removed; don't re-add it. The shim's `useLocation` deliberately avoids `useSearchParams()` (Suspense/prerender constraint) — pages that need live search params (Login) are wrapped in `<Suspense>` in their route file.
+- Provider stack + page chrome (Navbar/Footer/skip-link/decorations) live in [app/providers.tsx](app/providers.tsx) (was main.tsx + Layout.tsx): `QueryClientProvider` → `AuthProvider` → `UIProvider`.
+- Per-route SEO is data-driven from [src/lib/route-meta.ts](src/lib/route-meta.ts) (static map + blog/research/team/product slug derivers) via each route file's `metadata`/`generateMetadata`.
 - API calls go through typed wrappers in [src/lib/api.ts](src/lib/api.ts), not ad-hoc `fetch` (except auth redirects).
-- Path alias `@/*` → `src/*` (configured in both `tsconfig.json` and `vite.config.ts`).
+- Path alias `@/*` → `src/*` (tsconfig paths; Next resolves it natively).
 
-### Backend (`server.ts` + `server/`)
-- Bun-native server: default export is `{ port, fetch }` (Bun's serve convention), **not** `serve()`. Prefer Bun APIs (`Bun.file`, `bun:sqlite`) over Node polyfills while this path remains active.
-- Inquiries persist to a local SQLite file `inquiries.db` via `bun:sqlite` (table auto-created on boot). `POST /api/inquiries` is public + rate-limited; `GET /api/inquiries` requires a session.
-- Sessions ([server/session.ts](server/session.ts)): iron-session sealed/encrypted cookie `mlai_session` (7-day TTL), no session DB. **Gotcha:** sessions are bound to client IP + User-Agent — a mismatch invalidates the session (`get()` returns null), which can surprise you behind changing proxies/networks in local testing.
-- Middleware ([server/middleware.ts](server/middleware.ts)): in-memory `rateLimiter`, request-id `loggerMiddleware`, and `sessionRenewal` (re-seals the cookie on every authenticated request to extend Max-Age).
-- Auth is WorkOS AuthKit: `/api/auth/login|signup|callback|me|logout|verify-user`. If `WORKOS_API_KEY`/`WORKOS_CLIENT_ID`/`SESSION_SECRET` are unset, auth routes degrade gracefully (redirect with `?error=auth_not_configured`) rather than crashing.
-- Protected app API (all require a session): `/api/llm/*` (Gemini via `GEMINI_API_KEY`, with a safe scaffold fallback when unconfigured), `/api/billing/*` (Stripe payment link), `PATCH /api/profile`.
+### Backend (`app/api/` + `src/lib/server/`)
+- Every endpoint is a Next route handler under `app/api/.../route.ts`, sharing logic from `src/lib/server/`: `session.ts` (iron-session sealed cookie `mlai_session`, 7-day TTL, IP+UA-bound — same cookie as the retired Hono server, so sessions survived the migration), `db.ts` (SQLite via `node:sqlite` `DatabaseSync` — works under both Node and Bun; same `inquiries.db` file and schemas), `workos.ts` (AuthKit client, MFA factor checks, `ADMIN_REQUIRE_MFA` fail-closed gate), `rate-limit.ts` (in-memory fixed windows, same limits as before), `llm.ts` (Gemini or safe scaffold).
+- Surface (contracts unchanged from the Hono server): `/api/auth/login|signup|callback|me|logout|features|verify-user|mfa-status`, `PATCH /api/profile`, `/api/llm/status|chat`, `/api/billing/plans|checkout`, `/api/inquiries` (public rate-limited POST, session+MFA GET), `/api/telemetry` (allowlisted events, DNT/Sec-GPC honored, no identifiers stored) + `/api/telemetry/summary`.
+- Auth degrades gracefully when `WORKOS_API_KEY`/`WORKOS_CLIENT_ID`/`SESSION_SECRET` are unset (redirect with `?error=auth_not_configured`). Login/signup redirects are 307 under Next (were 302) — same behavior for GET redirects.
 
-### Rust 2024 backend target (`rust/server`)
-- `rust/server` is an Axum + Tokio + SQLx SQLite implementation intended to replace `server.ts` incrementally.
-- It mirrors WorkOS AuthKit redirects/callbacks, private encrypted cookie sessions, rate-limited inquiry writes, protected LLM/billing/profile routes, and static `dist/` SPA serving.
-- Use `Dockerfile.rust` for Rust server container experiments. Keep endpoint response shapes compatible with `src/lib/api.ts` while migrating.
+### Retired stacks
+The Vite SPA entrypoints (vite.config.ts, index.html, main.tsx, App.tsx, Layout.tsx, RouteMetadata.tsx), the Hono server (server.ts + server/), and the abandoned Rust/Axum stack (rust/, Cargo.toml, Cargo.lock, Dockerfile.rust, start_rust.sh) are parked in `.retired/` (gitignored; history has the tracked versions). Don't wire any of it back in.
+
+### Telemetry, MFA, and WDBX V2 assets
+- **Telemetry (privacy-respecting):** `POST /api/telemetry` (server.ts) accepts allowlisted events only (`inquiry_open/submit/success/close`), honors DNT/Sec-GPC with a 204 no-store, and persists ONLY event + pathname + timestamp to the `telemetry_events` table in `inquiries.db` — no IP/UA/user id (the client IP touches only the in-memory rate limiter). Client side: `src/lib/telemetry.ts` (`track()`, sendBeacon + keepalive fallback, checks doNotTrack/globalPrivacyControl before sending); hooks live in `ui-context.tsx` (open/close) and `InquiryForm.tsx` (submit/success). `GET /api/telemetry/summary` (session + MFA gate) returns per-event counts and the open→success conversion rate. Keep new events allowlisted on both sides; never add identifying fields.
+- **MFA:** policy is configured in the WorkOS Dashboard ([docs/mfa-workos-runbook.md](docs/mfa-workos-runbook.md) has the steps + lockout-safe rollout order). Code side: `GET /api/auth/mfa-status` lists enrolled factors; `ADMIN_REQUIRE_MFA=true` makes the admin reads (`GET /api/inquiries`, `GET /api/telemetry/summary`) fail closed (403) without an enrolled factor. The SDK's `listUserAuthFactors` exists at runtime but not in the bundled types — server.ts uses a narrow structural cast (`FactorListing`); don't "fix" it back to a direct call until the SDK types catch up.
+- **WDBX V2 docs/PDFs:** the real Markdown documentation set from the sibling `wdbx` repo is mirrored at `public/docs/wdbx/*.md` (9 files incl. `limitations.md`) and surfaced in the Docs page `#wdbx-v2` section; research-paper PDFs (browser print-to-PDF of the live pages) live at `public/research/*.pdf`. The release note is the `wdbx-v2-release` blog entry. Re-mirror from `~/wdbx/docs/` when V2 docs change.
+- **HeroScene micro-interactions:** `HeroScene.webgpu.tsx` (the active hero) has pointer parallax, hover brightening, and a click-triggered "backtrace pulse" (sparks travel inward along the spokes; core flashes on arrival) — all gated off under `prefers-reduced-motion`. Pulse flight starts OUTSIDE the core disc on purpose (additive sparks have no contrast against the bright core).
 
 ### Content data layer
-Site copy is a single source of truth at [src/data/index.ts](src/data/index.ts), which aggregates per-domain modules in `src/data/categories/*` (about, platform, industries, services, research, blog, team, stats, faq) into a `content` object, with Zod schemas in [src/data/schemas.ts](src/data/schemas.ts). Edit content there, not inline in components. (Note: older docs referenced a flat `src/data/content.ts` — that file no longer exists.)
+Site copy is a single source of truth at [src/data/index.ts](src/data/index.ts), which aggregates per-domain modules in `src/data/categories/*` (about, platform, industries, services, research, blog, team, stats, faq, products) into a `content` object, with Zod schemas in [src/data/schemas.ts](src/data/schemas.ts). `products` drives the `/products/:slug` deep-dive pages ([src/pages/Product.tsx](src/pages/Product.tsx) — ABI Framework + Abbey, with KaTeX equations and the interactive demos in `src/components/demos/`); product routes are emitted into the sitemap and resolved in RouteMetadata like the other dynamic slugs. Edit content there, not inline in components. (Note: older docs referenced a flat `src/data/content.ts` — that file no longer exists.)
 
 - **Long-form content (blog + research) is data, not JSX.** Both `blog` and `research.publications` items carry a `slug` and a structured `body: BlogSection[]` (shared `BlogSectionSchema` of `{ heading?, paragraphs[], list?, math? }`). `math` is an array of LaTeX strings rendered as KaTeX block equations (via [src/components/Math.tsx](src/components/Math.tsx); KaTeX CSS imported in `main.tsx`). To add an article/paper, append a fully-bodied entry to the data module; do not hardcode prose in a component. List cards (`Blog.tsx`, `Research.tsx`, `Home.tsx`) link by `slug`.
 - **The detail pages share one shell.** [BlogPost.tsx](src/pages/BlogPost.tsx) (`/blog/:slug`), [ResearchPaper.tsx](src/pages/ResearchPaper.tsx) (`/research/:slug`), and the founder profile all render through [src/components/article.tsx](src/components/article.tsx): `ArticleLayout` (full reading shell), `ArticleSections` (the heading/paragraph/list/math body renderer), and `ArticleNotFound` (in-page 404). Research/blog tag→class colors live in [src/lib/tag-colors.ts](src/lib/tag-colors.ts), not inline.
@@ -63,17 +60,13 @@ TailwindCSS v4 via `@tailwindcss/vite` (no `tailwind.config.js`; tokens/utilitie
 - **Fonts:** body/sans is self-hosted **Geist** (`@fontsource-variable/geist`); display **Outfit** + mono **JetBrains Mono** load async (non-render-blocking print→all swap) from `index.html`. Don't re-add a render-blocking Google Fonts `@import` in CSS.
 
 ## Deployment
-Multi-stage [Dockerfile](Dockerfile) (`oven/bun` base) targeting Google Cloud Run; the runner serves `dist/` via `server.ts`. `Dockerfile.rust` builds the Vite SPA and the Rust 2024 Axum server. Cloud Run injects `PORT`. Required secrets: `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, `SESSION_SECRET` (generate with `openssl rand -base64 32`); optionally `GEMINI_API_KEY`, `STRIPE_PAYMENT_LINK`, `APP_URL`/`FRONTEND_URL`, `DATABASE_URL`. Copy `.env.example` → `.env` for local setup.
-
-Caveats:
-- `vite.config.ts` should not inline server-only LLM secrets into the client bundle; the server reads its own `GEMINI_API_KEY` separately. Keep production LLM keys server-side only.
+Multi-stage [Dockerfile](Dockerfile) (`oven/bun` base) targeting Google Cloud Run; the runner executes `next start` on the injected `PORT`. Required secrets: `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, `SESSION_SECRET` (generate with `openssl rand -base64 32`); optionally `GEMINI_API_KEY`, `STRIPE_PAYMENT_LINK`, `APP_URL`/`FRONTEND_URL`, `ADMIN_REQUIRE_MFA`. Copy `.env.example` → `.env` for local setup. Keep production LLM keys server-side only.
 
 ## Modernization Standards
 These govern the *content* of the benchmark visualizations, which mirror sibling-project releases:
 - **Zig 0.17**: WDBX benchmark data in `src/components/wdbx-benchmark/charts.ts` (custom Canvas charts) should reflect latest engine performance.
 - **Swift 6.3**: Abbey AI benchmarks should reflect latest concurrency-safe framework metrics.
-- **Rust 2024**: New backend migration work should target the Axum crate in `rust/server`.
-- **Bun**: For the legacy Bun server path, prefer Bun APIs over Node.js polyfills.
+- **Bun**: Bun is the package manager + script runner; route-handler code uses runtime-portable APIs (`node:sqlite`, Web Crypto) so it runs under Node or Bun.
 
 ## Repository hygiene
 - The working tree periodically accumulates rotating scratch/experiment files at the repo root (`*.json`/`*.txt`/`debug_*.ts` — e.g. past ones like `accent_usage.txt`, `metadata.json`, `massive_content.json` that have since been removed). None are imported by `src/`, `server.ts`, or the build — verify with a quick `grep` before trusting any root-level scratch file; treat them as throwaway, not source of truth, and don't wire them into the app.

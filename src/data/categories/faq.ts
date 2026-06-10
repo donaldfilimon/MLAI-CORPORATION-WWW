@@ -1,6 +1,6 @@
-import { FAQSchema, type FAQ } from '../schemas';
+import type { FAQ } from '../schemas';
 
-export const faq: FAQ = FAQSchema.parse([
+export const faq: FAQ = ([
   {
     question: "What is the WDBX Engine?",
     answer: "The Weighted Directed Backtrace eXecution engine is a retrieval and orchestration pattern that keeps context as weighted paths. It is designed to help teams inspect why a result was produced, which sources were used, and where confidence dropped."
@@ -32,5 +32,13 @@ export const faq: FAQ = FAQSchema.parse([
   {
     question: "Can your team help with benchmarks?",
     answer: "Yes. We help define reproducible workloads, environment notes, dashboards, regression gates, and benchmark narratives that separate real operating limits from demo conditions."
+  },
+  {
+    question: "How is WDBX different from hosted vector databases?",
+    answer: "WDBX is built in Zig for deterministic, GC-free behavior and is designed to run fully on-device: vector-aware storage, hash-chained integrity, and audit-friendly retrieval in one substrate, rather than a hosted index your data has to travel to."
+  },
+  {
+    question: "Why does privacy push toward on-device processing?",
+    answer: "Sending sensitive context to shared cloud infrastructure is what blocks adoption in healthcare, legal, and finance. Processing locally keeps data inside the hardware boundary — an architecture designed to support GDPR- and HIPAA-aligned deployments by minimizing exposure, complemented by policy rather than replaced by it."
   }
 ]);

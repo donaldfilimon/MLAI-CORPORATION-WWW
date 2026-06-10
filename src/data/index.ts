@@ -7,6 +7,7 @@ import { blog } from './categories/blog';
 import { team } from './categories/team';
 import { stats } from './categories/stats';
 import { faq } from './categories/faq';
+import { products } from './categories/products';
 
 export * from './schemas';
 export * from './categories/about';
@@ -18,6 +19,7 @@ export * from './categories/blog';
 export * from './categories/team';
 export * from './categories/stats';
 export * from './categories/faq';
+export * from './categories/products';
 
 export const content = {
   about,
@@ -29,4 +31,5 @@ export const content = {
   team,
   stats,
   faq,
+  products,
 } as const;

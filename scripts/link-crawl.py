@@ -18,6 +18,7 @@ Run via `bun run crawl` (or scripts/crawl-links.sh). Needs a dev server on :3000
 broken link, failed click-navigation, or unexpected console error.
 """
 import json
+import time
 import os
 import subprocess
 import sys
@@ -88,6 +89,7 @@ def visit(path: str):
 def click_through(target: str, source: str):
     """Click the anchor for `target` on page `source`; return the landed path."""
     cli("goto", BASE + source)
+    time.sleep(0.6)  # let the navigation commit + hydrate before clicking
     click_fn = (
         "() => {"
         "const t=" + json.dumps(target) + ";"
@@ -96,18 +98,40 @@ def click_through(target: str, source: str):
         "h=h.split('#')[0].split('?')[0].replace(/\\/$/,'')||'/';return h===t;});"
         "if(!a)return JSON.stringify({error:'anchor-not-found'});"
         "a.scrollIntoView();a.click();"
-        # react-router <Link> updates history synchronously, so location is current
-        "return JSON.stringify({landed: location.pathname});}"
+        "return JSON.stringify({clicked:true});}"
     )
     res = result_payload(cli("eval", click_fn))
     if not res or res.get("error"):
         return {"error": res.get("error") if res else "eval-failed"}
-    return {"landed": norm(res["landed"])}
+    # Next.js <Link> navigations are async (router transition + RSC fetch) —
+    # poll the location instead of reading it synchronously after the click.
+    landed = norm(source)
+    for _ in range(16):
+        time.sleep(0.25)
+        loc = result_payload(cli("eval", "() => JSON.stringify({p: location.pathname})"))
+        if loc and "p" in loc:
+            landed = norm(loc["p"])
+            if landed == target:
+                break
+    return {"landed": landed}
+
+
+# Auth-guarded routes legitimately land on /login when crawled signed-out.
+GUARD_REDIRECTS = {"/console": "/login", "/profile": "/login"}
+
+ASSET_EXTS = (".pdf", ".md", ".svg", ".xml", ".webmanifest", ".txt", ".png", ".jpg", ".ico")
+
+
+def is_asset(path: str) -> bool:
+    return path.lower().endswith(ASSET_EXTS)
 
 
 def main():
+    cli("close")  # reset any stale session state from a prior run
+    cli("open", BASE + "/")  # ensure a browser session exists (goto won't auto-open)
     # Phase 1 — discover routes + 404/console checks.
     seen, queue, results = set(), list(dict.fromkeys(norm(s) for s in SEEDS)), []
+    asset_links = {}  # document/file hrefs — status-checked via HTTP, not crawled
     first_seen = {}  # href -> a route where an anchor for it exists
     while queue:
         path = queue.pop(0)
@@ -118,11 +142,29 @@ def main():
         results.append((path, d))
         for href in d.get("links", []):
             n = norm(href)
+            if is_asset(n):
+                asset_links.setdefault(n, path)
+                continue
             first_seen.setdefault(n, path)
             if n not in seen and n not in queue:
                 queue.append(n)
 
-    broken = [p for p, d in results if d.get("is404")]
+    import urllib.request
+    bad_assets = []
+    for a in sorted(asset_links):
+        try:
+            req = urllib.request.Request(BASE + a, method="HEAD")
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                if resp.status >= 400:
+                    bad_assets.append((a, resp.status))
+        except Exception as e:
+            bad_assets.append((a, str(e)[:60]))
+    if asset_links:
+        print(f"Asset links: {len(asset_links) - len(bad_assets)}/{len(asset_links)} OK")
+        for a, st in bad_assets:
+            print(f"  x  asset {a} -> {st}")
+
+    broken = [p for p, d in results if d.get("is404")] + [a for a, _ in bad_assets]
     errored = [(p, d["errors"]) for p, d in results if d.get("errors")]
 
     # Phase 2 — click-through: click each unique link once, assert navigation.
@@ -130,7 +172,7 @@ def main():
     click_ok = 0
     for target, source in sorted(first_seen.items()):
         r = click_through(target, source)
-        if r.get("landed") == target:
+        if r.get("landed") == target or r.get("landed") == GUARD_REDIRECTS.get(target):
             click_ok += 1
         else:
             click_fails.append((target, source, r))
