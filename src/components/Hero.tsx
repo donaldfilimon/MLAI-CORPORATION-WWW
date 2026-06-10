@@ -1,12 +1,19 @@
-import { Suspense, useRef, useEffect, useState, useCallback } from "react";
+import { Suspense } from "react";
 import { m, useReducedMotion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  BrainCircuit,
+  DatabaseZap,
+  GitBranch,
+  Play,
+  ShieldCheck,
+} from "lucide-react";
 import { Magnetic } from "./Magnetic";
 import dynamic from "next/dynamic";
 
-// Decorative WebGL canvas — loaded after first paint, never in first-load JS.
+// Decorative WebGL canvas: loaded after first paint, outside the eager route bundle.
 const HeroSceneWebGPU = dynamic(() => import("./HeroScene.webgpu"), { ssr: false });
 
 const TRUSTED_LOGOS = [
@@ -17,127 +24,108 @@ const TRUSTED_LOGOS = [
   "GPU-aware runtime",
 ];
 
+const PRODUCT_SIGNALS = [
+  {
+    label: "WDBX",
+    title: "Traceable retrieval",
+    detail: "Weighted backtrace memory for evidence-aware context.",
+    icon: DatabaseZap,
+  },
+  {
+    label: "Abbey · Aviva · Abi",
+    title: "Persona routing",
+    detail: "Empathy, direct expertise, and adaptive moderation.",
+    icon: BrainCircuit,
+  },
+  {
+    label: "Operator layer",
+    title: "Bounded autonomy",
+    detail: "Approval gates, audit trails, and deployment controls.",
+    icon: GitBranch,
+  },
+];
+
 export const Hero = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const shouldReduceMotion = useReducedMotion();
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (shouldReduceMotion) return;
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      setMouseOffset({
-        x: ((e.clientX - centerX) / (rect.width / 2)) * 30,
-        y: ((e.clientY - centerY) / (rect.height / 2)) * 20,
-      });
-    },
-    [shouldReduceMotion],
-  );
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || shouldReduceMotion) return;
-    section.addEventListener("mousemove", handleMouseMove);
-    return () => section.removeEventListener("mousemove", handleMouseMove);
-  }, [handleMouseMove, shouldReduceMotion]);
 
   const stagger: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.15 },
+      transition: { staggerChildren: 0.12 },
     },
   };
 
   const fadeUp: Variants = {
-    hidden: { opacity: 0, y: 25 },
+    hidden: { opacity: 0, y: 24 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: "easeOut" },
+      transition: { duration: 0.68, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
   return (
     <section
-      ref={sectionRef}
-      className="relative min-h-[calc(100svh-6rem)] flex items-center overflow-hidden noise-overlay"
+      className="relative flex min-h-[calc(100svh-5rem)] items-center overflow-hidden noise-overlay"
       aria-labelledby="hero-heading"
     >
-      {/* Background Orbs — react to mouse position */}
       <div
-        className="bg-orb w-[600px] h-[600px] bg-indigo-500/20 -top-20 -right-20 animate-float"
-        style={{
-          transform: `translate(${mouseOffset.x * 0.8}px, ${mouseOffset.y * 0.8}px)`,
-          transition: "transform 0.3s ease-out",
-        }}
+        className="absolute inset-0 bg-[radial-gradient(70%_55%_at_64%_2%,rgba(99,102,241,0.24),transparent_72%),radial-gradient(44%_44%_at_18%_14%,rgba(56,189,248,0.10),transparent_68%)]"
+        aria-hidden="true"
       />
       <div
-        className="bg-orb w-[400px] h-[400px] bg-purple-500/10 bottom-20 -left-20 animate-float"
-        style={{
-          animationDelay: "-5s",
-          transform: `translate(${mouseOffset.x * -0.5}px, ${mouseOffset.y * -0.5}px)`,
-          transition: "transform 0.3s ease-out",
-        }}
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/40 to-transparent"
+        aria-hidden="true"
       />
       <div
-        className="bg-orb w-[300px] h-[300px] bg-sky-400/5 top-1/3 left-1/4 animate-float"
-        style={{
-          animationDelay: "-3s",
-          transform: `translate(${mouseOffset.x * 1.2}px, ${mouseOffset.y * 1.2}px)`,
-          transition: "transform 0.3s ease-out",
-        }}
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:96px_96px] opacity-30 [mask-image:linear-gradient(to_bottom,black,transparent_78%)]"
+        aria-hidden="true"
       />
 
-      <div className="container-custom relative z-10 py-20 md:py-28">
-        <div className="max-w-4xl lg:max-w-5xl">
-          <m.div variants={stagger} initial="hidden" animate="visible">
-            <m.div variants={fadeUp} className="label-chip mb-8">
+      <div className="container-custom relative z-10 py-12 md:py-16">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.68fr)] lg:items-center">
+          <m.div variants={stagger} initial="hidden" animate="visible" className="min-w-0">
+            <m.div variants={fadeUp} className="label-chip mb-5">
               <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-indigo-500" />
               </span>
-              <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-              SAFETY-CRITICAL AI INFRASTRUCTURE
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+              PRIVATE AI INFRASTRUCTURE
             </m.div>
 
             <m.h1
               variants={fadeUp}
               id="hero-heading"
-              className="text-5xl sm:text-6xl md:text-8xl font-display font-bold tracking-tight text-white mb-8 leading-[1.02] max-w-5xl"
+              className="mb-5 max-w-4xl font-display text-4xl font-bold leading-[1.03] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
             >
-              Infrastructure for{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-sky-300 to-indigo-500 animate-gradient">
-                resilient intelligence.
+              Traceable AI systems for{" "}
+              <span className="bg-gradient-to-r from-indigo-300 via-sky-200 to-indigo-500 bg-clip-text text-transparent">
+                real production constraints.
               </span>
             </m.h1>
 
             <m.p
               variants={fadeUp}
-              className="text-lg md:text-2xl text-text-dim mb-12 max-w-3xl leading-relaxed"
+              className="mb-6 max-w-3xl text-base leading-relaxed text-text-dim md:text-lg"
             >
-              MLAI Corporation builds WDBX, Abbey, Aviva, and Abi:
-              high-integrity systems for teams that need AI agents to explain
-              decisions, enforce constraints, and perform under production load.
+              MLAI connects WDBX memory, Abbey · Aviva · Abi routing, and
+              operator controls into infrastructure for agents that need to
+              explain decisions, respect boundaries, and stay observable.
             </m.p>
 
-            <m.div
-              variants={fadeUp}
-              className="flex flex-wrap gap-4 sm:gap-6 mb-16"
-            >
+            <m.div variants={fadeUp} className="mb-7 flex flex-wrap gap-3 sm:gap-4">
               <Magnetic>
                 <Button
                   asChild
                   size="lg"
                   className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-indigo-50"
                 >
-                  <Link to="/research">
-                    Explore Our Research
+                  <Link to="/showcase">
+                    View the System
                     <ArrowRight
-                      className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                      className="h-4 w-4 transition-transform group-hover:translate-x-1"
                       aria-hidden="true"
                     />
                   </Link>
@@ -149,55 +137,82 @@ export const Hero = () => {
                   variant="ghost"
                   asChild
                   size="lg"
-                  className="h-12 gap-3 rounded-full border border-white/10 px-5 text-white hover:bg-white/10 hover:text-white group"
+                  className="group h-12 gap-3 rounded-full border border-white/10 px-5 text-white hover:bg-white/10 hover:text-white"
                 >
                   <Link to="/benchmarks">
-                    <div
-                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center transition-all group-hover:border-indigo-400/50 group-hover:bg-indigo-400/5"
+                    <span
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all group-hover:border-indigo-400/50 group-hover:bg-indigo-400/5"
                       aria-hidden="true"
                     >
-                      <Play className="w-4 h-4 fill-current" />
-                    </div>
+                      <Play className="h-4 w-4 fill-current" />
+                    </span>
                     WDBX Benchmarks
                   </Link>
                 </Button>
               </Magnetic>
             </m.div>
 
-            {/* Trust Strip */}
-            <m.div
-              variants={fadeUp}
-              className="pt-8 border-t border-white/5"
-            >
-              <p className="text-[10px] font-mono text-text-dim/60 uppercase tracking-[0.2em] mb-5">
-                Built around production constraints
-              </p>
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-                {TRUSTED_LOGOS.map((name) => (
-                  <span
-                    key={name}
-                    className="text-sm font-medium text-text-dim/40 hover:text-text-dim/70 transition-colors cursor-default"
+            <m.div variants={fadeUp} className="grid gap-3 sm:grid-cols-3">
+              {PRODUCT_SIGNALS.map((signal) => {
+                const Icon = signal.icon;
+                return (
+                  <div
+                    key={signal.label}
+                    className="rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 backdrop-blur-md"
                   >
-                    {name}
-                  </span>
-                ))}
-              </div>
+                    <div className="mb-3 flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-300">
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      {signal.label}
+                    </div>
+                    <div className="text-sm font-semibold text-white">{signal.title}</div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-text-dim/85">
+                      {signal.detail}
+                    </p>
+                  </div>
+                );
+              })}
             </m.div>
           </m.div>
-        </div>
-      </div>
 
-      {/* Hero Visual Element (Abstract 3D) */}
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-full hidden lg:block opacity-80"
-        aria-hidden="true"
-      >
-        <Suspense fallback={<div className="h-full w-full" />}>
-          {/* Use WebGL-based version for better performance */}
-          <HeroSceneWebGPU />
-          {/* Fallback to original if needed */}
-          {/* <HeroScene /> */}
-        </Suspense>
+          <div className="relative hidden min-h-[500px] lg:block" aria-hidden="true">
+            <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 bg-bg/20 shadow-2xl shadow-indigo-950/20 backdrop-blur-sm" />
+            <div className="absolute inset-4 overflow-hidden rounded-[2rem] border border-white/8 bg-[#070914]/70">
+              <Suspense fallback={<div className="h-full w-full" />}>
+                <HeroSceneWebGPU />
+              </Suspense>
+            </div>
+            <div className="absolute bottom-8 left-8 right-8 rounded-2xl border border-white/10 bg-bg/75 p-4 backdrop-blur-md">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-sky-200/80">
+                Live architecture view
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-text-dim">
+                Retrieval, routing, and operator controls presented as one
+                inspectable system.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <m.div
+          variants={fadeUp}
+          initial={shouldReduceMotion ? false : "hidden"}
+          animate={shouldReduceMotion ? undefined : "visible"}
+          className="mt-10 border-t border-white/5 pt-6"
+        >
+          <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/60">
+            Built around production constraints
+          </p>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+            {TRUSTED_LOGOS.map((name) => (
+              <span
+                key={name}
+                className="text-sm font-medium text-text-dim/45 transition-colors hover:text-text-dim/80"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        </m.div>
       </div>
     </section>
   );

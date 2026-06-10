@@ -39,6 +39,12 @@ const workflow = [
   'Deploy with monitoring, benchmark baselines, and continuous reliability reviews.',
 ];
 
+const operatingContract = [
+  'Trace every retrieval path back to durable context.',
+  'Route requests through the persona best suited to the job.',
+  'Keep operator approval close to actions that can change state.',
+];
+
 const featuredResearch = research.publications.slice(0, 3);
 const featuredServices = services.slice(0, 4);
 const platformIcons = [GitBranch, ShieldCheck, Layers3, ServerCog];
@@ -54,21 +60,38 @@ export function Home() {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" aria-hidden="true" />
         <Reveal width="100%">
           <div className="container-custom">
-            <div className="mb-14 max-w-3xl">
-              <div className="label-chip mb-6">
-                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                PRODUCTION AI FOUNDATIONS
+            <div className="mb-14 grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(360px,0.58fr)] lg:items-end">
+              <div className="max-w-3xl">
+                <div className="label-chip mb-6">
+                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                  PRODUCTION AI FOUNDATIONS
+                </div>
+                <h2 id="home-capabilities-heading" className="section-title">One architecture from memory to action.</h2>
+                <p className="section-subtitle mb-0">
+                  WDBX keeps context traceable, Abbey · Aviva · Abi choose the right operating voice, and policy gates keep agent work inside reviewable boundaries.
+                </p>
               </div>
-              <h2 id="home-capabilities-heading" className="section-title">Move from impressive demos to accountable systems.</h2>
-              <p className="section-subtitle mb-0">
-                MLAI combines retrieval infrastructure, multi-agent orchestration, and safety governance into one deployable architecture for teams shipping consequential AI.
-              </p>
+              <div className="rounded-3xl border border-indigo-300/15 bg-indigo-400/[0.045] p-5">
+                <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-indigo-300">
+                  Operating contract
+                </p>
+                <div className="grid gap-3">
+                  {operatingContract.map((item, index) => (
+                    <div key={item} className="flex gap-3 text-sm leading-relaxed text-text-dim">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-indigo-300/20 bg-indigo-300/10 font-mono text-[10px] text-indigo-200">
+                        {index + 1}
+                      </span>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               {capabilities.map((item) => (
-                <div key={item.title} className="glass-card h-full flex flex-col">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]" aria-hidden="true">
+                <div key={item.title} className="glass-card group h-full flex flex-col overflow-hidden">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] transition-colors group-hover:border-indigo-300/25 group-hover:bg-indigo-300/10" aria-hidden="true">
                     {item.icon}
                   </div>
                   <h3 className="text-xl font-display font-bold text-white mb-3">{item.title}</h3>
@@ -102,10 +125,11 @@ export function Home() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-indigo-950/20 backdrop-blur">
+            <div className="relative rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-indigo-950/20 backdrop-blur">
+              <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-sky-200/40 to-transparent" aria-hidden="true" />
               <ol className="grid gap-3" aria-label="MLAI delivery workflow">
                 {workflow.map((step, index) => (
-                  <li key={step} className="flex gap-4 rounded-3xl border border-white/8 bg-white/[0.03] p-5">
+                  <li key={step} className="flex gap-4 rounded-3xl border border-white/8 bg-white/[0.03] p-5 transition-colors hover:border-indigo-300/20 hover:bg-white/[0.045]">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 font-mono text-sm font-bold text-indigo-300 ring-1 ring-indigo-400/20">
                       0{index + 1}
                     </span>

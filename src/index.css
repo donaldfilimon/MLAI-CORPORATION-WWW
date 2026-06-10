@@ -171,20 +171,6 @@
   @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
 }
 
-/* Animated Background Orbs */
-.bg-orb {
-  @apply absolute rounded-full blur-[100px] pointer-events-none opacity-[0.12];
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-16px) scale(1.03); }
-}
-
-.animate-float {
-  animation: float 10s ease-in-out infinite;
-}
-
 /* Subtle grid pattern for technology sections */
 .bg-grid {
   background-image:

@@ -96,7 +96,7 @@ export function Showcase() {
         };
 
   return (
-    <div className="relative pt-10">
+    <div className="relative pt-6 md:pt-10">
       {/* projection-room atmosphere: a cone of light from above, grain on top */}
       <div
         aria-hidden="true"
@@ -112,10 +112,11 @@ export function Showcase() {
         style={{ backgroundImage: GRAIN }}
       />
 
-      <section className="section-y relative">
+      <section className="relative py-14 md:py-24 lg:py-28">
         <div className="container-custom">
           {/* marquee header — oversized, cinema lobby */}
-          <div className="mb-20 max-w-4xl">
+          <div className="mb-10 grid gap-8 lg:mb-20 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.44fr)] lg:items-end">
+            <div className="max-w-4xl">
             <m.p
               {...(shouldReduceMotion
                 ? { initial: false }
@@ -134,7 +135,7 @@ export function Showcase() {
                   })}
               className="font-display text-5xl font-bold leading-[1.04] tracking-tight text-white md:text-7xl"
             >
-              The projection
+              The projection{" "}
               <br />
               room<span className="text-indigo-400">.</span>
             </m.h1>
@@ -152,17 +153,46 @@ export function Showcase() {
               your browser, narrated by the three MLAI minds with a neural
               voice that never leaves your device.
             </m.p>
+            </div>
+            <m.div
+              {...(shouldReduceMotion
+                ? { initial: false }
+                : {
+                    initial: { opacity: 0, y: 18 },
+                    animate: { opacity: 1, y: 0 },
+                    transition: { duration: 0.65, delay: 0.24 },
+                  })}
+              className="rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-md"
+            >
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-sky-200/80">
+                Program
+              </p>
+              <div className="mt-4 grid gap-3 text-sm text-text-dim">
+                <div className="flex items-center justify-between gap-4">
+                  <span>Rendered scenes</span>
+                  <span className="font-mono text-white">5</span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span>Primary medium</span>
+                  <span className="font-mono text-white">Browser</span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span>Voice model</span>
+                  <span className="font-mono text-white">On-device</span>
+                </div>
+              </div>
+            </m.div>
           </div>
 
           {/* poster wall — letterboxed cards, film-frame chrome */}
-          <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {SURFACES.map((s, i) => {
               const Icon = s.icon;
               return (
                 <m.div key={s.to} {...enter(i)} className={i === 2 ? "md:col-span-2 lg:col-span-1" : undefined}>
                   <Link
                     to={s.to}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d16] transition-all duration-500 hover:-translate-y-1.5 hover:border-white/20"
+                    className="group relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d16] transition-all duration-500 hover:-translate-y-1.5 hover:border-white/20 focus-visible:ring-2 focus-visible:ring-indigo-300/70"
                     style={{ boxShadow: "0 18px 50px -22px rgba(0,0,0,0.8)" }}
                   >
                     {/* poster glow */}
@@ -184,7 +214,13 @@ export function Showcase() {
                     </div>
 
                     {/* letterboxed marquee area */}
-                    <div className="relative flex aspect-[16/8] items-center justify-center overflow-hidden">
+                    <div className="relative flex aspect-[16/8] items-center justify-center overflow-hidden border-y border-white/[0.03]">
+                      <span
+                        className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/25 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-white/65"
+                        aria-hidden="true"
+                      >
+                        Open reel
+                      </span>
                       <Icon
                         className={`${s.accent} transition-transform duration-700 group-hover:scale-110`}
                         size={52}
@@ -206,16 +242,20 @@ export function Showcase() {
                     </div>
 
                     {/* bill copy */}
-                    <div className="relative flex flex-1 flex-col gap-3 border-t border-white/8 p-6">
-                      <div className="flex items-baseline justify-between gap-3">
+                    <div className="relative flex flex-1 flex-col gap-3 p-5 sm:p-6">
+                      <div className="grid gap-2 sm:flex sm:items-baseline sm:justify-between sm:gap-3">
                         <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
                           {s.title}
                         </h2>
-                        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim/70">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim/70">
                           {s.duration}
                         </span>
                       </div>
                       <p className="text-sm leading-relaxed text-text-dim">{s.blurb}</p>
+                      <span className="mt-auto inline-flex items-center gap-2 pt-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-200/80">
+                        Enter scene
+                        <Play size={12} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                      </span>
                     </div>
                   </Link>
                 </m.div>
@@ -224,7 +264,7 @@ export function Showcase() {
 
             {/* voice card completes the wall — same chrome, different content */}
             <m.div {...enter(5)}>
-              <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-indigo-400/20 bg-[#0c0d16]">
+              <div className="relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-indigo-400/20 bg-[#0c0d16]">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0"
@@ -239,7 +279,7 @@ export function Showcase() {
                   </span>
                   <Mic size={13} className="text-indigo-300/70" aria-hidden="true" />
                 </div>
-                <div className="relative flex flex-1 flex-col gap-3 p-6">
+                <div className="relative flex flex-1 flex-col gap-3 p-5 sm:p-6">
                   <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
                     On-device neural voice
                   </h2>
