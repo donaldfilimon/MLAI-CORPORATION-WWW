@@ -130,6 +130,15 @@ export const Footer = () => {
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/links"
+                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                >
+                  Link Hub{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
             </ul>
           </div>
 

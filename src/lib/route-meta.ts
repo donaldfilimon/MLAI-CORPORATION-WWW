@@ -57,6 +57,11 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "Review WDBX benchmark dashboards, workload summaries, and performance context for traceable retrieval infrastructure.",
   },
+  "/links": {
+    title: "Link Hub | MLAI Corporation",
+    description:
+      "One screen for MLAI's important doors — source repositories, reference docs, product pages, research, and the founder's profile.",
+  },
   "/privacy": {
     title: "Privacy Policy | MLAI Corporation",
     description:
