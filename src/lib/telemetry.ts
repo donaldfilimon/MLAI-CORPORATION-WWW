@@ -15,10 +15,16 @@ export type TelemetryEvent =
   | "inquiry_success"
   | "inquiry_close";
 
-function optedOut(): boolean {
+// Exported for unit testing. doNotTrack is "1" in Chromium but older
+// Firefox/Safari report "yes" when enabled — honor both, plus GPC.
+export function optedOut(): boolean {
   if (typeof navigator === "undefined") return true;
   const nav = navigator as Navigator & { globalPrivacyControl?: boolean };
-  return nav.doNotTrack === "1" || nav.globalPrivacyControl === true;
+  return (
+    nav.doNotTrack === "1" ||
+    nav.doNotTrack === "yes" ||
+    nav.globalPrivacyControl === true
+  );
 }
 
 export function track(event: TelemetryEvent): void {
