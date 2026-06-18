@@ -4,6 +4,8 @@
  * only in this in-memory map, never persisted.
  */
 
+import { clientIpOf } from "./session";
+
 type Bucket = { count: number; reset: number };
 
 const stores = new Map<string, Map<string, Bucket>>();
@@ -18,8 +20,10 @@ export function rateLimit(
     store = new Map();
     stores.set(name, store);
   }
-  const key =
-    req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+  // Key on the leftmost X-Forwarded-For entry (the original client), mirroring
+  // session.ts — otherwise an attacker appends junk hops ("ip, junk1",
+  // "ip, junk2", …) to mint a fresh bucket per request and bypass the limit.
+  const key = clientIpOf(req);
   const now = Date.now();
   const bucket = store.get(key);
   if (!bucket || bucket.reset < now) {

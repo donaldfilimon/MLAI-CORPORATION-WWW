@@ -53,7 +53,7 @@ export function toPublicUser(data: SessionData): PublicSessionUser {
 // X-Forwarded-For is only trustworthy behind a proxy that overwrites it
 // (Cloud Run does). Use the leftmost entry — the original client — so a
 // spoofed multi-hop header can't manufacture a "matching" IP string.
-function clientIpOf(req: Request): string {
+export function clientIpOf(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");
   if (xff) {
     const first = xff.split(",")[0]?.trim();
