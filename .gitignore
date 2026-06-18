@@ -23,3 +23,7 @@ inquiries.db
 .next/
 tsconfig.tsbuildinfo
 nohup.out
+
+# auto-improve loop run-state
+.claude/auto-improve.active
+.claude/auto-improve-ledger.jsonl
