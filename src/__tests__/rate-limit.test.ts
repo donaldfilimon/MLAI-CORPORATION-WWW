@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { rateLimit } from "../lib/server/rate-limit";
 
 // Each test uses a unique limiter `name` so the module-level in-memory store
@@ -38,5 +38,20 @@ describe("rateLimit — keys on the leftmost X-Forwarded-For IP", () => {
     });
     expect(rateLimit(name, realIp, opts)).toBe(true);
     expect(rateLimit(name, realIp, opts)).toBe(false);
+  });
+});
+
+describe("rateLimit — fixed-window expiry", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it("resets the bucket once windowMs elapses", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+    const name = `window-${Math.random()}`;
+    const opts = { windowMs: 1_000, max: 1 };
+    expect(rateLimit(name, reqWith("5.5.5.5"), opts)).toBe(true); // t=0: first request
+    expect(rateLimit(name, reqWith("5.5.5.5"), opts)).toBe(false); // t=0: over limit
+    vi.setSystemTime(1_001); // advance past the window
+    expect(rateLimit(name, reqWith("5.5.5.5"), opts)).toBe(true); // bucket reset
   });
 });
