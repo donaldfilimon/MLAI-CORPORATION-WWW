@@ -17,11 +17,11 @@
     "smoke": "bash scripts/smoke-api.sh"
   },
   "dependencies": {
-    "@base-ui/react": "^1.5.0",
+    "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
-    "@tailwindcss/postcss": "^4.3.0",
-    "@tanstack/react-query": "^5.66.0",
-    "@tanstack/react-virtual": "^3.11.2",
+    "@tailwindcss/postcss": "^4.3.1",
+    "@tanstack/react-query": "^5.101.0",
+    "@tanstack/react-virtual": "^3.14.3",
     "@tensorflow-models/posenet": "^2.2.2",
     "@tensorflow/tfjs": "^4.22.0",
     "@workos-inc/node": "^9.3.1",
@@ -30,12 +30,12 @@
     "framer-motion": "^12.40.0",
     "iron-session": "^8.0.4",
     "katex": "^0.17.0",
-    "lucide-react": "^1.16.0",
-    "next": "15",
+    "lucide-react": "^1.21.0",
+    "next": "^15.5.19",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "regl": "^2.1.1",
-    "shadcn": "^4.8.0",
+    "shadcn": "^4.11.0",
     "tailwind-merge": "^3.6.0",
     "tw-animate-css": "^1.4.0",
     "zod": "^4.4.3"
@@ -43,14 +43,13 @@
   "devDependencies": {
     "@types/bun": "^1.3.14",
     "@types/katex": "^0.16.8",
-    "@types/node": "^25.9.1",
-    "@types/react": "^19.2.15",
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.5.0",
-    "tailwindcss": "^4.3.0",
-    "tsx": "^4.22.3",
+    "tailwindcss": "^4.3.1",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.14",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   }
 }
