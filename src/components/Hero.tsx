@@ -44,10 +44,16 @@ const PRODUCT_SIGNALS = [
 export const Hero = () => {
   const shouldReduceMotion = useReducedMotion();
 
-  // Mount the signature neural constellation after client-side navigation
-  // (neural.js auto-mounts on first load; this covers SPA route changes).
+  // Mount the signature neural canvases after client-side navigation (neural.js
+  // auto-mounts on first load; this covers SPA route changes). The cleanup tears
+  // them down on unmount so the rAF loop + listeners don't leak when leaving home.
   useEffect(() => {
-    (window as unknown as { MLAINeural?: { mount: () => void } }).MLAINeural?.mount();
+    const neural = () =>
+      (window as unknown as {
+        MLAINeural?: { mount: () => void; unmount: () => void };
+      }).MLAINeural;
+    neural()?.mount();
+    return () => neural()?.unmount();
   }, []);
 
   const stagger: Variants = {

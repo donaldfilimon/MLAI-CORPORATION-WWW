@@ -62,7 +62,7 @@
     var cfg = Object.assign({}, DEFAULTS, datasetCfg(host));
     var c = makeCanvas(host);
     var ctx = c.getContext('2d');
-    var raf, w, h, dpr, cloud = [], lat = [], dust = [], curDensity = -1;
+    var raf, w, h, dpr, cloud = [], lat = [], dust = [], curDensity = -1, stopped = false;
     var tiltC = Math.cos(0.34), tiltS = Math.sin(0.34);
 
     function build() {
@@ -96,6 +96,7 @@
     }
 
     function draw(now) {
+      if (stopped) return;
       if (cfg.density !== curDensity) build();
       var speed = REDUCE ? 0 : cfg.speed;
       var par = (REDUCE || !cfg.parallax) ? 0 : 1;
@@ -175,7 +176,10 @@
       raf = requestAnimationFrame(draw);
     }
     raf = requestAnimationFrame(draw);
-    instances.push({ cfg: cfg, kind: 'galaxy' });
+    instances.push({
+      host: host, kind: 'galaxy', cfg: cfg,
+      destroy: function () { stopped = true; cancelAnimationFrame(raf); removeEventListener('resize', resize); c.remove(); },
+    });
   }
 
   function mountNet(host) {
@@ -183,11 +187,12 @@
     var dense = parseFloat(host.dataset.dense || '9000');
     var op = parseFloat(host.dataset.op || '1');
     var c = makeCanvas(host);
-    var ctx = c.getContext('2d'); var raf, w, h, dpr, n = [];
+    var ctx = c.getContext('2d'); var raf, w, h, dpr, n = [], stopped = false;
     function rs() { dpr = Math.min(devicePixelRatio || 1, 2); w = c.clientWidth; h = c.clientHeight; c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); n = []; var cnt = Math.min(54, Math.floor(w * h / dense)); for (var i = 0; i < cnt; i++) n.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25 }); }
     rs(); addEventListener('resize', rs);
     var still = REDUCE;
     function d() {
+      if (stopped) return;
       ctx.clearRect(0, 0, w, h);
       for (var i = 0; i < n.length; i++) {
         var a = n[i];
@@ -198,10 +203,26 @@
       raf = requestAnimationFrame(d);
     }
     d();
+    instances.push({
+      host: host, kind: 'net', cfg: {},
+      destroy: function () { stopped = true; cancelAnimationFrame(raf); removeEventListener('resize', rs); c.remove(); },
+    });
   }
 
   function updateAll(partial) {
     for (var i = 0; i < instances.length; i++) Object.assign(instances[i].cfg, partial);
+  }
+
+  // Tear down mounted canvases (cancel rAF + remove listeners + canvas). With a
+  // host, only that host's instance(s); without, all. Lets React unmount the
+  // hero without leaking a detached animation loop on SPA navigation.
+  function unmount(host) {
+    for (var i = instances.length - 1; i >= 0; i--) {
+      if (!host || instances[i].host === host) {
+        try { if (instances[i].destroy) instances[i].destroy(); } catch (e) {}
+        instances.splice(i, 1);
+      }
+    }
   }
 
   function mount() {
@@ -210,5 +231,5 @@
   }
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', mount); } else { mount(); }
 
-  window.MLAINeural = { updateAll: updateAll, mount: mount, DEFAULTS: DEFAULTS };
+  window.MLAINeural = { updateAll: updateAll, mount: mount, unmount: unmount, DEFAULTS: DEFAULTS };
 })();
