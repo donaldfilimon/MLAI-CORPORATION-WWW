@@ -50,3 +50,26 @@ describe("admin access policy", () => {
     expect(checkAdminIdentity(session)).toEqual({ ok: true });
   });
 });
+
+describe("getReturnTo — open-redirect guard", () => {
+  it("rejects unsafe targets, returning '/'", async () => {
+    const { getReturnTo } = await loadWorkos();
+    // missing / non-string
+    expect(getReturnTo(undefined)).toBe("/");
+    expect(getReturnTo(null)).toBe("/");
+    expect(getReturnTo("")).toBe("/");
+    // absolute / protocol-relative — the classic open-redirect vectors
+    expect(getReturnTo("//evil.com")).toBe("/");
+    expect(getReturnTo("https://evil.com")).toBe("/");
+    expect(getReturnTo("javascript:alert(1)")).toBe("/");
+    // internal API paths must not be a post-auth landing target
+    expect(getReturnTo("/api/auth/login")).toBe("/");
+  });
+
+  it("passes through safe same-origin relative paths unchanged", async () => {
+    const { getReturnTo } = await loadWorkos();
+    expect(getReturnTo("/")).toBe("/");
+    expect(getReturnTo("/blog/post")).toBe("/blog/post");
+    expect(getReturnTo("/console")).toBe("/console");
+  });
+});
