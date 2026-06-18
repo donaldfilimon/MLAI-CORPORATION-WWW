@@ -100,7 +100,7 @@ export function Showcase() {
       {/* projection-room atmosphere: a cone of light from above, grain on top */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[640px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-160"
         style={{
           background:
             "radial-gradient(55% 60% at 50% -10%, rgba(99,102,241,0.16), transparent 70%), radial-gradient(35% 45% at 82% 5%, rgba(56,189,248,0.08), transparent 70%)",
@@ -192,7 +192,7 @@ export function Showcase() {
                 <m.div key={s.to} {...enter(i)} className={i === 2 ? "md:col-span-2 lg:col-span-1" : undefined}>
                   <Link
                     to={s.to}
-                    className="group relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d16] transition-all duration-500 hover:-translate-y-1.5 hover:border-white/20 focus-visible:ring-2 focus-visible:ring-cyan-300/70"
+                    className="group relative flex h-full min-h-90 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d16] transition-all duration-500 hover:-translate-y-1.5 hover:border-white/20 focus-visible:ring-2 focus-visible:ring-cyan-300/70"
                     style={{ boxShadow: "0 18px 50px -22px rgba(0,0,0,0.8)" }}
                   >
                     {/* poster glow */}
@@ -214,7 +214,7 @@ export function Showcase() {
                     </div>
 
                     {/* letterboxed marquee area */}
-                    <div className="relative flex aspect-[16/8] items-center justify-center overflow-hidden border-y border-white/[0.03]">
+                    <div className="relative flex aspect-16/8 items-center justify-center overflow-hidden border-y border-white/3">
                       <span
                         className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/25 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-white/65"
                         aria-hidden="true"
@@ -264,7 +264,7 @@ export function Showcase() {
 
             {/* voice card completes the wall — same chrome, different content */}
             <m.div {...enter(5)}>
-              <div className="relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-[#0c0d16]">
+              <div className="relative flex h-full min-h-90 flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-[#0c0d16]">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0"

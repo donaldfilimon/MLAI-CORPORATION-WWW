@@ -11,19 +11,19 @@ export const ContactCTA = ({
 }) => {
   return (
     <section id="contact" className="section-y relative overflow-hidden">
-      <div className="bg-orb w-[800px] h-[800px] bg-cyan-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+      <div className="bg-orb w-200 h-200 bg-cyan-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
       <div className="container-custom relative z-10">
         <Card className="max-w-5xl mx-auto p-12 md:p-20 text-center border-cyan-500/10 relative overflow-hidden bg-surface/50">
           {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-500/40 to-transparent" />
 
           <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-sky-500/10 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-cyan-500/20">
+            <div className="w-16 h-16 bg-linear-to-br from-cyan-500/20 to-sky-500/10 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-cyan-500/20">
               <MessageSquare className="w-8 h-8 text-cyan-400" />
             </div>
             <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 leading-tight">

@@ -94,7 +94,7 @@ export const Navbar = () => {
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
                     <User className="w-4 h-4 text-cyan-400" />
-                    <span className="text-xs font-medium text-text-dim max-w-[100px] truncate">
+                    <span className="text-xs font-medium text-text-dim max-w-25 truncate">
                       {user.email}
                     </span>
                   </Button>

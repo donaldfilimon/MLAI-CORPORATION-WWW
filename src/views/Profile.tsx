@@ -78,7 +78,7 @@ export function Profile() {
         <p className="section-subtitle">Customize your MLAI account, verify the real WorkOS user behind the session, and prepare billing activation.</p>
       </div>
 
-      {status && <div className="mb-6 rounded-2xl border border-white/5 bg-white/[0.04] p-4 text-sm text-text-dim">{status}</div>}
+      {status && <div className="mb-6 rounded-2xl border border-white/5 bg-white/4 p-4 text-sm text-text-dim">{status}</div>}
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="glass-card flex flex-col justify-between">

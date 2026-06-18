@@ -88,7 +88,7 @@ export function WdbxLiveDemo() {
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_180px]">
           <div className="space-y-3">
             {hits.map((h) => (
-              <div key={h.doc.id} className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+              <div key={h.doc.id} className="rounded-xl border border-white/5 bg-white/2 p-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <div className="text-sm font-bold text-white">{h.doc.title}</div>
                   <div className="font-mono text-xs text-cyan-300">{h.score.toFixed(4)}</div>
@@ -96,7 +96,7 @@ export function WdbxLiveDemo() {
                 <p className="mt-1.5 text-sm leading-relaxed text-text-dim">{h.doc.text}</p>
                 <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/5">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-sky-400"
+                    className="h-full rounded-full bg-linear-to-r from-cyan-500 to-sky-400"
                     style={{ width: `${Math.max(4, (h.score / topScore) * 100)}%` }}
                   />
                 </div>
@@ -116,7 +116,7 @@ export function WdbxLiveDemo() {
               { v: `${stats?.shardsHit ?? "—"}/4`, k: "shards hit" },
               { v: `#${stats?.snapshot ?? "—"}`, k: "mvcc snapshot" },
             ].map((s) => (
-              <div key={s.k} className="rounded-xl border border-white/5 bg-white/[0.02] p-3.5">
+              <div key={s.k} className="rounded-xl border border-white/5 bg-white/2 p-3.5">
                 <div className="font-mono text-lg font-bold text-white">{s.v}</div>
                 <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-text-dim/50">{s.k}</div>
               </div>
@@ -141,7 +141,7 @@ export function WdbxLiveDemo() {
                   <span className="block font-mono text-[10px] text-cyan-300">
                     #{b.height} · 0x{b.hash}
                   </span>
-                  <span className="block max-w-[160px] truncate font-mono text-[10px] text-text-dim/60">
+                  <span className="block max-w-40 truncate font-mono text-[10px] text-text-dim/60">
                     {b.query}
                   </span>
                 </span>

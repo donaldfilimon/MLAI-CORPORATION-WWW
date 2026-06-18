@@ -17,7 +17,7 @@ export function CosineSimDemo() {
 
   return (
     <div className="glass-card grid items-center gap-6 p-6 sm:grid-cols-2">
-      <svg viewBox="0 0 220 220" className="mx-auto w-full max-w-[220px]" aria-label="Two vectors on a unit circle">
+      <svg viewBox="0 0 220 220" className="mx-auto w-full max-w-55" aria-label="Two vectors on a unit circle">
         <circle cx={cx} cy={cy} r={R} fill="none" stroke="rgba(255,255,255,.08)" />
         <line x1={20} y1={cy} x2={200} y2={cy} stroke="rgba(255,255,255,.05)" />
         <line x1={cx} y1={20} x2={cx} y2={200} stroke="rgba(255,255,255,.05)" />

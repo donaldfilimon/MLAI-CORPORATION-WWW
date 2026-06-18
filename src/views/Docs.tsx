@@ -303,7 +303,7 @@ export function Docs() {
                 {mcpTools.map((tool) => (
                   <div
                     key={tool.name}
-                    className="grid gap-4 border-b border-white/5 p-4 last:border-b-0 md:grid-cols-[12rem_1fr] hover:bg-white/[0.01] transition-colors"
+                    className="grid gap-4 border-b border-white/5 p-4 last:border-b-0 md:grid-cols-[12rem_1fr] hover:bg-white/1 transition-colors"
                   >
                     <div className="font-mono text-xs font-bold text-sky-400">{tool.name}</div>
                     <p className="text-sm leading-relaxed text-text-dim">{tool.purpose}</p>
@@ -502,7 +502,7 @@ export function Docs() {
                 {apiRoutes.map((route) => (
                   <div
                     key={route.path}
-                    className="grid gap-4 border-b border-white/5 p-5 last:border-b-0 md:grid-cols-[14rem_1fr] hover:bg-white/[0.01] transition-colors"
+                    className="grid gap-4 border-b border-white/5 p-5 last:border-b-0 md:grid-cols-[14rem_1fr] hover:bg-white/1 transition-colors"
                   >
                     <div className="font-mono text-xs font-bold text-cyan-400">{route.method} {route.path}</div>
                     <p className="text-sm leading-relaxed text-text-dim">{route.purpose}</p>

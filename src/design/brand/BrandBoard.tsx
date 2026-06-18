@@ -757,7 +757,7 @@ export default function BrandBoard(): ReactNode {
             <div className="text-sm font-semibold text-white mb-1">Glassmorphism</div>
             <p className="text-xs text-slate-400 mb-4">
               Frosted panels on near-black:{" "}
-              <span className="font-mono text-cyan-300/80">bg-white/[0.04] · border-white/10 · blur</span>
+              <span className="font-mono text-cyan-300/80">bg-white/4 · border-white/10 · blur</span>
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div className="glass h-20" />

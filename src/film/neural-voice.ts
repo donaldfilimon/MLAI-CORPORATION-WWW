@@ -182,6 +182,26 @@ function chunkText(text: string): string[] {
 let _loadPromise: Promise<boolean> | null = null;
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
+// ONNX Runtime Web prints a benign warning on session creation when shape/CPU
+// ops fall back off the preferred EP ("VerifyEachNodeIsAssignedToAnEp … Some
+// nodes were not assigned to the preferred execution providers"). It's
+// informational — the model still loads — but ORT logs it via console.error,
+// which trips the Next.js dev error overlay. Filter ONLY that line; everything
+// else passes through untouched. Installed once, before the first model load.
+let _ortFilterInstalled = false;
+function installOrtLogFilter(): void {
+  if (_ortFilterInstalled || typeof console === "undefined") return;
+  _ortFilterInstalled = true;
+  const BENIGN = /onnxruntime|VerifyEachNodeIsAssignedToAnEp|nodes were not assigned to the preferred/i;
+  for (const level of ["warn", "error"] as const) {
+    const orig = console[level].bind(console);
+    console[level] = (...args: unknown[]) => {
+      if (typeof args[0] === "string" && BENIGN.test(args[0])) return;
+      orig(...args);
+    };
+  }
+}
+
 async function load(): Promise<boolean> {
   if (state.status === "ready") return true;
   if (state.status === "unsupported") return false;
@@ -191,6 +211,7 @@ async function load(): Promise<boolean> {
 
   _loadPromise = (async () => {
     state.status = "loading";
+    installOrtLogFilter();   // quiet ORT's benign EP-assignment notice before session creation
     let lastErr: unknown = null;
     for (let attempt = 1; attempt <= LOAD_RETRIES; attempt++) {
       try {
@@ -201,7 +222,15 @@ async function load(): Promise<boolean> {
         state.KokoroTTS = KokoroTTS;
         state.device = await detectDevice();
         const dtype = state.device === "webgpu" ? "fp32" : "q8";
-        state.tts = await KokoroTTS.from_pretrained(MODEL_ID, { dtype, device: state.device });
+        state.tts = await KokoroTTS.from_pretrained(MODEL_ID, {
+          dtype,
+          device: state.device,
+          // ORT log severity 3 = ERROR: stop the benign WARNING-level
+          // EP-assignment notices at the source (transformers.js forwards
+          // session_options to the ONNX InferenceSession). The console filter
+          // above is the fallback for builds that ignore this.
+          session_options: { logSeverityLevel: 3 },
+        });
         state.status = "ready";
         return true;
       } catch (err) {

@@ -220,7 +220,7 @@ export const Footer = () => {
         </div>
 
         {/* Provenance legend — every figure on the site carries one of these tags */}
-        <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-text-dim/70">
+        <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-white/8 bg-white/2 px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-text-dim/70">
           <span className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px] shadow-emerald-400/60" aria-hidden="true" />
             <b className="font-semibold text-text-dim">measured</b> — reproduced on our hardware
