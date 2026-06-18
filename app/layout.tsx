@@ -81,7 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
         />
       </head>
-      <body className="bg-[#05070d] text-[#e8edf6] antialiased selection:bg-cyan-400/30">
+      <body className="bg-bg text-text antialiased selection:bg-cyan-400/30">
         <Providers>{children}</Providers>
         {/* Signature neural canvases (vanilla) — auto-mount on [data-neural] hosts;
             Hero also calls MLAINeural.mount() after client navigation. */}

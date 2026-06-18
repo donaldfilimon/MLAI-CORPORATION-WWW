@@ -85,15 +85,15 @@ export const Hero = () => {
         data-neural="net"
         data-color="34,211,238"
         data-op="0.6"
-        className="pointer-events-none absolute inset-0 z-0 opacity-70 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+        className="pointer-events-none absolute inset-0 z-0 opacity-70 mask-[linear-gradient(to_bottom,black,transparent_85%)]"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent"
+        className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-300/40 to-transparent"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:96px_96px] opacity-30 [mask-image:linear-gradient(to_bottom,black,transparent_78%)]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-size-[96px_96px] opacity-30 mask-[linear-gradient(to_bottom,black,transparent_78%)]"
         aria-hidden="true"
       />
 
@@ -115,7 +115,7 @@ export const Hero = () => {
               className="mb-5 max-w-4xl font-display text-4xl font-bold leading-[1.03] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
             >
               Traceable AI systems for{" "}
-              <span className="bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-cyan-300 via-sky-200 to-cyan-500 bg-clip-text text-transparent">
                 real production constraints.
               </span>
             </m.h1>
@@ -188,7 +188,7 @@ export const Hero = () => {
             </m.div>
           </m.div>
 
-          <div className="relative hidden min-h-[500px] lg:block" aria-hidden="true">
+          <div className="relative hidden min-h-125 lg:block" aria-hidden="true">
             <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 bg-bg/20 shadow-2xl shadow-cyan-950/20 backdrop-blur-sm" />
             <div className="absolute inset-4 overflow-hidden rounded-[2rem] border border-white/8 bg-[#070914]/70">
               <Suspense fallback={<div className="h-full w-full" />}>

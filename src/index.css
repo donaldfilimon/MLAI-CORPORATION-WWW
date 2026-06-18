@@ -112,7 +112,7 @@
   }
 
   .section-title {
-    @apply text-h3 sm:text-h2 md:text-h1 font-display font-bold tracking-tight mb-6 text-balance text-white leading-[1.08] [text-wrap:balance];
+    @apply text-h3 sm:text-h2 md:text-h1 font-display font-bold tracking-tight mb-6 text-balance text-white leading-[1.08];
   }
 
   .section-subtitle {
@@ -149,7 +149,7 @@
   }
 
   .section-divider {
-    @apply w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    @apply w-full h-px bg-linear-to-r from-transparent via-white/10 to-transparent;
   }
 
   /* Subtle gradient label chip */
