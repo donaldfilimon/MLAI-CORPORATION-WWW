@@ -1,6 +1,6 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 
-const WDBX_COLOR = "#6366f1";
+const WDBX_COLOR = "#22d3ee";
 const COMP_COLOR = "#64748b";
 
 interface Props {

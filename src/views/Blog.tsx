@@ -29,7 +29,7 @@ export function Blog() {
             (item) => (
               <Card key={item} variant="glass" className="p-6">
                 <Sparkles
-                  className="mb-3 h-4 w-4 text-indigo-400"
+                  className="mb-3 h-4 w-4 text-cyan-400"
                   aria-hidden="true"
                 />
                 <h3 className="text-sm font-semibold text-white mb-2">
@@ -63,11 +63,11 @@ export function Blog() {
                 <Link to={`/blog/${post.slug}`} className="block">
                   <Card
                     variant="glass"
-                    className="group flex flex-col justify-between hover:border-indigo-500/20 transition-all duration-300 p-0 overflow-hidden"
+                    className="group flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300 p-0 overflow-hidden"
                   >
                     <CardContent className="p-8">
                       <div className="flex items-center gap-4 mb-4">
-                        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-indigo-400 uppercase">
+                        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase">
                           {post.tag}
                         </span>
                         <Separator
@@ -78,7 +78,7 @@ export function Blog() {
                           {post.date}
                         </span>
                       </div>
-                      <h3 className="text-2xl font-display font-bold text-white group-hover:text-indigo-400 transition-colors leading-tight mb-4">
+                      <h3 className="text-2xl font-display font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight mb-4">
                         {post.title}
                       </h3>
                       <p className="text-sm md:text-base text-text-dim leading-relaxed mb-6">
@@ -89,7 +89,7 @@ export function Blog() {
                       <span className="text-xs font-mono text-text-dim/40 uppercase tracking-widest">
                         {post.readTime}
                       </span>
-                      <span className="text-white group-hover:text-indigo-400 font-bold uppercase tracking-widest text-xs gap-2 inline-flex items-center transition-all">
+                      <span className="text-white group-hover:text-cyan-400 font-bold uppercase tracking-widest text-xs gap-2 inline-flex items-center transition-all">
                         Read Note{" "}
                         <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                       </span>

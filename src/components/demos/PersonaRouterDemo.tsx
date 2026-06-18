@@ -26,12 +26,12 @@ export function PersonaRouterDemo() {
       ? { label: "Abbey", cls: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" }
       : alpha < 0.34
         ? { label: "Aviva", cls: "bg-violet-500/20 text-violet-300 border-violet-500/30" }
-        : { label: "Blend", cls: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30" };
+        : { label: "Blend", cls: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30" };
 
   return (
     <div className="glass-card p-6">
       <div className="mb-3 flex items-center gap-2">
-        <Workflow className="h-4 w-4 text-indigo-400" aria-hidden="true" />
+        <Workflow className="h-4 w-4 text-cyan-400" aria-hidden="true" />
         <span className="text-sm font-semibold text-white">Abi — live routing (illustrative)</span>
       </div>
       <div className="flex gap-2">
@@ -39,10 +39,10 @@ export function PersonaRouterDemo() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Type a user message…"
-          className="flex-1 rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white outline-none focus:border-indigo-400/50"
+          className="flex-1 rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-400/50"
         />
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/20">
-          <Send className="h-4 w-4 text-indigo-300" aria-hidden="true" />
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-500/20">
+          <Send className="h-4 w-4 text-cyan-300" aria-hidden="true" />
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">

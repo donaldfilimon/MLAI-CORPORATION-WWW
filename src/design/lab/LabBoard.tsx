@@ -77,7 +77,7 @@ type ThemeDef = { label: string; filter: string; dot: string };
 
 const THEMES: Record<ThemeKey, ThemeDef> = {
   aurora: { label: "Aurora", filter: "none", dot: "#22d3ee" },
-  violet: { label: "Violet", filter: "hue-rotate(45deg)", dot: "#818cf8" },
+  violet: { label: "Violet", filter: "hue-rotate(45deg)", dot: "#60a5fa" },
   emerald: { label: "Emerald", filter: "hue-rotate(150deg) saturate(1.05)", dot: "#34d399" },
   sunset: { label: "Sunset", filter: "hue-rotate(200deg) saturate(1.15)", dot: "#fb7185" },
   mono: { label: "Mono", filter: "saturate(0.2) brightness(1.04)", dot: "#cbd5e1" },

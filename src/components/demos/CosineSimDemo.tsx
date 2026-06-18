@@ -21,8 +21,8 @@ export function CosineSimDemo() {
         <circle cx={cx} cy={cy} r={R} fill="none" stroke="rgba(255,255,255,.08)" />
         <line x1={20} y1={cy} x2={200} y2={cy} stroke="rgba(255,255,255,.05)" />
         <line x1={cx} y1={20} x2={cx} y2={200} stroke="rgba(255,255,255,.05)" />
-        <path d={`M ${cx} ${cy} L ${ax} ${ay}`} stroke="#818cf8" strokeWidth="2.5" />
-        <circle cx={ax} cy={ay} r="4" fill="#818cf8" />
+        <path d={`M ${cx} ${cy} L ${ax} ${ay}`} stroke="#60a5fa" strokeWidth="2.5" />
+        <circle cx={ax} cy={ay} r="4" fill="#60a5fa" />
         <path d={`M ${cx} ${cy} L ${bx} ${by}`} stroke="#38bdf8" strokeWidth="2.5" />
         <circle cx={bx} cy={by} r="4" fill="#38bdf8" />
         <circle cx={cx} cy={cy} r="3" fill="#fff" />
@@ -32,11 +32,11 @@ export function CosineSimDemo() {
           {cos.toFixed(3)}
         </div>
         <div className="mb-5 text-xs text-text-dim">cosine similarity (a · b / ‖a‖‖b‖)</div>
-        <label className="mb-1 block text-xs text-indigo-300">Vector a — {a}°</label>
+        <label className="mb-1 block text-xs text-cyan-300">Vector a — {a}°</label>
         <input
           type="range" min={0} max={360} value={a}
           onChange={(e) => setA(+e.target.value)}
-          className="mb-4 w-full accent-indigo-400"
+          className="mb-4 w-full accent-cyan-400"
         />
         <label className="mb-1 block text-xs text-sky-300">Vector b — {b}°</label>
         <input

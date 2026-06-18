@@ -117,7 +117,7 @@ export function Profile() {
         <div className="grid gap-6">
           <div className="glass-card flex flex-col justify-between">
             <div>
-              <ShieldCheck className="mb-4 h-8 w-8 text-indigo-400" />
+              <ShieldCheck className="mb-4 h-8 w-8 text-cyan-400" />
               <h3 className="text-lg font-bold text-white mb-1">Real User Check</h3>
               <p className="text-xs text-text-dim mb-6">Server verifies the session user against WorkOS.</p>
             </div>
@@ -129,7 +129,7 @@ export function Profile() {
 
           <div className="glass-card flex flex-col justify-between">
             <div>
-              <KeyRound className="mb-4 h-8 w-8 text-indigo-400" />
+              <KeyRound className="mb-4 h-8 w-8 text-cyan-400" />
               <h3 className="text-lg font-bold text-white mb-1">2FA, Passkeys, Cookies</h3>
               <p className="text-xs text-text-dim mb-6">Hosted AuthKit handles MFA/passkeys once enabled in WorkOS.</p>
             </div>

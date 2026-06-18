@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 import { Providers } from "./providers";
 import { DEFAULT_ROUTE_META, SITE_URL } from "@/lib/route-meta";
 
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0b12",
+  themeColor: "#05070d",
 };
 
 const ORG_JSON_LD = JSON.stringify({
@@ -58,29 +59,33 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth dark" suppressHydrationWarning>
       <head>
-        {/* Display (Outfit) + mono (JetBrains Mono) load from Google Fonts;
-            body font (Geist) is self-hosted via @fontsource (imported above). */}
+        {/* Display (Spectral serif — the Lab signature) + mono (JetBrains Mono)
+            load from Google Fonts; body font (Geist) is self-hosted via
+            @fontsource (imported above). */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         />
         <noscript>
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
           />
         </noscript>
-        <link rel="mask-icon" href="/favicon.svg" color="#6366f1" />
+        <link rel="mask-icon" href="/favicon.svg" color="#22d3ee" />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
         />
       </head>
-      <body className="bg-[#0a0b12] text-[#fafafa] antialiased selection:bg-indigo-500/30">
+      <body className="bg-bg text-text antialiased selection:bg-cyan-400/30">
         <Providers>{children}</Providers>
+        {/* Signature neural canvases (vanilla) — auto-mount on [data-neural] hosts;
+            Hero also calls MLAINeural.mount() after client navigation. */}
+        <Script src="/neural.js" strategy="afterInteractive" />
       </body>
     </html>
   );

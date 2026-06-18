@@ -23,7 +23,7 @@ export const Demo = () => {
         <div className="mt-10 flex flex-wrap gap-6">
           <Link
             to="/research/wdbx-weighted-backtrace-memory-store"
-            className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-indigo-400 transition-colors"
+            className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors"
           >
             Read the WDBX paper
             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
@@ -32,7 +32,7 @@ export const Demo = () => {
             href="https://github.com/donaldfilimon/abi"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-text-dim hover:text-indigo-400 transition-colors"
+            className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-text-dim hover:text-cyan-400 transition-colors"
           >
             The source is the truth — open the repo
             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />

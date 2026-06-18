@@ -2,9 +2,9 @@ import { content } from "@/data";
 import { PageHeader } from "@/components/PageHeader";
 
 const CAT_STYLES: Record<string, string> = {
-  added: "text-indigo-300 bg-indigo-500/10 border-indigo-500/20",
+  added: "text-cyan-300 bg-cyan-500/10 border-cyan-500/20",
   changed: "text-sky-300 bg-sky-500/10 border-sky-500/20",
-  perf: "text-fuchsia-300 bg-fuchsia-500/10 border-fuchsia-500/20",
+  perf: "text-violet-300 bg-violet-500/10 border-violet-500/20",
   fixed: "text-amber-300 bg-amber-500/10 border-amber-500/20",
 };
 
@@ -26,18 +26,18 @@ export const Changelog = () => {
         <div className="relative mx-auto max-w-3xl">
           {/* timeline spine */}
           <div
-            className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-indigo-500/40 via-white/10 to-transparent"
+            className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-cyan-500/40 via-white/10 to-transparent"
             aria-hidden="true"
           />
           <ol className="space-y-10">
             {content.changelog.map((entry) => (
               <li key={entry.version} className="relative pl-10">
                 <span
-                  className="absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 border-indigo-400/60 bg-bg"
+                  className="absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 border-cyan-400/60 bg-bg"
                   aria-hidden="true"
                 />
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-3">
-                  <span className="font-mono text-sm font-bold text-indigo-300">
+                  <span className="font-mono text-sm font-bold text-cyan-300">
                     {entry.version}
                   </span>
                   <h2 className="text-lg font-display font-bold text-white">

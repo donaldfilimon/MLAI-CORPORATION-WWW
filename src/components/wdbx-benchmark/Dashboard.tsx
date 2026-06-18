@@ -32,7 +32,7 @@ import { Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import "./benchmarks.css";
 
-const WDBX_COLOR = "#6366f1";
+const WDBX_COLOR = "#22d3ee";
 const COMP_COLOR = "#64748b";
 
 type ChartEntry = {

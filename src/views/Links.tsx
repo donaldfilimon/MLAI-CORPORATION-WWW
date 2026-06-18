@@ -160,11 +160,11 @@ function LinkCard({ item }: { item: LinkItem }) {
       <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-text-dim/50">
         {external ? "External" : "Internal"}
       </span>
-      <h3 className="mt-2 text-base font-bold text-white group-hover:text-indigo-400 transition-colors">
+      <h3 className="mt-2 text-base font-bold text-white group-hover:text-cyan-400 transition-colors">
         {item.title}
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-text-dim">{item.body}</p>
-      <span className="mt-4 inline-flex items-center gap-1.5 font-mono text-xs text-indigo-400">
+      <span className="mt-4 inline-flex items-center gap-1.5 font-mono text-xs text-cyan-400">
         {item.label}
         {external ? (
           <ArrowUpRight className="h-3 w-3" />
@@ -209,7 +209,7 @@ export const Links = () => {
           {LINK_SECTIONS.map((section) => (
             <div key={section.title}>
               <div className="mb-6 flex items-baseline gap-4">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-indigo-400">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-400">
                   {section.kicker}
                 </span>
                 <h2 className="text-xl font-display font-bold text-white">
