@@ -29,6 +29,31 @@ const icons = [
   <Code className="w-7 h-7 text-cyan-400" />,
 ];
 
+// How an engagement runs — a real ordered sequence (the page's own
+// "audit, design, build, harden"), so numbered rows are honest here.
+const engagement = [
+  {
+    kick: "Phase 01",
+    title: "Audit",
+    body: "Map workflows, prompt surfaces, data paths, and approval gates to determine what is safe to automate and what still needs a human in the loop.",
+  },
+  {
+    kick: "Phase 02",
+    title: "Design",
+    body: "Specify the retrieval, orchestration, and safety layers — index strategy, agent roles, tool permissions, and the evaluation harness that will gate releases.",
+  },
+  {
+    kick: "Phase 03",
+    title: "Build",
+    body: "Implement against production-like traffic with traces, audit events, and benchmark baselines wired in from the first commit, not bolted on later.",
+  },
+  {
+    kick: "Phase 04",
+    title: "Harden",
+    body: "Red-team the system, tighten policy locks, and package private deployment, monitoring, and rollback paths for governed production.",
+  },
+];
+
 export const Services = () => {
   const { openInquiry } = useUI();
   const shouldReduceMotion = useReducedMotion();
@@ -97,7 +122,7 @@ export const Services = () => {
                       ))}
                     </div>
                   </CardContent>
-                  <div className="mt-auto p-6 border-t border-white/5 bg-white/[0.02]">
+                  <div className="mt-auto p-6 border-t border-white/5 bg-white/2">
                     <button
                       onClick={openInquiry}
                       className="text-sm font-semibold text-cyan-400 flex items-center gap-2 hover:gap-3 transition-all opacity-85 group-hover:opacity-100 cursor-pointer"
@@ -113,6 +138,54 @@ export const Services = () => {
             );
           })}
         </CardGrid>
+
+        {/* Engagement process — numbered rows (numrow), a genuine sequence. */}
+        <div className="mt-24">
+          <div className="mb-12 max-w-2xl">
+            <div className="label-chip mb-5">HOW AN ENGAGEMENT RUNS</div>
+            <h2 className="section-title">From audit to governed production.</h2>
+            <p className="section-subtitle mb-0">
+              Four phases, in order. Each one ends with evidence — a register, a
+              harness, a baseline — that gates the next.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {engagement.map((step, i) => {
+              const motionProps = shouldReduceMotion
+                ? { initial: false }
+                : {
+                    initial: { opacity: 0, y: 16 },
+                    whileInView: { opacity: 1, y: 0 },
+                    transition: { delay: i * 0.06 },
+                  };
+              return (
+                <m.div
+                  key={step.title}
+                  viewport={{ once: true }}
+                  {...motionProps}
+                  className="glass-card flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:gap-7"
+                >
+                  <div
+                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 font-mono text-lg font-bold text-cyan-300"
+                    aria-hidden="true"
+                  >
+                    0{i + 1}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-dim/60">
+                      {step.kick}
+                    </div>
+                    <h3 className="mt-1 text-xl font-bold text-white">{step.title}</h3>
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-dim">
+                      {step.body}
+                    </p>
+                  </div>
+                </m.div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );

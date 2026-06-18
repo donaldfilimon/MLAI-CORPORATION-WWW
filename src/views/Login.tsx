@@ -21,7 +21,7 @@ export function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center px-5 pt-20 pb-20 relative overflow-hidden font-sans">
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
       <m.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -118,7 +118,7 @@ export function Login() {
                   onClick={() =>
                     mode === "signup" ? login("/console") : signup("/console")
                   }
-                  className="w-full py-6 text-base font-semibold rounded-xl border-white/10 bg-white/[0.03] text-white hover:bg-white/10 cursor-pointer"
+                  className="w-full py-6 text-base font-semibold rounded-xl border-white/10 bg-white/3 text-white hover:bg-white/10 cursor-pointer"
                 >
                   {mode === "signup"
                     ? "I already have an account"

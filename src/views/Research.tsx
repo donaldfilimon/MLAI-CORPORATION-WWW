@@ -18,7 +18,7 @@ export const Research = () => {
       className="min-h-screen section-y bg-bg relative overflow-hidden font-sans"
       aria-labelledby="research-heading"
     >
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-cyan-900/10 to-transparent -z-10" />
+      <div className="absolute top-0 left-0 w-full h-96 bg-linear-to-b from-cyan-900/10 to-transparent -z-10" />
       <div className="container-custom">
         <PageHeader
           id="research-heading"
@@ -92,7 +92,7 @@ export const Research = () => {
                         {item.abstract}
                       </p>
                     </CardContent>
-                    <div className="px-8 py-4 border-t border-white/5 flex items-center justify-between bg-white/[0.02]">
+                    <div className="px-8 py-4 border-t border-white/5 flex items-center justify-between bg-white/2">
                       <span className="text-xs font-mono text-text-dim/40 uppercase tracking-widest">
                         {item.readTime}
                       </span>

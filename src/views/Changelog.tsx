@@ -26,7 +26,7 @@ export const Changelog = () => {
         <div className="relative mx-auto max-w-3xl">
           {/* timeline spine */}
           <div
-            className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-cyan-500/40 via-white/10 to-transparent"
+            className="absolute left-[7px] top-2 bottom-2 w-px bg-linear-to-b from-cyan-500/40 via-white/10 to-transparent"
             aria-hidden="true"
           />
           <ol className="space-y-10">

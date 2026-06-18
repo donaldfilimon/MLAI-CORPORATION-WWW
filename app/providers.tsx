@@ -54,8 +54,8 @@ export function Providers({ children }: { children: ReactNode }) {
 
             {/* Global UI Decorations */}
             <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-cyan-500/[0.03] to-transparent" />
-              <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-gradient-to-t from-cyan-500/[0.03] to-transparent" />
+              <div className="absolute top-0 left-0 w-full h-[50vh] bg-linear-to-b from-cyan-500/3 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-linear-to-t from-cyan-500/3 to-transparent" />
             </div>
           </div>
           <Toaster />

@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { m, useReducedMotion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Magnetic } from "./Magnetic";
-import dynamic from "next/dynamic";
-
-// Decorative WebGL canvas: loaded after first paint, outside the eager route bundle.
-const HeroSceneWebGPU = dynamic(() => import("./HeroScene.webgpu"), { ssr: false });
 
 const TRUSTED_LOGOS = [
   "Private retrieval",
@@ -191,17 +187,25 @@ export const Hero = () => {
           <div className="relative hidden min-h-125 lg:block" aria-hidden="true">
             <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 bg-bg/20 shadow-2xl shadow-cyan-950/20 backdrop-blur-sm" />
             <div className="absolute inset-4 overflow-hidden rounded-[2rem] border border-white/8 bg-[#070914]/70">
-              <Suspense fallback={<div className="h-full w-full" />}>
-                <HeroSceneWebGPU />
-              </Suspense>
+              {/* Tri-persona embedding galaxy — the Lab headline signature
+                  (Abbey · Aviva · Abi clusters). 2D canvas, auto-mounted by
+                  neural.js; respects prefers-reduced-motion internally. */}
+              <div
+                data-neural="galaxy"
+                data-glow="0.95"
+                data-density="1"
+                data-chain="1"
+                className="absolute inset-0"
+                aria-hidden="true"
+              />
             </div>
             <div className="absolute bottom-8 left-8 right-8 rounded-2xl border border-white/10 bg-bg/75 p-4 backdrop-blur-md">
               <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-sky-200/80">
-                Live architecture view
+                Tri-persona embedding space
               </p>
               <p className="mt-2 text-sm leading-relaxed text-text-dim">
-                Retrieval, routing, and operator controls presented as one
-                inspectable system.
+                Abbey, Aviva, and Abi as distinct clusters in one
+                retrieval-governed system.
               </p>
             </div>
           </div>

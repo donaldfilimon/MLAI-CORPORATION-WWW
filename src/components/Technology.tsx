@@ -74,7 +74,7 @@ export const Technology = () => {
                             <Info className="w-3.5 h-3.5 opacity-30 group-hover:opacity-100 transition-opacity" />
                           </h4>
                         </TooltipTrigger>
-                        <TooltipContent side="right" className="max-w-[240px] bg-surface/90 backdrop-blur-md border-white/10">
+                        <TooltipContent side="right" className="max-w-60 bg-surface/90 backdrop-blur-md border-white/10">
                           <p className="text-xs leading-relaxed">{feat.glossary}</p>
                         </TooltipContent>
                       </Tooltip>

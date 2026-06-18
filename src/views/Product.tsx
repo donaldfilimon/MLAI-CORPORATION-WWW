@@ -73,7 +73,7 @@ export function Product() {
       {/* persona atmosphere — the page is lit in the product's color */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[560px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-140"
         style={{ background: accent.glow }}
       />
 
@@ -127,7 +127,7 @@ export function Product() {
                     <div className="relative">
                       <span
                         aria-hidden="true"
-                        className="pointer-events-none select-none font-display text-7xl font-bold leading-none text-white/[0.06] md:text-8xl"
+                        className="pointer-events-none select-none font-display text-7xl font-bold leading-none text-white/6 md:text-8xl"
                       >
                         {num}
                       </span>
@@ -163,7 +163,7 @@ export function Product() {
                             >
                               <div
                                 aria-hidden="true"
-                                className="pointer-events-none absolute inset-0 translate-x-[-110%] bg-linear-to-r from-transparent via-white/[0.04] to-transparent transition-transform duration-700 group-hover/eq:translate-x-[110%]"
+                                className="pointer-events-none absolute inset-0 translate-x-[-110%] bg-linear-to-r from-transparent via-white/4 to-transparent transition-transform duration-700 group-hover/eq:translate-x-[110%]"
                               />
                               <BlockMath tex={eq.tex} />
                               <p className="mt-3 text-xs leading-relaxed text-text-dim">{eq.note}</p>

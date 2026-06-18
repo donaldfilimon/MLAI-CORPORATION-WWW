@@ -18,10 +18,10 @@ function TeamPhoto({ name, image }: { name: string; image: string }) {
     .join("");
 
   return (
-    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl mb-5">
+    <div className="relative aspect-3/4 overflow-hidden rounded-2xl mb-5">
       {failed ? (
         <div
-          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-500/25 to-sky-500/10"
+          className="flex h-full w-full items-center justify-center bg-linear-to-br from-cyan-500/25 to-sky-500/10"
           aria-label={name}
         >
           <span className="font-display text-4xl font-bold text-cyan-200/80">
@@ -37,7 +37,7 @@ function TeamPhoto({ name, image }: { name: string; image: string }) {
           className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-70" />
+      <div className="absolute inset-0 bg-linear-to-t from-bg via-bg/20 to-transparent opacity-70" />
     </div>
   );
 }

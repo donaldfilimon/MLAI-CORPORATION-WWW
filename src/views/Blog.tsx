@@ -85,7 +85,7 @@ export function Blog() {
                         {post.excerpt}
                       </p>
                     </CardContent>
-                    <div className="px-8 py-4 border-t border-white/5 flex items-center justify-between bg-white/[0.02]">
+                    <div className="px-8 py-4 border-t border-white/5 flex items-center justify-between bg-white/2">
                       <span className="text-xs font-mono text-text-dim/40 uppercase tracking-widest">
                         {post.readTime}
                       </span>

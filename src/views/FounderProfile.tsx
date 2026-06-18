@@ -22,7 +22,7 @@ function ProfilePhoto({ name, image }: { name: string; image: string }) {
     <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10">
       {failed ? (
         <div
-          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-500/25 to-sky-500/10"
+          className="flex h-full w-full items-center justify-center bg-linear-to-br from-cyan-500/25 to-sky-500/10"
           aria-label={name}
         >
           <span className="font-display text-5xl font-bold text-cyan-200/80">
@@ -38,7 +38,7 @@ function ProfilePhoto({ name, image }: { name: string; image: string }) {
           className="h-full w-full object-cover grayscale transition-all duration-700 hover:grayscale-0"
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-bg/60 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-bg/60 via-transparent to-transparent" />
     </div>
   );
 }
@@ -219,7 +219,7 @@ export function FounderProfile() {
             <div className="grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:grid-cols-2">
               {member.projects.map((project) => {
                 const inner = (
-                  <div className="group flex h-full flex-col bg-bg p-6 transition-colors hover:bg-white/[0.03]">
+                  <div className="group flex h-full flex-col bg-bg p-6 transition-colors hover:bg-white/3">
                     <div className="flex items-center justify-between gap-3 mb-2">
                       <span className="font-mono text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">
                         {project.name}

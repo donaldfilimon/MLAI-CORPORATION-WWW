@@ -55,7 +55,7 @@ export function Benchmarks() {
             not a performance claim.
           </p>
           <div className="glass-card overflow-x-auto p-0">
-            <table className="w-full min-w-[560px] text-left text-sm">
+            <table className="w-full min-w-140 text-left text-sm">
               <thead>
                 <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-text-dim">
                   <th className="px-5 py-3.5 font-medium">Property</th>
