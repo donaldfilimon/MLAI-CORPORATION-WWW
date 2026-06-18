@@ -21,7 +21,7 @@ function PaperLink({ to, children }: { to: string; children: string }) {
   return (
     <Link
       to={to}
-      className="mt-5 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-indigo-400 hover:text-indigo-300 transition-colors"
+      className="mt-5 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
     >
       {children}
       <ArrowRight className="h-3 w-3" />
@@ -74,7 +74,7 @@ const personas = [
   {
     name: "Abi",
     role: "Adaptive Moderator",
-    accent: "#818cf8",
+    accent: "#60a5fa",
     description:
       "Concise and policy-aware. Mediates, routes, and executes — but only once a plan clears review. The governance layer of the framework.",
   },
@@ -152,7 +152,7 @@ export function Docs() {
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
-                className="inline-flex whitespace-nowrap rounded-full border border-white/10 px-3.5 py-1.5 text-xs font-medium text-text-dim transition-colors hover:border-indigo-500/30 hover:text-indigo-400"
+                className="inline-flex whitespace-nowrap rounded-full border border-white/10 px-3.5 py-1.5 text-xs font-medium text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
               >
                 {item.label}
               </a>
@@ -215,13 +215,13 @@ export function Docs() {
             {/* ABI Runtime */}
             <section id="runtime" className="mt-16">
               <div className="mb-6 flex items-center gap-3">
-                <Terminal className="h-5 w-5 text-indigo-400" />
+                <Terminal className="h-5 w-5 text-cyan-400" />
                 <h2 className="text-2xl font-bold text-white">ABI Runtime</h2>
               </div>
               <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
                 ABI is a Zig 0.17 framework for local AI orchestration, semantic vector
                 storage, and GPU capability reporting. Build the CLI and MCP server from a
-                pinned toolchain; on macOS use the <code className="text-indigo-300">./build.sh</code> wrapper.
+                pinned toolchain; on macOS use the <code className="text-cyan-300">./build.sh</code> wrapper.
               </p>
               <div className="bg-[#0D1117] rounded-lg p-4 border border-white/10 mb-8 font-mono text-sm overflow-x-auto">
                 <div className="flex gap-2 mb-3">
@@ -230,19 +230,19 @@ export function Docs() {
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
                 <code className="text-gray-500"># Primary validation gate (build, tests, lint, mod/stub parity)</code><br />
-                <code className="text-indigo-400">./build.sh</code> <code className="text-white">check</code><br />
+                <code className="text-cyan-400">./build.sh</code> <code className="text-white">check</code><br />
                 <code className="text-gray-500"># Build the CLI and MCP server binaries</code><br />
-                <code className="text-indigo-400">./build.sh</code> <code className="text-white">cli</code>{"   "}<code className="text-gray-500"># → zig-out/bin/abi</code><br />
-                <code className="text-indigo-400">./build.sh</code> <code className="text-white">mcp</code>{"   "}<code className="text-gray-500"># → zig-out/bin/abi-mcp</code><br />
+                <code className="text-cyan-400">./build.sh</code> <code className="text-white">cli</code>{"   "}<code className="text-gray-500"># → zig-out/bin/abi</code><br />
+                <code className="text-cyan-400">./build.sh</code> <code className="text-white">mcp</code>{"   "}<code className="text-gray-500"># → zig-out/bin/abi-mcp</code><br />
                 <br />
                 <code className="text-gray-500"># Run a completion, plan an agent, open the dashboard TUI</code><br />
-                <code className="text-indigo-400">abi</code> <code className="text-white">complete "summarize the incident trace"</code><br />
-                <code className="text-indigo-400">abi</code> <code className="text-white">agent plan</code><br />
-                <code className="text-indigo-400">abi</code> <code className="text-white">agent os execute --confirm</code>
+                <code className="text-cyan-400">abi</code> <code className="text-white">complete "summarize the incident trace"</code><br />
+                <code className="text-cyan-400">abi</code> <code className="text-white">agent plan</code><br />
+                <code className="text-cyan-400">abi</code> <code className="text-white">agent os execute --confirm</code>
               </div>
               <p className="text-xs text-text-dim/70 leading-relaxed max-w-2xl">
                 Top-level commands: <span className="text-text-dim">help, complete, train, agent, backends, plugin, auth, twilio, tui, dashboard.</span> Feature
-                modules are selected at build time via <code className="text-indigo-300">-Dfeat-*</code> flags
+                modules are selected at build time via <code className="text-cyan-300">-Dfeat-*</code> flags
                 (ai, wdbx, gpu, accelerator, shader, mlir, os-control, tui, hash enabled by default).
               </p>
 
@@ -259,7 +259,7 @@ export function Docs() {
                       ["shared/", "Shared contracts, types, and cross-module utilities"],
                     ].map(([mod, desc]) => (
                       <div key={mod} className="flex gap-3 text-sm">
-                        <dt className="w-24 shrink-0 font-mono text-xs text-indigo-300">{mod}</dt>
+                        <dt className="w-24 shrink-0 font-mono text-xs text-cyan-300">{mod}</dt>
                         <dd className="text-text-dim leading-snug">{desc}</dd>
                       </div>
                     ))}
@@ -269,15 +269,15 @@ export function Docs() {
                   <h3 className="text-sm font-bold text-white mb-3">Design decisions</h3>
                   <ul className="space-y-2.5 text-sm text-text-dim leading-relaxed">
                     <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
-                      <span><span className="text-white">SIMD-native vector math</span> — <code className="text-indigo-300">@Vector</code> builtins compile distance kernels to the target ISA (AVX-512 on x86, NEON on Apple Silicon) from one source.</span>
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
+                      <span><span className="text-white">SIMD-native vector math</span> — <code className="text-cyan-300">@Vector</code> builtins compile distance kernels to the target ISA (AVX-512 on x86, NEON on Apple Silicon) from one source.</span>
                     </li>
                     <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
-                      <span><span className="text-white">One build, every platform</span> — <code className="text-indigo-300">zig build</code> cross-compiles static binaries for macOS arm64/x86_64, Linux, and Windows. No container, no runtime, no GC pauses.</span>
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
+                      <span><span className="text-white">One build, every platform</span> — <code className="text-cyan-300">zig build</code> cross-compiles static binaries for macOS arm64/x86_64, Linux, and Windows. No container, no runtime, no GC pauses.</span>
                     </li>
                     <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
                       <span><span className="text-white">TLS at the edge</span> — Zig's std TLS server is still pending upstream (ziglang #14171), so deployments terminate TLS at a reverse proxy by design rather than shipping an unvetted stack.</span>
                     </li>
                   </ul>
@@ -292,12 +292,12 @@ export function Docs() {
                 <h2 className="text-2xl font-bold text-white">MCP Server</h2>
               </div>
               <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                The <code className="text-indigo-300">abi-mcp</code> server speaks JSON-RPC 2.0 over stdio
+                The <code className="text-cyan-300">abi-mcp</code> server speaks JSON-RPC 2.0 over stdio
                 (64&nbsp;KB request cap) and an optional HTTP transport on{" "}
-                <code className="text-indigo-300">127.0.0.1:8080</code> — configurable with{" "}
-                <code className="text-indigo-300">ABI_MCP_HTTP_PORT</code>, exposing{" "}
-                <code className="text-indigo-300">GET /sse</code> and{" "}
-                <code className="text-indigo-300">POST /message</code>.
+                <code className="text-cyan-300">127.0.0.1:8080</code> — configurable with{" "}
+                <code className="text-cyan-300">ABI_MCP_HTTP_PORT</code>, exposing{" "}
+                <code className="text-cyan-300">GET /sse</code> and{" "}
+                <code className="text-cyan-300">POST /message</code>.
               </p>
               <div className="glass-card p-0 overflow-hidden">
                 {mcpTools.map((tool) => (
@@ -315,7 +315,7 @@ export function Docs() {
             {/* WDBX */}
             <section id="wdbx" className="mt-16">
               <div className="mb-6 flex items-center gap-3">
-                <Boxes className="h-5 w-5 text-indigo-400" />
+                <Boxes className="h-5 w-5 text-cyan-400" />
                 <h2 className="text-2xl font-bold text-white">WDBX Retrieval</h2>
               </div>
               <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
@@ -327,10 +327,10 @@ export function Docs() {
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {[
-                  { icon: <GitBranch className="h-4 w-4 text-indigo-400" />, label: "Weighted backtrace paths", text: "Inspect which sources were used and where confidence dropped." },
-                  { icon: <Cpu className="h-4 w-4 text-indigo-400" />, label: "SIMD vector search", text: "Cosine nearest-neighbor with an HNSW-style index and CPU fallback." },
-                  { icon: <ServerCog className="h-4 w-4 text-indigo-400" />, label: "Durable snapshots", text: "JSONL serialize/restore with integrity checks and tamper rejection." },
-                  { icon: <ShieldCheck className="h-4 w-4 text-indigo-400" />, label: "Opt-in persistence", text: "Completions persist only when store_result is set on the request." },
+                  { icon: <GitBranch className="h-4 w-4 text-cyan-400" />, label: "Weighted backtrace paths", text: "Inspect which sources were used and where confidence dropped." },
+                  { icon: <Cpu className="h-4 w-4 text-cyan-400" />, label: "SIMD vector search", text: "Cosine nearest-neighbor with an HNSW-style index and CPU fallback." },
+                  { icon: <ServerCog className="h-4 w-4 text-cyan-400" />, label: "Durable snapshots", text: "JSONL serialize/restore with integrity checks and tamper rejection." },
+                  { icon: <ShieldCheck className="h-4 w-4 text-cyan-400" />, label: "Opt-in persistence", text: "Completions persist only when store_result is set on the request." },
                 ].map((item) => (
                   <div key={item.label} className="glass-card p-5">
                     <div className="mb-2 flex items-center gap-2">{item.icon}<span className="text-sm font-bold text-white">{item.label}</span></div>
@@ -431,21 +431,21 @@ export function Docs() {
                   normalized to a distribution; the largest becomes primary and
                   its share is the routing confidence (which in turn picks a
                   single, parallel, or consensus strategy). Take{" "}
-                  <span className="text-fuchsia-300">Aviva</span>, the direct
+                  <span className="text-violet-300">Aviva</span>, the direct
                   expert — she gains weight when the request reads as hands-on or
                   time-pressed:
                 </p>
                 <ul className="space-y-2.5 text-sm text-text-dim">
                   <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-fuchsia-400" aria-hidden="true" />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" aria-hidden="true" />
                     <span><span className="text-white">Technical execution</span> — debug, fix, error, build, compile, code, test cues steer toward Aviva.</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-fuchsia-400" aria-hidden="true" />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" aria-hidden="true" />
                     <span><span className="text-white">Directness</span> — urgent, quick, concise, direct, or fast cues raise her weight further.</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" aria-hidden="true" />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
                     <span><span className="text-white">Policy overrides win</span> — when the control plane flags risk, weight shifts hard toward Abi, and a disallowed action routes to Abi outright regardless of the keyword signals.</span>
                   </li>
                 </ul>
@@ -490,12 +490,12 @@ export function Docs() {
             {/* Protected API */}
             <section id="api" className="mt-16">
               <div className="mb-6 flex items-center gap-3">
-                <LockKeyhole className="h-5 w-5 text-indigo-400" />
+                <LockKeyhole className="h-5 w-5 text-cyan-400" />
                 <h2 className="text-2xl font-bold text-white">Protected Console API</h2>
               </div>
               <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
                 The MLAI console is served behind a WorkOS AuthKit session (an encrypted{" "}
-                <code className="text-indigo-300">mlai_session</code> cookie). Protected routes
+                <code className="text-cyan-300">mlai_session</code> cookie). Protected routes
                 require a valid session; inquiry submission is public and rate-limited.
               </p>
               <div className="glass-card p-0 overflow-hidden">
@@ -504,7 +504,7 @@ export function Docs() {
                     key={route.path}
                     className="grid gap-4 border-b border-white/5 p-5 last:border-b-0 md:grid-cols-[14rem_1fr] hover:bg-white/[0.01] transition-colors"
                   >
-                    <div className="font-mono text-xs font-bold text-indigo-400">{route.method} {route.path}</div>
+                    <div className="font-mono text-xs font-bold text-cyan-400">{route.method} {route.path}</div>
                     <p className="text-sm leading-relaxed text-text-dim">{route.purpose}</p>
                   </div>
                 ))}
@@ -520,7 +520,7 @@ export function Docs() {
               <div className="grid gap-4">
                 {deploymentChecklist.map((item, index) => (
                   <div key={item} className="glass-card flex gap-5 p-5 items-center">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 font-mono text-xs font-bold text-indigo-400 ring-1 ring-indigo-500/20">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 font-mono text-xs font-bold text-cyan-400 ring-1 ring-cyan-500/20">
                       {index + 1}
                     </span>
                     <p className="text-sm leading-relaxed text-text-dim">{item}</p>

@@ -62,7 +62,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   WDBX Engine{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -71,7 +71,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Multi-Persona Framework{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -80,7 +80,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/benchmarks"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   WDBX Benchmarks{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -89,7 +89,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/research"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Publications{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -106,7 +106,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/docs"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Documentation{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -115,7 +115,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/blog"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Lab Notes{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -124,7 +124,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/console"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Console{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -133,7 +133,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/links"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Link Hub{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -142,7 +142,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/changelog"
-                  className="hover:text-indigo-400 transition-colors flex items-center gap-1 group"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >
                   Changelog{" "}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -159,7 +159,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/about"
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-cyan-400 transition-colors"
                 >
                   About Us
                 </Link>
@@ -167,7 +167,7 @@ export const Footer = () => {
               <li>
                 <Link
                   to="/team"
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-cyan-400 transition-colors"
                 >
                   Leadership
                 </Link>
@@ -175,7 +175,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-indigo-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-cyan-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Careers
                 </button>
@@ -183,7 +183,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-indigo-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-cyan-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Contact
                 </button>
@@ -191,7 +191,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={openInquiry}
-                  className="hover:text-indigo-400 transition-colors text-left w-full cursor-pointer"
+                  className="hover:text-cyan-400 transition-colors text-left w-full cursor-pointer"
                 >
                   Press Kit
                 </button>
@@ -217,6 +217,22 @@ export const Footer = () => {
               Request Updates
             </Button>
           </div>
+        </div>
+
+        {/* Provenance legend — every figure on the site carries one of these tags */}
+        <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-text-dim/70">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px] shadow-emerald-400/60" aria-hidden="true" />
+            <b className="font-semibold text-text-dim">measured</b> — reproduced on our hardware
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full border border-amber-400" aria-hidden="true" />
+            <b className="font-semibold text-text-dim">target</b> — engineering goal
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-violet-400 shadow-[0_0_8px] shadow-violet-400/60" aria-hidden="true" />
+            <b className="font-semibold text-text-dim">reported</b> — cited research figure
+          </span>
         </div>
 
         <Separator className="bg-white/10 mb-8" />

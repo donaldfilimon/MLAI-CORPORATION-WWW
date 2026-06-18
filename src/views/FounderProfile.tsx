@@ -22,10 +22,10 @@ function ProfilePhoto({ name, image }: { name: string; image: string }) {
     <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10">
       {failed ? (
         <div
-          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500/25 to-sky-500/10"
+          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-500/25 to-sky-500/10"
           aria-label={name}
         >
-          <span className="font-display text-5xl font-bold text-indigo-200/80">
+          <span className="font-display text-5xl font-bold text-cyan-200/80">
             {initials}
           </span>
         </div>
@@ -71,7 +71,7 @@ export function FounderProfile() {
     return (
       <div className="container-custom pt-32 pb-20 min-h-screen font-sans" role="main">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-indigo-400 uppercase">
+          <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase">
             404 — Profile not found
           </span>
           <h1 className="mt-4 text-3xl font-display font-bold text-white">
@@ -79,7 +79,7 @@ export function FounderProfile() {
           </h1>
           <Link
             to="/team"
-            className="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-indigo-400 transition-colors"
+            className="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors"
           >
             <ArrowLeft className="w-3 h-3" /> Back to leadership
           </Link>
@@ -122,7 +122,7 @@ export function FounderProfile() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${member.name} on GitHub`}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-text-dim transition-colors hover:border-indigo-500/30 hover:text-indigo-400"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
                   >
                     <GithubIcon className="h-4 w-4" />
                   </a>
@@ -133,7 +133,7 @@ export function FounderProfile() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${member.name} on X`}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-text-dim transition-colors hover:border-indigo-500/30 hover:text-indigo-400"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
                   >
                     <XIcon className="h-3.5 w-3.5" />
                   </a>
@@ -144,7 +144,7 @@ export function FounderProfile() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${member.name} website`}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-text-dim transition-colors hover:border-indigo-500/30 hover:text-indigo-400"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
                   >
                     <Globe className="h-4 w-4" />
                   </a>
@@ -158,7 +158,7 @@ export function FounderProfile() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="text-indigo-400 font-mono text-[10px] uppercase tracking-[0.2em] mb-4">
+            <div className="text-cyan-400 font-mono text-[10px] uppercase tracking-[0.2em] mb-4">
               {member.role}
             </div>
             <h1
@@ -221,7 +221,7 @@ export function FounderProfile() {
                 const inner = (
                   <div className="group flex h-full flex-col bg-bg p-6 transition-colors hover:bg-white/[0.03]">
                     <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="font-mono text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">
+                      <span className="font-mono text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">
                         {project.name}
                       </span>
                       <span className="flex items-center gap-2">
@@ -231,7 +231,7 @@ export function FounderProfile() {
                           </span>
                         )}
                         {project.url && (
-                          <ArrowUpRight className="h-3.5 w-3.5 text-text-dim/50 group-hover:text-indigo-400 transition-colors" />
+                          <ArrowUpRight className="h-3.5 w-3.5 text-text-dim/50 group-hover:text-cyan-400 transition-colors" />
                         )}
                       </span>
                     </div>
@@ -281,7 +281,7 @@ export function FounderProfile() {
           </div>
           <Link
             to="/team"
-            className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-indigo-400 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors"
           >
             <ArrowLeft className="w-3 h-3" /> All leadership
           </Link>

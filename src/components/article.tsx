@@ -58,7 +58,7 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
                       {block.file}
                     </figcaption>
                   )}
-                  <pre className="overflow-x-auto px-4 py-3.5 text-[13px] leading-relaxed text-indigo-50/85">
+                  <pre className="overflow-x-auto px-4 py-3.5 text-[13px] leading-relaxed text-cyan-50/85">
                     <code>{block.code}</code>
                   </pre>
                 </figure>
@@ -73,7 +73,7 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
                   className="flex gap-3 text-base text-text-dim leading-relaxed"
                 >
                   <span
-                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400"
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400"
                     aria-hidden="true"
                   />
                   <span>{item}</span>
@@ -104,14 +104,14 @@ export function ArticleNotFound({
   return (
     <div className="container-custom pt-32 pb-20 min-h-screen font-sans" role="main">
       <div className="mx-auto max-w-2xl text-center">
-        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-indigo-400 uppercase">
+        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase">
           {eyebrow}
         </span>
         <h1 className="mt-4 text-3xl font-display font-bold text-white">{title}</h1>
         {body && <p className="mt-4 text-text-dim">{body}</p>}
         <Link
           to={backTo}
-          className="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-indigo-400 transition-colors"
+          className="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors"
         >
           <ArrowLeft className="w-3 h-3" /> {backLabel}
         </Link>
@@ -221,7 +221,7 @@ export function ArticleLayout({
               <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/50">
                 {next.label}
               </span>
-              <span className="mt-2 flex items-center justify-end gap-2 text-sm font-bold text-white group-hover:text-indigo-400 transition-colors leading-snug">
+              <span className="mt-2 flex items-center justify-end gap-2 text-sm font-bold text-white group-hover:text-cyan-400 transition-colors leading-snug">
                 {next.title}
                 <ArrowRight className="w-3 h-3 shrink-0 group-hover:translate-x-1 transition-transform" />
               </span>

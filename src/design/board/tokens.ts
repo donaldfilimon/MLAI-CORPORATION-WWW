@@ -197,7 +197,7 @@ export interface ThemeTriple {
 export const THEMES: Readonly<Record<string, ThemeTriple>> = {
   Spectrum: { a: "#22d3ee", b: "#60a5fa", c: "#a855f7" },
   Cyan: { a: "#22d3ee", b: "#38bdf8", c: "#3b82f6" },
-  Violet: { a: "#818cf8", b: "#a855f7", c: "#e879f9" },
+  Violet: { a: "#60a5fa", b: "#a855f7", c: "#e879f9" },
   Aurora: { a: "#22d3ee", b: "#34d399", c: "#a3e635" },
   Ember: { a: "#fbbf24", b: "#fb923c", c: "#f87171" },
 };

@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { m, useReducedMotion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,12 @@ const PRODUCT_SIGNALS = [
 export const Hero = () => {
   const shouldReduceMotion = useReducedMotion();
 
+  // Mount the signature neural constellation after client-side navigation
+  // (neural.js auto-mounts on first load; this covers SPA route changes).
+  useEffect(() => {
+    (window as unknown as { MLAINeural?: { mount: () => void } }).MLAINeural?.mount();
+  }, []);
+
   const stagger: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -71,11 +77,19 @@ export const Hero = () => {
       aria-labelledby="hero-heading"
     >
       <div
-        className="absolute inset-0 bg-[radial-gradient(70%_55%_at_64%_2%,rgba(99,102,241,0.24),transparent_72%),radial-gradient(44%_44%_at_18%_14%,rgba(56,189,248,0.10),transparent_68%)]"
+        className="absolute inset-0 bg-[radial-gradient(70%_55%_at_64%_2%,rgba(34,211,238,0.22),transparent_72%),radial-gradient(44%_44%_at_18%_14%,rgba(96,165,250,0.10),transparent_68%)]"
+        aria-hidden="true"
+      />
+      {/* Signature drifting constellation — the Lab "net" backdrop (cyan). */}
+      <div
+        data-neural="net"
+        data-color="34,211,238"
+        data-op="0.6"
+        className="pointer-events-none absolute inset-0 z-0 opacity-70 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/40 to-transparent"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent"
         aria-hidden="true"
       />
       <div
@@ -88,8 +102,8 @@ export const Hero = () => {
           <m.div variants={stagger} initial="hidden" animate="visible" className="min-w-0">
             <m.div variants={fadeUp} className="label-chip mb-5">
               <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-indigo-500" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
               </span>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
               PRIVATE AI INFRASTRUCTURE
@@ -101,7 +115,7 @@ export const Hero = () => {
               className="mb-5 max-w-4xl font-display text-4xl font-bold leading-[1.03] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
             >
               Traceable AI systems for{" "}
-              <span className="bg-gradient-to-r from-indigo-300 via-sky-200 to-indigo-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-500 bg-clip-text text-transparent">
                 real production constraints.
               </span>
             </m.h1>
@@ -120,7 +134,7 @@ export const Hero = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-indigo-50"
+                  className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50"
                 >
                   <Link to="/showcase">
                     View the System
@@ -141,7 +155,7 @@ export const Hero = () => {
                 >
                   <Link to="/benchmarks">
                     <span
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all group-hover:border-indigo-400/50 group-hover:bg-indigo-400/5"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all group-hover:border-cyan-400/50 group-hover:bg-cyan-400/5"
                       aria-hidden="true"
                     >
                       <Play className="h-4 w-4 fill-current" />
@@ -160,7 +174,7 @@ export const Hero = () => {
                     key={signal.label}
                     className="rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 backdrop-blur-md"
                   >
-                    <div className="mb-3 flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-300">
+                    <div className="mb-3 flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">
                       <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                       {signal.label}
                     </div>
@@ -175,7 +189,7 @@ export const Hero = () => {
           </m.div>
 
           <div className="relative hidden min-h-[500px] lg:block" aria-hidden="true">
-            <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 bg-bg/20 shadow-2xl shadow-indigo-950/20 backdrop-blur-sm" />
+            <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 bg-bg/20 shadow-2xl shadow-cyan-950/20 backdrop-blur-sm" />
             <div className="absolute inset-4 overflow-hidden rounded-[2rem] border border-white/8 bg-[#070914]/70">
               <Suspense fallback={<div className="h-full w-full" />}>
                 <HeroSceneWebGPU />

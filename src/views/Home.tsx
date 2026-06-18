@@ -17,7 +17,7 @@ const Technology = React.lazy(() => import('../components/Technology').then(modu
 
 const capabilities = [
   {
-    icon: <BrainCircuit className="w-6 h-6 text-indigo-400" />,
+    icon: <BrainCircuit className="w-6 h-6 text-cyan-400" />,
     title: 'Agentic orchestration',
     description: 'Coordinate Abbey, Aviva, and Abi personas with auditable task handoffs, bounded autonomy, and clear operator control.',
   },
@@ -27,7 +27,7 @@ const capabilities = [
     description: 'Weighted backtrace graphs preserve context, reduce hallucination surfaces, and keep high-throughput retrieval explainable.',
   },
   {
-    icon: <LockKeyhole className="w-6 h-6 text-indigo-300" />,
+    icon: <LockKeyhole className="w-6 h-6 text-cyan-300" />,
     title: 'Policy-locked execution',
     description: 'Constraint enforcement, audit trails, and human approval gates are designed into the runtime instead of bolted on later.',
   },
@@ -57,7 +57,7 @@ export function Home() {
       <Hero />
 
       <section className="relative w-full section-y" aria-labelledby="home-capabilities-heading">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" aria-hidden="true" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" aria-hidden="true" />
         <Reveal width="100%">
           <div className="container-custom">
             <div className="mb-14 grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(360px,0.58fr)] lg:items-end">
@@ -71,14 +71,14 @@ export function Home() {
                   WDBX keeps context traceable, Abbey · Aviva · Abi choose the right operating voice, and policy gates keep agent work inside reviewable boundaries.
                 </p>
               </div>
-              <div className="rounded-3xl border border-indigo-300/15 bg-indigo-400/[0.045] p-5">
-                <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-indigo-300">
+              <div className="rounded-3xl border border-cyan-300/15 bg-cyan-400/[0.045] p-5">
+                <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-300">
                   Operating contract
                 </p>
                 <div className="grid gap-3">
                   {operatingContract.map((item, index) => (
                     <div key={item} className="flex gap-3 text-sm leading-relaxed text-text-dim">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-indigo-300/20 bg-indigo-300/10 font-mono text-[10px] text-indigo-200">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10 font-mono text-[10px] text-cyan-200">
                         {index + 1}
                       </span>
                       {item}
@@ -91,7 +91,7 @@ export function Home() {
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               {capabilities.map((item) => (
                 <div key={item.title} className="glass-card group h-full flex flex-col overflow-hidden">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] transition-colors group-hover:border-indigo-300/25 group-hover:bg-indigo-300/10" aria-hidden="true">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] transition-colors group-hover:border-cyan-300/25 group-hover:bg-cyan-300/10" aria-hidden="true">
                     {item.icon}
                   </div>
                   <h3 className="text-xl font-display font-bold text-white mb-3">{item.title}</h3>
@@ -116,7 +116,7 @@ export function Home() {
                 We start with the operational risk profile, then build only the layers needed to make your system observable, governable, and fast enough for real users.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild className="rounded-full bg-white px-5 font-bold text-black hover:bg-indigo-50">
+                <Button asChild className="rounded-full bg-white px-5 font-bold text-black hover:bg-cyan-50">
                   <Link to="/services">See Services <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
                 </Button>
                 <Button variant="outline" onClick={openInquiry} className="rounded-full border-white/10 bg-white/[0.03] px-5 text-white hover:bg-white/10 hover:text-white">
@@ -125,12 +125,12 @@ export function Home() {
               </div>
             </div>
 
-            <div className="relative rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-indigo-950/20 backdrop-blur">
+            <div className="relative rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-cyan-950/20 backdrop-blur">
               <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-sky-200/40 to-transparent" aria-hidden="true" />
               <ol className="grid gap-3" aria-label="MLAI delivery workflow">
                 {workflow.map((step, index) => (
-                  <li key={step} className="flex gap-4 rounded-3xl border border-white/8 bg-white/[0.03] p-5 transition-colors hover:border-indigo-300/20 hover:bg-white/[0.045]">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 font-mono text-sm font-bold text-indigo-300 ring-1 ring-indigo-400/20">
+                  <li key={step} className="flex gap-4 rounded-3xl border border-white/8 bg-white/[0.03] p-5 transition-colors hover:border-cyan-300/20 hover:bg-white/[0.045]">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 font-mono text-sm font-bold text-cyan-300 ring-1 ring-cyan-400/20">
                       0{index + 1}
                     </span>
                     <p className="pt-1 text-sm leading-relaxed text-text-dim">{step}</p>
@@ -164,7 +164,7 @@ export function Home() {
                 return (
                   <div key={item.title} className="glass-card h-full flex flex-col justify-between">
                     <div>
-                      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10 text-indigo-300">
+                      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 text-cyan-300">
                         <Icon className="h-5 w-5" aria-hidden="true" />
                       </div>
                       <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
@@ -214,7 +214,7 @@ export function Home() {
             <div className="grid gap-4 md:grid-cols-2">
               {industries.map((industry) => (
                 <div key={industry} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 text-sm leading-relaxed text-text-dim">
-                  <CheckCircle2 className="mb-4 h-5 w-5 text-indigo-300" aria-hidden="true" />
+                  <CheckCircle2 className="mb-4 h-5 w-5 text-cyan-300" aria-hidden="true" />
                   {industry}
                 </div>
               ))}
@@ -235,7 +235,7 @@ export function Home() {
                 <h2 id="home-research-heading" className="section-title">Selected architecture notes.</h2>
                 <p className="section-subtitle mb-0">A focused preview of the research themes behind MLAI systems.</p>
               </div>
-              <Button asChild variant="link" className="h-auto justify-start p-0 text-indigo-300 hover:text-indigo-200">
+              <Button asChild variant="link" className="h-auto justify-start p-0 text-cyan-300 hover:text-cyan-200">
                 <Link to="/research">View research archive <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
               </Button>
             </div>
@@ -245,16 +245,16 @@ export function Home() {
                 <Link
                   key={item.title}
                   to={`/research/${item.slug}`}
-                  className="glass-card group flex h-full flex-col transition-colors hover:border-indigo-500/20"
+                  className="glass-card group flex h-full flex-col transition-colors hover:border-cyan-500/20"
                 >
-                  <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-indigo-300">
+                  <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-300">
                     <span>{item.tag}</span>
                     <span className="h-1 w-1 rounded-full bg-white/30" aria-hidden="true" />
                     <span className="text-text-dim/70">{item.date}</span>
                   </div>
-                  <h3 className="text-xl font-display font-bold leading-tight text-white mb-3 group-hover:text-indigo-300 transition-colors">{item.title}</h3>
+                  <h3 className="text-xl font-display font-bold leading-tight text-white mb-3 group-hover:text-cyan-300 transition-colors">{item.title}</h3>
                   <p className="text-sm leading-relaxed text-text-dim mb-4">{item.abstract}</p>
-                  <span className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300">
+                  <span className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
                     Read paper <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                   </span>
                 </Link>
@@ -279,9 +279,9 @@ export function Home() {
             <div className="grid gap-6 md:grid-cols-2">
               {featuredServices.map((service) => (
                 <div key={service.title} className="glass-card group flex gap-5 items-start">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-indigo-400 transition-transform group-hover:scale-110" aria-hidden="true" />
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-cyan-400 transition-transform group-hover:scale-110" aria-hidden="true" />
                   <div>
-                    <h3 className="font-display text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">{service.title}</h3>
+                    <h3 className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">{service.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-text-dim">{service.description}</p>
                   </div>
                 </div>
@@ -304,8 +304,8 @@ export function Home() {
       <section className="w-full px-6 section-y" aria-labelledby="home-cta-heading">
         <Reveal width="100%">
           <div className="container-custom">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-600/20 via-bg to-sky-500/10 p-8 md:p-14">
-              <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-indigo-400/20 blur-[90px]" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-cyan-600/20 via-bg to-sky-500/10 p-8 md:p-14">
+              <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-400/20 blur-[90px]" aria-hidden="true" />
               <div className="relative z-10 max-w-3xl">
                 <div className="label-chip mb-6">
                   <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
@@ -316,7 +316,7 @@ export function Home() {
                   Share the workflow you want to automate, the failure modes you cannot accept, and the infrastructure constraints we need to respect.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
-                  <Button onClick={openInquiry} className="h-11 rounded-full bg-white px-6 font-bold text-black hover:bg-indigo-50">Start Inquiry</Button>
+                  <Button onClick={openInquiry} className="h-11 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50">Start Inquiry</Button>
                   <Button asChild variant="ghost" className="h-11 rounded-full border border-white/10 px-6 text-white hover:bg-white/10 hover:text-white">
                     <Link to="/benchmarks">Review Benchmarks</Link>
                   </Button>

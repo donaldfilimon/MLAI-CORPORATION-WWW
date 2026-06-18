@@ -10,12 +10,12 @@ import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
 
 const icons = [
-  <Shield className="w-6 h-6 text-indigo-400" />,
-  <Zap className="w-6 h-6 text-indigo-400" />,
-  <Target className="w-6 h-6 text-indigo-400" />,
-  <Globe className="w-6 h-6 text-indigo-400" />,
-  <Activity className="w-6 h-6 text-indigo-400" />,
-  <Users className="w-6 h-6 text-indigo-400" />,
+  <Shield className="w-6 h-6 text-cyan-400" />,
+  <Zap className="w-6 h-6 text-cyan-400" />,
+  <Target className="w-6 h-6 text-cyan-400" />,
+  <Globe className="w-6 h-6 text-cyan-400" />,
+  <Activity className="w-6 h-6 text-cyan-400" />,
+  <Users className="w-6 h-6 text-cyan-400" />,
 ];
 
 export const About = () => {
@@ -38,33 +38,33 @@ export const About = () => {
             />
 
             <ul
-              className="space-y-4 font-mono text-sm text-indigo-400/80 mb-8"
+              className="space-y-4 font-mono text-sm text-cyan-400/80 mb-8"
               role="list"
             >
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-indigo-400"
+                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
                   aria-hidden="true"
                 />
                 ESTABLISHED 2024 · PALO ALTO, CA
               </li>
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-indigo-400"
+                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
                   aria-hidden="true"
                 />
                 PIONEERING WDBX ARCHITECTURE
               </li>
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-indigo-400"
+                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
                   aria-hidden="true"
                 />
                 TRACEABLE RETRIEVAL AND AGENT SAFETY FOCUS
               </li>
               <li className="flex items-center gap-3">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-indigo-400"
+                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
                   aria-hidden="true"
                 />
                 AUDIT-READY SECURITY CONTROLS
@@ -93,7 +93,7 @@ export const About = () => {
                 >
                   <div className="glass-card h-full p-6">
                     <div
-                      className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4"
+                      className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4"
                       aria-hidden="true"
                     >
                       {icons[i]}
@@ -113,12 +113,12 @@ export const About = () => {
       </div>
       <div className="container-custom mt-32 relative z-10">
         <div className="glass-card relative overflow-hidden p-10 md:p-14 lg:p-20 group">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 blur-[100px] -mr-48 -mt-48 group-hover:bg-indigo-400/30 transition-all duration-700" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/20 blur-[100px] -mr-48 -mt-48 group-hover:bg-cyan-400/30 transition-all duration-700" />
           <div className="max-w-3xl relative z-10">
             <h2 className="section-title">
               Our Mission: <br />
               Ensuring the Safety of{" "}
-              <span className="text-indigo-400">Autonomous Progress.</span>
+              <span className="text-cyan-400">Autonomous Progress.</span>
             </h2>
             <p className="text-xl text-text-dim leading-relaxed mb-10">
               As AI systems transition from generative tools to autonomous
@@ -133,7 +133,7 @@ export const About = () => {
                 <div className="text-3xl font-display font-bold text-white mb-1">
                   2024
                 </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-indigo-400">
+                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">
                   Founded
                 </div>
               </div>
@@ -141,7 +141,7 @@ export const About = () => {
                 <div className="text-3xl font-display font-bold text-white mb-1">
                   Local
                 </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-indigo-400">
+                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">
                   Private-First Patterns
                 </div>
               </div>
@@ -149,7 +149,7 @@ export const About = () => {
                 <div className="text-3xl font-display font-bold text-white mb-1">
                   Global
                 </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-indigo-400">
+                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">
                   Research Network
                 </div>
               </div>

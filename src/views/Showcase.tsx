@@ -26,7 +26,7 @@ const SURFACES: Surface[] = [
     icon: FilmIcon,
     glow: "radial-gradient(80% 90% at 30% 0%, rgba(99,102,241,0.32), transparent 65%)",
     edge: "rgba(129,140,248,0.45)",
-    accent: "text-indigo-300",
+    accent: "text-cyan-300",
   },
   {
     to: "/showcase/trailer",
@@ -50,7 +50,7 @@ const SURFACES: Surface[] = [
     icon: Clapperboard,
     glow: "radial-gradient(80% 90% at 50% 0%, rgba(232,121,249,0.26), transparent 65%)",
     edge: "rgba(240,171,252,0.4)",
-    accent: "text-fuchsia-300",
+    accent: "text-violet-300",
   },
   {
     to: "/showcase/explainer",
@@ -62,7 +62,7 @@ const SURFACES: Surface[] = [
     icon: Sparkles,
     glow: "radial-gradient(80% 90% at 30% 0%, rgba(129,140,248,0.28), transparent 65%)",
     edge: "rgba(165,180,252,0.4)",
-    accent: "text-indigo-200",
+    accent: "text-cyan-200",
   },
   {
     to: "/showcase/design",
@@ -121,7 +121,7 @@ export function Showcase() {
               {...(shouldReduceMotion
                 ? { initial: false }
                 : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.6 } })}
-              className="mb-5 font-mono text-[11px] uppercase tracking-[0.42em] text-indigo-300/80"
+              className="mb-5 font-mono text-[11px] uppercase tracking-[0.42em] text-cyan-300/80"
             >
               Now showing · rendered live · no video files
             </m.p>
@@ -137,7 +137,7 @@ export function Showcase() {
             >
               The projection{" "}
               <br />
-              room<span className="text-indigo-400">.</span>
+              room<span className="text-cyan-400">.</span>
             </m.h1>
             <m.p
               {...(shouldReduceMotion
@@ -192,7 +192,7 @@ export function Showcase() {
                 <m.div key={s.to} {...enter(i)} className={i === 2 ? "md:col-span-2 lg:col-span-1" : undefined}>
                   <Link
                     to={s.to}
-                    className="group relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d16] transition-all duration-500 hover:-translate-y-1.5 hover:border-white/20 focus-visible:ring-2 focus-visible:ring-indigo-300/70"
+                    className="group relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d16] transition-all duration-500 hover:-translate-y-1.5 hover:border-white/20 focus-visible:ring-2 focus-visible:ring-cyan-300/70"
                     style={{ boxShadow: "0 18px 50px -22px rgba(0,0,0,0.8)" }}
                   >
                     {/* poster glow */}
@@ -252,7 +252,7 @@ export function Showcase() {
                         </span>
                       </div>
                       <p className="text-sm leading-relaxed text-text-dim">{s.blurb}</p>
-                      <span className="mt-auto inline-flex items-center gap-2 pt-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-200/80">
+                      <span className="mt-auto inline-flex items-center gap-2 pt-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
                         Enter scene
                         <Play size={12} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
                       </span>
@@ -264,7 +264,7 @@ export function Showcase() {
 
             {/* voice card completes the wall — same chrome, different content */}
             <m.div {...enter(5)}>
-              <div className="relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-indigo-400/20 bg-[#0c0d16]">
+              <div className="relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-[#0c0d16]">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0"
@@ -274,10 +274,10 @@ export function Showcase() {
                   }}
                 />
                 <div className="relative flex items-center justify-between border-b border-white/8 px-5 py-2.5">
-                  <span className="font-mono text-[10px] tracking-[0.3em] text-indigo-300/70">
+                  <span className="font-mono text-[10px] tracking-[0.3em] text-cyan-300/70">
                     VOICE SYSTEM
                   </span>
-                  <Mic size={13} className="text-indigo-300/70" aria-hidden="true" />
+                  <Mic size={13} className="text-cyan-300/70" aria-hidden="true" />
                 </div>
                 <div className="relative flex flex-1 flex-col gap-3 p-5 sm:p-6">
                   <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
