@@ -129,12 +129,13 @@ export default function Vault() {
       setSavingEdit(true);
       setError(null);
       setItems((cur) => applyEdit(cur, item.recordName, title, body));
-      setEditingId(null);
       try {
         await updateItem(item.recordName, title, body, item.createdAt);
+        setEditingId(null); // close only on success — keep the form (and spinner) up during the save
       } catch (e) {
         // Revert just this item's fields in the current list (not a whole-list
-        // snapshot), so notes touched meanwhile are preserved.
+        // snapshot), so notes touched meanwhile are preserved. Leave the form
+        // open, pre-filled with the attempted text, so the user can retry.
         setItems((cur) => applyEdit(cur, item.recordName, item.title, item.body));
         setError(e instanceof Error ? e.message : "Could not update that item.");
       } finally {
@@ -143,6 +144,14 @@ export default function Vault() {
     },
     [editTitle, editBody],
   );
+
+  // If a search query filters out the note currently being edited, close the
+  // edit form rather than leaving it stranded off-screen with unsaved text.
+  useEffect(() => {
+    if (editingId && query.trim() && !filterItems(items, query).some((i) => i.recordName === editingId)) {
+      setEditingId(null);
+    }
+  }, [editingId, query, items]);
 
   const desc = status ? describeStatus(status) : null;
   const initials = initialsFor(user);

@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import { backend, describeStatus, listItems, addItem, removeItem, reinsertSorted, applyEdit, filterItems, type VaultStatus, type VaultItem } from "@/lib/cloud";
+import { backend, describeStatus, listItems, addItem, removeItem, updateItem, reinsertSorted, applyEdit, filterItems, type VaultStatus, type VaultItem } from "@/lib/cloud";
 
 // The manual mock (__mocks__/expo-secure-store.js) exposes these test helpers.
 const mock = SecureStore as unknown as { __reset: () => void; __seed: (k: string, v: string) => void };
@@ -55,6 +55,19 @@ describe("local fallback repository", () => {
     await addItem("second", "");
     const list = await listItems();
     expect(list.map((i) => i.title)).toEqual(["second", "first"]);
+  });
+
+  it("updates an item in place via the local repository, preserving createdAt", async () => {
+    const created = await addItem("Title", "body");
+    await updateItem(created.recordName, "Title 2", "body 2", created.createdAt);
+    const list = await listItems();
+    expect(list).toHaveLength(1);
+    expect(list[0]).toMatchObject({
+      recordName: created.recordName,
+      title: "Title 2",
+      body: "body 2",
+      createdAt: created.createdAt,
+    });
   });
 });
 
