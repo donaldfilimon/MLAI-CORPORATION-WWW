@@ -1,5 +1,7 @@
 # Design System Upgrade Specification
 
+> **Status: Superseded — implemented (2026-06).** All four proposed upgrades shipped — the modular type scale (`--text-h0…h5`, Major-Third), tuned glass depth + a global film-grain overlay, formalized `container-custom`/`section-y` rhythm, and consistent `glass-card`/`section-title` use across Home/About/Team/Benchmarks/Docs — and the subsequent **"Lab" redesign** carried the system further: a serif (Spectral) display face, a cyan/blue→violet palette on near-black ink, the tri-persona embedding-galaxy hero, `grad-text` headlines, and the measured/target/reported provenance legend. The live design system is documented in `CLAUDE.md` (Styling section) and implemented in `src/index.css`. This file is retained as the historical planning artifact — do not action it as pending work.
+
 ## Overview
 A comprehensive refresh of the MLAI Corporation website aesthetic to improve visual depth, typographical hierarchy, and responsive scaling.
 
