@@ -21,7 +21,7 @@ bun run test              # jest (jest-expo) — pure-logic unit suites
 bun run lint              # expo lint (eslint-config-expo)
 ```
 
-**Verification gates** (all should pass after a change): `bun run typecheck`, `bun run test` (jest-expo; pure-logic suites under `__tests__/`), `bun run lint`, and `bunx expo export --platform web` (confirms all routes bundle). `bun run test` and `bun run lint` were added during development; the test suite mocks `expo-secure-store` to exercise the local-fallback repository. Component-render tests are not set up (no `@testing-library/react-native`), so UI-state logic in screens is covered by typecheck + the export gate, not unit tests.
+**Verification gates** (all should pass after a change): `bun run typecheck`, `bun run test` (jest-expo), `bun run lint`, and `bunx expo export --platform web` (confirms all routes bundle). The test suite has both pure-logic suites (mocking `expo-secure-store` to exercise the local-fallback repository) and component-render suites via `@testing-library/react-native` (v13 — v14 no-ops under jest-expo). Render tests cover `ErrorScreen`, `NoteForm`, and the Vault add/edit/delete/search flows (router + auth mocked).
 
 ### Native CloudKit build (Vault feature)
 
