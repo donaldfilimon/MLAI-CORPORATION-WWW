@@ -69,7 +69,7 @@ export default function SignIn() {
         )}
 
         <Txt variant="mono" color={color.textFaint} style={{ textAlign: "center", marginTop: space.lg }}>
-          Built on Apple's public frameworks
+          {"Built on Apple's public frameworks"}
         </Txt>
       </Animated.View>
 

@@ -97,7 +97,7 @@ export default function Account() {
         </PressableScale>
 
         <Txt variant="mono" color={color.textFaint} style={{ marginTop: space.xl }}>
-          Built on Apple's public frameworks — Metal, Accelerate, Core ML.
+          {"Built on Apple's public frameworks — Metal, Accelerate, Core ML."}
         </Txt>
       </View>
     </SafeAreaView>

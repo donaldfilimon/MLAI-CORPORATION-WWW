@@ -90,7 +90,7 @@ export default function ProductDetail() {
         <Reveal delay={60} style={styles.section}>
           <View style={styles.eyebrowRow}>
             <View style={[styles.tick, { backgroundColor: accentColor[accent] }]} />
-            <Eyebrow color={accentColor[accent]}>What's inside</Eyebrow>
+            <Eyebrow color={accentColor[accent]}>{"What's inside"}</Eyebrow>
           </View>
           <View style={{ gap: space.md, marginTop: space.sm }}>
             {product.features.map((f) => (

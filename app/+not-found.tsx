@@ -15,7 +15,7 @@ export default function NotFound() {
         <Txt variant="hero" color={color.white} style={{ marginTop: space.md }}>404</Txt>
         <Surface style={{ marginTop: space.lg }}>
           <Txt variant="mono" color={color.textMute}>
-            <Txt variant="mono" color={color.wdbx}>$ </Txt>wdbx query --route "this screen" --k 10
+            <Txt variant="mono" color={color.wdbx}>$ </Txt>{'wdbx query --route "this screen" --k 10'}
           </Txt>
           <Txt variant="mono" color={color.textMute} style={{ marginTop: 4 }}>
             … 0 hits · route not present
