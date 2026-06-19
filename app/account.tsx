@@ -15,7 +15,19 @@ export default function Account() {
   const [status, setStatus] = useState<VaultStatus | null>(null);
 
   useEffect(() => {
-    getStatus().then(setStatus).catch(() => setStatus(null));
+    // The Account screen is a dismissable modal — guard against resolving the
+    // status probe after the user has already closed it (setState on unmount).
+    let mounted = true;
+    getStatus()
+      .then((s) => {
+        if (mounted) setStatus(s);
+      })
+      .catch(() => {
+        if (mounted) setStatus(null);
+      });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const initials = initialsFor(user);
