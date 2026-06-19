@@ -78,6 +78,13 @@ export function reinsertSorted(items: VaultItem[], item: VaultItem): VaultItem[]
   return [...items, item].sort((a, b) => b.createdAt - a.createdAt);
 }
 
+/** Apply an in-place edit to the matching item, preserving list position and
+   every other field (notably `createdAt`). Pure — used for the optimistic UI
+   update so an edit doesn't reorder the list. */
+export function applyEdit(items: VaultItem[], recordName: string, title: string, body: string): VaultItem[] {
+  return items.map((i) => (i.recordName === recordName ? { ...i, title, body } : i));
+}
+
 // ── public repository API ───────────────────────────────────────────────────
 export async function listItems(limit = 50): Promise<VaultItem[]> {
   const ck = getCloudKit();
@@ -105,6 +112,24 @@ export async function addItem(title: string, body: string): Promise<VaultItem> {
   const items = await readLocal();
   await writeLocal([item, ...items]);
   return item;
+}
+
+export async function updateItem(
+  recordName: string,
+  title: string,
+  body: string,
+  createdAt: number,
+): Promise<VaultItem> {
+  const ck = getCloudKit();
+  if (ck) {
+    // Passing the existing recordName updates that record in place; createdAt is
+    // re-sent so the stored value (and ordering) is preserved.
+    const rec = await ck.save(RECORD_TYPE, recordName, { title, body, createdAt });
+    return { recordName: rec.recordName, title, body, createdAt };
+  }
+  const items = await readLocal();
+  await writeLocal(applyEdit(items, recordName, title, body));
+  return { recordName, title, body, createdAt };
 }
 
 export async function removeItem(recordName: string): Promise<void> {

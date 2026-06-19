@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import { backend, describeStatus, listItems, addItem, removeItem, reinsertSorted, type VaultStatus, type VaultItem } from "@/lib/cloud";
+import { backend, describeStatus, listItems, addItem, removeItem, reinsertSorted, applyEdit, type VaultStatus, type VaultItem } from "@/lib/cloud";
 
 // The manual mock (__mocks__/expo-secure-store.js) exposes these test helpers.
 const mock = SecureStore as unknown as { __reset: () => void; __seed: (k: string, v: string) => void };
@@ -71,5 +71,24 @@ describe("reinsertSorted (failed-delete rollback)", () => {
 
   it("places the re-inserted item by createdAt (newest-first)", () => {
     expect(reinsertSorted([mk("X", 5)], mk("Y", 9)).map((i) => i.recordName)).toEqual(["Y", "X"]);
+  });
+});
+
+describe("applyEdit", () => {
+  const mk = (name: string, createdAt: number, title = name, body = ""): VaultItem => ({ recordName: name, title, body, createdAt });
+
+  it("edits only the matching item's title/body, preserving position and createdAt", () => {
+    const items = [mk("B", 2), mk("A", 1)];
+    const next = applyEdit(items, "A", "A-new", "body-new");
+    expect(next.map((i) => i.recordName)).toEqual(["B", "A"]); // order unchanged
+    const edited = next.find((i) => i.recordName === "A")!;
+    expect(edited).toMatchObject({ title: "A-new", body: "body-new", createdAt: 1 });
+  });
+
+  it("is a no-op for an unknown recordName and does not mutate the input", () => {
+    const items = [mk("A", 1)];
+    const next = applyEdit(items, "ZZZ", "x", "y");
+    expect(next).toEqual(items);
+    expect(items[0].title).toBe("A"); // input untouched
   });
 });

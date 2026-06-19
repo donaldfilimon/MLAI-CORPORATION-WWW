@@ -20,7 +20,9 @@ import {
   listItems,
   addItem,
   removeItem,
+  updateItem,
   reinsertSorted,
+  applyEdit,
   getStatus,
   describeStatus,
   type VaultItem,
@@ -39,6 +41,10 @@ export default function Vault() {
   const [body, setBody] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const load = useCallback(async () => {
     const [s, list] = await Promise.all([getStatus(), listItems()]);
@@ -103,6 +109,38 @@ export default function Vault() {
       setError(e instanceof Error ? e.message : "Could not delete that item.");
     }
   }, []);
+
+  const startEdit = useCallback((item: VaultItem) => {
+    setEditingId(item.recordName);
+    setEditTitle(item.title);
+    setEditBody(item.body);
+    setError(null);
+  }, []);
+
+  const cancelEdit = useCallback(() => setEditingId(null), []);
+
+  const onSaveEdit = useCallback(
+    async (item: VaultItem) => {
+      const title = editTitle.trim();
+      if (!title) return;
+      const body = editBody.trim();
+      setSavingEdit(true);
+      setError(null);
+      setItems((cur) => applyEdit(cur, item.recordName, title, body));
+      setEditingId(null);
+      try {
+        await updateItem(item.recordName, title, body, item.createdAt);
+      } catch (e) {
+        // Revert just this item's fields in the current list (not a whole-list
+        // snapshot), so notes touched meanwhile are preserved.
+        setItems((cur) => applyEdit(cur, item.recordName, item.title, item.body));
+        setError(e instanceof Error ? e.message : "Could not update that item.");
+      } finally {
+        setSavingEdit(false);
+      }
+    },
+    [editTitle, editBody],
+  );
 
   const desc = status ? describeStatus(status) : null;
   const initials = initialsFor(user);
@@ -198,23 +236,73 @@ export default function Vault() {
             items.map((item, i) => (
               <Animated.View key={item.recordName} entering={FadeInDown.delay(i * 40).duration(360)} layout={LayoutAnim}>
                 <Surface accent="wdbx">
-                  <View style={styles.rowHead}>
-                    <Txt variant="h3" color={color.white} style={{ flex: 1 }}>{item.title}</Txt>
-                    <PressableScale
-                      onPress={() => onDelete(item.recordName)}
-                      haptic
-                      style={styles.del}
-                      accessibilityLabel={`Delete ${item.title}`}
-                    >
-                      <Txt variant="mono" color={color.textMute}>✕</Txt>
-                    </PressableScale>
-                  </View>
-                  {item.body ? (
-                    <Txt variant="small" color={color.textDim} style={{ marginTop: 6 }}>{item.body}</Txt>
-                  ) : null}
-                  <Txt variant="mono" color={color.textFaint} style={{ marginTop: 10 }}>
-                    {new Date(item.createdAt).toLocaleString()}
-                  </Txt>
+                  {editingId === item.recordName ? (
+                    <>
+                      <TextInput
+                        value={editTitle}
+                        onChangeText={setEditTitle}
+                        placeholder="Title"
+                        placeholderTextColor={color.textFaint}
+                        accessibilityLabel="Edit note title"
+                        autoFocus
+                        style={[t.bodyMed, styles.input, { color: color.white }]}
+                      />
+                      <View style={styles.inputDivider} />
+                      <TextInput
+                        value={editBody}
+                        onChangeText={setEditBody}
+                        placeholder="Anything you want kept private…"
+                        placeholderTextColor={color.textFaint}
+                        accessibilityLabel="Edit note body"
+                        multiline
+                        style={[t.body, styles.input, { color: color.text, minHeight: 44 }]}
+                      />
+                      <View style={styles.editActions}>
+                        <PressableScale onPress={cancelEdit} haptic={false} style={styles.cancelBtn} accessibilityLabel="Cancel editing">
+                          <Txt variant="mono" color={color.textDim}>CANCEL</Txt>
+                        </PressableScale>
+                        <PressableScale
+                          onPress={() => onSaveEdit(item)}
+                          style={[styles.updateBtn, { opacity: editTitle.trim() ? 1 : 0.4 }]}
+                          accessibilityLabel="Save changes"
+                        >
+                          {savingEdit ? (
+                            <ActivityIndicator color={color.ink} size="small" />
+                          ) : (
+                            <Txt variant="mono" color={color.ink}>UPDATE →</Txt>
+                          )}
+                        </PressableScale>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <View style={styles.rowHead}>
+                        <Txt variant="h3" color={color.white} style={{ flex: 1 }}>{item.title}</Txt>
+                        <PressableScale
+                          onPress={() => startEdit(item)}
+                          haptic={false}
+                          style={styles.iconBtn}
+                          accessibilityLabel={`Edit ${item.title}`}
+                        >
+                          <Txt variant="mono" color={color.textMute}>edit</Txt>
+                        </PressableScale>
+                        <PressableScale
+                          onPress={() => onDelete(item.recordName)}
+                          haptic
+                          style={styles.del}
+                          accessibilityLabel={`Delete ${item.title}`}
+                        >
+                          <Txt variant="mono" color={color.textMute}>✕</Txt>
+                        </PressableScale>
+                      </View>
+                      {item.body ? (
+                        <Txt variant="small" color={color.textDim} style={{ marginTop: 6 }}>{item.body}</Txt>
+                      ) : null}
+                      <Txt variant="mono" color={color.textFaint} style={{ marginTop: 10 }}>
+                        {new Date(item.createdAt).toLocaleString()}
+                      </Txt>
+                    </>
+                  )}
                 </Surface>
               </Animated.View>
             ))
@@ -263,6 +351,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
   },
-  rowHead: { flexDirection: "row", alignItems: "center", gap: space.md },
+  rowHead: { flexDirection: "row", alignItems: "center", gap: space.sm },
+  iconBtn: { height: 28, paddingHorizontal: 10, alignItems: "center", justifyContent: "center", borderRadius: 8, backgroundColor: color.panelRaised },
   del: { width: 28, height: 28, alignItems: "center", justifyContent: "center", borderRadius: 8, backgroundColor: color.panelRaised },
+  editActions: { flexDirection: "row", justifyContent: "flex-end", gap: space.sm, marginTop: space.md },
+  cancelBtn: { borderWidth: 1, borderColor: color.line, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
+  updateBtn: { backgroundColor: color.wdbx, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10, minWidth: 96, alignItems: "center" },
 });
