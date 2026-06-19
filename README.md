@@ -144,8 +144,9 @@ bunx eas build --profile development --platform ios
 ## Verification status
 
 - `tsc --noEmit` (strict) — **clean**, against real Expo SDK 53 / RN 0.79 types.
-- `expo export --platform web` — **succeeds**; all 11 routes bundle and
-  statically render (home, tabs, the four sections, `product/[slug]`, 404).
+- `expo export --platform web` — **succeeds**; all 16 routes bundle and
+  statically render (home, the four tab sections, `vault`, `account`, `sign-in`,
+  `product/[slug]`, and the 404).
 - A native iOS/Android simulator was not run in the build environment, so the
   final visual pass is yours: `bun run ios` / `bun run android`. On native, the
   gradient hero text and iOS blur render fully (react-native-web approximates
