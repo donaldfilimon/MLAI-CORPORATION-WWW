@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import { backend, describeStatus, listItems, addItem, removeItem, type VaultStatus } from "@/lib/cloud";
+import { backend, describeStatus, listItems, addItem, removeItem, reinsertSorted, type VaultStatus, type VaultItem } from "@/lib/cloud";
 
 // The manual mock (__mocks__/expo-secure-store.js) exposes these test helpers.
 const mock = SecureStore as unknown as { __reset: () => void; __seed: (k: string, v: string) => void };
@@ -55,5 +55,21 @@ describe("local fallback repository", () => {
     await addItem("second", "");
     const list = await listItems();
     expect(list.map((i) => i.title)).toEqual(["second", "first"]);
+  });
+});
+
+describe("reinsertSorted (failed-delete rollback)", () => {
+  const mk = (name: string, createdAt: number): VaultItem => ({ recordName: name, title: name, body: "", createdAt });
+
+  it("re-inserts the removed item WITHOUT dropping items added during the in-flight delete", () => {
+    // A was optimistically removed; meanwhile C was added and B still present.
+    // Rolling back must keep C — a whole-list snapshot restore would lose it.
+    const current = [mk("C", 2), mk("B", 0)];
+    const rolledBack = reinsertSorted(current, mk("A", 1));
+    expect(rolledBack.map((i) => i.recordName)).toEqual(["C", "A", "B"]);
+  });
+
+  it("places the re-inserted item by createdAt (newest-first)", () => {
+    expect(reinsertSorted([mk("X", 5)], mk("Y", 9)).map((i) => i.recordName)).toEqual(["Y", "X"]);
   });
 });

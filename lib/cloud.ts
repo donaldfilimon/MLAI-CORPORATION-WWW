@@ -69,6 +69,15 @@ async function writeLocal(items: VaultItem[]): Promise<void> {
   await SecureStore.setItemAsync(FALLBACK_KEY, JSON.stringify(items));
 }
 
+// ── pure helpers ────────────────────────────────────────────────────────────
+/** Re-insert an item into a list, keeping the newest-first order `listItems`
+   returns. Used to roll back a *failed* optimistic delete by restoring just the
+   removed item into the current list — so notes added during the in-flight
+   delete are preserved, rather than clobbered by a stale whole-list snapshot. */
+export function reinsertSorted(items: VaultItem[], item: VaultItem): VaultItem[] {
+  return [...items, item].sort((a, b) => b.createdAt - a.createdAt);
+}
+
 // ── public repository API ───────────────────────────────────────────────────
 export async function listItems(limit = 50): Promise<VaultItem[]> {
   const ck = getCloudKit();

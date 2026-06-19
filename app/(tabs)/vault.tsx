@@ -20,6 +20,7 @@ import {
   listItems,
   addItem,
   removeItem,
+  reinsertSorted,
   getStatus,
   describeStatus,
   type VaultItem,
@@ -86,20 +87,19 @@ export default function Vault() {
   }, [title, body]);
 
   const onDelete = useCallback(async (recordName: string) => {
-    // Capture the exact pre-removal snapshot inside the updater rather than from
-    // a closed-over `items`, so rapid successive deletes each roll back to the
-    // right state instead of a stale render's snapshot. Also lets this callback
-    // stay referentially stable (no `items` dependency).
-    let prev: VaultItem[] = [];
+    // Capture just the removed item inside the updater (not a whole-list
+    // snapshot), so a failed delete rolls back by re-inserting that one item
+    // into the *current* list — preserving any notes added during the in-flight
+    // delete. Keeps the callback referentially stable (no `items` dependency).
+    let removed: VaultItem | undefined;
     setItems((cur) => {
-      prev = cur;
+      removed = cur.find((i) => i.recordName === recordName);
       return cur.filter((i) => i.recordName !== recordName);
     });
     try {
       await removeItem(recordName);
     } catch (e) {
-      // Roll the optimistic removal back so the UI stays truthful.
-      setItems(prev);
+      if (removed) setItems((cur) => reinsertSorted(cur, removed!));
       setError(e instanceof Error ? e.message : "Could not delete that item.");
     }
   }, []);
