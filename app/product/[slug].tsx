@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Linking, Pressable } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { useLocalSearchParams, useRouter, Stack, Redirect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
@@ -15,8 +15,15 @@ import { products, links } from "@/lib/brand";
 export default function ProductDetail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
-  const key = (slug ?? "wdbx") as Accent;
-  const product = products[key] ?? products.wdbx;
+
+  // A deep link to an unknown slug (e.g. /product/foo) must not masquerade as a
+  // real product — send it to the branded 404 instead of silently showing WDBX.
+  if (!slug || !(slug in products)) {
+    return <Redirect href="/+not-found" />;
+  }
+
+  const key = slug as Accent;
+  const product = products[key];
   const accent = product.accent;
 
   return (
