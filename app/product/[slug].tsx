@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet, Linking, Pressable } from "react-native";
+import { View, StyleSheet, Linking, Pressable, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter, Stack, Redirect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
 import { Txt, Eyebrow } from "@/components/ui/Text";
 import { Surface } from "@/components/ui/Surface";
 import { StatBlock, ProvLegend } from "@/components/ui/StatBlock";

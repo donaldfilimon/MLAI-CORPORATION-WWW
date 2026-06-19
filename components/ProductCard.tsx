@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { Txt } from "@/components/ui/Text";
 import { Surface } from "@/components/ui/Surface";
 import { PressableScale } from "@/components/ui/Motion";
-import { color, space, accentColor } from "@/lib/theme";
+import { color, accentColor } from "@/lib/theme";
 import type { Product } from "@/lib/brand";
 
 export function ProductCard({ product }: { product: Product }) {

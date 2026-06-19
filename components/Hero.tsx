@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -10,7 +10,6 @@ import Animated, {
   FadeIn,
   FadeInDown,
 } from "react-native-reanimated";
-import { TextInput } from "react-native";
 import { LogoMark } from "@/components/Logo";
 import { Txt, GradientText } from "@/components/ui/Text";
 import { color, space, type as t, font } from "@/lib/theme";
