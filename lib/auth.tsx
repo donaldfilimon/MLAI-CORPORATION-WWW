@@ -55,7 +55,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!cancelled) setAppleAvailable(available);
 
       const raw = await SecureStore.getItemAsync(KEY).catch(() => null);
-      const saved = raw ? (JSON.parse(raw) as AuthUser) : null;
+      // A corrupt keychain value must never throw here: this runs in the
+      // bootstrap effect, and an unhandled parse error would leave `status`
+      // wedged on "loading" forever (a permanently blank, gated app). On bad
+      // data, discard the key and fall through to a clean signed-out state.
+      let saved: AuthUser | null = null;
+      if (raw) {
+        try {
+          saved = JSON.parse(raw) as AuthUser;
+        } catch {
+          await SecureStore.deleteItemAsync(KEY).catch(() => {});
+        }
+      }
 
       if (saved?.provider === "apple" && available) {
         const state = await AppleAuthentication.getCredentialStateAsync(saved.id).catch(

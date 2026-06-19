@@ -55,7 +55,15 @@ export function describeStatus(s: VaultStatus): { label: string; ok: boolean } {
 // ── local fallback helpers ──────────────────────────────────────────────────
 async function readLocal(): Promise<VaultItem[]> {
   const raw = await SecureStore.getItemAsync(FALLBACK_KEY).catch(() => null);
-  return raw ? (JSON.parse(raw) as VaultItem[]) : [];
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    // A corrupt or unexpectedly-shaped blob must not brick every Vault load —
+    // treat it as empty; the next write self-heals by overwriting it.
+    return Array.isArray(parsed) ? (parsed as VaultItem[]) : [];
+  } catch {
+    return [];
+  }
 }
 async function writeLocal(items: VaultItem[]): Promise<void> {
   await SecureStore.setItemAsync(FALLBACK_KEY, JSON.stringify(items));
