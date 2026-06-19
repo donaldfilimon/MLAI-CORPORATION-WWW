@@ -39,4 +39,41 @@ describe("Vault screen (local fallback)", () => {
     fireEvent.press(screen.getByLabelText("Delete Disposable"));
     await waitFor(() => expect(screen.queryByText("Disposable")).toBeNull());
   });
+
+  const seedTwoNotes = async (screen: ReturnType<typeof render>) => {
+    await waitFor(() => expect(screen.getByText(/Nothing saved yet/)).toBeTruthy());
+    fireEvent.changeText(screen.getByLabelText("Note title"), "Apples");
+    fireEvent.changeText(screen.getByLabelText("Note body"), "fruit");
+    fireEvent.press(screen.getByText("SAVE TO VAULT →"));
+    await waitFor(() => expect(screen.getByText("Apples")).toBeTruthy());
+    fireEvent.changeText(screen.getByLabelText("Note title"), "Bread");
+    fireEvent.changeText(screen.getByLabelText("Note body"), "bakery");
+    fireEvent.press(screen.getByText("SAVE TO VAULT →"));
+    await waitFor(() => expect(screen.getByText("Bread")).toBeTruthy());
+  };
+
+  it("filters the list by the search query", async () => {
+    const screen = render(<Vault />);
+    await seedTwoNotes(screen);
+
+    fireEvent.changeText(screen.getByLabelText("Search notes"), "appl");
+    await waitFor(() => expect(screen.queryByText("Bread")).toBeNull());
+    expect(screen.getByText("Apples")).toBeTruthy();
+
+    fireEvent.changeText(screen.getByLabelText("Search notes"), "zzz");
+    await waitFor(() => expect(screen.getByText(/No notes match/)).toBeTruthy());
+  });
+
+  it("edits a note in place", async () => {
+    const screen = render(<Vault />);
+    await seedTwoNotes(screen);
+
+    fireEvent.press(screen.getByLabelText("Edit Apples"));
+    fireEvent.changeText(screen.getByLabelText("Edit note title"), "Green apples");
+    fireEvent.press(screen.getByText("UPDATE →"));
+
+    await waitFor(() => expect(screen.getByText("Green apples")).toBeTruthy());
+    expect(screen.queryByText("Apples")).toBeNull();
+    expect(screen.getByText("Bread")).toBeTruthy(); // the other note is untouched
+  });
 });
