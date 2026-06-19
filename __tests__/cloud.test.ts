@@ -69,6 +69,20 @@ describe("local fallback repository", () => {
       createdAt: created.createdAt,
     });
   });
+
+  it("gives locally-added notes unique recordNames even within the same millisecond", async () => {
+    const now = jest.spyOn(Date, "now").mockReturnValue(1_700_000_000_000);
+    try {
+      const a = await addItem("A", "");
+      const b = await addItem("B", ""); // same frozen createdAt as a
+      expect(a.recordName).not.toBe(b.recordName);
+      // deleting one must leave the other (a shared recordName would drop both)
+      await removeItem(a.recordName);
+      expect((await listItems()).map((i) => i.title)).toEqual(["B"]);
+    } finally {
+      now.mockRestore();
+    }
+  });
 });
 
 describe("reinsertSorted (failed-delete rollback)", () => {

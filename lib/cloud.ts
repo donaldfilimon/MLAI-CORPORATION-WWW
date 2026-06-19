@@ -12,6 +12,11 @@ import { getCloudKit, isCloudKitAvailable, type CloudAccountStatus } from "@/mod
 export const RECORD_TYPE = "VaultItem";
 const FALLBACK_KEY = "mlai.vault.local.v1";
 
+// Monotonic suffix so locally-created recordNames stay unique even when two
+// adds land in the same millisecond (Date.now() alone collides → delete/edit
+// would hit the wrong note and React keys would clash).
+let localSeq = 0;
+
 export type VaultItem = {
   recordName: string;
   title: string;
@@ -119,7 +124,7 @@ export async function addItem(title: string, body: string): Promise<VaultItem> {
     const rec = await ck.save(RECORD_TYPE, null, { title, body, createdAt });
     return { recordName: rec.recordName, title, body, createdAt };
   }
-  const item: VaultItem = { recordName: `local-${createdAt}`, title, body, createdAt };
+  const item: VaultItem = { recordName: `local-${createdAt}-${localSeq++}`, title, body, createdAt };
   const items = await readLocal();
   await writeLocal([item, ...items]);
   return item;
