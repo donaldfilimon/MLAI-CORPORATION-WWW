@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import { backend, describeStatus, listItems, addItem, removeItem, reinsertSorted, applyEdit, type VaultStatus, type VaultItem } from "@/lib/cloud";
+import { backend, describeStatus, listItems, addItem, removeItem, reinsertSorted, applyEdit, filterItems, type VaultStatus, type VaultItem } from "@/lib/cloud";
 
 // The manual mock (__mocks__/expo-secure-store.js) exposes these test helpers.
 const mock = SecureStore as unknown as { __reset: () => void; __seed: (k: string, v: string) => void };
@@ -90,5 +90,27 @@ describe("applyEdit", () => {
     const next = applyEdit(items, "ZZZ", "x", "y");
     expect(next).toEqual(items);
     expect(items[0].title).toBe("A"); // input untouched
+  });
+});
+
+describe("filterItems", () => {
+  const items: VaultItem[] = [
+    { recordName: "1", title: "Grocery list", body: "milk, eggs", createdAt: 2 },
+    { recordName: "2", title: "Meeting", body: "discuss roadmap", createdAt: 1 },
+  ];
+
+  it("returns the list unchanged for an empty or whitespace query", () => {
+    expect(filterItems(items, "")).toBe(items);
+    expect(filterItems(items, "   ")).toBe(items);
+  });
+
+  it("matches title or body, case-insensitively", () => {
+    expect(filterItems(items, "GROCERY").map((i) => i.recordName)).toEqual(["1"]);
+    expect(filterItems(items, "roadmap").map((i) => i.recordName)).toEqual(["2"]);
+    expect(filterItems(items, "milk").map((i) => i.recordName)).toEqual(["1"]);
+  });
+
+  it("returns [] when nothing matches", () => {
+    expect(filterItems(items, "zzz")).toEqual([]);
   });
 });

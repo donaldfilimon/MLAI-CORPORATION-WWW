@@ -23,6 +23,7 @@ import {
   updateItem,
   reinsertSorted,
   applyEdit,
+  filterItems,
   getStatus,
   describeStatus,
   type VaultItem,
@@ -45,6 +46,7 @@ export default function Vault() {
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+  const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
     const [s, list] = await Promise.all([getStatus(), listItems()]);
@@ -144,6 +146,7 @@ export default function Vault() {
 
   const desc = status ? describeStatus(status) : null;
   const initials = initialsFor(user);
+  const visible = filterItems(items, query);
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
@@ -224,16 +227,43 @@ export default function Vault() {
           </Animated.View>
         ) : null}
 
+        {/* search */}
+        {items.length > 0 ? (
+          <View style={styles.search}>
+            <Txt variant="mono" color={color.textMute}>⌕</Txt>
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search notes"
+              placeholderTextColor={color.textFaint}
+              accessibilityLabel="Search notes"
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="search"
+              style={[t.body, { flex: 1, color: color.white, paddingVertical: 0 }]}
+            />
+            {query ? (
+              <PressableScale onPress={() => setQuery("")} haptic={false} style={styles.del} accessibilityLabel="Clear search">
+                <Txt variant="mono" color={color.textMute}>✕</Txt>
+              </PressableScale>
+            ) : null}
+          </View>
+        ) : null}
+
         {/* list */}
-        <View style={{ marginTop: space.xl, gap: space.md }}>
+        <View style={{ marginTop: space.lg, gap: space.md }}>
           {loading ? (
             <ActivityIndicator color={color.wdbx} style={{ marginTop: space.xl }} />
           ) : items.length === 0 ? (
             <Txt variant="small" color={color.textMute} style={{ marginTop: space.md }}>
               Nothing saved yet. Add your first private note above.
             </Txt>
+          ) : visible.length === 0 ? (
+            <Txt variant="small" color={color.textMute} style={{ marginTop: space.md }}>
+              No notes match “{query.trim()}”.
+            </Txt>
           ) : (
-            items.map((item, i) => (
+            visible.map((item, i) => (
               <Animated.View key={item.recordName} entering={FadeInDown.delay(i * 40).duration(360)} layout={LayoutAnim}>
                 <Surface accent="wdbx">
                   {editingId === item.recordName ? (
@@ -342,6 +372,18 @@ const styles = StyleSheet.create({
   },
   dot: { width: 8, height: 8, borderRadius: 4 },
   errorRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: space.md },
+  search: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    marginTop: space.xl,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: color.line,
+    backgroundColor: color.panel,
+  },
   input: { paddingVertical: 8 },
   inputDivider: { height: 1, backgroundColor: color.line, marginVertical: 4 },
   addBtn: {

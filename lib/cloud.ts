@@ -85,6 +85,17 @@ export function applyEdit(items: VaultItem[], recordName: string, title: string,
   return items.map((i) => (i.recordName === recordName ? { ...i, title, body } : i));
 }
 
+/** Filter a vault by a free-text query: case-insensitive substring match over
+   title and body. An empty/whitespace query returns the list unchanged. Pure —
+   the Vault filters the already-loaded list client-side (local-first). */
+export function filterItems(items: VaultItem[], query: string): VaultItem[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return items;
+  return items.filter(
+    (i) => i.title.toLowerCase().includes(q) || i.body.toLowerCase().includes(q),
+  );
+}
+
 // ── public repository API ───────────────────────────────────────────────────
 export async function listItems(limit = 50): Promise<VaultItem[]> {
   const ck = getCloudKit();
