@@ -22,10 +22,12 @@ bun run android      # Android emulator
 bun run web          # react-native-web in the browser
 ```
 
-Type-check at any time:
+Verify at any time:
 
 ```bash
 bun run typecheck    # tsc --noEmit, strict
+bun run test         # jest (jest-expo) — pure-logic unit suites
+bun run lint         # eslint (eslint-config-expo)
 ```
 
 > **Staying current.** The dependency set is pinned to the Expo SDK 53 family —
@@ -81,7 +83,8 @@ plugins/withCloudKit.js     config plugin: iCloud + CloudKit entitlements
 lib/auth.tsx                AuthProvider / useAuth, credential-revocation check
 lib/cloud.ts                vault repository (CloudKit ⇢ encrypted-local fallback)
 app/(auth)/sign-in.tsx      branded sign-in
-app/(tabs)/vault.tsx        the CloudKit-backed feature (notes in your iCloud)
+app/(tabs)/vault.tsx        the CloudKit-backed feature — create, inline-edit,
+                            delete, and search notes in your iCloud
 app/account.tsx             identity · storage status · sign out
 ```
 
@@ -144,6 +147,10 @@ bunx eas build --profile development --platform ios
 ## Verification status
 
 - `tsc --noEmit` (strict) — **clean**, against real Expo SDK 53 / RN 0.79 types.
+- `bun run test` (jest-expo) — **passing**; pure-logic suites cover the vault
+  repository (add/update/delete/search helpers, local fallback) and the brand /
+  theme / auth helpers.
+- `bun run lint` (eslint-config-expo) — **clean**, 0 problems.
 - `expo export --platform web` — **succeeds**; all 16 routes bundle and
   statically render (home, the four tab sections, `vault`, `account`, `sign-in`,
   `product/[slug]`, and the 404).

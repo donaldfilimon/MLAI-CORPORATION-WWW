@@ -16,11 +16,12 @@ bun start                 # Expo dev server (QR → Expo Go)
 bun run ios               # iOS simulator
 bun run android           # Android emulator
 bun run web               # react-native-web
-bun run typecheck         # tsc --noEmit, strict — the primary CI gate
-bun run lint              # expo lint
+bun run typecheck         # tsc --noEmit, strict
+bun run test              # jest (jest-expo) — pure-logic unit suites
+bun run lint              # expo lint (eslint-config-expo)
 ```
 
-There is no test runner configured. **`bun run typecheck` is the verification gate** — run it after any change. `expo export --platform web` is the second check used to confirm all routes bundle.
+**Verification gates** (all should pass after a change): `bun run typecheck`, `bun run test` (jest-expo; pure-logic suites under `__tests__/`), `bun run lint`, and `bunx expo export --platform web` (confirms all routes bundle). `bun run test` and `bun run lint` were added during development; the test suite mocks `expo-secure-store` to exercise the local-fallback repository. Component-render tests are not set up (no `@testing-library/react-native`), so UI-state logic in screens is covered by typecheck + the export gate, not unit tests.
 
 ### Native CloudKit build (Vault feature)
 
