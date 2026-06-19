@@ -31,6 +31,77 @@ import {
 } from "@/lib/cloud";
 import { color, space, accentColor, tabScrollPadding, type as t } from "@/lib/theme";
 
+/* Shared title/body note form — backs both the top composer (no onCancel:
+   full-width SAVE) and the inline card editor (onCancel: CANCEL + UPDATE row). */
+function NoteForm({
+  title,
+  body,
+  onChangeTitle,
+  onChangeBody,
+  onSubmit,
+  submitLabel,
+  busy,
+  onCancel,
+  autoFocus,
+  titleLabel,
+  bodyLabel,
+}: {
+  title: string;
+  body: string;
+  onChangeTitle: (s: string) => void;
+  onChangeBody: (s: string) => void;
+  onSubmit: () => void;
+  submitLabel: string;
+  busy: boolean;
+  onCancel?: () => void;
+  autoFocus?: boolean;
+  titleLabel: string;
+  bodyLabel: string;
+}) {
+  const submit = (
+    <PressableScale
+      onPress={onSubmit}
+      style={[onCancel ? styles.updateBtn : styles.addBtn, { opacity: title.trim() ? 1 : 0.4 }]}
+      accessibilityLabel={onCancel ? "Save changes" : undefined}
+    >
+      {busy ? <ActivityIndicator color={color.ink} size="small" /> : <Txt variant="mono" color={color.ink}>{submitLabel}</Txt>}
+    </PressableScale>
+  );
+  return (
+    <>
+      <TextInput
+        value={title}
+        onChangeText={onChangeTitle}
+        placeholder="Title"
+        placeholderTextColor={color.textFaint}
+        accessibilityLabel={titleLabel}
+        autoFocus={autoFocus}
+        style={[t.bodyMed, styles.input, { color: color.white }]}
+      />
+      <View style={styles.inputDivider} />
+      <TextInput
+        value={body}
+        onChangeText={onChangeBody}
+        placeholder="Anything you want kept private…"
+        placeholderTextColor={color.textFaint}
+        accessibilityLabel={bodyLabel}
+        multiline
+        style={[t.body, styles.input, { color: color.text, minHeight: 44 }]}
+      />
+      {onCancel ? (
+        <View style={styles.editActions}>
+          <PressableScale onPress={onCancel} haptic={false} style={styles.cancelBtn} accessibilityLabel="Cancel editing">
+            <Txt variant="mono" color={color.textDim}>CANCEL</Txt>
+          </PressableScale>
+          {submit}
+        </View>
+      ) : (
+        submit
+      )}
+    </>
+  );
+}
+
 export default function Vault() {
   const { user } = useAuth();
   const router = useRouter();
@@ -202,31 +273,17 @@ export default function Vault() {
 
         {/* composer */}
         <Surface style={{ marginTop: space.lg }}>
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Title"
-            placeholderTextColor={color.textFaint}
-            accessibilityLabel="Note title"
-            style={[t.bodyMed, styles.input, { color: color.white }]}
+          <NoteForm
+            title={title}
+            body={body}
+            onChangeTitle={setTitle}
+            onChangeBody={setBody}
+            onSubmit={onAdd}
+            submitLabel="SAVE TO VAULT →"
+            busy={saving}
+            titleLabel="Note title"
+            bodyLabel="Note body"
           />
-          <View style={styles.inputDivider} />
-          <TextInput
-            value={body}
-            onChangeText={setBody}
-            placeholder="Anything you want kept private…"
-            placeholderTextColor={color.textFaint}
-            accessibilityLabel="Note body"
-            multiline
-            style={[t.body, styles.input, { color: color.text, minHeight: 44 }]}
-          />
-          <PressableScale onPress={onAdd} style={[styles.addBtn, { opacity: title.trim() ? 1 : 0.4 }]}>
-            {saving ? (
-              <ActivityIndicator color={color.ink} size="small" />
-            ) : (
-              <Txt variant="mono" color={color.ink}>SAVE TO VAULT →</Txt>
-            )}
-          </PressableScale>
         </Surface>
 
         {error ? (
@@ -276,43 +333,19 @@ export default function Vault() {
               <Animated.View key={item.recordName} entering={FadeInDown.delay(i * 40).duration(360)} layout={LayoutAnim}>
                 <Surface accent="wdbx">
                   {editingId === item.recordName ? (
-                    <>
-                      <TextInput
-                        value={editTitle}
-                        onChangeText={setEditTitle}
-                        placeholder="Title"
-                        placeholderTextColor={color.textFaint}
-                        accessibilityLabel="Edit note title"
-                        autoFocus
-                        style={[t.bodyMed, styles.input, { color: color.white }]}
-                      />
-                      <View style={styles.inputDivider} />
-                      <TextInput
-                        value={editBody}
-                        onChangeText={setEditBody}
-                        placeholder="Anything you want kept private…"
-                        placeholderTextColor={color.textFaint}
-                        accessibilityLabel="Edit note body"
-                        multiline
-                        style={[t.body, styles.input, { color: color.text, minHeight: 44 }]}
-                      />
-                      <View style={styles.editActions}>
-                        <PressableScale onPress={cancelEdit} haptic={false} style={styles.cancelBtn} accessibilityLabel="Cancel editing">
-                          <Txt variant="mono" color={color.textDim}>CANCEL</Txt>
-                        </PressableScale>
-                        <PressableScale
-                          onPress={() => onSaveEdit(item)}
-                          style={[styles.updateBtn, { opacity: editTitle.trim() ? 1 : 0.4 }]}
-                          accessibilityLabel="Save changes"
-                        >
-                          {savingEdit ? (
-                            <ActivityIndicator color={color.ink} size="small" />
-                          ) : (
-                            <Txt variant="mono" color={color.ink}>UPDATE →</Txt>
-                          )}
-                        </PressableScale>
-                      </View>
-                    </>
+                    <NoteForm
+                      title={editTitle}
+                      body={editBody}
+                      onChangeTitle={setEditTitle}
+                      onChangeBody={setEditBody}
+                      onSubmit={() => onSaveEdit(item)}
+                      submitLabel="UPDATE →"
+                      busy={savingEdit}
+                      onCancel={cancelEdit}
+                      autoFocus
+                      titleLabel="Edit note title"
+                      bodyLabel="Edit note body"
+                    />
                   ) : (
                     <>
                       <View style={styles.rowHead}>
