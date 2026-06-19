@@ -86,8 +86,15 @@ export default function Vault() {
   }, [title, body]);
 
   const onDelete = useCallback(async (recordName: string) => {
-    const prev = items;
-    setItems((cur) => cur.filter((i) => i.recordName !== recordName));
+    // Capture the exact pre-removal snapshot inside the updater rather than from
+    // a closed-over `items`, so rapid successive deletes each roll back to the
+    // right state instead of a stale render's snapshot. Also lets this callback
+    // stay referentially stable (no `items` dependency).
+    let prev: VaultItem[] = [];
+    setItems((cur) => {
+      prev = cur;
+      return cur.filter((i) => i.recordName !== recordName);
+    });
     try {
       await removeItem(recordName);
     } catch (e) {
@@ -95,7 +102,7 @@ export default function Vault() {
       setItems(prev);
       setError(e instanceof Error ? e.message : "Could not delete that item.");
     }
-  }, [items]);
+  }, []);
 
   const desc = status ? describeStatus(status) : null;
   const initials = initialsFor(user);
