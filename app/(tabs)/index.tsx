@@ -52,7 +52,7 @@ export default function HomeScreen() {
           <Txt variant="small" color={color.textDim} style={{ marginTop: 6 }}>
             The WDBX and ABI core is Apache-2.0. {company.appleFraming}
           </Txt>
-          <PressableScale onPress={() => Linking.openURL(links.github)} style={styles.btn}>
+          <PressableScale onPress={() => Linking.openURL(links.github).catch(() => {})} style={styles.btn}>
             <Txt variant="mono" color={color.ink}>OPEN GITHUB →</Txt>
           </PressableScale>
         </Surface>

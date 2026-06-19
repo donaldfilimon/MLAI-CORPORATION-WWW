@@ -100,7 +100,7 @@ export default function ProductDetail() {
               Start with the core; reach out for Pro or enterprise terms.
             </Txt>
             <PressableScale
-              onPress={() => Linking.openURL(links.github)}
+              onPress={() => Linking.openURL(links.github).catch(() => {})}
               style={[styles.btn, { backgroundColor: accentColor[accent] }]}
             >
               <Txt variant="mono" color={color.ink}>VIEW ON GITHUB →</Txt>

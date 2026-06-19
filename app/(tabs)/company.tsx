@@ -53,7 +53,7 @@ export default function CompanyScreen() {
               { label: "WEB", url: links.site },
               { label: "X", url: links.x },
             ].map((l) => (
-              <PressableScale key={l.label} onPress={() => Linking.openURL(l.url)} style={styles.linkBtn}>
+              <PressableScale key={l.label} onPress={() => Linking.openURL(l.url).catch(() => {})} style={styles.linkBtn}>
                 <Txt variant="mono" color={color.text}>{l.label}</Txt>
               </PressableScale>
             ))}
