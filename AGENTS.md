@@ -20,7 +20,7 @@ Tests are in `src/__tests__/`. Static assets are in `public/`. Scripts such as s
 
 Use TypeScript and React 19 patterns already present in the codebase. Prefer Bun tooling over Node/npm/pnpm. Keep components in PascalCase (`HeroScene.tsx`), hooks in camelCase with `use` prefixes, and data modules as lowercase domain files such as `blog.ts` or `products.ts`.
 
-TailwindCSS v4 is the styling layer. Reuse existing utilities such as `.glass-card`, `.container-custom`, `.container-prose`, and `.section-y`. Brand colors are the Signal/Indigo palette; avoid reintroducing emerald/teal/cyan brand accents in site chrome.
+TailwindCSS v4 is the styling layer. Reuse existing utilities such as `.glass-card`, `.container-custom`, `.container-prose`, and `.section-y`. Brand colors are the **"Lab"** palette: cyan primary, blue/sky secondary, and violet/emerald/amber persona accents on a near-black ink canvas, with a serif (Spectral) display face. The indigo "Signal" identity is retired; do not reintroduce indigo/fuchsia for brand chrome.
 
 ## Testing Guidelines
 

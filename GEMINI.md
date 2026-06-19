@@ -33,7 +33,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - **Auth/Admin**: `mlai_session` is an iron-session cookie. Admin reads (`GET /api/inquiries`, `GET /api/telemetry/summary`) require session + `ADMIN_EMAILS`; MFA is enabled by `ADMIN_REQUIRE_MFA=true`.
 - **Content**: `src/data/index.ts` aggregates `src/data/categories/*`. Blog and research entries are structured data with slugs and full bodies; do not hardcode long-form prose in components.
 - **Styling**: TailwindCSS v4 tokens/utilities live in `src/index.css`. Reuse `.container-custom`, `.container-prose`, `.section-y`, `.section-title`, `.glass-card`, and `.label-chip`.
-- **Brand**: Signal/Indigo system: indigo primary, sky/ice secondary, slate near-black canvas, fuchsia only as a rare trace accent. Do not reintroduce emerald/teal/cyan site chrome.
+- **Brand**: "Lab" system: cyan primary, blue/sky secondary, near-black ink canvas (`#05070d`), with violet/emerald/amber as fixed persona colors and a serif (Spectral) display face. The indigo "Signal" identity is retired; do not reintroduce indigo/fuchsia for brand chrome.
 - **Showcase**: `/showcase/*` surfaces use lazy client chunks and cinematic engines under `src/film/`, `src/trailer/`, `src/mega/`, and `src/explainer/`.
 - **Performance**: Keep heavy route-specific dependencies isolated, especially TensorFlow on `/tf-pose-demo`.
 
