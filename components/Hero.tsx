@@ -26,7 +26,7 @@ function CountUp({ to, suffix, decimals = 1 }: { to: number; suffix: string; dec
 
   const props = useAnimatedProps(() => {
     return { text: `${v.value.toFixed(decimals)}${suffix}`, defaultValue: `0${suffix}` } as any;
-  });
+  }, [decimals, suffix]);
 
   return (
     <AnimatedInput
