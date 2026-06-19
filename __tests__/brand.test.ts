@@ -1,4 +1,4 @@
-import { provenanceMeta, products, productOrder, heroStats } from "@/lib/brand";
+import { provenanceMeta, products, productOrder, heroStats, parseStatValue } from "@/lib/brand";
 import { color, accentColor } from "@/lib/theme";
 
 describe("provenance metadata", () => {
@@ -27,5 +27,18 @@ describe("catalog integrity", () => {
       for (const s of products[slug].stats) expect(valid.has(s.provenance)).toBe(true);
     }
     for (const s of heroStats) expect(valid.has(s.provenance)).toBe(true);
+  });
+});
+
+describe("parseStatValue", () => {
+  it("splits the leading number from its unit suffix", () => {
+    expect(parseStatValue("2.3ms")).toEqual({ number: 2.3, suffix: "ms" });
+    expect(parseStatValue("98.2%")).toEqual({ number: 98.2, suffix: "%" });
+    expect(parseStatValue("16.5K")).toEqual({ number: 16.5, suffix: "K" });
+  });
+
+  it("drives the hero metrics from brand.ts (no hardcoded duplication)", () => {
+    expect(parseStatValue(heroStats[0].value)).toEqual({ number: 2.3, suffix: "ms" });
+    expect(parseStatValue(heroStats[1].value)).toEqual({ number: 98.2, suffix: "%" });
   });
 });

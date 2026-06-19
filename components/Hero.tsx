@@ -13,6 +13,7 @@ import Animated, {
 import { LogoMark } from "@/components/Logo";
 import { Txt, GradientText } from "@/components/ui/Text";
 import { color, space, type as t, font } from "@/lib/theme";
+import { heroStats, parseStatValue } from "@/lib/brand";
 
 const AnimatedInput = Animated.createAnimatedComponent(TextInput);
 
@@ -38,6 +39,10 @@ function CountUp({ to, suffix, decimals = 1 }: { to: number; suffix: string; dec
 }
 
 export function Hero() {
+  // Source the two measured metrics from brand.ts (the provenance-tagged single
+  // source of truth) instead of re-hardcoding the numbers here.
+  const p50 = parseStatValue(heroStats[0].value);
+  const recall = parseStatValue(heroStats[1].value);
   return (
     <View style={styles.wrap}>
       {/* ambient glows */}
@@ -71,13 +76,13 @@ export function Hero() {
       {/* live metric strip */}
       <Animated.View entering={FadeInDown.delay(400).duration(500)} style={styles.metricRow}>
         <View>
-          <CountUp to={2.3} suffix="ms" />
-          <Txt variant="mono" color={color.textMute}>p50 search · measured</Txt>
+          <CountUp to={p50.number} suffix={p50.suffix} />
+          <Txt variant="mono" color={color.textMute}>p50 search · {heroStats[0].provenance}</Txt>
         </View>
         <View style={styles.metricDivider} />
         <View>
-          <CountUp to={98.2} suffix="%" />
-          <Txt variant="mono" color={color.textMute}>recall@10 · measured</Txt>
+          <CountUp to={recall.number} suffix={recall.suffix} />
+          <Txt variant="mono" color={color.textMute}>recall@10 · {heroStats[1].provenance}</Txt>
         </View>
       </Animated.View>
     </View>

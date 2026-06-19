@@ -39,6 +39,14 @@ export const heroStats: Stat[] = [
   { value: "0.8ms", label: "p50 @ 1M vectors", provenance: "target" },
 ];
 
+/** Split a formatted stat value like "2.3ms" or "98.2%" into its leading number
+   and unit suffix — so a component can animate the number (e.g. the hero
+   count-up) without re-hardcoding the value that lives here in brand.ts. */
+export function parseStatValue(value: string): { number: number; suffix: string } {
+  const m = value.match(/^([\d.]+)(.*)$/);
+  return { number: m ? parseFloat(m[1]) : 0, suffix: m ? m[2] : "" };
+}
+
 export type Product = {
   slug: Accent;
   name: string;
