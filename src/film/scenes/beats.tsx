@@ -202,7 +202,7 @@ export function BeatPersona({ name, role, accent }: { name: string; role: string
 }
 
 // ── Beat 6: verifiable memory (chain snap) ───────────────────────────────────
-const TBLOCKS: [string, string][] = [['Abbey', '#60a5fa'], ['Aviva', '#a78bfa'], ['Abi', '#22d3ee'], ['Abbey', '#60a5fa']];
+const TBLOCKS: [string, string][] = [['Abbey', '#34d399'], ['Aviva', '#a78bfa'], ['Abi', '#22d3ee'], ['Abbey', '#34d399']];
 export function BeatMemory() {
   const { localTime: lt } = useSprite();
   const T = useTime();

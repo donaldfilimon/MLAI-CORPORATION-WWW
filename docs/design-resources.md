@@ -20,6 +20,7 @@ wins. This index exists so design/website resources don't drift across projects.
 | **Social / OG** | `public/og-image.svg`, `app/layout.tsx` (`metadataBase`, theme-color, mask-icon), `manifest.webmanifest` |
 | **Site content (single source of truth)** | `src/data/categories/*` (company, products, research, blog, team, platform, services, stats, faq, industries, changelog), aggregated by `src/data/index.ts` |
 | **Consolidated product/brand reference** | `docs/master-reference.md` (provenance-tagged; cross-source figures flagged) |
+| **Voice & tone (written)** | `docs/voice-guidelines.md` — motto-driven voice, per-persona registers, claims discipline, do/don't from real copy. The written counterpart to this visual index. |
 
 ## 2 · Upstream / sibling resources (feed in, not canonical)
 

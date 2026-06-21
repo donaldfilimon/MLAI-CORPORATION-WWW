@@ -60,21 +60,21 @@ const personas = [
   {
     name: "Aviva",
     role: "Direct Expert",
-    accent: "#d946ef",
+    accent: "#a855f7",
     description:
       "Direct, creative, and exploratory. Generates plans, analysis, and alternative approaches — the framework's research and planning voice. Proposes; never executes on its own.",
   },
   {
     name: "Abbey",
     role: "Empathetic Polymath",
-    accent: "#38bdf8",
+    accent: "#34d399",
     description:
       "Warm, precise, and never condescending — Abbey pairs broad technical range with real emotional intelligence, explaining the why behind the what. She handles structured explanation and safety-oriented review, and says \"I'm not sure\" instead of bluffing.",
   },
   {
     name: "Abi",
     role: "Adaptive Moderator",
-    accent: "#60a5fa",
+    accent: "#22d3ee",
     description:
       "Concise and policy-aware. Mediates, routes, and executes — but only once a plan clears review. The governance layer of the framework.",
   },
