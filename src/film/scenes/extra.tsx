@@ -146,7 +146,7 @@ export function SceneTemporal() {
 // ── The minds — persona deep dive ────────────────────────────────────────────
 interface DeepPersona { name: string; role: string; traits: string[]; c: string; }
 const DEEP_PERSONAS: DeepPersona[] = [
-  { name: 'Abbey', role: 'Empathic polymath', traits: ['Structured explanation', 'Safety-oriented review', 'Scaffolding protocol'], c: '#60a5fa' },
+  { name: 'Abbey', role: 'Empathic polymath', traits: ['Structured explanation', 'Safety-oriented review', 'Scaffolding protocol'], c: '#34d399' },
   { name: 'Aviva', role: 'Unfiltered expert',  traits: ['Idea generation', 'Alternative perspectives', 'Concise + dense'], c: '#a78bfa' },
   { name: 'Abi',   role: 'Adaptive moderator', traits: ['Intent routing', 'Response blending', 'Action-oriented'], c: '#22d3ee' },
 ];
@@ -186,7 +186,7 @@ export function ScenePersonaDeep() {
       })}
       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 130, textAlign: 'center', zIndex: 20, opacity: blend,
         fontFamily: FONT.mono, fontSize: 26, color: C.dim }}>
-        R<span style={{ fontSize: 18 }}>final</span> = <span style={{ color: '#60a5fa' }}>α·Abbey</span> + <span style={{ color: '#a78bfa' }}>(1−α)·Aviva</span> — <span style={{ color: '#22d3ee' }}>moderated by Abi</span>
+        R<span style={{ fontSize: 18 }}>final</span> = <span style={{ color: '#34d399' }}>α·Abbey</span> + <span style={{ color: '#a78bfa' }}>(1−α)·Aviva</span> — <span style={{ color: '#22d3ee' }}>moderated by Abi</span>
       </div>
     </SceneBox>
   );

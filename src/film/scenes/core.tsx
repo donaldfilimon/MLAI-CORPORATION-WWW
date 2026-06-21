@@ -16,7 +16,7 @@ const QUERY_TOKENS = [
   { t: "the ", hot: false }, { t: "risks", hot: true }, { t: ".", hot: false },
 ];
 const ROUTE_PERSONAS = [
-  { name: "Abbey", role: "Analytical · supportive", w: 0.62, accent: "#60a5fa" },
+  { name: "Abbey", role: "Analytical · supportive", w: 0.62, accent: "#34d399" },
   { name: "Aviva", role: "Creative · exploratory", w: 0.14, accent: "#a78bfa" },
   { name: "Abi", role: "Concise · action", w: 0.24, accent: "#22d3ee" },
 ];
@@ -139,7 +139,7 @@ const NN = VEC_PTS.map((p, i) => ({ i, d: Math.hypot(p[0] - QUERY_PT[0], p[1] - 
   .sort((a, b) => a.d - b.d).slice(1, 6).map((o) => o.i);
 
 const MEM_BLOCKS = [
-  { profile: "Abbey", accent: "#60a5fa" },
+  { profile: "Abbey", accent: "#34d399" },
   { profile: "Aviva", accent: "#a78bfa" },
   { profile: "Abi", accent: "#22d3ee" },
 ];
