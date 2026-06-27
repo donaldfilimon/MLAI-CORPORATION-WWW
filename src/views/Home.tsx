@@ -6,6 +6,7 @@ import { Reveal } from '../components/Reveal';
 import { Stats } from '../components/Stats';
 import { FAQ } from '../components/FAQ';
 import { PersonaLegend } from '../components/PersonaLegend';
+import { PersonaVoices } from '../components/PersonaVoices';
 import { Button } from '@/components/ui/button';
 import { industries } from '@/data/categories/industries';
 import { platform } from '@/data/categories/platform';
@@ -107,6 +108,8 @@ export function Home() {
                 Three minds, one router
               </p>
               <PersonaLegend />
+              {/* Hear each mind — neural TTS, opt-in + lazy (client-only). */}
+              <PersonaVoices className="mt-6" />
             </div>
           </div>
         </Reveal>
