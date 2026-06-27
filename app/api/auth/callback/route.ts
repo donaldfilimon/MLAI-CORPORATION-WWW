@@ -29,6 +29,8 @@ export async function GET(req: Request) {
       firstName: user.firstName,
       lastName: user.lastName,
       avatarUrl: user.profilePictureUrl ?? null,
+      company: user.metadata?.company ?? null,
+      useCase: user.metadata?.use_case ?? null,
       organizationId: organizationId ?? null,
       authenticationMethod: authenticationMethod ?? null,
       accessToken,

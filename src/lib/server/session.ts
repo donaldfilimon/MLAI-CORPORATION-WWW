@@ -35,6 +35,8 @@ export interface SessionData {
   firstName?: string | null;
   lastName?: string | null;
   avatarUrl?: string | null;
+  company?: string | null;
+  useCase?: string | null;
   organizationId?: string | null;
   authenticationMethod?: string | null;
   refreshToken?: string;

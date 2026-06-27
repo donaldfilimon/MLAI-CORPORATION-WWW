@@ -33,6 +33,8 @@ export function Profile() {
     if (!user) return;
     setFirstName(user.firstName ?? '');
     setLastName(user.lastName ?? '');
+    setCompany(user.company ?? '');
+    setUseCase(user.useCase ?? '');
     Promise.allSettled([getAuthFeatures(), getBillingPlans(), verifyWorkosUser()]).then((results) => {
       if (results[0].status === 'fulfilled') setFeatures(results[0].value);
       if (results[1].status === 'fulfilled') setBilling(results[1].value);

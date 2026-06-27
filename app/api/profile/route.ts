@@ -35,18 +35,19 @@ export async function PATCH(req: Request) {
       },
     });
 
-    const cookie = await setSessionCookie(req, {
+    const nextUser = {
       ...user,
       firstName: updated.firstName,
       lastName: updated.lastName,
       avatarUrl: updated.profilePictureUrl ?? user.avatarUrl ?? null,
-    });
+      company: updated.metadata?.company ?? null,
+      useCase: updated.metadata?.use_case ?? null,
+    };
+
+    const cookie = await setSessionCookie(req, nextUser);
 
     return Response.json(
-      {
-        ok: true,
-        user: toPublicUser({ ...user, firstName: updated.firstName, lastName: updated.lastName }),
-      },
+      { ok: true, user: toPublicUser(nextUser) },
       { headers: { "Set-Cookie": cookie } },
     );
   } catch (err) {
