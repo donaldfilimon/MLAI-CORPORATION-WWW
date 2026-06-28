@@ -114,6 +114,12 @@ const LINK_SECTIONS: LinkSection[] = [
         label: "/demo",
       },
       {
+        title: "3-statement model",
+        body: "An interactive financial model — income statement, balance sheet, and cash flow that recalculate together on a Base/Upside/Downside toggle. Illustrative sample data.",
+        href: "/financial-model",
+        label: "/financial-model",
+      },
+      {
         title: "Showcase",
         body: "The cinematic surfaces — film, trailer, and design lab experiments.",
         href: "/showcase",

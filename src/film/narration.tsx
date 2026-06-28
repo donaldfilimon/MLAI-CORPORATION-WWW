@@ -79,7 +79,11 @@ function useSettings(): Settings { return useSyncExternalStore(subscribe, () => 
 export function speak(who: PersonaKey, text: string) {
   if (typeof window === "undefined" || !settings.voiceOn) return;
   if (!NeuralVoice.isSupported()) return;        // no engine → captions carry the words
-  NeuralVoice.speak(who, text, { volume: clamp(settings.volume, 0, 1) }).catch(() => {});
+  // force: true — the film is an explicit opt-in surface (the user navigated to
+  // it, the VoiceToggle is on, and the AudioContext is already gated behind a
+  // user gesture), so it speaks even under prefers-reduced-motion; the gate
+  // still protects any non-film / autoplay caller of NeuralVoice.speak.
+  NeuralVoice.speak(who, text, { volume: clamp(settings.volume, 0, 1), force: true }).catch(() => {});
 }
 
 // Stop speech (e.g. seek-back, voice-off, navigation).

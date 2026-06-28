@@ -1,0 +1,58 @@
+name: Deploy to Cloud Run
+
+# Builds the Dockerfile via Cloud Build and deploys the full Next.js app
+# (pages + /api/* route handlers) to Cloud Run. This is the documented
+# deployment path — GitHub Pages cannot host the server/auth/API surface.
+#
+# One-time setup (see docs/deploy-cloud-run.md):
+#   Repo → Settings → Secrets and variables → Actions
+#     Variables: GCP_PROJECT_ID, GCP_REGION, CLOUD_RUN_SERVICE
+#     Secret:    GCP_SA_KEY   (JSON key of a deployer service account)
+#                — or switch to Workload Identity Federation (preferred).
+#   App runtime secrets live in Google Secret Manager (created once) and are
+#   wired in at deploy time via --set-secrets below.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # enables Workload Identity Federation (preferred over a key)
+
+concurrency:
+  group: cloudrun-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # Long-lived service-account key. To use Workload Identity Federation
+          # instead, drop credentials_json and set:
+          #   workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          #   service_account: ${{ vars.DEPLOYER_SA }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --source . \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --platform managed \
+            --allow-unauthenticated \
+            --set-env-vars "NODE_ENV=production" \
+            --set-secrets "WORKOS_API_KEY=WORKOS_API_KEY:latest,WORKOS_CLIENT_ID=WORKOS_CLIENT_ID:latest,SESSION_SECRET=SESSION_SECRET:latest"
+          # Optional secrets — add to the --set-secrets list once created in
+          # Secret Manager: GEMINI_API_KEY, STRIPE_PAYMENT_LINK, APP_URL,
+          # FRONTEND_URL, ADMIN_REQUIRE_MFA
