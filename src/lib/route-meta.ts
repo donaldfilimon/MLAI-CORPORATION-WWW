@@ -62,6 +62,12 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "Run a faithful in-browser miniature of the WDBX query path — real cosine search over deterministic embeddings, shard routing, MVCC snapshots, and a hash-chained query log.",
   },
+  "/financial-model": {
+    title: "3-Statement Model | Interactive Tool",
+    description:
+      "An interactive, integrated three-statement financial model (income statement, balance sheet, cash flow) with a Base/Upside/Downside scenario toggle. Illustrative sample data for a fictional company, not MLAI financials.",
+    noindex: true,
+  },
   "/changelog": {
     title: "Changelog | MLAI Corporation",
     description:
