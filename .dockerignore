@@ -1,0 +1,38 @@
+# Build context exclusions for the Cloud Run image (Dockerfile uses `COPY . .`).
+# Keep secrets, local data, and regenerated artifacts OUT of the image.
+
+# Git / CI
+.git
+.github
+.gitignore
+
+# Dependencies & build output — reinstalled / rebuilt inside the image
+node_modules
+.next
+dist
+out
+
+# Secrets & local data — never bake these into an image
+.env
+.env.*
+!.env.example
+*.db
+*.db-journal
+*.db-wal
+inquiries.db
+
+# Local agent / editor tooling (not part of the app)
+.claude
+.cursor
+.zed
+.vscode
+
+# Scratch / non-source outputs (gitignored or throwaway)
+output
+ds-bundle
+*.log
+coverage
+
+# OS junk
+.DS_Store
+Thumbs.db
