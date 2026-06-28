@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MLAI Corporation — Private, Traceable AI Infrastructure</title>
+    <meta
+      name="description"
+      content="MLAI Corporation builds private, traceable AI infrastructure: WDBX weighted-backtrace memory, Abbey · Aviva · Abi persona routing, and operator controls for agents that explain their decisions."
+    />
+    <link rel="canonical" href="https://mlai-corp.com/" />
+    <!-- Static landing page served from GitHub Pages. The full application
+         (console, auth, APIs) runs as a Next.js server on Cloud Run. -->
+    <meta name="theme-color" content="#05070d" />
+    <meta property="og:title" content="MLAI Corporation" />
+    <meta
+      property="og:description"
+      content="Private, traceable AI infrastructure — WDBX memory, Abbey · Aviva · Abi routing, operator controls."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mlai-corp.com/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #05070d;
+        --panel: rgba(255, 255, 255, 0.03);
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #e6edf6;
+        --dim: #93a4ba;
+        --primary: #22d3ee; /* cyan — the "Lab" identity */
+        --sky: #38bdf8;
+        --abbey: #34d399; /* emerald */
+        --aviva: #a78bfa; /* violet */
+        --abi: #fbbf24; /* amber */
+        --grad: linear-gradient(100deg, #22d3ee, #38bdf8 45%, #a78bfa);
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      h1, h2, h3 { font-family: "Spectral", Georgia, serif; font-weight: 600; line-height: 1.1; }
+      a { color: inherit; }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+      .glow {
+        position: fixed; inset: -30% 0 auto 0; height: 70vh; pointer-events: none; z-index: 0;
+        background: radial-gradient(60% 60% at 50% 0%, rgba(34, 211, 238, 0.14), transparent 70%);
+      }
+      header {
+        position: relative; z-index: 2; display: flex; align-items: center;
+        justify-content: space-between; padding: 22px 0;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.02em; }
+      .brand .corp { color: var(--dim); font-weight: 600; }
+      nav a {
+        text-decoration: none; color: var(--dim); font-size: 14px; margin-left: 22px;
+        transition: color 0.2s;
+      }
+      nav a:hover { color: var(--text); }
+      main { position: relative; z-index: 1; }
+      .hero { padding: 72px 0 48px; }
+      .tag {
+        display: inline-block; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--primary); border: 1px solid var(--border); border-radius: 999px;
+        padding: 6px 14px; margin-bottom: 26px;
+      }
+      .hero h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); margin: 0 0 20px; max-width: 16ch; }
+      .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .hero p.lead { font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--dim); max-width: 60ch; margin: 0 0 34px; }
+      .cta { display: flex; flex-wrap: wrap; gap: 14px; }
+      .btn {
+        text-decoration: none; font-weight: 600; font-size: 15px; padding: 13px 22px;
+        border-radius: 12px; transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+        display: inline-flex; align-items: center; gap: 8px;
+      }
+      .btn-primary { background: var(--grad); color: #04121a; box-shadow: 0 8px 30px rgba(34, 211, 238, 0.25); }
+      .btn-primary:hover { transform: translateY(-2px); }
+      .btn-ghost { border: 1px solid var(--border); color: var(--text); }
+      .btn-ghost:hover { border-color: rgba(34, 211, 238, 0.5); transform: translateY(-2px); }
+      .personas { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); padding: 28px 0 16px; }
+      .card {
+        border: 1px solid var(--border); background: var(--panel); border-radius: 18px; padding: 24px;
+        position: relative; overflow: hidden;
+      }
+      .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.6; }
+      .card .role { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+      .card h3 { font-size: 1.5rem; margin: 8px 0 8px; }
+      .card p { color: var(--dim); font-size: 14px; margin: 0; }
+      .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px var(--accent); display: inline-block; margin-right: 8px; }
+      .section-title { font-size: clamp(1.6rem, 3.5vw, 2.3rem); margin: 56px 0 10px; }
+      .muted { color: var(--dim); max-width: 64ch; }
+      .pillars { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); margin-top: 26px; }
+      .pillar { border: 1px solid var(--border); border-radius: 14px; padding: 20px; background: var(--panel); }
+      .pillar strong { display: block; margin-bottom: 6px; font-size: 15px; }
+      .pillar span { color: var(--dim); font-size: 13px; }
+      .note {
+        margin-top: 56px; border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px;
+        background: var(--panel); color: var(--dim); font-size: 14px;
+      }
+      .note a { color: var(--primary); text-decoration: none; }
+      .note a:hover { text-decoration: underline; }
+      footer { position: relative; z-index: 1; color: var(--dim); font-size: 13px; padding: 48px 0 60px; border-top: 1px solid var(--border); margin-top: 60px; }
+      footer a { color: var(--dim); text-decoration: none; }
+      footer a:hover { color: var(--text); }
+      @media (max-width: 760px) {
+        .personas, .pillars { grid-template-columns: 1fr; }
+        nav { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+    </style>
+  </head>
+  <body>
+    <div class="glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#22d3ee" />
+                <stop offset="1" stop-color="#38bdf8" />
+              </linearGradient>
+            </defs>
+            <circle cx="8" cy="8" r="3" fill="url(#g)" />
+            <circle cx="24" cy="9" r="3" fill="url(#g)" />
+            <circle cx="16" cy="22" r="3" fill="url(#g)" />
+            <path d="M8 8 L24 9 L16 22 Z" fill="none" stroke="url(#g)" stroke-width="1.4" opacity="0.7" />
+          </svg>
+          <span>MLAI <span class="corp">CORP</span></span>
+        </div>
+        <nav>
+          <a href="https://mlai-corp.com/">App</a>
+          <a href="https://mlai-corp.com/research">Research</a>
+          <a href="https://mlai-corp.com/docs">Docs</a>
+          <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">GitHub</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <span class="tag">Private AI Infrastructure</span>
+          <h1>Traceable AI systems for <span class="grad">real production constraints.</span></h1>
+          <p class="lead">
+            MLAI connects WDBX weighted-backtrace memory, Abbey · Aviva · Abi persona routing, and
+            operator controls into infrastructure for agents that need to explain decisions, respect
+            boundaries, and stay observable.
+          </p>
+          <div class="cta">
+            <a class="btn btn-primary" href="https://mlai-corp.com/">Open the application →</a>
+            <a class="btn btn-ghost" href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">View the source</a>
+          </div>
+        </section>
+
+        <section aria-label="Personas">
+          <div class="personas">
+            <div class="card" style="--accent: var(--abbey)">
+              <span class="role"><span class="dot"></span>Empathetic polymath</span>
+              <h3>Abbey</h3>
+              <p>A patient, broad interface that meets people where they are.</p>
+            </div>
+            <div class="card" style="--accent: var(--aviva)">
+              <span class="role"><span class="dot"></span>Direct expert</span>
+              <h3>Aviva</h3>
+              <p>Unfiltered technical depth for precise, fast execution.</p>
+            </div>
+            <div class="card" style="--accent: var(--abi)">
+              <span class="role"><span class="dot"></span>Adaptive router</span>
+              <h3>Abi</h3>
+              <p>Blends the two by request, keeping moderation in the loop.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-title">One architecture, from memory to action.</h2>
+          <p class="muted">
+            The platform separates traceability, control, and deployment so each layer can improve
+            without breaking the rest. Capabilities are framed as design intent, grounded in the
+            real <code>abi</code> runtime, MCP tools, and WDBX stores.
+          </p>
+          <div class="pillars">
+            <div class="pillar"><strong>WDBX retrieval</strong><span>Weighted backtrace memory for evidence-aware context.</span></div>
+            <div class="pillar"><strong>Persona routing</strong><span>Empathy, expertise, and adaptive moderation in one router.</span></div>
+            <div class="pillar"><strong>Operator layer</strong><span>Approval gates, audit trails, and deployment controls.</span></div>
+          </div>
+        </section>
+
+        <div class="note">
+          This is a lightweight static landing page hosted on GitHub Pages. The full MLAI experience —
+          the private console, authentication, and APIs — runs as a server application at
+          <a href="https://mlai-corp.com/">mlai-corp.com</a>. Explore the interactive
+          <a href="https://mlai-corp.com/financial-model">3-statement model</a> and
+          <a href="https://mlai-corp.com/demo">WDBX demo</a> there.
+        </div>
+      </main>
+
+      <footer>
+        © MLAI Corporation · Founder-led ·
+        <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">GitHub</a> ·
+        <a href="https://mlai-corp.com/">mlai-corp.com</a>
+      </footer>
+    </div>
+  </body>
+</html>
