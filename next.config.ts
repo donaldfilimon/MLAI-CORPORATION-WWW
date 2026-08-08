@@ -9,9 +9,58 @@ import path from "node:path";
  * - node:sqlite / iron-session / WorkOS run inside route handlers; node:*
  *   builtins are externalized by Next automatically.
  */
+/**
+ * Content-Security-Policy — pragmatic baseline for the real runtime surface:
+ * - 'unsafe-inline' script/style: required by Next's inline hydration payloads,
+ *   the JSON-LD block, and Framer Motion / KaTeX inline styles (no nonce
+ *   middleware in this stack).
+ * - 'wasm-unsafe-eval' + blob: workers + jsdelivr + huggingface: the Kokoro
+ *   neural-voice runtime (src/film/neural-voice.ts) dynamic-imports
+ *   kokoro.web.js from jsDelivr and pulls ONNX weights from Hugging Face.
+ * - storage.googleapis.com: @tensorflow-models/posenet checkpoint downloads
+ *   (/tf-pose-demo).
+ * - avatars.githubusercontent.com: team avatars in src/data/categories/team.ts.
+ * Extend the allowlist when a surface gains a new external origin; never widen
+ * to a bare https: wildcard.
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "img-src 'self' data: blob: https://avatars.githubusercontent.com",
+  "connect-src 'self' data: blob: https://storage.googleapis.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co https://fonts.gstatic.com https://fonts.googleapis.com",
+  "media-src 'self' blob:",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
+const SECURITY_HEADERS = [
+  { key: "Content-Security-Policy", value: CSP },
+  // 2 years, ready for preload-list submission.
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // Camera stays self-allowed for the /tf-pose-demo webcam surface.
+  {
+    key: "Permissions-Policy",
+    value:
+      "camera=(self), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+  },
+  { key: "X-DNS-Prefetch-Control", value: "on" },
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: __dirname,
+  async headers() {
+    return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

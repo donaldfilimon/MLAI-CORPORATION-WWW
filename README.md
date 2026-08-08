@@ -20,7 +20,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 ## Project Structure
 
 - `app/` - route files, metadata, providers, and API route handlers.
-- `src/views/` - client page implementations rendered through `app/pages-client.tsx`.
+- `src/views/` - client page implementations rendered through each route's `app/<route>/client.tsx` boundary.
 - `src/components/` - shared UI, article shells, demos, charts, and layout primitives.
 - `src/lib/` - typed API wrappers, router compatibility, telemetry, auth, and server helpers.
 - `src/data/` - single source of truth for marketing, blog, research, team, product, and FAQ content.
@@ -46,6 +46,7 @@ bun run build     # Regenerate sitemap, then next build
 bun run start     # Serve the production build on port 3000
 bun run smoke     # API smoke script
 bun run crawl     # Link crawl script
+bun run og        # Regenerate raster brand assets (og-image.png + PNG icons)
 ```
 
 Run `bun run lint`, `bun run test`, and `bun run build` before production-impacting changes.

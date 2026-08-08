@@ -13,17 +13,28 @@ export const metadata: Metadata = {
   title: DEFAULT_ROUTE_META.title,
   description: DEFAULT_ROUTE_META.description,
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: "/logo.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.webmanifest",
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/feed.xml", title: "MLAI Corporation — Lab Notes & Research" },
+      ],
+    },
+  },
   openGraph: {
     type: "website",
     siteName: "MLAI Corporation",
     title: "MLAI Corporation | Private AI Infrastructure",
     description:
       "Private, traceable AI infrastructure for teams moving agents, retrieval, and evaluation from demos to governed production systems.",
-    images: ["https://mlai-corp.com/og-image.svg"],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MLAI Corporation — private, traceable AI infrastructure" }],
     url: SITE_URL,
   },
   twitter: {
@@ -31,7 +42,7 @@ export const metadata: Metadata = {
     title: "MLAI Corporation | Private AI Infrastructure",
     description:
       "Private, traceable AI infrastructure: WDBX retrieval, Abbey · Aviva · Abi orchestration, and operator-ready controls.",
-    images: ["https://mlai-corp.com/og-image.svg"],
+    images: ["/og-image.png"],
   },
 };
 
@@ -43,16 +54,27 @@ const ORG_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "MLAI Corporation",
+  legalName: "Machine Learning Advanced Innovations, Inc.",
   url: "https://mlai-corp.com",
-  logo: "https://mlai-corp.com/logo.svg",
+  logo: "https://mlai-corp.com/icon-512.png",
+  image: "https://mlai-corp.com/og-image.png",
   description:
     "Leading AI and ML research lab providing high-integrity frameworks for neural AI orchestration.",
+  founder: { "@type": "Person", name: "Donald Filimon", url: "https://mlai-corp.com/team/donald-filimon" },
+  sameAs: ["https://github.com/donaldfilimon"],
   address: {
     "@type": "PostalAddress",
     addressLocality: "Palo Alto",
     addressRegion: "CA",
     addressCountry: "US",
   },
+});
+
+const WEBSITE_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "MLAI Corporation",
+  url: "https://mlai-corp.com",
 });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -79,6 +101,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD }}
         />
       </head>
       <body className="bg-bg text-text antialiased selection:bg-cyan-400/30">

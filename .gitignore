@@ -33,3 +33,4 @@ ds-bundle/
 .design-sync/learnings/
 .design-sync/node_modules
 .design-sync/lab-compiled.css
+.cache/
