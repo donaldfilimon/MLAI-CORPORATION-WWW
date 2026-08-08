@@ -83,7 +83,11 @@ check "csp-report: oversize body → 413" 413 "$(code -X POST "$BASE_URL/api/csp
   --data-binary "@$BIG_FILE")"
 check "telemetry: oversize body → 413" 413 "$(code -X POST "$BASE_URL/api/telemetry" \
   -H 'content-type: application/json' --data-binary "@$BIG_FILE")"
+# Dedicated IP: the inquiries limiter is 5/5min and rateLimit runs before the
+# body cap, so this probe would otherwise spend a token on the shared default
+# bucket and back-to-back smoke runs would tip later inquiries checks into 429.
 check "inquiries: oversize body → 413" 413 "$(code -X POST "$BASE_URL/api/inquiries" \
+  -H "x-forwarded-for: 203.0.113.253" \
   -H 'content-type: application/json' --data-binary "@$BIG_FILE")"
 rm -f "$BIG_FILE"
 

@@ -53,6 +53,23 @@ describe("readBodyLimited — streaming counter (no Content-Length)", () => {
     const req = new Request("https://example.test/api/x", { method: "POST" });
     expect(await readBodyLimited(req, 100)).toBe("");
   });
+
+  it("returns null, not a rejection, when the stream errors mid-read (client abort)", async () => {
+    // An aborted upload must map to a 4xx like the old in-try req.json() did,
+    // never escape the handler as a 500.
+    const body = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(new Uint8Array(10));
+        c.error(new Error("client went away"));
+      },
+    });
+    const req = new Request("https://example.test/api/x", {
+      method: "POST",
+      body,
+      duplex: "half",
+    } as RequestInit & { duplex: "half" });
+    await expect(readBodyLimited(req, 1024)).resolves.toBeNull();
+  });
 });
 
 describe("payloadTooLarge", () => {
