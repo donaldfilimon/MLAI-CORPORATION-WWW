@@ -20,10 +20,12 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 ## Project Structure
 
 - `app/` - route files, metadata, providers, and API route handlers.
-- `src/views/` - client page implementations rendered through `app/pages-client.tsx`.
+- `src/views/` - client page implementations rendered through each route's `app/<route>/client.tsx` boundary.
 - `src/components/` - shared UI, article shells, demos, charts, and layout primitives.
 - `src/lib/` - typed API wrappers, router compatibility, telemetry, auth, and server helpers.
 - `src/data/` - single source of truth for marketing, blog, research, team, product, and FAQ content.
+- `src/film/`, `src/trailer/`, `src/mega/`, `src/explainer/` - the cinematic `/showcase/*` surfaces: a shared timeline engine and scene library in `src/film/`, plus three alternate cuts built on it.
+- `src/design/` - the `/showcase/design` design lab, lazy-loaded one board at a time.
 - `public/` - static assets, sitemap, mirrored WDBX docs, and research PDFs.
 - `docs/` - operator runbooks and project specifications.
 
@@ -46,6 +48,7 @@ bun run build     # Regenerate sitemap, then next build
 bun run start     # Serve the production build on port 3000
 bun run smoke     # API smoke script
 bun run crawl     # Link crawl script
+bun run og        # Regenerate raster brand assets (og-image.png + PNG icons)
 ```
 
 Run `bun run lint`, `bun run test`, and `bun run build` before production-impacting changes.
@@ -56,10 +59,17 @@ Edit public copy in `src/data/categories/*`, not inline in page components. Blog
 
 External collateral must not cite unsupported benchmark, security, compliance, distributed-sharding, or scaling claims. Frame unverified metrics as targets and ground copy in implemented architecture.
 
+## Feeds, SEO, and Social Cards
+
+- `sitemap.xml` and `llms.txt` are both generated from the content layer by `bun run sitemap` (also the first step of `bun run build`) — neither can drift from the real route set.
+- `feed.xml` is an RSS 2.0 feed of every blog post + research publication, served at request time from the same content layer (`src/lib/feed.ts`).
+- Individual blog posts, research papers, team profiles, and product pages each get their own branded Open Graph image (title-aware, generated at build time) instead of sharing one generic card — see the `opengraph-image.tsx` file next to each dynamic route.
+- Each of those detail pages also carries JSON-LD (`BlogPosting`/`ScholarlyArticle`/`Person`/`SoftwareApplication`) for rich results.
+
 ## Administrative Access
 
 Admin reads such as `GET /api/inquiries` and `GET /api/telemetry/summary` require a valid session and `ADMIN_EMAILS` allowlist membership. When `ADMIN_REQUIRE_MFA=true`, they also require at least one enrolled WorkOS MFA factor and fail closed if factor verification is unavailable. See `docs/mfa-workos-runbook.md`.
 
 ## Deployment
 
-The Dockerfile targets Google Cloud Run and runs `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET`; set `APP_URL` and `FRONTEND_URL` to the deployed origin.
+The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET`; set `APP_URL` and `FRONTEND_URL` to the deployed origin. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main` as the merge gate, separate from the deploy workflows.

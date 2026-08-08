@@ -1,8 +1,45 @@
 import { getSession } from "@/lib/server/session";
 
+/**
+ * Plan ids this endpoint accepts, mirroring GET /api/billing/plans.
+ *
+ * Only `pilot` is checkout-eligible: `platform` is priced "Custom", and a single
+ * Stripe payment link cannot represent a negotiated price. The client has always
+ * sent `{ planId }` (src/lib/api.ts) and this handler used to ignore it entirely,
+ * so selecting Platform silently returned the Pilot payment link.
+ */
+const CHECKOUT_PLANS = { pilot: true, platform: false } as const;
+type PlanId = keyof typeof CHECKOUT_PLANS;
+
 export async function POST(req: Request) {
   const user = await getSession(req);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  let planId: string | undefined;
+  try {
+    const body: { planId?: unknown } = await req.json();
+    planId = typeof body.planId === "string" ? body.planId : undefined;
+  } catch {
+    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  if (!planId || !(planId in CHECKOUT_PLANS)) {
+    return Response.json(
+      { error: "Unknown plan", validPlans: Object.keys(CHECKOUT_PLANS) },
+      { status: 400 },
+    );
+  }
+
+  if (!CHECKOUT_PLANS[planId as PlanId]) {
+    return Response.json(
+      {
+        ok: false,
+        error: "This plan is priced individually and has no self-serve checkout.",
+        nextStep: "Contact sales to scope a Platform engagement.",
+      },
+      { status: 400 },
+    );
+  }
 
   const paymentLink = process.env.STRIPE_PAYMENT_LINK;
   if (!paymentLink) {

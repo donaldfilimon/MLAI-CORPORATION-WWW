@@ -64,4 +64,30 @@ describe("route-meta — toNextMetadata", () => {
       follow: true,
     });
   });
+
+  it("defaults to og:type website when ogType is unset", () => {
+    const og = toNextMetadata({ title: "t", description: "d" }, "/x").openGraph;
+    expect(og.type).toBe("website");
+  });
+
+  it("blog/research detail pages resolve to og:type article with a date + author", () => {
+    const blogOg = toNextMetadata(blogMeta(firstSlug(content.blog)), "/blog/x").openGraph;
+    expect(blogOg.type).toBe("article");
+
+    const researchOg = toNextMetadata(
+      researchMeta(firstSlug(content.research.publications)),
+      "/research/x",
+    ).openGraph;
+    expect(researchOg.type).toBe("article");
+  });
+
+  it("team detail pages resolve to og:type profile", () => {
+    const og = toNextMetadata(teamMeta(firstSlug(content.team)), "/team/x").openGraph;
+    expect(og.type).toBe("profile");
+  });
+
+  it("product detail pages stay og:type website (no article/profile semantics apply)", () => {
+    const og = toNextMetadata(productMeta(firstSlug(content.products)), "/products/x").openGraph;
+    expect(og.type).toBe("website");
+  });
 });

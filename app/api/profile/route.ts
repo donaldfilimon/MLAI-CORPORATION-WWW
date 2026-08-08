@@ -24,15 +24,22 @@ export async function PATCH(req: Request) {
   const useCase =
     typeof body.useCase === "string" ? body.useCase.trim().slice(0, 240) : undefined;
 
+  // PATCH is a partial update: an absent key means "leave unchanged", which is
+  // what passing `undefined` achieves for firstName/lastName. Metadata needs the
+  // same policy built explicitly — sending `{ company: null }` for a key the
+  // caller never mentioned WIPES the stored value, so `PATCH {"firstName":"X"}`
+  // used to erase company and use_case. Only include keys actually present, and
+  // omit `metadata` entirely when neither is.
+  const metadata: Record<string, string | null> = {};
+  if (company !== undefined) metadata.company = company || null;
+  if (useCase !== undefined) metadata.use_case = useCase || null;
+
   try {
     const updated = await auth.userManagement.updateUser({
       userId: user.userId,
       firstName,
       lastName,
-      metadata: {
-        company: company || null,
-        use_case: useCase || null,
-      },
+      ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
     });
 
     const nextUser = {

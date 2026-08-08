@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "./Logo";
+import { ProvLegend } from "./site/ProvTag";
 import { useUI } from "@/lib/ui-context";
 
 export const Footer = () => {
@@ -219,21 +220,12 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Provenance legend — every figure on the site carries one of these tags */}
-        <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-white/8 bg-white/2 px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-text-dim/70">
-          <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px] shadow-emerald-400/60" aria-hidden="true" />
-            <b className="font-semibold text-text-dim">measured</b> — reproduced on our hardware
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full border border-amber-400" aria-hidden="true" />
-            <b className="font-semibold text-text-dim">target</b> — engineering goal
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-violet-400 shadow-[0_0_8px] shadow-violet-400/60" aria-hidden="true" />
-            <b className="font-semibold text-text-dim">reported</b> — cited research figure
-          </span>
-        </div>
+        {/* Provenance legend — every figure on the site carries one of these tags.
+            Definition lives in site/ProvTag.tsx alongside the tags themselves. */}
+        <ProvLegend
+          variant="inline"
+          className="mb-8 rounded-2xl border border-white/8 bg-white/2 px-5 py-3.5"
+        />
 
         <Separator className="bg-white/10 mb-8" />
 

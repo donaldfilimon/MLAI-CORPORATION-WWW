@@ -6,37 +6,61 @@ import { BlockMath } from "@/components/Math";
 import { PersonaRouterDemo } from "@/components/demos/PersonaRouterDemo";
 import { CosineSimDemo } from "@/components/demos/CosineSimDemo";
 import { ShardingLatencyDemo } from "@/components/demos/ShardingLatencyDemo";
+import {
+  AccentGlow,
+  Callout,
+  CardPanel,
+  Eyebrow,
+  FeatureCard,
+  NextUp,
+  Section,
+  SplitSection,
+  StepList,
+  accentClasses,
+  type Accent,
+  type NextUpItem,
+} from "@/components/site";
+import { cn } from "@/lib/utils";
 
-// Persona accent classes — same palette as the Docs persona dots.
-const ACCENT = {
-  abbey: {
-    text: "text-emerald-400",
-    border: "border-emerald-500/30",
-    bg: "bg-emerald-500/5",
-    glow: "radial-gradient(50% 55% at 28% 0%, rgba(52,211,153,0.14), transparent 70%)",
-    rule: "from-emerald-400/60",
-  },
-  aviva: {
-    text: "text-violet-400",
-    border: "border-violet-500/30",
-    bg: "bg-violet-500/5",
-    glow: "radial-gradient(50% 55% at 28% 0%, rgba(168,85,247,0.14), transparent 70%)",
-    rule: "from-violet-400/60",
-  },
-  abi: {
-    text: "text-sky-400",
-    border: "border-sky-500/30",
-    bg: "bg-sky-500/5",
-    glow: "radial-gradient(50% 55% at 28% 0%, rgba(56,189,248,0.14), transparent 70%)",
-    rule: "from-sky-400/60",
-  },
-} as const;
+/**
+ * The content layer labels things on the **persona** axis (`abbey` emerald ·
+ * `aviva` violet · `abi` cyan — the Docs persona dots). The `site/` components
+ * take the **product** axis (`wdbx` cyan · `abi` violet · `abbey` emerald).
+ * The two share the name "abi" and mean different colors, so they are mapped
+ * explicitly here rather than passed through. The resulting ramps are the same
+ * ones this page has always used.
+ */
+const PERSONA_ACCENT: Record<"abbey" | "aviva" | "abi", Accent> = {
+  abbey: "abbey", // emerald
+  aviva: "abi", // violet
+  abi: "wdbx", // cyan
+};
+
+/**
+ * The page is lit in the accent of the *product* it renders — not of a
+ * persona — so it derives from the slug and stays correct for either product.
+ */
+const PRODUCT_ACCENT: Record<string, Accent> = {
+  abi: "abi", // ABI Framework → violet
+  abbey: "abbey", // Abbey → emerald
+};
 
 const DEMOS = {
   "persona-router": PersonaRouterDemo,
   "cosine-sim": CosineSimDemo,
   "sharding-latency": ShardingLatencyDemo,
 } as const;
+
+/** Masthead/section rail width, shared so the kicker rails line up. */
+const RAIL = "lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16";
+
+/**
+ * `SplitSection` carries its own `.section-y`, so stacking six of them would
+ * roughly double the inter-section rhythm this page was designed with
+ * (`space-y-28` inside one band). Utilities beat the components-layer
+ * `.section-y`, so this trims each band back to the original cadence.
+ */
+const BAND = "py-12 md:py-14 lg:py-16";
 
 export function Product() {
   const { slug } = useParams();
@@ -46,19 +70,51 @@ export function Product() {
   if (!product) {
     return (
       <div className="pt-10">
-        <section className="section-y">
-          <div className="container-custom">
-            <h1 className="section-title">Product not found</h1>
-            <Link to="/" className="mt-4 inline-flex items-center gap-2 text-primary">
-              Back home <ArrowRight size={14} />
-            </Link>
-          </div>
-        </section>
+        <Section>
+          <h1 className="section-title">Product not found</h1>
+          <Link to="/" className="mt-4 inline-flex items-center gap-2 text-primary">
+            Back home <ArrowRight size={14} />
+          </Link>
+        </Section>
       </div>
     );
   }
 
-  const accent = ACCENT[product.accent];
+  const pageAccent: Accent = PRODUCT_ACCENT[product.slug] ?? "wdbx";
+  const a = accentClasses(pageAccent);
+
+  // Cross-navigation derives from the content layer, so it can never point at
+  // the page you are already on. Descriptions for the sibling products are the
+  // products' own kickers rather than new copy.
+  const nextUp: NextUpItem[] = [
+    ...products
+      .filter((p) => p.slug !== product.slug)
+      .map((p) => ({
+        label: p.name,
+        href: `/products/${p.slug}`,
+        desc: p.kicker,
+        accent: PRODUCT_ACCENT[p.slug] ?? "wdbx",
+      })),
+    {
+      label: "WDBX Benchmarks",
+      href: "/benchmarks",
+      desc: "The WDBX benchmark page.",
+      accent: "wdbx",
+    },
+    {
+      label: "Documentation",
+      href: "/docs",
+      desc: "Platform and WDBX documentation.",
+      accent: "wdbx",
+    },
+    {
+      label: "The projection room",
+      href: "/showcase",
+      desc: "The cinematic showcase surfaces.",
+      accent: "abi",
+    },
+  ];
+
   const reveal = shouldReduceMotion
     ? { initial: false as const }
     : {
@@ -70,22 +126,24 @@ export function Product() {
 
   return (
     <div className="relative pt-10">
-      {/* persona atmosphere — the page is lit in the product's color */}
+      {/* product atmosphere — the page is lit in the product's color */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-140"
-        style={{ background: accent.glow }}
-      />
+        className="pointer-events-none absolute inset-x-0 top-0 h-140 overflow-hidden"
+      >
+        <AccentGlow accent={pageAccent} />
+      </div>
 
-      <section className="section-y relative">
+      {/* editorial masthead — kicker rail + oversized name */}
+      <section className="section-y relative pb-4 md:pb-6">
         <div className="container-custom">
-          {/* editorial masthead — kicker rail + oversized name */}
-          <div className="mb-24 grid gap-6 lg:grid-cols-[1fr_2fr] lg:gap-12">
+          <div className={cn("grid gap-6", RAIL)}>
             <div className="pt-3">
-              <p className={`font-mono text-[11px] uppercase tracking-[0.38em] ${accent.text}`}>
-                {product.kicker}
-              </p>
-              <div className={`mt-5 h-px w-24 bg-linear-to-r ${accent.rule} to-transparent`} />
+              <Eyebrow accent={pageAccent}>{product.kicker}</Eyebrow>
+              <span
+                aria-hidden="true"
+                className={cn("mt-5 block h-px w-24 rounded-full", a.dot)}
+              />
             </div>
             <div>
               <m.h1
@@ -99,7 +157,7 @@ export function Product() {
                 className="font-display text-6xl font-bold tracking-tight text-white md:text-8xl"
               >
                 {product.name}
-                <span className={accent.text}>.</span>
+                <span className={a.text}>.</span>
               </m.h1>
               <m.p
                 {...(shouldReduceMotion
@@ -115,180 +173,136 @@ export function Product() {
               </m.p>
             </div>
           </div>
-
-          <div className="space-y-28">
-            {product.sections.map((section, idx) => {
-              const Demo = section.demo ? DEMOS[section.demo] : null;
-              const num = String(idx + 1).padStart(2, "0");
-              return (
-                <m.div key={section.title} {...reveal}>
-                  {/* numbered editorial section: index rail · content */}
-                  <div className="grid gap-6 lg:grid-cols-[1fr_2fr] lg:gap-12">
-                    <div className="relative">
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none select-none font-display text-7xl font-bold leading-none text-white/6 md:text-8xl"
-                      >
-                        {num}
-                      </span>
-                      <div className="mt-2">
-                        <span className={`font-mono text-[10px] uppercase tracking-[0.3em] ${accent.text}`}>
-                          {section.eyebrow}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="min-w-0">
-                      <h2 className="mb-4 font-display text-2xl font-bold tracking-tight text-white md:text-3xl">
-                        {section.title}
-                      </h2>
-                      {section.sub && (
-                        <p className="mb-7 max-w-2xl text-sm leading-relaxed text-text-dim">
-                          {section.sub}
-                        </p>
-                      )}
-
-                      {section.paragraphs.map((p) => (
-                        <p key={p.slice(0, 32)} className="mb-4 max-w-3xl leading-relaxed text-text-dim">
-                          {p}
-                        </p>
-                      ))}
-
-                      {section.equations && (
-                        <div className="mt-2 grid gap-5 md:grid-cols-2">
-                          {section.equations.map((eq) => (
-                            <div
-                              key={eq.tex}
-                              className="glass-card group/eq relative overflow-hidden p-5"
-                            >
-                              <div
-                                aria-hidden="true"
-                                className="pointer-events-none absolute inset-0 translate-x-[-110%] bg-linear-to-r from-transparent via-white/4 to-transparent transition-transform duration-700 group-hover/eq:translate-x-[110%]"
-                              />
-                              <BlockMath tex={eq.tex} />
-                              <p className="mt-3 text-xs leading-relaxed text-text-dim">{eq.note}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {section.blendTable && (
-                        <div className="mt-7 max-w-xl space-y-3">
-                          {section.blendTable.map((row) => {
-                            const a = ACCENT[row.accent];
-                            return (
-                              <div key={row.range} className={`rounded-lg border p-3 ${a.border} ${a.bg}`}>
-                                <div className={`font-mono text-xs ${a.text}`}>{row.range}</div>
-                                <div className="mt-0.5 text-sm text-gray-300">{row.meaning}</div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {Demo && (
-                        <div className="mt-7 max-w-2xl">
-                          <Demo />
-                        </div>
-                      )}
-
-                      {section.pillars && (
-                        <div
-                          className={`mt-7 grid gap-5 ${section.pillars.length === 4 ? "sm:grid-cols-2" : "md:grid-cols-3"}`}
-                        >
-                          {section.pillars.map((pillar) => {
-                            const a = ACCENT[pillar.accent ?? product.accent];
-                            return (
-                              <div
-                                key={pillar.title}
-                                className="glass-card flex h-full flex-col p-6 transition-transform duration-300 hover:-translate-y-1"
-                              >
-                                <h3 className={`mb-2 text-sm font-bold ${a.text}`}>{pillar.title}</h3>
-                                <p className="text-sm leading-relaxed text-text-dim">
-                                  {pillar.description}
-                                </p>
-                                {pillar.eq && (
-                                  <div className="mt-auto pt-4">
-                                    <BlockMath tex={pillar.eq} />
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {section.steps && (
-                        <div className="mt-7 space-y-3">
-                          {section.steps.map((step) => (
-                            <div
-                              key={step.n}
-                              className="glass-card flex gap-4 border-l-4 border-l-emerald-400/60 p-4 transition-transform duration-300 hover:translate-x-1"
-                            >
-                              <span className="w-8 shrink-0 text-lg font-black text-emerald-400">
-                                {step.n}
-                              </span>
-                              <div>
-                                <h3 className="text-sm font-bold text-white">{step.title}</h3>
-                                <p className="mt-0.5 text-sm leading-relaxed text-text-dim">
-                                  {step.description}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {section.chips && (
-                        <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                          {section.chips.map((chip) => (
-                            <div
-                              key={chip}
-                              className="glass-card p-4 text-center font-mono text-sm font-medium text-white"
-                            >
-                              {chip}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </m.div>
-              );
-            })}
-          </div>
-
-          {/* cross-navigation */}
-          <div className="mt-28 flex flex-wrap gap-4 border-t border-white/8 pt-10">
-            {products
-              .filter((p) => p.slug !== product.slug)
-              .map((p) => (
-                <Link
-                  key={p.slug}
-                  to={`/products/${p.slug}`}
-                  className="glass-card group inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-white"
-                >
-                  {p.name}
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-                </Link>
-              ))}
-            <Link
-              to="/benchmarks"
-              className="glass-card group inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-white"
-            >
-              WDBX Benchmarks
-              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              to="/showcase"
-              className="glass-card group inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-white"
-            >
-              The projection room
-              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
         </div>
       </section>
+
+      {product.sections.map((section) => {
+        const Demo = section.demo ? DEMOS[section.demo] : null;
+        return (
+          <m.div key={section.title} {...reveal}>
+            <SplitSection
+              kicker={section.eyebrow}
+              title={section.title}
+              accent={pageAccent}
+              className={BAND}
+            >
+              {section.sub && <p className="max-w-2xl text-sm">{section.sub}</p>}
+
+              {section.paragraphs.map((p) => (
+                <p key={p.slice(0, 32)}>{p}</p>
+              ))}
+
+              {/* `text-foreground` is load-bearing: KaTeX inherits `color`, and
+                  SplitSection's prose column is `text-text-dim`. Without it every
+                  equation renders a step dimmer than it did before. */}
+              {section.equations && (
+                <div className="grid gap-5 text-foreground md:grid-cols-2">
+                  {section.equations.map((eq) => (
+                    <CardPanel key={eq.tex} gap="sm" className="h-full">
+                      <BlockMath tex={eq.tex} />
+                      <p className="text-xs leading-relaxed text-text-dim">{eq.note}</p>
+                    </CardPanel>
+                  ))}
+                </div>
+              )}
+
+              {section.blendTable && (
+                <div className="max-w-xl space-y-3">
+                  {section.blendTable.map((row) => (
+                    // Per-row accent stays on the persona axis: the color is
+                    // the key linking each α band to the persona it selects.
+                    <Callout
+                      key={row.range}
+                      label={row.range}
+                      accent={PERSONA_ACCENT[row.accent]}
+                    >
+                      {row.meaning}
+                    </Callout>
+                  ))}
+                </div>
+              )}
+
+              {/* Demos keep their own render path and mounting behavior; the
+                  wrapper only restores the inherited body color. */}
+              {Demo && (
+                <div className="max-w-2xl text-foreground">
+                  <Demo />
+                </div>
+              )}
+
+              {section.pillars && (
+                <div
+                  className={cn(
+                    "grid gap-5",
+                    section.pillars.length === 4 ? "sm:grid-cols-2" : "md:grid-cols-3",
+                  )}
+                >
+                  {section.pillars.map((pillar) => {
+                    const pa = PERSONA_ACCENT[pillar.accent ?? product.accent];
+                    // FeatureCard takes no children, so pillars carrying a
+                    // KaTeX loss function mirror its internals by hand.
+                    return pillar.eq ? (
+                      <CardPanel key={pillar.title} gap="sm" className="h-full text-foreground">
+                        <span
+                          aria-hidden="true"
+                          className={cn("h-px w-10 rounded-full", accentClasses(pa).dot)}
+                        />
+                        <h3 className="font-display text-lg font-semibold text-white">
+                          {pillar.title}
+                        </h3>
+                        <p className="text-sm leading-relaxed text-text-dim text-pretty">
+                          {pillar.description}
+                        </p>
+                        <div className="mt-auto pt-4">
+                          <BlockMath tex={pillar.eq} />
+                        </div>
+                      </CardPanel>
+                    ) : (
+                      <FeatureCard
+                        key={pillar.title}
+                        title={pillar.title}
+                        desc={pillar.description}
+                        accent={pa}
+                        className="h-full"
+                      />
+                    );
+                  })}
+                </div>
+              )}
+
+              {section.steps && (
+                <StepList
+                  accent={pageAccent}
+                  steps={section.steps.map((step) => ({
+                    title: step.title,
+                    body: step.description,
+                  }))}
+                />
+              )}
+
+              {section.chips && (
+                <div className="flex flex-wrap gap-3">
+                  {section.chips.map((chip) => (
+                    // `.label-chip` is hardcoded cyan; the accent utilities
+                    // override it so the chips match the product's ramp.
+                    <span key={chip} className={cn("label-chip", a.border, a.bg, a.text)}>
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </SplitSection>
+          </m.div>
+        );
+      })}
+
+      {/* `pt-*` trims the band so the divider sits the same distance below the
+          last section as it did when the page was one `section-y` block. */}
+      <Section className="pt-6 md:pt-8">
+        <div className="border-t border-white/8 pt-10">
+          <NextUp items={nextUp} />
+        </div>
+      </Section>
     </div>
   );
 }

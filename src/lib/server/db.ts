@@ -10,9 +10,22 @@ declare global {
   var __mlaiDb: DatabaseSync | undefined;
 }
 
+/**
+ * Resolve DATABASE_URL → a filesystem path DatabaseSync accepts (it takes a
+ * plain path, not a URL). Accepts the documented `sqlite://` form from
+ * .env.example (stripped) or a bare path; falls back to the historical
+ * default so unset/blank env stays backward compatible. Pure + exported for
+ * unit testing without touching the filesystem.
+ */
+export function resolveDbPath(databaseUrl: string | undefined): string {
+  const trimmed = databaseUrl?.trim();
+  if (!trimmed) return "inquiries.db";
+  return trimmed.startsWith("sqlite://") ? trimmed.slice("sqlite://".length) : trimmed;
+}
+
 export function getDb(): DatabaseSync {
   if (!globalThis.__mlaiDb) {
-    const db = new DatabaseSync("inquiries.db");
+    const db = new DatabaseSync(resolveDbPath(process.env.DATABASE_URL));
     db.exec(`
       CREATE TABLE IF NOT EXISTS inquiries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
