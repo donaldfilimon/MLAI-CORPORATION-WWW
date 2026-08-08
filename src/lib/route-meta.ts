@@ -5,6 +5,7 @@
  * unchanged. Dynamic slugs (blog/research/team/products) derive from content.
  */
 import { content } from "@/data";
+import { toIsoDate } from "@/lib/dates";
 
 export const SITE_URL = "https://mlai-corp.com";
 
@@ -12,6 +13,13 @@ export type RouteMeta = {
   title: string;
   description: string;
   noindex?: boolean;
+  /** Open Graph object type; defaults to "website" in toNextMetadata. */
+  ogType?: "website" | "article" | "profile";
+  /** ISO-8601 publish date — only read when ogType is "article". */
+  publishedTime?: string;
+  /** Byline / person name — article:author when ogType is "article", split
+   *  into first/last name for og:profile when ogType is "profile". */
+  authorName?: string;
 };
 
 export const DEFAULT_ROUTE_META: RouteMeta = {
@@ -161,13 +169,25 @@ export const NOT_FOUND_META: RouteMeta = {
 export function blogMeta(slug: string): RouteMeta {
   const post = content.blog.find((p) => p.slug === slug);
   if (!post) return NOT_FOUND_META;
-  return { title: `${post.title} | MLAI Lab Notes`, description: post.excerpt };
+  return {
+    title: `${post.title} | MLAI Lab Notes`,
+    description: post.excerpt,
+    ogType: "article",
+    publishedTime: toIsoDate(post.date),
+    authorName: post.author,
+  };
 }
 
 export function researchMeta(slug: string): RouteMeta {
   const paper = content.research.publications.find((p) => p.slug === slug);
   if (!paper) return NOT_FOUND_META;
-  return { title: `${paper.title} | MLAI Research`, description: paper.abstract };
+  return {
+    title: `${paper.title} | MLAI Research`,
+    description: paper.abstract,
+    ogType: "article",
+    publishedTime: toIsoDate(paper.date),
+    authorName: paper.authors,
+  };
 }
 
 export function teamMeta(slug: string): RouteMeta {
@@ -177,6 +197,8 @@ export function teamMeta(slug: string): RouteMeta {
     title: `${member.name} | ${member.role}, MLAI Corporation`,
     description:
       member.tagline ?? `${member.name}, ${member.role} at MLAI Corporation. ${member.bio}`,
+    ogType: "profile",
+    authorName: member.name,
   };
 }
 
@@ -189,16 +211,33 @@ export function productMeta(slug: string): RouteMeta {
 /** Build a Next Metadata object from a RouteMeta + canonical path. */
 export function toNextMetadata(meta: RouteMeta, path: string) {
   const canonical = `${SITE_URL}${path === "/" ? "" : path}`;
+  const base = { title: meta.title, description: meta.description, url: canonical };
+
+  const openGraph =
+    meta.ogType === "article"
+      ? {
+          ...base,
+          type: "article" as const,
+          ...(meta.publishedTime ? { publishedTime: meta.publishedTime } : {}),
+          ...(meta.authorName ? { authors: [meta.authorName] } : {}),
+        }
+      : meta.ogType === "profile"
+        ? (() => {
+            const [firstName, ...rest] = (meta.authorName ?? "").split(" ").filter(Boolean);
+            return {
+              ...base,
+              type: "profile" as const,
+              ...(firstName ? { firstName } : {}),
+              ...(rest.length ? { lastName: rest.join(" ") } : {}),
+            };
+          })()
+        : { ...base, type: "website" as const };
+
   return {
     title: meta.title,
     description: meta.description,
     alternates: { canonical },
-    openGraph: {
-      title: meta.title,
-      description: meta.description,
-      type: "website" as const,
-      url: canonical,
-    },
+    openGraph,
     twitter: { card: "summary_large_image" as const },
     robots: meta.noindex ? { index: false, follow: false } : { index: true, follow: true },
   };

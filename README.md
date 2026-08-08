@@ -57,10 +57,17 @@ Edit public copy in `src/data/categories/*`, not inline in page components. Blog
 
 External collateral must not cite unsupported benchmark, security, compliance, distributed-sharding, or scaling claims. Frame unverified metrics as targets and ground copy in implemented architecture.
 
+## Feeds, SEO, and Social Cards
+
+- `sitemap.xml` and `llms.txt` are both generated from the content layer by `bun run sitemap` (also the first step of `bun run build`) — neither can drift from the real route set.
+- `feed.xml` is an RSS 2.0 feed of every blog post + research publication, served at request time from the same content layer (`src/lib/feed.ts`).
+- Individual blog posts, research papers, team profiles, and product pages each get their own branded Open Graph image (title-aware, generated at build time) instead of sharing one generic card — see the `opengraph-image.tsx` file next to each dynamic route.
+- Each of those detail pages also carries JSON-LD (`BlogPosting`/`ScholarlyArticle`/`Person`/`SoftwareApplication`) for rich results.
+
 ## Administrative Access
 
 Admin reads such as `GET /api/inquiries` and `GET /api/telemetry/summary` require a valid session and `ADMIN_EMAILS` allowlist membership. When `ADMIN_REQUIRE_MFA=true`, they also require at least one enrolled WorkOS MFA factor and fail closed if factor verification is unavailable. See `docs/mfa-workos-runbook.md`.
 
 ## Deployment
 
-The Dockerfile targets Google Cloud Run and runs `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET`; set `APP_URL` and `FRONTEND_URL` to the deployed origin.
+The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET`; set `APP_URL` and `FRONTEND_URL` to the deployed origin. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main` as the merge gate, separate from the deploy workflows.

@@ -9,6 +9,10 @@
 
 import { content } from "@/data";
 import { SITE_URL, DEFAULT_ROUTE_META } from "@/lib/route-meta";
+import { parseContentDate } from "@/lib/dates";
+
+export { parseContentDate } from "@/lib/dates";
+
 
 export interface FeedItem {
   title: string;
@@ -29,10 +33,6 @@ export function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
-export function parseContentDate(value: string): number | null {
-  const t = Date.parse(value);
-  return Number.isNaN(t) ? null : t;
-}
 
 export function collectFeedItems(): FeedItem[] {
   const posts: FeedItem[] = content.blog.map((p) => ({
