@@ -166,7 +166,25 @@ async function main() {
       const link = page.locator(`a[href="${target}"], a[href="${target}/"]`).first();
       if ((await link.count()) === 0) return { landed: null, why: "anchor vanished" };
       await link.click({ timeout: 10_000 });
-      await page.waitForLoadState("networkidle", { timeout: 20_000 });
+      // Client-side navigation never starts a new document load, so
+      // waitForLoadState("networkidle") resolves IMMEDIATELY (the current page
+      // is already idle) and reading page.url() then races the SPA router —
+      // measured on `next dev`, the URL updates ~2.5s after networkidle
+      // resolves, which made every click-through "land on" its source page.
+      // Wait for the URL itself: target or its known auth-guard redirect.
+      const ok = target;
+      const guard = GUARD_REDIRECTS[target];
+      try {
+        await page.waitForURL(
+          (u) => {
+            const n = norm(u.href);
+            return n === ok || (guard !== undefined && n === guard);
+          },
+          { timeout: 20_000 },
+        );
+      } catch {
+        /* fall through — report wherever we actually are */
+      }
       return { landed: norm(page.url()) };
     };
 
