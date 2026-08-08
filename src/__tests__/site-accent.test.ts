@@ -25,7 +25,7 @@ describe("site accent axis", () => {
     // unstyled, so every string here must be a full, standalone utility.
     for (const accent of ACCENTS) {
       const c = accentClasses(accent);
-      for (const value of [c.text, c.border, c.bg, c.ring, c.dot]) {
+      for (const value of [c.text, c.border, c.bg, c.dot]) {
         expect(value).not.toContain("${");
         expect(value).toMatch(/^[a-z]+(-[a-z0-9/[\].]+)+$/);
       }

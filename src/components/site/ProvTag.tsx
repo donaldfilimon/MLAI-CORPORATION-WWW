@@ -2,33 +2,48 @@ import { cn } from "@/lib/utils";
 
 /**
  * Provenance classes, per `docs/master-reference.md`. Every metric this site
- * publishes carries exactly one of these, and they are never conflated:
- *
- *   ● measured — reproduced on MLAI hardware
- *   ○ target   — an engineering goal, not yet a measured result
- *   ◆ reported — a cited or internal-eval figure
+ * publishes carries exactly one of these, and they are never conflated.
  */
 export type Provenance = "measured" | "target" | "reported";
 
-const MARKS: Record<Provenance, { glyph: string; label: string; className: string }> = {
+/**
+ * One row per provenance class — glyph, label, description, and both color
+ * treatments. Deliberately a single table: these were previously three parallel
+ * `Record<Provenance, …>` maps plus a hand-maintained order array, so adding a
+ * fourth class meant editing four places, and only three of them were
+ * type-checked.
+ *
+ * Declaration order is render order; `PROVENANCE_ORDER` derives from it rather
+ * than being kept in sync alongside it.
+ */
+const PROVENANCE = {
   measured: {
     glyph: "●",
     label: "Measured",
-    className: "border-emerald-400/25 bg-emerald-400/5 text-emerald-300",
+    description: "reproduced on our hardware",
+    chip: "border-emerald-400/25 bg-emerald-400/5 text-emerald-300",
+    dot: "bg-emerald-400 shadow-[0_0_8px] shadow-emerald-400/60",
   },
   target: {
     glyph: "○",
     label: "Target",
-    className: "border-amber-400/25 bg-amber-400/5 text-amber-300",
+    description: "engineering goal",
+    chip: "border-amber-400/25 bg-amber-400/5 text-amber-300",
+    // Outline rather than fill — a target is not a result.
+    dot: "border border-amber-400",
   },
-  // Violet, matching the legend this replaced in `Footer.tsx` — the shipped
-  // site already established this color for "reported", so keep it.
   reported: {
     glyph: "◆",
     label: "Reported",
-    className: "border-violet-400/25 bg-violet-400/5 text-violet-300",
+    description: "cited research figure",
+    // Violet, matching the legend this replaced in `Footer.tsx` — the shipped
+    // site had already established this color for "reported".
+    chip: "border-violet-400/25 bg-violet-400/5 text-violet-300",
+    dot: "bg-violet-400 shadow-[0_0_8px] shadow-violet-400/60",
   },
-};
+} satisfies Record<Provenance, { glyph: string; label: string; description: string; chip: string; dot: string }>;
+
+const PROVENANCE_ORDER = Object.keys(PROVENANCE) as readonly Provenance[];
 
 export interface ProvTagProps {
   /** Which provenance class the figure carries. */
@@ -44,47 +59,30 @@ export interface ProvTagProps {
  * ●/○/◆ apart at small sizes.
  */
 export function ProvTag({ tag, className }: ProvTagProps) {
-  const mark = MARKS[tag];
+  const { glyph, label, chip } = PROVENANCE[tag];
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em]",
-        mark.className,
+        "font-mono inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em]",
+        chip,
         className,
       )}
-      style={{ fontFamily: "var(--font-mono)" }}
     >
-      <span aria-hidden="true">{mark.glyph}</span>
-      {mark.label}
+      <span aria-hidden="true">{glyph}</span>
+      {label}
     </span>
   );
 }
 
-const DESCRIPTIONS: Record<Provenance, string> = {
-  measured: "reproduced on our hardware",
-  target: "engineering goal",
-  reported: "cited research figure",
-};
-
-/** Dot styling for the `inline` variant, matching the site-wide footer legend. */
-const DOTS: Record<Provenance, string> = {
-  measured: "bg-emerald-400 shadow-[0_0_8px] shadow-emerald-400/60",
-  target: "border border-amber-400",
-  reported: "bg-violet-400 shadow-[0_0_8px] shadow-violet-400/60",
-};
-
 export interface ProvLegendProps {
   /**
-   * `chips` renders the same `ProvTag` pills used beside figures — good in
-   * page content. `inline` is the compact mono/dot row the footer carries
-   * site-wide.
+   * `chips` renders the same `ProvTag` pills used beside figures — good in page
+   * content. `inline` is the compact mono/dot row the footer carries site-wide.
    * @default "chips"
    */
   variant?: "chips" | "inline";
   className?: string;
 }
-
-const ORDER: readonly Provenance[] = ["measured", "target", "reported"] as const;
 
 /**
  * The standing legend explaining the three provenance classes.
@@ -94,47 +92,43 @@ const ORDER: readonly Provenance[] = ["measured", "target", "reported"] as const
  * with the tags it explains.
  */
 export function ProvLegend({ variant = "chips", className }: ProvLegendProps) {
-  if (variant === "inline") {
-    return (
-      <dl
-        className={cn(
-          // Full-strength text-dim, not /70: composited at 70% over the ink
-          // canvas this lands at 4.26:1, under the 4.5:1 AA floor for text
-          // below 18.66px. At full opacity it is 7.86:1.
-          "flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-text-dim",
-          className,
-        )}
-      >
-        {ORDER.map((tag) => (
-          <div key={tag} className="flex items-center gap-2">
-            {/* The dot lives inside the <dt>: a bare <span> as a direct child
-                of <dl> is outside its content model and breaks term/definition
-                pairing in some assistive tech. */}
-            <dt className="flex items-center gap-2 font-semibold">
-              <span className={cn("h-2 w-2 rounded-full", DOTS[tag])} aria-hidden="true" />
-              {tag}
-            </dt>
-            <dd>— {DESCRIPTIONS[tag]}</dd>
-          </div>
-        ))}
-      </dl>
-    );
-  }
-
+  const inline = variant === "inline";
   return (
     <dl
-      className={cn("flex flex-wrap items-center gap-x-6 gap-y-2", className)}
+      className={cn(
+        "flex flex-wrap items-center gap-x-6 gap-y-2",
+        // Full-strength text-dim, not /70: composited at 70% over the ink
+        // canvas that lands at 4.26:1, under the 4.5:1 AA floor for text below
+        // 18.66px. At full opacity it is 7.86:1.
+        inline && "font-mono text-[11px] uppercase tracking-[0.12em] text-text-dim",
+        className,
+      )}
       aria-label="How figures on this site are labeled"
     >
-      {ORDER.map((tag) => (
+      {PROVENANCE_ORDER.map((tag) => (
         <div key={tag} className="flex items-center gap-2">
-          {/* The chip IS the term — `ProvTag` renders its label as real text
-              with only the glyph aria-hidden, so an extra sr-only <dt> would
-              announce the word twice. */}
-          <dt>
-            <ProvTag tag={tag} />
+          {/* The chip or dot lives inside the <dt>: a bare <span> as a direct
+              child of <dl> is outside its content model and breaks term/
+              definition pairing in some assistive tech. In the chip variant the
+              chip IS the term — `ProvTag` renders its label as real text, so an
+              extra sr-only <dt> would announce the word twice. */}
+          <dt className={cn(inline && "flex items-center gap-2 font-semibold")}>
+            {inline ? (
+              <>
+                <span
+                  className={cn("h-2 w-2 rounded-full", PROVENANCE[tag].dot)}
+                  aria-hidden="true"
+                />
+                {tag}
+              </>
+            ) : (
+              <ProvTag tag={tag} />
+            )}
           </dt>
-          <dd className="text-xs text-text-dim">{DESCRIPTIONS[tag]}</dd>
+          <dd className={cn(!inline && "text-xs text-text-dim")}>
+            {inline && "— "}
+            {PROVENANCE[tag].description}
+          </dd>
         </div>
       ))}
     </dl>

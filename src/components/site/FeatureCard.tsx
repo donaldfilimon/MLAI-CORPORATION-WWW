@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CardPanel } from "./CardPanel";
 import { accentClasses, type Accent } from "./accent";
 
 export interface FeatureCardProps {
@@ -19,10 +20,10 @@ export interface FeatureCardProps {
 export function FeatureCard({ title, desc, accent = "wdbx", className }: FeatureCardProps) {
   const a = accentClasses(accent);
   return (
-    <article className={cn("glass-card flex flex-col gap-3", className)}>
+    <CardPanel gap="sm" className={className}>
       <span className={cn("h-px w-10 rounded-full", a.dot)} aria-hidden="true" />
-      <h3 className={cn("font-display text-lg font-semibold text-white")}>{title}</h3>
+      <h3 className="font-display text-lg font-semibold text-white">{title}</h3>
       <p className="text-sm leading-relaxed text-text-dim text-pretty">{desc}</p>
-    </article>
+    </CardPanel>
   );
 }

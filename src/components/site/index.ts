@@ -23,6 +23,7 @@ export { accentClasses, ACCENTS, type Accent } from "./accent";
 export { ProvTag, ProvLegend, type ProvTagProps, type ProvLegendProps, type Provenance } from "./ProvTag";
 export { Eyebrow, type EyebrowProps } from "./Eyebrow";
 export { Section, SplitSection, type SectionProps, type SplitSectionProps } from "./Section";
+export { CardPanel, type CardPanelProps } from "./CardPanel";
 export { FeatureCard, type FeatureCardProps } from "./FeatureCard";
 export { StatBlock, type StatBlockProps, type Stat } from "./StatBlock";
 export { SpecList, type SpecListProps, type SpecRow } from "./SpecList";

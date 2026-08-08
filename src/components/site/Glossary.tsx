@@ -21,8 +21,7 @@ export function Glossary({ items, className }: GlossaryProps) {
           className="grid gap-x-6 gap-y-1 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]"
         >
           <dt
-            className="text-sm font-semibold text-cyan-300"
-            style={{ fontFamily: "var(--font-mono)" }}
+            className="font-mono text-sm font-semibold text-cyan-300"
           >
             {item.term}
           </dt>

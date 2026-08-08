@@ -39,8 +39,7 @@ export function NextUp({ items, linkComponent, className }: NextUpProps) {
             )}
           >
             <span
-              className={cn("text-[11px] font-bold uppercase tracking-[0.18em]", a.text)}
-              style={{ fontFamily: "var(--font-mono)" }}
+              className={cn("font-mono text-[11px] font-bold uppercase tracking-[0.18em]", a.text)}
             >
               {item.label}
             </span>

@@ -25,8 +25,7 @@ export function Callout({ label, children, accent = "wdbx", className }: Callout
     >
       {label && (
         <p
-          className={cn("mb-2 text-[11px] font-bold uppercase tracking-[0.18em]", a.text)}
-          style={{ fontFamily: "var(--font-mono)" }}
+          className={cn("font-mono mb-2 text-[11px] font-bold uppercase tracking-[0.18em]", a.text)}
         >
           {label}
         </p>

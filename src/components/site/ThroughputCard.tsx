@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CardPanel } from "./CardPanel";
 import { ProvTag, type Provenance } from "./ProvTag";
 import { accentClasses, type Accent } from "./accent";
 
@@ -46,8 +47,7 @@ export function ThroughputCard({
 }: ThroughputCardProps) {
   const a = accentClasses(accent);
   return (
-    <div className={cn("glass-card flex flex-col gap-4", className)}>
-      <h3 className="font-display text-base font-semibold text-white">{title}</h3>
+    <CardPanel title={title} className={className}>
       <ul role="list" className="space-y-3">
         {/* Keyed by label+tag, not label alone: the whole point of this card is
             that a measured figure and a target can share a ladder, so two rows
@@ -58,8 +58,7 @@ export function ThroughputCard({
               <span className="text-xs text-text-dim">{row.label}</span>
               <span className="flex items-center gap-2">
                 <span
-                  className={cn("text-sm font-semibold", a.text)}
-                  style={{ fontFamily: "var(--font-mono)" }}
+                  className={cn("font-mono text-sm font-semibold", a.text)}
                 >
                   {row.value}
                 </span>
@@ -82,6 +81,6 @@ export function ThroughputCard({
           </li>
         ))}
       </ul>
-    </div>
+    </CardPanel>
   );
 }

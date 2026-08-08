@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CardPanel } from "./CardPanel";
 import { ProvTag, type Provenance } from "./ProvTag";
 import { accentClasses, type Accent } from "./accent";
 
@@ -32,7 +33,7 @@ export interface StatBlockProps {
 export function StatBlock({ stat, accent = "wdbx", className }: StatBlockProps) {
   const a = accentClasses(accent);
   return (
-    <div className={cn("glass-card flex flex-col gap-2", className)}>
+    <CardPanel gap="xs" className={className}>
       <div className="flex items-start justify-between gap-3">
         <span className={cn("font-display text-h4 font-bold leading-none", a.text)}>
           {stat.value}
@@ -41,6 +42,6 @@ export function StatBlock({ stat, accent = "wdbx", className }: StatBlockProps) 
       </div>
       <p className="text-sm font-medium text-white">{stat.label}</p>
       {stat.note && <p className="text-xs text-text-dim">{stat.note}</p>}
-    </div>
+    </CardPanel>
   );
 }

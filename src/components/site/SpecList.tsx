@@ -27,8 +27,7 @@ export function SpecList({ rows, className }: SpecListProps) {
         >
           <dt className="text-sm text-text-dim">{row.k}</dt>
           <dd
-            className="text-sm font-medium text-white"
-            style={{ fontFamily: "var(--font-mono)" }}
+            className="font-mono text-sm font-medium text-white"
           >
             {row.v}
           </dd>

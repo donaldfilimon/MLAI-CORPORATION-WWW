@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CardPanel } from "./CardPanel";
 import { accentClasses, type Accent } from "./accent";
 
 export interface IndexLayer {
@@ -33,14 +34,12 @@ export interface IndexCardProps {
 export function IndexCard({ layers, title = "Index structure", accent = "wdbx", className }: IndexCardProps) {
   const a = accentClasses(accent);
   return (
-    <div className={cn("glass-card flex flex-col gap-4", className)}>
-      <h3 className="font-display text-base font-semibold text-white">{title}</h3>
+    <CardPanel title={title} className={className}>
       <ul role="list" className="space-y-3">
         {layers.map((layer, i) => (
           <li key={layer.name} className="flex items-center gap-3">
             <span
-              className={cn("w-8 shrink-0 text-[11px] font-bold", a.text)}
-              style={{ fontFamily: "var(--font-mono)" }}
+              className={cn("font-mono w-8 shrink-0 text-[11px] font-bold", a.text)}
             >
               {layer.name}
             </span>
@@ -51,8 +50,7 @@ export function IndexCard({ layers, title = "Index structure", accent = "wdbx", 
             />
             <span className="ml-auto shrink-0 text-right">
               <span
-                className="block text-xs text-white"
-                style={{ fontFamily: "var(--font-mono)" }}
+                className="block text-xs text-white font-mono"
               >
                 {layer.nodes}
               </span>
@@ -61,6 +59,6 @@ export function IndexCard({ layers, title = "Index structure", accent = "wdbx", 
           </li>
         ))}
       </ul>
-    </div>
+    </CardPanel>
   );
 }

@@ -92,7 +92,7 @@ export function PublicationIndex({
               <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <span className="text-sm font-medium text-white">{item.title}</span>
                 {item.date && (
-                  <span className="text-[11px] text-text-dim" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="text-[11px] text-text-dim font-mono">
                     {item.date}
                   </span>
                 )}

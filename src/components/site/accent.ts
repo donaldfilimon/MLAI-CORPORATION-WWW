@@ -25,8 +25,6 @@ interface AccentClasses {
   border: string;
   /** Low-alpha fill for chips and callout grounds. */
   bg: string;
-  /** Ring used on hover/emphasis states. */
-  ring: string;
   /** Solid fill for small markers (dots, step numerals). */
   dot: string;
   /** Radial-glow color as an `rgb()` triple, for AccentGlow. */
@@ -43,7 +41,6 @@ const MAP: Record<Accent, AccentClasses> = {
     text: "text-cyan-300",
     border: "border-cyan-400/25",
     bg: "bg-cyan-400/5",
-    ring: "ring-cyan-400/20",
     dot: "bg-cyan-400",
     glowRgb: "34 211 238",
   },
@@ -51,7 +48,6 @@ const MAP: Record<Accent, AccentClasses> = {
     text: "text-violet-300",
     border: "border-violet-400/25",
     bg: "bg-violet-400/5",
-    ring: "ring-violet-400/20",
     dot: "bg-violet-400",
     glowRgb: "167 139 250",
   },
@@ -59,7 +55,6 @@ const MAP: Record<Accent, AccentClasses> = {
     text: "text-emerald-300",
     border: "border-emerald-400/25",
     bg: "bg-emerald-400/5",
-    ring: "ring-emerald-400/20",
     dot: "bg-emerald-400",
     glowRgb: "52 211 153",
   },

@@ -34,12 +34,11 @@ export function StepList({ steps, accent = "wdbx", className }: StepListProps) {
           <div className="flex flex-col items-center gap-2" aria-hidden="true">
             <span
               className={cn(
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold",
+                "font-mono flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold",
                 a.border,
                 a.bg,
                 a.text,
               )}
-              style={{ fontFamily: "var(--font-mono)" }}
             >
               {String(i + 1).padStart(2, "0")}
             </span>

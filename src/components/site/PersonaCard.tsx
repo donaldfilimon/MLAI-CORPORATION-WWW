@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CardPanel } from "./CardPanel";
 
 /**
  * Persona accent colors. **This is the persona axis, not the product accent
@@ -33,8 +34,7 @@ export interface PersonaCardProps {
 /** A compact roster of the routing personas, each with its fixed accent dot. */
 export function PersonaCard({ personas, title = "Persona routing", className }: PersonaCardProps) {
   return (
-    <div className={cn("glass-card flex flex-col gap-4", className)}>
-      <h3 className="font-display text-base font-semibold text-white">{title}</h3>
+    <CardPanel title={title} className={className}>
       <ul role="list" className="space-y-3">
         {personas.map((p) => {
           const c = PERSONA_CLASSES[p.key];
@@ -52,6 +52,6 @@ export function PersonaCard({ personas, title = "Persona routing", className }: 
           );
         })}
       </ul>
-    </div>
+    </CardPanel>
   );
 }

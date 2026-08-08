@@ -89,8 +89,7 @@ export function HeroBench({
         // explicit outline is needed because the parent is overflow-hidden,
         // which would clip the global box-shadow focus ring.
         tabIndex={0}
-        className="overflow-x-auto px-4 py-3 text-xs leading-relaxed text-text-dim focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-cyan-400"
-        style={{ fontFamily: "var(--font-mono)" }}
+        className="overflow-x-auto px-4 py-3 text-xs leading-relaxed text-text-dim focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-cyan-400 font-mono"
         aria-live="off"
       >
         {/* <span className="block">, not <div>: <pre> takes phrasing content,
