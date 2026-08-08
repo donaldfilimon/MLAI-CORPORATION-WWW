@@ -68,17 +68,22 @@ const SEEDS = [
 /** Auth-guarded routes legitimately bounce to /login — not a broken link. */
 const GUARD_REDIRECTS = { "/console": "/login", "/profile": "/login" };
 
+/** One definition of "landing here counts as reaching `target`". */
+const accepts = (target, landed) => landed === target || landed === GUARD_REDIRECTS[target];
+
 const ASSET_EXTS = [".pdf", ".md", ".svg", ".xml", ".webmanifest", ".txt", ".png", ".jpg", ".ico"];
 const isAsset = (p) => ASSET_EXTS.some((e) => p.toLowerCase().endsWith(e));
 
-/** Strip origin, query and hash so "/docs?x=1#y" and "/docs" are one route. */
+/**
+ * Strip origin, query and hash so "/docs?x=1#y" and "/docs" are one route.
+ *
+ * Deliberately no try/catch: BASE is absolute and callers pass hrefs already
+ * filtered to a leading "/", so this cannot throw — and returning the raw href
+ * on a phantom failure would feed an un-normalized value into `seen`/`queue`
+ * as though it were a route. If it ever does throw, the stack is what you want.
+ */
 function norm(href) {
-  try {
-    const u = new URL(href, BASE);
-    return u.pathname.replace(/\/$/, "") || "/";
-  } catch {
-    return href;
-  }
+  return new URL(href, BASE).pathname.replace(/\/$/, "") || "/";
 }
 
 async function main() {
@@ -96,38 +101,47 @@ async function main() {
   /** Visit a route and report 404-ness, console errors, and outbound links. */
   async function visit(route) {
     consoleErrors = [];
-    await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 30_000 });
+    const res = await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 30_000 });
     const data = await page.evaluate(() => ({
       title: document.title,
-      is404:
-        /Page Not Found/i.test(document.title) ||
-        /doesn.?t resolve|could not be found/i.test(document.body.innerText),
+      // SOFT 404: `/blog/[slug]` matches any slug, so a dead <Link> renders the
+      // in-page not-found view at HTTP 200. route-meta.ts gives every unknown
+      // slug the shared not-found title, so the title is the one signal that
+      // covers it. (Body-copy regexes were tried and dropped: the per-view
+      // wording — "That lab note doesn't exist." — never matched them, so they
+      // were dead weight riding on the title check.)
+      softNotFound: /Page Not Found/i.test(document.title),
       links: [
         ...new Set(
           [...document.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")),
         ),
       ].filter((h) => h && h.startsWith("/") && !h.startsWith("//") && !h.startsWith("/api")),
     }));
-    return { ...data, errors: [...consoleErrors] };
+    // Hard 404s are exact — the server already told us. No prose guessing.
+    const is404 = (res?.status() ?? 0) >= 400 || data.softNotFound;
+    return { ...data, is404, errors: [...consoleErrors] };
   }
 
   // ── Phase 1 — BFS discovery, 404 + console checks ────────────────────────
-  const seen = new Set();
-  const queue = [...new Set(SEEDS.map(norm))];
+  // `seen` means "ever enqueued", which is what both the dequeue guard and the
+  // old O(n) `queue.includes` scan were approximating.
+  const seen = new Set(SEEDS.map(norm));
+  const queue = [...seen];
   const results = [];
+  const navFails = []; // [route, why] — could not be reached at all
   const assetLinks = new Map(); // asset href -> a route that links it
   const firstSeen = new Map(); // route href -> a route where an anchor exists
 
   while (queue.length) {
     const route = queue.shift();
-    if (seen.has(route)) continue;
-    seen.add(route);
 
     let d;
     try {
       d = await visit(route);
     } catch (e) {
-      results.push([route, { is404: true, errors: [`navigation failed: ${e.message}`], links: [] }]);
+      // A connection failure is not a 404 and not a console error. It used to
+      // be reported as both, so one dead route counted twice in the total.
+      navFails.push([route, e.message.slice(0, 80)]);
       continue;
     }
     results.push([route, d]);
@@ -139,20 +153,26 @@ async function main() {
         continue;
       }
       if (!firstSeen.has(n)) firstSeen.set(n, route);
-      if (!seen.has(n) && !queue.includes(n)) queue.push(n);
+      if (!seen.has(n)) {
+        seen.add(n);
+        queue.push(n);
+      }
     }
   }
 
   // ── Asset links are status-checked over HTTP, not crawled ────────────────
-  const badAssets = [];
-  for (const a of [...assetLinks.keys()].sort()) {
-    try {
-      const res = await fetch(BASE + a, { method: "HEAD" });
-      if (res.status >= 400) badAssets.push([a, res.status]);
-    } catch (e) {
-      badAssets.push([a, String(e.message).slice(0, 60)]);
-    }
-  }
+  const badAssets = (
+    await Promise.all(
+      [...assetLinks.keys()].sort().map(async (a) => {
+        try {
+          const res = await fetch(BASE + a, { method: "HEAD" });
+          return res.status >= 400 ? [a, String(res.status)] : null;
+        } catch (e) {
+          return [a, String(e.message).slice(0, 60)];
+        }
+      }),
+    )
+  ).filter(Boolean);
 
   // ── Phase 2 — click each unique link once and assert where it lands ──────
   // This is the part that actually exercises the router shim: a compiling
@@ -161,48 +181,38 @@ async function main() {
   let clickOk = 0;
 
   for (const [target, source] of [...firstSeen.entries()].sort()) {
+    /**
+     * Always resolves to `{ landed, why? }` — never throws. goto/count/click
+     * failures used to leak out and were marshalled into that shape by two
+     * identical try/catch blocks at the call site; owning it here makes the
+     * retry one line instead of fourteen.
+     */
     const attempt = async () => {
-      await page.goto(BASE + source, { waitUntil: "networkidle", timeout: 30_000 });
-      const link = page.locator(`a[href="${target}"], a[href="${target}/"]`).first();
-      if ((await link.count()) === 0) return { landed: null, why: "anchor vanished" };
-      await link.click({ timeout: 10_000 });
-      // Client-side navigation never starts a new document load, so
-      // waitForLoadState("networkidle") resolves IMMEDIATELY (the current page
-      // is already idle) and reading page.url() then races the SPA router —
-      // measured on `next dev`, the URL updates ~2.5s after networkidle
-      // resolves, which made every click-through "land on" its source page.
-      // Wait for the URL itself: target or its known auth-guard redirect.
-      const ok = target;
-      const guard = GUARD_REDIRECTS[target];
       try {
-        await page.waitForURL(
-          (u) => {
-            const n = norm(u.href);
-            return n === ok || (guard !== undefined && n === guard);
-          },
-          { timeout: 20_000 },
-        );
-      } catch {
-        /* fall through — report wherever we actually are */
+        await page.goto(BASE + source, { waitUntil: "networkidle", timeout: 30_000 });
+        const link = page.locator(`a[href="${target}"], a[href="${target}/"]`).first();
+        if ((await link.count()) === 0) return { landed: null, why: "anchor vanished" };
+        await link.click({ timeout: 10_000 });
+        // Client-side navigation never starts a new document load, so
+        // waitForLoadState("networkidle") resolves IMMEDIATELY (the current
+        // page is already idle) and reading page.url() then races the SPA
+        // router — measured on `next dev`, the URL updates ~2.5s after
+        // networkidle resolves, which made every click-through "land on" its
+        // source page. Wait for the URL itself.
+        await page
+          .waitForURL((u) => accepts(target, norm(u.href)), { timeout: 20_000 })
+          .catch(() => {
+            /* report wherever we actually are */
+          });
+        return { landed: norm(page.url()) };
+      } catch (e) {
+        return { landed: null, why: e.message.slice(0, 80) };
       }
-      return { landed: norm(page.url()) };
     };
 
-    let r;
-    try {
-      r = await attempt();
-    } catch (e) {
-      r = { landed: null, why: e.message.slice(0, 80) };
-    }
-    const accepts = (landed) => landed === target || landed === GUARD_REDIRECTS[target];
-    if (!accepts(r.landed)) {
-      try {
-        r = await attempt(); // one retry absorbs a slow hydration race
-      } catch (e) {
-        r = { landed: null, why: e.message.slice(0, 80) };
-      }
-    }
-    if (accepts(r.landed)) clickOk += 1;
+    let r = await attempt();
+    if (!accepts(target, r.landed)) r = await attempt(); // absorbs a slow hydration race
+    if (accepts(target, r.landed)) clickOk += 1;
     else clickFails.push([target, source, r]);
   }
 
@@ -212,10 +222,11 @@ async function main() {
   const broken = results.filter(([, d]) => d.is404).map(([p]) => p);
   const errored = results.filter(([, d]) => d.errors.length);
 
-  console.log(`\nRoutes crawled : ${results.length}`);
+  console.log(`\nRoutes crawled : ${results.length}${navFails.length ? ` (+${navFails.length} unreachable)` : ""}`);
   console.log(`Asset links    : ${assetLinks.size - badAssets.length}/${assetLinks.size} OK`);
   console.log(`Click-throughs : ${clickOk}/${firstSeen.size} landed correctly`);
 
+  for (const [p, why] of navFails) console.log(`  x  unreachable: ${p} — ${why}`);
   for (const p of broken) console.log(`  x  404 or unresolved: ${p}`);
   for (const [a, st] of badAssets) console.log(`  x  asset ${a} -> ${st}`);
   for (const [p, d] of errored) console.log(`  !  console errors on ${p}: ${d.errors[0]}`);
@@ -223,7 +234,8 @@ async function main() {
     console.log(`  x  click ${t} (from ${s}) landed on ${r.landed ?? "nowhere"}${r.why ? ` — ${r.why}` : ""}`);
   }
 
-  const failed = broken.length + badAssets.length + clickFails.length + errored.length;
+  const failed =
+    navFails.length + broken.length + badAssets.length + clickFails.length + errored.length;
   if (failed) {
     console.log(`\n${failed} problem(s) found.`);
     process.exit(1);
