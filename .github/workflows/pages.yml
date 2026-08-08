@@ -13,6 +13,7 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "src/__tests__/landing-page.test.ts"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -33,6 +34,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      # Gate the publish on the landing-page drift guard
+      # (src/__tests__/landing-page.test.ts): canonical URL, complete social
+      # card, brand assets physically present in site/, no /_next/ or
+      # /public/ paths Pages can't serve. Cheap insurance — this page is
+      # hand-maintained and duplicates brand/copy from the Next app.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4"
+      - run: bun install --frozen-lockfile
+      - run: bunx vitest run src/__tests__/landing-page.test.ts
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

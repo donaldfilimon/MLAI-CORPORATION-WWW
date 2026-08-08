@@ -10,8 +10,24 @@
     />
     <link rel="canonical" href="https://mlai-corp.com/" />
     <!-- Static landing page served from GitHub Pages. The full application
-         (console, auth, APIs) runs as a Next.js server on Cloud Run. -->
+         (console, auth, APIs) runs as a Next.js server on Cloud Run.
+         Brand assets (favicon.svg, og-image.png, apple-touch-icon.png) are
+         copies of the canonical ones in public/ — the Pages workflow uploads
+         ONLY this directory, so it cannot reference public/. Refresh them
+         alongside `bun run og` after any re-skin. og:/twitter: image URLs
+         point at the canonical mlai-corp.com host (matching rel=canonical)
+         so social crawlers attribute the card to the real site. -->
     <meta name="theme-color" content="#05070d" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="MLAI Corporation — Lab Notes &amp; Research"
+      href="https://mlai-corp.com/feed.xml"
+    />
+    <meta property="og:site_name" content="MLAI Corporation" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="MLAI Corporation" />
     <meta
       property="og:description"
@@ -19,13 +35,39 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://mlai-corp.com/" />
+    <meta property="og:image" content="https://mlai-corp.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="MLAI Corporation — private, traceable AI infrastructure"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MLAI Corporation" />
+    <meta
+      name="twitter:description"
+      content="Private, traceable AI infrastructure — WDBX memory, Abbey · Aviva · Abi routing, operator controls."
+    />
+    <meta name="twitter:image" content="https://mlai-corp.com/og-image.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Geist:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MLAI Corporation",
+        "legalName": "Machine Learning Advanced Innovations, Inc.",
+        "url": "https://mlai-corp.com",
+        "logo": "https://mlai-corp.com/icon-512.png",
+        "image": "https://mlai-corp.com/og-image.png",
+        "description": "Private, traceable AI infrastructure for production teams.",
+        "sameAs": ["https://github.com/donaldfilimon"]
+      }
+    </script><style>
       :root {
         --bg: #05070d;
         --panel: rgba(255, 255, 255, 0.03);
@@ -45,7 +87,7 @@
         margin: 0;
         background: var(--bg);
         color: var(--text);
-        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        font-family: "Geist", "Inter", system-ui, -apple-system, sans-serif;
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
