@@ -13,7 +13,7 @@
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "crawl": "bash scripts/crawl-links.sh",
+    "crawl": "bun scripts/crawl-links.mjs",
     "smoke": "bash scripts/smoke-api.sh",
     "og": "python3 scripts/generate-og.py"
   },
