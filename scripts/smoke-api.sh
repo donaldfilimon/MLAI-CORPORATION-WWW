@@ -7,6 +7,7 @@
 #   204 accept            — allowlisted telemetry event is accepted
 #   204 csp sink          — /api/csp-report accepts any body shape, never 5xx
 #   429 rate-limited      — csp-report sheds past 60/min per IP (SMOKE_RATELIMIT=1)
+#   413 oversize          — bodies past each route's byte cap are rejected unread
 #   DNT no-store          — DNT:1 short-circuits to 204 BEFORE the DB insert
 #   400 unknown event     — non-allowlisted telemetry event rejected
 #   401 unauthenticated   — protected endpoints without a session
@@ -71,6 +72,20 @@ check "csp-report: empty body → 204" 204 "$(code -X POST "$BASE_URL/api/csp-re
 
 check "csp-report: unparseable body → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
   -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/json' -d 'not-json-at-all')"
+
+# Body-size caps (src/lib/server/body-limit.ts). One oversize probe per public
+# POST route that has a cap small enough to exercise cheaply. The payload is
+# generated, not stored — 200 KB of 'x' clears every cap under 128 KB.
+BIG_FILE="$(mktemp)"
+head -c 200000 /dev/zero | tr '\0' 'x' > "$BIG_FILE"
+check "csp-report: oversize body → 413" 413 "$(code -X POST "$BASE_URL/api/csp-report" \
+  -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/csp-report' \
+  --data-binary "@$BIG_FILE")"
+check "telemetry: oversize body → 413" 413 "$(code -X POST "$BASE_URL/api/telemetry" \
+  -H 'content-type: application/json' --data-binary "@$BIG_FILE")"
+check "inquiries: oversize body → 413" 413 "$(code -X POST "$BASE_URL/api/inquiries" \
+  -H 'content-type: application/json' --data-binary "@$BIG_FILE")"
+rm -f "$BIG_FILE"
 
 # Exhausting a 60/min limiter costs 61 requests, so it is opt-in — same
 # convention as SMOKE_WRITE. Uses its own IP so the four cases above are

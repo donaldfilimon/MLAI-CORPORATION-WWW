@@ -13,6 +13,7 @@
  * context. They go to stdout only, where the platform's own retention applies.
  */
 
+import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 
 // Browsers post violations without credentials and expect a fast, bodyless
@@ -26,12 +27,18 @@ export async function POST(req: Request): Promise<Response> {
   // actionable content is "directive D blocked URI U", which you already have
   // after report #1, so shedding the tail costs nothing.
   //
-  // Must stay the FIRST statement: req.text() below buffers the whole body, so a
-  // limiter placed after it has already paid the cost it exists to avoid.
+  // Must stay the FIRST statement: the body read below still buffers up to the
+  // 64 KB cap, so a limiter placed after it has already paid the per-request
+  // cost it exists to avoid.
   if (!rateLimit("csp-report", req, { windowMs: 60 * 1000, max: 60 })) return tooMany();
 
   try {
-    const raw = await req.text();
+    // 64 KB cap: real CSP reports are a few hundred bytes; the handler only
+    // ever logs the first 2000 chars anyway. Rate limiting caps request COUNT;
+    // this caps request SIZE. Inside the try so a client aborting the stream
+    // mid-read stays a swallowed error, not a 500 — this endpoint never 5xxes.
+    const raw = await readBodyLimited(req, 64 * 1024);
+    if (raw === null) return payloadTooLarge();
     if (raw) {
       // Two wire formats in the wild: the legacy `report-uri` shape
       // ({"csp-report": {...}}, content-type application/csp-report) and the
@@ -41,8 +48,8 @@ export async function POST(req: Request): Promise<Response> {
       console.warn("[CSP] violation report:", raw.slice(0, 2000));
     }
   } catch {
-    // A malformed body is not worth a 500 — the browser will not retry and
-    // there is nothing actionable to report about the report.
+    // A malformed or aborted body is not worth a 500 — the browser will not
+    // retry and there is nothing actionable to report about the report.
   }
 
   // 204: the spec wants no content, and returning a body invites the browser to
