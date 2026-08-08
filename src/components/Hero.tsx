@@ -191,13 +191,21 @@ export const Hero = () => {
             </m.div>
           </m.div>
 
-          <div className="relative hidden min-h-125 lg:block">
+          <div className="relative mt-2 min-w-0 lg:mt-0 lg:min-h-125">
             {/* Hero signature: the weighted backtrace (see BacktracePanel).
                 This replaced the tri-persona particle "galaxy" canvas — a
                 drifting point cloud reads as generic AI and could sit on any
                 competitor's page, whereas the backtrace is this product's own
                 instrument and mirrors the node-graph logo mark. The faint
-                `data-neural="net"` backdrop above is kept as atmosphere. */}
+                `data-neural="net"` backdrop above is kept as atmosphere.
+                Shown on mobile too (the galaxy it replaced was lg-only, which
+                hid the page's single most product-specific element from
+                phone traffic).
+                `min-w-0` is load-bearing: grid items default to
+                `min-width: auto`, so the panel's unshrinkable monospace
+                (hashes, block ids) blew the column past the viewport and
+                shifted/clipped the ENTIRE hero on phones. Same reason the
+                copy column carries it. */}
             <BacktracePanel />
           </div>
         </div>
