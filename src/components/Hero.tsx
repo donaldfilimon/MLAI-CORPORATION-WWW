@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Magnetic } from "./Magnetic";
+import { BacktracePanel } from "./BacktracePanel";
 
 const TRUSTED_LOGOS = [
   "Private retrieval",
@@ -190,30 +191,14 @@ export const Hero = () => {
             </m.div>
           </m.div>
 
-          <div className="relative hidden min-h-125 lg:block" aria-hidden="true">
-            <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 bg-bg/20 shadow-2xl shadow-cyan-950/20 backdrop-blur-sm" />
-            <div className="absolute inset-4 overflow-hidden rounded-[2rem] border border-white/8 bg-[#070914]/70">
-              {/* Tri-persona embedding galaxy — the Lab headline signature
-                  (Abbey · Aviva · Abi clusters). 2D canvas, auto-mounted by
-                  neural.js; respects prefers-reduced-motion internally. */}
-              <div
-                data-neural="galaxy"
-                data-glow="0.95"
-                data-density="1"
-                data-chain="1"
-                className="absolute inset-0"
-                aria-hidden="true"
-              />
-            </div>
-            <div className="absolute bottom-8 left-8 right-8 rounded-2xl border border-white/10 bg-bg/75 p-4 backdrop-blur-md">
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-sky-200/80">
-                Tri-persona embedding space
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-text-dim">
-                Abbey, Aviva, and Abi as distinct clusters in one
-                retrieval-governed system.
-              </p>
-            </div>
+          <div className="relative hidden min-h-125 lg:block">
+            {/* Hero signature: the weighted backtrace (see BacktracePanel).
+                This replaced the tri-persona particle "galaxy" canvas — a
+                drifting point cloud reads as generic AI and could sit on any
+                competitor's page, whereas the backtrace is this product's own
+                instrument and mirrors the node-graph logo mark. The faint
+                `data-neural="net"` backdrop above is kept as atmosphere. */}
+            <BacktracePanel />
           </div>
         </div>
 
