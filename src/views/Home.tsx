@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, BrainCircuit, CheckCircle2, Cpu, DatabaseZap, GitBranch, Layers3, LockKeyhole, Network, ServerCog, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { Reveal } from '../components/Reveal';
@@ -8,6 +8,17 @@ import { FAQ } from '../components/FAQ';
 import { PersonaLegend } from '../components/PersonaLegend';
 import { PersonaVoices } from '../components/PersonaVoices';
 import { Button } from '@/components/ui/button';
+import {
+  AccentGlow,
+  Callout,
+  DeepDive,
+  Eyebrow,
+  FeatureCard,
+  NextUp,
+  Section,
+  type Accent,
+  type NextUpItem,
+} from '@/components/site';
 import { industries } from '@/data/categories/industries';
 import { platform } from '@/data/categories/platform';
 import { products } from '@/data/categories/products';
@@ -17,21 +28,26 @@ import { useUI } from '@/lib/ui-context';
 
 const Technology = React.lazy(() => import('../components/Technology').then(module => ({ default: module.Technology })));
 
-const capabilities = [
+/**
+ * Accents here are the PRODUCT axis (`site/accent.ts`), assigned from what each
+ * capability is about — persona orchestration → abbey, retrieval → wdbx,
+ * runtime policy enforcement → abi. Not the persona color axis.
+ */
+const capabilities: { title: string; description: string; accent: Accent }[] = [
   {
-    icon: <BrainCircuit className="w-6 h-6 text-cyan-400" />,
     title: 'Agentic orchestration',
     description: 'Coordinate Abbey, Aviva, and Abi personas with auditable task handoffs, bounded autonomy, and clear operator control.',
+    accent: 'abbey',
   },
   {
-    icon: <DatabaseZap className="w-6 h-6 text-sky-300" />,
     title: 'WDBX retrieval core',
     description: 'Weighted backtrace graphs preserve context, reduce hallucination surfaces, and keep high-throughput retrieval explainable.',
+    accent: 'wdbx',
   },
   {
-    icon: <LockKeyhole className="w-6 h-6 text-cyan-300" />,
     title: 'Policy-locked execution',
     description: 'Constraint enforcement, audit trails, and human approval gates are designed into the runtime instead of bolted on later.',
+    accent: 'abi',
   },
 ];
 
@@ -49,7 +65,45 @@ const operatingContract = [
 
 const featuredResearch = research.publications.slice(0, 3);
 const featuredServices = services.slice(0, 4);
-const platformIcons = [GitBranch, ShieldCheck, Layers3, ServerCog];
+
+/** The four platform layers, mapped onto the DeepDive card shape. */
+const platformLayers = platform.map((item) => ({
+  title: item.title,
+  body: item.description,
+  meta: item.detail,
+}));
+
+/**
+ * Closing wayfinding. Descriptions are trimmed from the destinations' own
+ * `route-meta.ts` copy so nothing new is claimed here, and every href is a real
+ * route directory under `app/`.
+ */
+const nextUp: NextUpItem[] = [
+  {
+    label: 'Live demo',
+    href: '/demo',
+    desc: 'Run a faithful in-browser miniature of the WDBX query path — real cosine search over deterministic embeddings, shard routing, MVCC snapshots, and a hash-chained query log.',
+    accent: 'wdbx',
+  },
+  {
+    label: 'Docs',
+    href: '/docs',
+    desc: 'Platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.',
+    accent: 'abi',
+  },
+  {
+    label: 'Research',
+    href: '/research',
+    desc: 'Notes on WDBX retrieval, graph provenance, policy-gated agents, offline workflows, and production AI safety.',
+    accent: 'abbey',
+  },
+  {
+    label: 'Link hub',
+    href: '/links',
+    desc: "One screen for MLAI's important doors — source repositories, reference docs, product pages, research, and the founder's profile.",
+    accent: 'wdbx',
+  },
+];
 
 export function Home() {
   const { openInquiry } = useUI();
@@ -58,71 +112,57 @@ export function Home() {
     <div className="home-page flex flex-col items-center overflow-hidden">
       <Hero />
 
-      <section className="relative w-full section-y" aria-labelledby="home-capabilities-heading">
-        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-400/30 to-transparent" aria-hidden="true" />
-        <Reveal width="100%">
-          <div className="container-custom">
-            <div className="mb-14 grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(360px,0.58fr)] lg:items-end">
-              <div className="max-w-3xl">
-                <div className="label-chip mb-6">
-                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                  PRODUCTION AI FOUNDATIONS
-                </div>
-                <h2 id="home-capabilities-heading" className="section-title">One architecture from memory to action.</h2>
-                <p className="section-subtitle mb-0">
-                  WDBX keeps context traceable, Abbey · Aviva · Abi choose the right operating voice, and policy gates keep agent work inside reviewable boundaries.
-                </p>
-              </div>
-              <div className="rounded-3xl border border-cyan-300/15 bg-cyan-400/[0.045] p-5">
-                <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-300">
-                  Operating contract
-                </p>
-                <div className="grid gap-3">
-                  {operatingContract.map((item, index) => (
-                    <div key={item} className="flex gap-3 text-sm leading-relaxed text-text-dim">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10 font-mono text-[10px] text-cyan-200">
-                        {index + 1}
-                      </span>
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+      <Reveal width="100%">
+        <Section
+          id="home-capabilities-heading"
+          className="relative w-full"
+          eyebrow="PRODUCTION AI FOUNDATIONS"
+          title="One architecture from memory to action."
+          lead="WDBX keeps context traceable, Abbey · Aviva · Abi choose the right operating voice, and policy gates keep agent work inside reviewable boundaries."
+        >
+          {/* `.container-custom` is not positioned, so this still resolves
+              against the <section> and stays full-bleed. */}
+          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-400/30 to-transparent" aria-hidden="true" />
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {capabilities.map((item) => (
-                <div key={item.title} className="glass-card group h-full flex flex-col overflow-hidden">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/4 transition-colors group-hover:border-cyan-300/25 group-hover:bg-cyan-300/10" aria-hidden="true">
-                    {item.icon}
-                  </div>
-                  <h3 className="text-xl font-display font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-text-dim">{item.description}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Persona legend — keyed to the hero galaxy's three clusters. */}
-            <div className="mt-12 flex flex-col items-center">
-              <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-text-dim/60">
-                Three minds, one router
-              </p>
-              <PersonaLegend />
-              {/* Hear each mind — neural TTS, opt-in + lazy (client-only). */}
-              <PersonaVoices className="mt-6" />
-            </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {capabilities.map((item) => (
+              <FeatureCard key={item.title} title={item.title} desc={item.description} accent={item.accent} />
+            ))}
           </div>
-        </Reveal>
-      </section>
+
+          <Callout label="Operating contract" className="mt-10">
+            <ol role="list" className="grid gap-3">
+              {operatingContract.map((item, index) => (
+                <li key={item} className="flex gap-3">
+                  <span
+                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10 font-mono text-[10px] text-cyan-200"
+                    aria-hidden="true"
+                  >
+                    {index + 1}
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ol>
+          </Callout>
+
+          {/* Persona legend — keyed to the hero galaxy's three clusters. */}
+          <div className="mt-12 flex flex-col items-center">
+            <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-text-dim/60">
+              Three minds, one router
+            </p>
+            <PersonaLegend />
+            {/* Hear each mind — neural TTS, opt-in + lazy (client-only). */}
+            <PersonaVoices className="mt-6" />
+          </div>
+        </Section>
+      </Reveal>
 
       <section className="relative w-full section-y bg-surface/20 noise-overlay" aria-labelledby="home-workflow-heading">
         <Reveal width="100%">
           <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
-              <div className="label-chip mb-6">
-                <Network className="w-3.5 h-3.5" aria-hidden="true" />
-                DELIVERY MODEL
-              </div>
+              <Eyebrow className="mb-6">DELIVERY MODEL</Eyebrow>
               <h2 id="home-workflow-heading" className="section-title">A practical path to reliable autonomy.</h2>
               <p className="text-lg leading-relaxed text-text-dim">
                 We start with the operational risk profile, then build only the layers needed to make your system observable, governable, and fast enough for real users.
@@ -158,68 +198,44 @@ export function Home() {
         <Technology />
       </React.Suspense>
 
-      <section className="w-full section-y bg-surface/20" aria-labelledby="home-platform-heading">
-        <Reveal width="100%">
-          <div className="container-custom">
-            <div className="mb-14 max-w-3xl">
-              <div className="label-chip mb-6">
-                <Layers3 className="w-3.5 h-3.5" aria-hidden="true" />
-                PLATFORM LAYERS
-              </div>
-              <h2 id="home-platform-heading" className="section-title">The stack behind reliable AI workflows.</h2>
-              <p className="section-subtitle mb-0">MLAI separates traceability, control, evaluation, and deployment so teams can improve one layer without breaking the rest of the system.</p>
-            </div>
+      <Reveal width="100%">
+        <Section
+          id="home-platform-heading"
+          className="w-full bg-surface/20"
+          eyebrow="PLATFORM LAYERS"
+          title="The stack behind reliable AI workflows."
+          lead="MLAI separates traceability, control, evaluation, and deployment so teams can improve one layer without breaking the rest of the system."
+        >
+          <DeepDive items={platformLayers} cols={2} />
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-              {platform.map((item, index) => {
-                const Icon = platformIcons[index] ?? Layers3;
-                return (
-                  <div key={item.title} className="glass-card h-full flex flex-col justify-between">
-                    <div>
-                      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 text-cyan-300">
-                        <Icon className="h-5 w-5" aria-hidden="true" />
-                      </div>
-                      <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-                      <p className="text-sm leading-relaxed text-text-dim mb-4">{item.description}</p>
-                    </div>
-                    <p className="mt-auto rounded-xl border border-white/5 bg-bg/40 p-3 text-xs leading-relaxed text-text-dim/80 font-mono">{item.detail}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <span className="text-sm text-text-dim">Deep dives:</span>
-              {products.map((p) => (
-                <Link
-                  key={p.slug}
-                  to={`/products/${p.slug}`}
-                  className="glass-card group inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white"
-                >
-                  {p.name}
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                </Link>
-              ))}
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <span className="text-sm text-text-dim">Deep dives:</span>
+            {products.map((p) => (
               <Link
-                to="/showcase"
+                key={p.slug}
+                to={`/products/${p.slug}`}
                 className="glass-card group inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white"
               >
-                Films &amp; Design Lab
+                {p.name}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Link>
-            </div>
+            ))}
+            <Link
+              to="/showcase"
+              className="glass-card group inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white"
+            >
+              Films &amp; Design Lab
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
           </div>
-        </Reveal>
-      </section>
+        </Section>
+      </Reveal>
 
       <section className="w-full section-y" aria-labelledby="home-industries-heading">
         <Reveal width="100%">
           <div className="container-custom grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
             <div>
-              <div className="label-chip mb-6">
-                <ServerCog className="w-3.5 h-3.5" aria-hidden="true" />
-                WHERE IT FITS
-              </div>
+              <Eyebrow className="mb-6">WHERE IT FITS</Eyebrow>
               <h2 id="home-industries-heading" className="section-title">Built for teams with real constraints.</h2>
               <p className="text-lg leading-relaxed text-text-dim">The site, console, and API are organized around private deployments, measurable controls, and AI features that can survive production review.</p>
             </div>
@@ -235,79 +251,64 @@ export function Home() {
         </Reveal>
       </section>
 
-      <section className="w-full section-y" aria-labelledby="home-research-heading">
-        <Reveal width="100%">
-          <div className="container-custom">
-            <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div className="max-w-3xl">
-                <div className="label-chip mb-6">
-                  <GitBranch className="w-3.5 h-3.5" aria-hidden="true" />
-                  RESEARCH TO RUNTIME
+      <Reveal width="100%">
+        <Section
+          id="home-research-heading"
+          className="w-full"
+          eyebrow="RESEARCH TO RUNTIME"
+          title="Selected architecture notes."
+          lead="A focused preview of the research themes behind MLAI systems."
+        >
+          <div className="grid gap-6 lg:grid-cols-3">
+            {featuredResearch.map((item) => (
+              <Link
+                key={item.title}
+                to={`/research/${item.slug}`}
+                className="glass-card group flex h-full flex-col transition-colors hover:border-cyan-500/20"
+              >
+                <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-300">
+                  <span>{item.tag}</span>
+                  <span className="h-1 w-1 rounded-full bg-white/30" aria-hidden="true" />
+                  <span className="text-text-dim/70">{item.date}</span>
                 </div>
-                <h2 id="home-research-heading" className="section-title">Selected architecture notes.</h2>
-                <p className="section-subtitle mb-0">A focused preview of the research themes behind MLAI systems.</p>
-              </div>
-              <Button asChild variant="link" className="h-auto justify-start p-0 text-cyan-300 hover:text-cyan-200">
-                <Link to="/research">View research archive <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
-              </Button>
-            </div>
-
-            <div className="grid gap-6 lg:grid-cols-3">
-              {featuredResearch.map((item) => (
-                <Link
-                  key={item.title}
-                  to={`/research/${item.slug}`}
-                  className="glass-card group flex h-full flex-col transition-colors hover:border-cyan-500/20"
-                >
-                  <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-300">
-                    <span>{item.tag}</span>
-                    <span className="h-1 w-1 rounded-full bg-white/30" aria-hidden="true" />
-                    <span className="text-text-dim/70">{item.date}</span>
-                  </div>
-                  <h3 className="text-xl font-display font-bold leading-tight text-white mb-3 group-hover:text-cyan-300 transition-colors">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-text-dim mb-4">{item.abstract}</p>
-                  <span className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
-                    Read paper <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                  </span>
-                </Link>
-              ))}
-            </div>
+                <h3 className="text-xl font-display font-bold leading-tight text-white mb-3 group-hover:text-cyan-300 transition-colors">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-text-dim mb-4">{item.abstract}</p>
+                <span className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
+                  Read paper <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </span>
+              </Link>
+            ))}
           </div>
-        </Reveal>
-      </section>
 
-      <section className="w-full section-y bg-surface/20" aria-labelledby="home-services-heading">
-        <Reveal width="100%">
-          <div className="container-custom">
-            <div className="mb-14 max-w-3xl">
-              <div className="label-chip mb-6">
-                <Cpu className="w-3.5 h-3.5" aria-hidden="true" />
-                ENGINEERING SERVICES
-              </div>
-              <h2 id="home-services-heading" className="section-title">Focused help where reliability matters most.</h2>
-              <p className="section-subtitle mb-0">Architecture, integration, auditing, and deployment support for high-stakes AI programs.</p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              {featuredServices.map((service) => (
-                <div key={service.title} className="glass-card group flex gap-5 items-start">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-cyan-400 transition-transform group-hover:scale-110" aria-hidden="true" />
-                  <div>
-                    <h3 className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">{service.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-text-dim">{service.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10">
-              <Button asChild variant="outline" className="rounded-full border-white/10 bg-white/3 px-5 text-white hover:bg-white/10 hover:text-white">
-                <Link to="/services">Explore all services <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
-              </Button>
-            </div>
+          <div className="mt-10">
+            <Button asChild variant="outline" className="rounded-full border-white/10 bg-white/3 px-5 text-white hover:bg-white/10 hover:text-white">
+              <Link to="/research">View research archive <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
+            </Button>
           </div>
-        </Reveal>
-      </section>
+        </Section>
+      </Reveal>
+
+      <Reveal width="100%">
+        <Section
+          id="home-services-heading"
+          className="w-full bg-surface/20"
+          eyebrow="ENGINEERING SERVICES"
+          title="Focused help where reliability matters most."
+          lead="Architecture, integration, auditing, and deployment support for high-stakes AI programs."
+        >
+          <div className="grid gap-6 md:grid-cols-2">
+            {featuredServices.map((service) => (
+              <FeatureCard key={service.title} title={service.title} desc={service.description} />
+            ))}
+          </div>
+
+          <div className="mt-10">
+            <Button asChild variant="outline" className="rounded-full border-white/10 bg-white/3 px-5 text-white hover:bg-white/10 hover:text-white">
+              <Link to="/services">Explore all services <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
+            </Button>
+          </div>
+        </Section>
+      </Reveal>
 
       <Stats />
 
@@ -317,12 +318,9 @@ export function Home() {
         <Reveal width="100%">
           <div className="container-custom">
             <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-linear-to-br from-cyan-600/20 via-bg to-sky-500/10 p-8 md:p-14">
-              <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-400/20 blur-[90px]" aria-hidden="true" />
+              <AccentGlow accent="wdbx" />
               <div className="relative z-10 max-w-3xl">
-                <div className="label-chip mb-6">
-                  <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                  READY FOR REVIEW
-                </div>
+                <Eyebrow className="mb-6">READY FOR REVIEW</Eyebrow>
                 <h2 id="home-cta-heading" className="text-3xl md:text-5xl font-display font-bold tracking-tight text-white">Bring MLAI into your next critical AI system.</h2>
                 <p className="mt-6 text-lg leading-relaxed text-text-dim">
                   Share the workflow you want to automate, the failure modes you cannot accept, and the infrastructure constraints we need to respect.
@@ -338,6 +336,14 @@ export function Home() {
           </div>
         </Reveal>
       </section>
+
+      <Reveal width="100%">
+        {/* `.section-y` sets padding-top at three breakpoints via @apply, so a
+            bare `pt-0` would only take effect below `md`. */}
+        <Section className="w-full pt-0 md:pt-0 lg:pt-0" eyebrow="KEEP EXPLORING">
+          <NextUp items={nextUp} />
+        </Section>
+      </Reveal>
     </div>
   );
 }

@@ -1,21 +1,33 @@
-import { m } from "framer-motion";
-import { Shield, Zap, Target, Globe, Activity, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { about } from '@/data/categories/about';
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ContactCTA } from "../components/ContactCTA";
 import { useUI } from "@/lib/ui-context";
 import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
+import {
+  Callout,
+  FeatureCard,
+  Section,
+  SpecList,
+  SplitSection,
+} from "@/components/site";
 
-const icons = [
-  <Shield className="w-6 h-6 text-cyan-400" />,
-  <Zap className="w-6 h-6 text-cyan-400" />,
-  <Target className="w-6 h-6 text-cyan-400" />,
-  <Globe className="w-6 h-6 text-cyan-400" />,
-  <Activity className="w-6 h-6 text-cyan-400" />,
-  <Users className="w-6 h-6 text-cyan-400" />,
+// The mono rail beside the page header — four standing facts, one per row.
+const identity = [
+  "ESTABLISHED 2024 · PALO ALTO, CA",
+  "PIONEERING WDBX ARCHITECTURE",
+  "TRACEABLE RETRIEVAL AND AGENT SAFETY FOCUS",
+  "AUDIT-READY SECURITY CONTROLS",
+];
+
+// The mission band's standing facts. These are descriptive facts, not
+// measurements, which is why they go in a `SpecList` rather than a
+// provenance-tagged `StatBlock`.
+const missionFacts = [
+  { k: "Founded", v: "2024" },
+  { k: "Private-First Patterns", v: "Local" },
+  { k: "Research Network", v: "Global" },
 ];
 
 export const About = () => {
@@ -27,8 +39,8 @@ export const About = () => {
       aria-labelledby="about-heading"
     >
       <div className="container-custom relative z-10">
-        <div className="flex flex-col lg:flex-row gap-16 items-center">
-          <div className="lg:w-1/2">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div>
             <PageHeader
               id="about-heading"
               tag="WHO WE ARE"
@@ -41,34 +53,15 @@ export const About = () => {
               className="space-y-4 font-mono text-sm text-cyan-400/80 mb-8"
               role="list"
             >
-              <li className="flex items-center gap-3">
-                <span
-                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
-                  aria-hidden="true"
-                />
-                ESTABLISHED 2024 · PALO ALTO, CA
-              </li>
-              <li className="flex items-center gap-3">
-                <span
-                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
-                  aria-hidden="true"
-                />
-                PIONEERING WDBX ARCHITECTURE
-              </li>
-              <li className="flex items-center gap-3">
-                <span
-                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
-                  aria-hidden="true"
-                />
-                TRACEABLE RETRIEVAL AND AGENT SAFETY FOCUS
-              </li>
-              <li className="flex items-center gap-3">
-                <span
-                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
-                  aria-hidden="true"
-                />
-                AUDIT-READY SECURITY CONTROLS
-              </li>
+              {identity.map((fact) => (
+                <li key={fact} className="flex items-center gap-3">
+                  <span
+                    className="w-1.5 h-1.5 shrink-0 rounded-full bg-cyan-400"
+                    aria-hidden="true"
+                  />
+                  {fact}
+                </li>
+              ))}
             </ul>
 
             <Link to="/research">
@@ -81,95 +74,48 @@ export const About = () => {
             </Link>
           </div>
 
-          <div className="lg:w-1/2">
-            <CardGrid cols={2} className="gap-5">
-              {about.values.map((item, i) => (
-                <m.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <div className="glass-card h-full p-6">
-                    <div
-                      className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4"
-                      aria-hidden="true"
-                    >
-                      {icons[i]}
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-text-dim leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-                </m.div>
-              ))}
-            </CardGrid>
-          </div>
+          <CardGrid cols={2} className="gap-5">
+            {about.values.map((item) => (
+              <FeatureCard
+                key={item.title}
+                title={item.title}
+                desc={item.description}
+              />
+            ))}
+          </CardGrid>
         </div>
       </div>
-      <div className="container-custom mt-32 relative z-10">
-        <div className="glass-card relative overflow-hidden p-10 md:p-14 lg:p-20 group">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/20 blur-[100px] -mr-48 -mt-48 group-hover:bg-cyan-400/30 transition-all duration-700" />
-          <div className="max-w-3xl relative z-10">
-            <h2 className="section-title">
-              Our Mission: <br />
-              Ensuring the Safety of{" "}
-              <span className="text-cyan-400">Autonomous Progress.</span>
-            </h2>
-            <p className="text-xl text-text-dim leading-relaxed mb-10">
-              As AI systems transition from generative tools to autonomous
-              agents, the margin for error disappears. Our mission is to provide
-              the structural integrity required for this transition, building
-              the guardrails, backtrace engines, and orchestration layers that
-              make autonomous intelligence a force for positive, predictable
-              change.
-            </p>
-            <div className="flex flex-wrap gap-12">
-              <div>
-                <div className="text-3xl font-display font-bold text-white mb-1">
-                  2024
-                </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">
-                  Founded
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-display font-bold text-white mb-1">
-                  Local
-                </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">
-                  Private-First Patterns
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-display font-bold text-white mb-1">
-                  Global
-                </div>
-                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">
-                  Research Network
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="container-custom mt-20 relative z-10">
-        <CardGrid cols={2} className="gap-6">
+
+      {/*
+        `SplitSection`/`Section` supply their own page gutter, so they sit as
+        siblings of the container above rather than inside it. `relative z-10`
+        is load-bearing: `.noise-overlay::before` is positioned at `z-index: 0`
+        and would otherwise paint over static-flow content.
+      */}
+      <SplitSection
+        kicker="Our Mission"
+        title="Ensuring the Safety of Autonomous Progress."
+        className="relative z-10"
+      >
+        <p>
+          As AI systems transition from generative tools to autonomous agents,
+          the margin for error disappears. Our mission is to provide the
+          structural integrity required for this transition, building the
+          guardrails, backtrace engines, and orchestration layers that make
+          autonomous intelligence a force for positive, predictable change.
+        </p>
+        <SpecList rows={missionFacts} />
+      </SplitSection>
+
+      {/* Operating principles — accent-edged asides, read as a rules list. */}
+      <Section className="relative z-10 py-0">
+        <CardGrid cols={2} className="gap-4">
           {about.operatingPrinciples.map((principle) => (
-            <Card
-              key={principle}
-              variant="glass"
-              className="text-sm leading-relaxed text-text-dim p-6"
-            >
-              {principle}
-            </Card>
+            <Callout key={principle}>{principle}</Callout>
           ))}
         </CardGrid>
-      </div>
+      </Section>
+
       <ContactCTA onOpenInquiry={openInquiry} />
     </section>
   );
