@@ -1,4 +1,4 @@
-import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
+import { readJsonLimited } from "@/lib/server/body-limit";
 import { getDb } from "@/lib/server/db";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 
@@ -18,14 +18,8 @@ export async function POST(req: Request) {
   }
 
   // 4 KB cap: the payload is {event, path} only.
-  const raw = await readBodyLimited(req, 4 * 1024);
-  if (raw === null) return payloadTooLarge();
-  let body;
-  try {
-    body = JSON.parse(raw);
-  } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const body = await readJsonLimited<{ event?: unknown; path?: unknown }>(req, 4 * 1024);
+  if (body instanceof Response) return body;
 
   const event = typeof body.event === "string" ? body.event : "";
   if (!TELEMETRY_EVENTS.has(event)) {

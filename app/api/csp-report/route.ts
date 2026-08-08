@@ -32,27 +32,24 @@ export async function POST(req: Request): Promise<Response> {
   // cost it exists to avoid.
   if (!rateLimit("csp-report", req, { windowMs: 60 * 1000, max: 60 })) return tooMany();
 
-  try {
-    // 64 KB cap: real CSP reports are a few hundred bytes; the handler only
-    // ever logs the first 2000 chars anyway. Rate limiting caps request COUNT;
-    // this caps request SIZE. Inside the try so a client aborting the stream
-    // mid-read stays a swallowed error, not a 500 — this endpoint never 5xxes.
-    const raw = await readBodyLimited(req, 64 * 1024);
-    if (raw === null) return payloadTooLarge();
-    if (raw) {
-      // Two wire formats in the wild: the legacy `report-uri` shape
-      // ({"csp-report": {...}}, content-type application/csp-report) and the
-      // Reporting API batch used by `report-to` (an array of {type, body}).
-      // Log whichever arrived rather than trying to normalize — the point is a
-      // greppable signal, not a schema.
-      console.warn("[CSP] violation report:", raw.slice(0, 2000));
-    }
-  } catch {
-    // A malformed or aborted body is not worth a 500 — the browser will not
-    // retry and there is nothing actionable to report about the report.
+  // 64 KB cap: real CSP reports are a few hundred bytes; the handler only ever
+  // logs the first 2000 chars anyway. Rate limiting caps request COUNT; this
+  // caps request SIZE. `readBodyLimited` never rejects — an aborted read comes
+  // back as null like an oversize one — so this endpoint's never-5xx property
+  // holds without a defensive wrapper here. That invariant is pinned in
+  // body-limit.test.ts, which is where it belongs.
+  const raw = await readBodyLimited(req, 64 * 1024);
+  if (raw === null) return payloadTooLarge();
+
+  if (raw) {
+    // Two wire formats in the wild: the legacy `report-uri` shape
+    // ({"csp-report": {...}}, content-type application/csp-report) and the
+    // Reporting API batch used by `report-to` (an array of {type, body}).
+    // Log whichever arrived rather than trying to normalize — the point is a
+    // greppable signal, not a schema.
+    console.warn("[CSP] violation report:", raw.slice(0, 2000));
   }
 
-  // 204: the spec wants no content, and returning a body invites the browser to
-  // parse it.
+  // 204 on success: the spec wants no content for an accepted report.
   return new Response(null, { status: 204 });
 }
