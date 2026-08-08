@@ -49,3 +49,44 @@ become separate cards.
 ## Known render warns
 - [FONT_MISSING] Spectral + JetBrains Mono — expected; app serves them at runtime
   (cfg.runtimeFontPrefixes). ui/ primitives render in Geist (shipped).
+
+## Run log — `/design-sync MLAI` (this run)
+
+**Config audit: clean.** All 16 `componentSrcMap` paths resolve, `entry`
+(`src/components/ui/index.ts`) exists and re-exports every mapped module, and the
+barrel's 17th export (`toast`) is correctly a sub-part of `Toaster`, not a 17th card.
+No drift since the last sync.
+
+**Fixed: the CSS compile step is now in-repo.** `cfg.cssEntry`
+(`.design-sync/lab-compiled.css`) was *missing* — the recipe was documented above but
+the script lived only in the external converter checkout (`.ds-sync/compile-css.mjs`),
+so a fresh clone could not regenerate it and every sync would report `[CSS_RUNTIME]`.
+It's now `scripts/design-sync-css.mjs` (`bun run design-sync:css`): runs the repo's own
+`@tailwindcss/postcss` over `src/index.css`, self-checks that OKLCH tokens *and* real
+utilities came out, and exits non-zero if not. Output is 208 KB (matches the ~203 KB
+recorded previously) and is gitignored — regenerate, never hand-edit or commit.
+
+**Found + fixed a real token bug (accessibility).** Diffing every utility used by the
+primitives against the compiled sheet surfaced `text-destructive-foreground` (used by
+`badge.tsx` and twice in `toast.tsx`) resolving to **nothing**: `--destructive-foreground`
+was never defined in `src/index.css`. Tailwind v4 emits no rule for an undefined theme
+color, so the destructive Badge/Toast text silently inherited the light `--foreground`
+— **2.7:1** on the light-red `--destructive` (`#ff5352`), failing WCAG AA. Added
+`--destructive-foreground: oklch(0.15 0.02 25)` (dark ink → **6.2:1**), mirroring the
+documented `--primary-foreground` reasoning, and re-exposed it via `@theme inline` per
+the "update both" rule. Both dead utilities now emit.
+
+**Guarded going forward.** `src/__tests__/design-sync.test.ts` (41 assertions) pins the
+config against the filesystem and asserts every semantic token used by the primitives is
+both defined in `:root` and re-exposed as `--color-*`. Mutation-checked: deleting the
+token fails 2 assertions.
+
+**Previews unaffected.** The 12 authored previews use inline `style={{}}`, not utility
+classes, so they carry no dependency on Tailwind's content scanning — a good property,
+keep it. The 4 floor cards (Dialog, DropdownMenu, Tooltip, Toaster) remain floor cards
+for the portal reason recorded above.
+
+**Not run here:** the converter itself (bundling, Playwright capture, card upload) — that
+toolchain is external to this repo and unavailable in this environment. Everything above
+is the repo-side half: config integrity, the compiled `cssEntry`, and the token fix the
+capture would otherwise have rendered wrong.

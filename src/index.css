@@ -234,6 +234,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -290,6 +291,13 @@
   --accent: oklch(0.30 0.045 215);
   --accent-foreground: oklch(0.95 0.02 210);
   --destructive: oklch(0.68 0.21 25);
+  /* Same reasoning as primary-foreground: --destructive is a LIGHT red
+     (L≈0.68, #ff5352), so its foreground is dark ink — 6.2:1 (WCAG AA).
+     Three components (badge, toast x2) already referenced
+     text-destructive-foreground; without this token Tailwind emitted no rule
+     at all and the text silently fell back to the light --foreground, which
+     is only 2.7:1 on destructive and fails AA. */
+  --destructive-foreground: oklch(0.15 0.02 25);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.79 0.13 207);

@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "crawl": "bash scripts/crawl-links.sh",
     "smoke": "bash scripts/smoke-api.sh",
-    "og": "python3 scripts/generate-og.py"
+    "og": "python3 scripts/generate-og.py",
+    "design-sync:css": "bun scripts/design-sync-css.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
