@@ -1,4 +1,4 @@
-import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
+import { readJsonLimited } from "@/lib/server/body-limit";
 import { getSession, setSessionCookie, toPublicUser } from "@/lib/server/session";
 import { requireWorkOS } from "@/lib/server/workos";
 
@@ -10,19 +10,13 @@ export async function PATCH(req: Request) {
   if (!auth) return Response.json({ error: "WorkOS is not configured" }, { status: 503 });
 
   // 16 KB cap: a handful of short profile fields.
-  const raw = await readBodyLimited(req, 16 * 1024);
-  if (raw === null) return payloadTooLarge();
-  let body: { firstName?: string; lastName?: string; company?: string; useCase?: string };
-  try {
-    body = JSON.parse(raw) as {
-      firstName?: string;
-      lastName?: string;
-      company?: string;
-      useCase?: string;
-    };
-  } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const body = await readJsonLimited<{
+    firstName?: unknown;
+    lastName?: unknown;
+    company?: unknown;
+    useCase?: unknown;
+  }>(req, 16 * 1024);
+  if (body instanceof Response) return body;
 
   const firstName =
     typeof body.firstName === "string" ? body.firstName.trim().slice(0, 80) : undefined;

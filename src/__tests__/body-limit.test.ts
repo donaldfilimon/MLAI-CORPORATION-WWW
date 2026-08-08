@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { payloadTooLarge, readBodyLimited } from "../lib/server/body-limit";
+import { payloadTooLarge, readBodyLimited, readJsonLimited } from "../lib/server/body-limit";
 
 function stringReq(body: string): Request {
   // Content-Length is set automatically and accurately from the byte length.
@@ -77,5 +77,48 @@ describe("payloadTooLarge", () => {
     const res = payloadTooLarge();
     expect(res.status).toBe(413);
     await expect(res.json()).resolves.toEqual({ error: "Payload too large" });
+  });
+});
+
+describe("readJsonLimited — the shared JSON-route contract", () => {
+  it("returns the parsed value when the body is valid JSON under the cap", async () => {
+    const req = stringReq(JSON.stringify({ event: "inquiry_open" }));
+    const body = await readJsonLimited<{ event?: string }>(req, 1024);
+    expect(body).not.toBeInstanceOf(Response);
+    expect((body as { event?: string }).event).toBe("inquiry_open");
+  });
+
+  it("returns a 413 when the body exceeds the cap", async () => {
+    const body = await readJsonLimited(stringReq(JSON.stringify({ x: "y".repeat(5000) })), 100);
+    expect(body).toBeInstanceOf(Response);
+    expect((body as Response).status).toBe(413);
+  });
+
+  it("returns a 400 when the body is not JSON", async () => {
+    const body = await readJsonLimited(stringReq("not-json-at-all"), 1024);
+    expect(body).toBeInstanceOf(Response);
+    expect((body as Response).status).toBe(400);
+    await expect((body as Response).json()).resolves.toEqual({ error: "Invalid JSON body" });
+  });
+
+  it("returns a 400 for an empty body — an aborted read is 413, a bodyless POST is 400", async () => {
+    const req = new Request("https://example.test/api/x", { method: "POST" });
+    const body = await readJsonLimited(req, 1024);
+    expect((body as Response).status).toBe(400);
+  });
+
+  it("returns a 413 when the stream errors mid-read", async () => {
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(new Uint8Array(10));
+        c.error(new Error("client went away"));
+      },
+    });
+    const req = new Request("https://example.test/api/x", {
+      method: "POST",
+      body: stream,
+      duplex: "half",
+    } as RequestInit & { duplex: "half" });
+    expect(((await readJsonLimited(req, 1024)) as Response).status).toBe(413);
   });
 });

@@ -1,4 +1,4 @@
-import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
+import { readJsonLimited } from "@/lib/server/body-limit";
 import { getSession } from "@/lib/server/session";
 import { generateLlmResponse, type ChatMessage } from "@/lib/server/llm";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
@@ -9,14 +9,8 @@ export async function POST(req: Request) {
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   // 128 KB cap: conversation history (the handler keeps only the last 12 turns).
-  const raw = await readBodyLimited(req, 128 * 1024);
-  if (raw === null) return payloadTooLarge();
-  let body: { messages?: ChatMessage[] };
-  try {
-    body = JSON.parse(raw) as { messages?: ChatMessage[] };
-  } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const body = await readJsonLimited<{ messages?: ChatMessage[] }>(req, 128 * 1024);
+  if (body instanceof Response) return body;
 
   const messages =
     body.messages

@@ -57,6 +57,30 @@ export async function readBodyLimited(req: Request, max: number): Promise<string
   }
 }
 
+/** The 413. Exported for routes that read raw text rather than JSON (csp-report). */
 export function payloadTooLarge(): Response {
   return Response.json({ error: "Payload too large" }, { status: 413 });
+}
+
+/**
+ * Read a capped JSON body, or the `Response` the handler should return.
+ *
+ * Every JSON route wants the same three outcomes — over the cap → 413,
+ * unparseable → 400, otherwise the parsed value — so that contract lives here
+ * once instead of being restated at each call site. Callers narrow with a
+ * single `instanceof Response` check; `JSON.parse` can never yield a
+ * `Response`, so the union is unambiguous.
+ *
+ * `T` is an assertion, not a validation: this only guarantees the body was
+ * valid JSON within the cap. Routes still validate their own fields — see
+ * `TELEMETRY_EVENTS` or the inquiry length checks.
+ */
+export async function readJsonLimited<T>(req: Request, max: number): Promise<T | Response> {
+  const raw = await readBodyLimited(req, max);
+  if (raw === null) return payloadTooLarge();
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 }
