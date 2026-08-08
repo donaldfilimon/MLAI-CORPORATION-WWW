@@ -24,6 +24,8 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - `src/components/` - shared UI, article shells, demos, charts, and layout primitives.
 - `src/lib/` - typed API wrappers, router compatibility, telemetry, auth, and server helpers.
 - `src/data/` - single source of truth for marketing, blog, research, team, product, and FAQ content.
+- `src/film/`, `src/trailer/`, `src/mega/`, `src/explainer/` - the cinematic `/showcase/*` surfaces: a shared timeline engine and scene library in `src/film/`, plus three alternate cuts built on it.
+- `src/design/` - the `/showcase/design` design lab, lazy-loaded one board at a time.
 - `public/` - static assets, sitemap, mirrored WDBX docs, and research PDFs.
 - `docs/` - operator runbooks and project specifications.
 
