@@ -12,8 +12,17 @@ name: Deploy to Cloud Run
 #   App runtime secrets live in Google Secret Manager (created once) and are
 #   wired in at deploy time via --set-secrets below.
 
+# Gated on CI. Previously this fired on `push: branches: [main]` as a job
+# independent of ci.yml, with no branch protection and a `production`
+# environment carrying zero protection rules — so the vitest suite gated
+# nothing. A type error or build failure could not reach production (the image
+# build runs `next build`), but a FAILING TEST could: the admin-MFA,
+# rate-limit, and telemetry-privacy suites are exactly the ones that were
+# advisory. workflow_run makes CI a real gate.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -29,8 +38,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    # workflow_run fires on completion regardless of outcome, so the success
+    # check has to be explicit. workflow_dispatch has no upstream run and is
+    # allowed through deliberately, for manual redeploys.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
+      # Pin to the commit CI actually validated. On a workflow_run event
+      # checkout defaults to the default branch's HEAD, which may already have
+      # moved past the run that just passed — so without this the deploy can
+      # ship a different commit than the one the gate approved.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - id: auth
         uses: google-github-actions/auth@v2
@@ -45,14 +66,42 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
+          # --service-account is opt-in via a repo variable. Without it the
+          # revision runs as the DEFAULT COMPUTE SERVICE ACCOUNT, which carries
+          # project-wide Editor — one SSRF or RCE in a route handler would
+          # become project-wide GCP write access. Set the RUNTIME_SA variable to
+          # a minimal service account; the guard keeps the deploy working until
+          # you do, rather than failing on an empty flag value.
+          RUNTIME_SA_FLAG=""
+          if [ -n "${{ vars.RUNTIME_SA }}" ]; then
+            RUNTIME_SA_FLAG="--service-account=${{ vars.RUNTIME_SA }}"
+          else
+            echo "::warning::RUNTIME_SA is unset — this revision will run as the default Compute service account (project Editor). Create a minimal runtime SA and set the RUNTIME_SA repo variable."
+          fi
+
+          # DATABASE_URL is set explicitly. resolveDbPath() falls back to the
+          # RELATIVE path "inquiries.db", which resolves against CWD (/app) —
+          # writable only after the Dockerfile chowns /app, and not the mount
+          # point. Pointing it at /app/data keeps the database in the directory
+          # a volume can actually be attached to.
+          #
+          # Note --set-env-vars REPLACES the whole env set, so anything added by
+          # hand in the console is wiped on the next deploy. Everything the app
+          # needs must therefore be listed here.
           gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
             --source . \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
             --platform managed \
             --allow-unauthenticated \
-            --set-env-vars "NODE_ENV=production" \
+            $RUNTIME_SA_FLAG \
+            --set-env-vars "NODE_ENV=production,DATABASE_URL=/app/data/inquiries.db" \
             --set-secrets "WORKOS_API_KEY=WORKOS_API_KEY:latest,WORKOS_CLIENT_ID=WORKOS_CLIENT_ID:latest,SESSION_SECRET=SESSION_SECRET:latest"
           # Optional secrets — add to the --set-secrets list once created in
           # Secret Manager: GEMINI_API_KEY, STRIPE_PAYMENT_LINK, APP_URL,
-          # FRONTEND_URL, ADMIN_REQUIRE_MFA
+          # FRONTEND_URL, ADMIN_REQUIRE_MFA.
+          #
+          # APP_URL matters more than "optional" suggests: it is the OAuth
+          # redirect base (workos.ts builds ${APP_URL}/api/auth/callback) and
+          # defaults to http://localhost:3000, so login is broken until it is
+          # set to the deployed origin and the service redeployed.

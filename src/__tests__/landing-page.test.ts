@@ -43,6 +43,31 @@ describe("site/index.html — GitHub Pages landing page", () => {
     }
   });
 
+  it("keeps the duplicated brand assets byte-identical to public/", () => {
+    // Existence alone is not enough. `bun run og` regenerates the raster brand
+    // assets into `public/` ONLY — it has no `site/` step — so after a re-skin
+    // the published landing page silently keeps the old artwork while every
+    // existence assertion above still passes. Compare the bytes.
+    for (const asset of ["favicon.svg", "og-image.png", "apple-touch-icon.png"]) {
+      const inSite = readFileSync(resolve(SITE_DIR, asset));
+      const inPublic = readFileSync(resolve(SITE_DIR, "..", "public", asset));
+      expect(
+        inSite.equals(inPublic),
+        `site/${asset} has drifted from public/${asset} — re-copy it after \`bun run og\``,
+      ).toBe(true);
+    }
+  });
+
+  it("uses relative asset paths, which are the only ones Pages can serve", () => {
+    // Pages serves this repo under the /MLAI-CORPORATION-WWW/ project prefix,
+    // so a root-absolute "/favicon.svg" resolves to the user-pages root and
+    // leaves the uploaded artifact entirely (it 404s, or worse, silently
+    // returns a different repo's file). The existing `/_next/` and `/public/`
+    // greps do not catch this shape.
+    const rootAbsolute = html.match(/(?:href|src)="\/(?!\/)[^"]*"/g) ?? [];
+    expect(rootAbsolute, `root-absolute asset paths cannot resolve under the Pages project prefix`).toEqual([]);
+  });
+
   it("uses the brand fonts (Spectral display + Geist body), not a stale substitute", () => {
     expect(html).toContain("Spectral");
     expect(html).toMatch(/font-family:\s*"Geist"/);
