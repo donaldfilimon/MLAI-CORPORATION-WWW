@@ -1,10 +1,4 @@
-@./skills/zig-017-modernization/SKILL.md
-@./skills/swift-63-modernization/SKILL.md
 @./skills/ai-tooling-sync/SKILL.md
-@./skills/abi-codebase-audit/SKILL.md
-@./skills/abi-refactor-architecture/SKILL.md
-@./skills/abi-lsp-zig-workflow/SKILL.md
-@./skills/abi-goals-roadmap/SKILL.md
 
 # MLAI Corporation WWW
 

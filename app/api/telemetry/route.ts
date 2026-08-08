@@ -1,3 +1,4 @@
+import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
 import { getDb } from "@/lib/server/db";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 
@@ -16,9 +17,12 @@ export async function POST(req: Request) {
     return new Response(null, { status: 204 });
   }
 
+  // 4 KB cap: the payload is {event, path} only.
+  const raw = await readBodyLimited(req, 4 * 1024);
+  if (raw === null) return payloadTooLarge();
   let body;
   try {
-    body = await req.json();
+    body = JSON.parse(raw);
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }

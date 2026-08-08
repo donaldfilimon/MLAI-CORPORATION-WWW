@@ -24,7 +24,9 @@ export default async function Page({
       {paper ? (
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
+          // Safe only because the payload is in-repo content validated by the
+          // Zod schema in src/data/schemas (see content.test.ts) — JSON.stringify
+          // does NOT escape "</script>", so never widen this to user input.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(researchArticleLd(paper)) }}
         />
       ) : null}

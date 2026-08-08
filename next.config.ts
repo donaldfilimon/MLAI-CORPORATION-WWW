@@ -23,9 +23,15 @@ import path from "node:path";
  * Extend the allowlist when a surface gains a new external origin; never widen
  * to a bare https: wildcard.
  */
+// `next dev` evaluates strings (HMR, eval-based source maps), so development
+// needs 'unsafe-eval' or every route logs a CSP violation — which is exactly
+// the noise that drowned the first full `bun run crawl`. Production bundles
+// never eval; keep the shipped policy strict.
+const DEV_EVAL = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net",
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${DEV_EVAL} blob: https://cdn.jsdelivr.net`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://avatars.githubusercontent.com",

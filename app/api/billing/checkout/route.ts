@@ -1,3 +1,4 @@
+import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
 import { getSession } from "@/lib/server/session";
 
 /**
@@ -15,9 +16,12 @@ export async function POST(req: Request) {
   const user = await getSession(req);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
+  // 4 KB cap: the payload is a single plan id.
+  const raw = await readBodyLimited(req, 4 * 1024);
+  if (raw === null) return payloadTooLarge();
   let planId: string | undefined;
   try {
-    const body: { planId?: unknown } = await req.json();
+    const body: { planId?: unknown } = JSON.parse(raw);
     planId = typeof body.planId === "string" ? body.planId : undefined;
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });

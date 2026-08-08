@@ -1,3 +1,4 @@
+import { payloadTooLarge, readBodyLimited } from "@/lib/server/body-limit";
 import { getDb } from "@/lib/server/db";
 import { getSession } from "@/lib/server/session";
 import { checkAdminAccess } from "@/lib/server/workos";
@@ -6,9 +7,12 @@ import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 export async function POST(req: Request) {
   if (!rateLimit("inquiries", req, { windowMs: 5 * 60 * 1000, max: 5 })) return tooMany();
 
+  // 32 KB cap: room for a long message field, nothing more.
+  const raw = await readBodyLimited(req, 32 * 1024);
+  if (raw === null) return payloadTooLarge();
   let body;
   try {
-    body = await req.json();
+    body = JSON.parse(raw);
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
