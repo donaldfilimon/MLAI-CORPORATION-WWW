@@ -467,7 +467,10 @@ function Generative() {
       cancelAnimationFrame(raf);
       removeEventListener("resize", rs);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Deps are deliberately narrow: only `mode` and `p.count` change the loop's
+    // structure. The other knobs are read through `pr.current` on every rAF
+    // tick, so listing them would tear down and restart the animation on each
+    // slider move — a visible hitch, not a correctness gain.
   }, [mode, p.count]);
 
   const Slider = ({

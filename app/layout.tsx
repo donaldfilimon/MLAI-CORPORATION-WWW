@@ -97,14 +97,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
         </noscript>
         <link rel="mask-icon" href="/favicon.svg" color="#22d3ee" />
+        {/* Safe only because both payloads are module constants built from
+            in-repo data — JSON.stringify does NOT escape "</script>", so never
+            widen these to user input. */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD }}
         />
       </head>

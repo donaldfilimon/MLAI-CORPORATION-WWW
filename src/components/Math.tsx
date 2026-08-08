@@ -55,7 +55,8 @@ export function BlockMath({ tex }: { tex: string }) {
   return (
     <div
       className="my-1 overflow-x-auto rounded-lg border border-white/5 bg-white/2 px-5 py-4 text-[0.95em] text-cyan-50/90"
-      // eslint-disable-next-line react/no-danger -- KaTeX output is generated from trusted in-repo LaTeX strings
+      // KaTeX output generated from trusted in-repo LaTeX strings, rendered
+      // with output:"html" and throwOnError:false — no user input reaches this.
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

@@ -29,7 +29,9 @@ export function WdbxLiveDemo() {
     setBlocks([...engine.blocks].slice(-5));
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Mount-only by design: seeds the demo with the first preset once. `run` is
+  // recreated every render, so listing it would re-run the seed query on every
+  // keystroke and clobber whatever the user typed.
   useEffect(() => run(PRESETS[0] ?? ""), []);
 
   const topScore = hits.length ? Math.max(hits[0]?.score ?? 1e-6, 1e-6) : 1;
