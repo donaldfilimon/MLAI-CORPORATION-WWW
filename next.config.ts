@@ -37,10 +37,23 @@ const CSP = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "upgrade-insecure-requests",
+  // Violation reporting. This allowlist is hand-curated against a moving
+  // surface — a CDN version bump, a new model host, a new avatar origin — and
+  // without reporting the first signal that it broke a feature is a user
+  // complaint. `report-to` is the current directive; `report-uri` is kept
+  // alongside it because Safari and older Firefox still only implement that one.
+  "report-to csp-endpoint",
+  "report-uri /api/csp-report",
 ].join("; ");
 
 const SECURITY_HEADERS = [
   { key: "Content-Security-Policy", value: CSP },
+  // Names the group that `report-to csp-endpoint` refers to. Same-origin, so
+  // reports land in the app's own logs rather than a third party.
+  {
+    key: "Reporting-Endpoints",
+    value: 'csp-endpoint="/api/csp-report"',
+  },
   // 2 years, ready for preload-list submission.
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
   { key: "X-Content-Type-Options", value: "nosniff" },

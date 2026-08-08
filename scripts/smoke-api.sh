@@ -5,6 +5,8 @@
 #
 # Contracts mirror src/lib/api.ts and the handlers under app/api/:
 #   204 accept            — allowlisted telemetry event is accepted
+#   204 csp sink          — /api/csp-report accepts any body shape, never 5xx
+#   429 rate-limited      — csp-report sheds past 60/min per IP (SMOKE_RATELIMIT=1)
 #   DNT no-store          — DNT:1 short-circuits to 204 BEFORE the DB insert
 #   400 unknown event     — non-allowlisted telemetry event rejected
 #   401 unauthenticated   — protected endpoints without a session
@@ -43,6 +45,47 @@ check "telemetry: unknown event → 400" 400 "$(code -X POST "$BASE_URL/api/tele
 
 check "telemetry: invalid JSON → 400" 400 "$(code -X POST "$BASE_URL/api/telemetry" \
   -H 'content-type: application/json' -d 'not-json')"
+
+# ── csp-report ───────────────────────────────────────────────────────────────
+# Sink for report-uri/report-to in next.config.ts. Contract: always 204
+# regardless of body shape (two wire formats exist and neither is validated),
+# never 5xx, rate-limited like /api/telemetry (60s/60 per client IP).
+#
+# Each case sends a distinct X-Forwarded-For from the RFC 5737 documentation
+# range so it gets its own limiter bucket. Without that, re-running this script
+# inside one 60s window accumulates against the shared "unknown" key
+# (clientIpOf falls back to "unknown" when curl hits localhost with no proxy
+# headers) and the always-on cases start failing spuriously.
+CSP_IP="203.0.113.$((RANDOM % 200 + 1))"
+
+check "csp-report: report-uri shape → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
+  -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/csp-report' \
+  -d '{"csp-report":{"document-uri":"https://mlai-corp.com/","violated-directive":"script-src","blocked-uri":"https://evil.test/x.js"}}')"
+
+check "csp-report: Reporting API batch → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
+  -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/reports+json' \
+  -d '[{"type":"csp-violation","body":{"effectiveDirective":"img-src","blockedURL":"https://evil.test/a.png"}}]')"
+
+check "csp-report: empty body → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
+  -H "x-forwarded-for: $CSP_IP" -d '')"
+
+check "csp-report: unparseable body → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
+  -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/json' -d 'not-json-at-all')"
+
+# Exhausting a 60/min limiter costs 61 requests, so it is opt-in — same
+# convention as SMOKE_WRITE. Uses its own IP so the four cases above are
+# unaffected by the burst regardless of ordering.
+if [ "${SMOKE_RATELIMIT:-0}" = "1" ]; then
+  BURST_IP="203.0.113.254"
+  i=0
+  while [ "$i" -lt 60 ]; do
+    code -X POST "$BASE_URL/api/csp-report" -H "x-forwarded-for: $BURST_IP" \
+      -H 'content-type: application/csp-report' -d '{"csp-report":{}}' >/dev/null
+    i=$((i + 1))
+  done
+  check "csp-report: 61st request in window → 429" 429 "$(code -X POST "$BASE_URL/api/csp-report" \
+    -H "x-forwarded-for: $BURST_IP" -H 'content-type: application/csp-report' -d '{"csp-report":{}}')"
+fi
 
 # ── auth ─────────────────────────────────────────────────────────────────────
 ME=$(curl -s "$BASE_URL/api/auth/me")
