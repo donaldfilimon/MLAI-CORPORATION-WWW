@@ -20,14 +20,21 @@ const ROOT = resolve(__dirname, "../..");
 const cfg = JSON.parse(readFileSync(resolve(ROOT, ".design-sync/config.json"), "utf8")) as {
   entry: string;
   cssEntry: string;
-  componentSrcMap: Record<string, string>;
+  // Sub-parts (CardHeader, DialogTrigger, …) are mapped to null on purpose: they
+  // stay in the bundle for composition but must not become separate cards. Only
+  // the non-null entries name a real source file.
+  componentSrcMap: Record<string, string | null>;
 };
+const mappedSources = Object.entries(cfg.componentSrcMap).filter(
+  (e): e is [string, string] => typeof e[1] === "string",
+);
 const indexCss = readFileSync(resolve(ROOT, "src/index.css"), "utf8");
 const uiDir = resolve(ROOT, "src/components/ui");
 
 describe("design-sync config", () => {
   it("every mapped component source file exists", () => {
-    for (const [name, path] of Object.entries(cfg.componentSrcMap)) {
+    expect(mappedSources.length, "config maps at least one real source file").toBeGreaterThan(0);
+    for (const [name, path] of mappedSources) {
       expect(existsSync(resolve(ROOT, path)), `${name} → ${path}`).toBe(true);
     }
   });
@@ -36,9 +43,26 @@ describe("design-sync config", () => {
     const entryPath = resolve(ROOT, cfg.entry);
     expect(existsSync(entryPath)).toBe(true);
     const barrel = readFileSync(entryPath, "utf8");
-    for (const path of Object.values(cfg.componentSrcMap)) {
+    // The entry is a thin two-layer barrel (`export * from "./ui"` / `"./site"`),
+    // so a module is reachable transitively, not named directly in the entry.
+    // Follow one level of `export * from "./x"` and search those barrels too.
+    const reachable = [barrel];
+    for (const m of barrel.matchAll(/export \* from "\.\/([^"]+)"/g)) {
+      for (const cand of [`${m[1]}/index.ts`, `${m[1]}.ts`]) {
+        const sub = resolve(entryPath, "..", cand);
+        if (existsSync(sub)) {
+          reachable.push(readFileSync(sub, "utf8"));
+          break;
+        }
+      }
+    }
+    expect(reachable.length, "entry re-exports at least one layer barrel").toBeGreaterThan(1);
+    for (const [, path] of mappedSources) {
       const mod = path.split("/").pop()!.replace(/\.tsx?$/, "");
-      expect(barrel, `barrel must export ./${mod}`).toContain(`./${mod}`);
+      expect(
+        reachable.some((src) => src.includes(`./${mod}`)),
+        `${mod} must be reachable from ${cfg.entry}`,
+      ).toBe(true);
     }
   });
 });
