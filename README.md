@@ -70,6 +70,8 @@ External collateral must not cite unsupported benchmark, security, compliance, d
 
 Admin reads such as `GET /api/inquiries` and `GET /api/telemetry/summary` require a valid session and `ADMIN_EMAILS` allowlist membership. When `ADMIN_REQUIRE_MFA=true`, they also require at least one enrolled WorkOS MFA factor and fail closed if factor verification is unavailable. See `docs/mfa-workos-runbook.md`.
 
+Write endpoints are protected on two independent axes. In-memory fixed-window rate limits cap how *many* requests a client IP can make, and `src/lib/server/body-limit.ts` caps how *large* each body may be — Next 15 route handlers ship no default body cap, so every POST reads through it and returns `413` past its per-route limit (4 KB telemetry and checkout, 16 KB profile, 32 KB inquiries, 64 KB CSP reports, 128 KB LLM chat). Give any new POST route a cap sized to its real payload.
+
 ## Deployment
 
 The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET`; set `APP_URL` and `FRONTEND_URL` to the deployed origin. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main` as the merge gate, separate from the deploy workflows.
