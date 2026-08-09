@@ -25,15 +25,31 @@ interface Feature {
 const features: Feature[] = [
   {
     icon: <Activity className="w-6 h-6 text-cyan-400" />,
-    title: "HNSW Retrieval",
-    description: "The store is indexed as a Hierarchical Navigable Small World graph, so nearest-neighbour search grows with the logarithm of the collection rather than scanning it. Distance kernels compile to the target ISA through Zig's SIMD vectors.",
-    glossary: "A layered proximity graph. Search starts coarse in the sparse upper layers and descends, narrowing the candidate set at each hop. Defaults are M=16, efConstruction=200."
+    // Sourced to what the MIRRORED WDBX docs actually document
+    // (`public/docs/wdbx/architecture.md`: "vector store, block-chain memory,
+    // sharding, snapshots"), NOT to the internal fact sheet. An earlier draft
+    // of this card named HNSW with "M=16, efConstruction=200" — those appear
+    // ONLY in an untagged prose bullet in docs/master-reference.md, and the
+    // nine mirrored WDBX docs never mention HNSW, efConstruction, or any index
+    // structure at all. Publishing specific tuning parameters for an index the
+    // product's own documentation does not describe is the same class of claim
+    // the /benchmarks charts were removed for, so it is deliberately absent.
+    // Restore it only against the wdbx source, not against master-reference.
+    title: "Vector Retrieval",
+    description: "Queries resolve by similarity over stored vectors rather than by keyword match, so retrieval reflects meaning instead of surface form. Distance kernels compile to the target ISA through Zig's SIMD vectors.",
+    glossary: "Each stored item carries an embedding; a query is embedded the same way, and the store returns the nearest vectors by cosine similarity."
   },
   {
     icon: <ShieldCheck className="w-6 h-6 text-cyan-400" />,
     title: "Tamper-Evident History",
-    description: "Interaction blocks are hash-chained in the write-ahead log, so a later edit to earlier history breaks the chain and is detectable on replay. The chain sits at the WAL level, not inside the index, so verifying history does not tax search.",
-    glossary: "Each block commits to its predecessor — Hᵢ = SHA-256(Hᵢ₋₁ ‖ tᵢ ‖ seqᵢ ‖ pᵢ ‖ mᵢ). This makes history verifiable after the fact; it is not encryption and not an access-control mechanism."
+    // Kept, unlike the HNSW card above, because the mirrored WDBX docs DO
+    // document this: architecture.md lists "block-chain memory" under
+    // `src/database/*`. Trimmed anyway — the earlier draft asserted the chain
+    // "sits at the WAL level, not inside the index", which the mirrored docs
+    // do not describe and which referenced an index this file no longer
+    // claims. The property that matters is detectability, not placement.
+    description: "Interaction blocks are hash-chained, so a later edit to earlier history breaks the chain and is detectable on replay.",
+    glossary: "Each block commits to its predecessor, so history can be verified after the fact. It is not encryption and not an access-control mechanism — it tells you whether the record changed, not who may read it."
   },
   {
     icon: <GitBranch className="w-6 h-6 text-cyan-400" />,
