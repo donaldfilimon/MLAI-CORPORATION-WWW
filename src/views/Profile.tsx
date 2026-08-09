@@ -61,10 +61,15 @@ export function Profile() {
     setStatus('');
     try {
       const checkout = await createCheckout(planId);
-      if (checkout.url) window.location.href = checkout.url;
-      else setStatus(checkout.nextStep ?? checkout.error ?? 'Checkout is not configured yet.');
+      // ok:false is a structured outcome the API meant for the user to read —
+      // "Platform is priced individually" (400) or "billing isn't wired up yet"
+      // (503) — so render its nextStep/error rather than treating it as a fault.
+      if (checkout.ok) window.location.href = checkout.url;
+      else setStatus(checkout.nextStep ?? checkout.error);
     } catch {
-      setStatus('Checkout is not configured yet.');
+      // Only genuine network/5xx failures land here now; the unconfigured-billing
+      // case reports itself above, so this must not claim to know the cause.
+      setStatus('Checkout could not be started. Please try again.');
     }
   }
 

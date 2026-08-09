@@ -8,8 +8,12 @@ import { CardPanel, DataTable, Eyebrow } from "@/components/site";
 const ARCH_COLS = ["Property", "WDBX", "SQL", "NoSQL"] as const;
 const ARCH_ROWS: [string, string, string, string][] = [
   ["Primary type", "Vectors (ℝᵈ)", "Rows / columns", "Documents"],
-  ["Scaling model", "Vector-aware sharding", "Manual / replicas", "Hash auto-shard"],
-  ["Concurrency", "Lock-free MVCC", "ACID locking", "Eventual (BASE)"],
+  // Was "Vector-aware sharding" — distributed sharding is on the forbidden
+  // list in CLAUDE.md and master-reference.md §4 describes no sharding layer.
+  // Memory-mapped single-node persistence is what §4 actually documents.
+  ["Scaling model", "Single-node, memory-mapped", "Manual / replicas", "Hash auto-shard"],
+  // "Lock-free" was an adjective §4 does not carry; it says MVCC transactions.
+  ["Concurrency", "MVCC transactions", "ACID locking", "Eventual (BASE)"],
   ["Integrity", "Hash-chained blocks", "WAL logs", "Replication logs"],
   ["Runtime", "Zig (no GC)", "C++ / Java (GC)", "Java / Go (GC)"],
 ];
@@ -19,7 +23,7 @@ const ARCH_ROWS: [string, string, string, string][] = [
 const FRAMING: readonly (readonly [string, string])[] = [
   [
     "Repeatable",
-    "Charts separate workload shape, hardware target, and runtime notes.",
+    "Figures state workload shape, hardware target, and where the number came from.",
   ],
   [
     "Operational",
@@ -38,9 +42,10 @@ export function Benchmarks() {
         <Eyebrow className="mb-6">PERFORMANCE LAB</Eyebrow>
         <h1 className="section-title">Benchmarks with operating context.</h1>
         <p className="section-subtitle max-w-3xl">
-          Performance analytics for WDBX retrieval and agent orchestration,
-          framed around latency budgets, throughput targets, GPU acceleration,
-          and repeatable workloads.
+          How WDBX retrieval and agent orchestration are built, and what we can
+          currently show for it — architectural properties first, then the one
+          GPU benchmark set we can attribute, each figure tagged measured or
+          target. We do not publish head-to-head numbers against other products.
         </p>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {/* `CardPanel` rather than `FeatureCard` because these keep their
@@ -76,8 +81,14 @@ export function Benchmarks() {
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
           <div>
             <Eyebrow className="mb-4">INTERACTIVE</Eyebrow>
+            {/* Was "Sharding latency model". The demo is a parallel-retrieval
+                model with illustrative constants, but as a heading it asserted
+                a WDBX sharding layer that master-reference.md §4 does not
+                document — and it sat directly under the architecture table that
+                now says single-node. The demo's own body copy still says
+                "shards"; that file is not owned here. */}
             <h2 className="mb-3 font-display text-xl font-bold text-white">
-              Sharding latency model
+              Parallel retrieval model
             </h2>
             <ShardingLatencyDemo />
           </div>

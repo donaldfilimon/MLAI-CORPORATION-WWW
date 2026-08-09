@@ -79,11 +79,16 @@ function CompShell({
   );
 }
 
+// Placeholder chip/stat content for a layout board. `/showcase/design` is a
+// public, indexed route: "SOC 2 track" asserted a compliance program that does
+// not exist (see `src/data/categories/stats.ts`), and 295× / 0.8 ms / 16.5k are
+// only publishable inside `Stats.tsx`, whose target framing does not travel
+// with a lifted card.
 const CHIPS: readonly (readonly [string, string])[] = [
-  ["Privacy-first", "#22d3ee"], ["WDBX runtime", "#60a5fa"], ["SOC 2 track", "#34d399"], ["295× target", "#fbbf24"],
+  ["Privacy-first", "#22d3ee"], ["WDBX runtime", "#60a5fa"], ["Audit-ready", "#34d399"], ["Sample chip", "#fbbf24"],
 ];
 const STATS: readonly (readonly [string, string, string])[] = [
-  ["295×", "GPU speedup", "#22d3ee"], ["0.8ms", "search latency", "#60a5fa"], ["16.5k", "throughput", "#a855f7"],
+  ["1,234", "sample metric", "#22d3ee"], ["56%", "sample ratio", "#60a5fa"], ["78", "sample count", "#a855f7"],
 ];
 
 export function ComponentsSection(): ReactNode {

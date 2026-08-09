@@ -800,7 +800,9 @@ export default function BrandBoard(): ReactNode {
               success
             </span>
             <kbd className="text-xs px-2 py-1 rounded-lg border border-white/10 text-slate-400">⌘K</kbd>
-            <span className="font-mono text-cyan-200 text-sm bg-black/30 rounded-lg px-3 py-1.5">295×</span>
+            {/* Mono-inline sample. Was "295×" — a published MLAI target, which
+                a brand board strips of its target framing. */}
+            <span className="font-mono text-cyan-200 text-sm bg-black/30 rounded-lg px-3 py-1.5">1,234</span>
           </div>
         </Card>
       </Section>

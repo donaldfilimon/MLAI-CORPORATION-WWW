@@ -43,19 +43,33 @@ function StatCard({ value, label, tint, sub }: StatCardProps) {
 type ActivityEvent = readonly [title: string, detail: string, color: string, ago: string];
 
 export function Overview() {
+  // Placeholder console data for a layout board — `/showcase/design` is a
+  // public, indexed route, so nothing here may read as a real deployment or
+  // carry a published MLAI figure. The previous version named a "wdbx-prod-01"
+  // host, counted 142,887 live blocks, and reported shard health; MLAI runs no
+  // hosted service, and distributed sharding is on the forbidden-claims list in
+  // CLAUDE.md.
   const events: ActivityEvent[] = [
-    ["Index rebuilt", "wdbx-prod-01 · HNSW · M=16", "var(--proof)", "2m"],
+    ["Index rebuilt", "sample host · HNSW · M=16", "var(--proof)", "2m"],
     ["Abi routed 3 sessions to Abbey", "intent: learning", "var(--persona-abi)", "11m"],
-    ["Memory chain verified", "142,887 blocks · 0 mismatches", "var(--proof)", "26m"],
-    ["Aviva: dense-mode reply", "sharding guidance", "var(--persona-aviva)", "40m"],
-    ["Shard-7 recovered", "warn → ok", "var(--signal)", "1h"],
+    ["Memory chain verified", "sample chain · 0 mismatches", "var(--proof)", "26m"],
+    ["Aviva: dense-mode reply", "retrieval guidance", "var(--persona-aviva)", "40m"],
+    ["Segment recovered", "warn → ok", "var(--signal)", "1h"],
   ];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }} className="cn-stat-grid">
-        <StatCard value="142.9k" label="Memory blocks" tint="#22d3ee" sub="SHA-256 chained" />
-        <StatCard value="0.8ms" label="p99 search" tint="#60a5fa" sub="illustrative" />
-        <StatCard value="12" label="Shards healthy" tint="#34d399" sub="of 12" />
+        {/* Deliberately unitless, unnamed placeholders. The previous tiles read
+            "142.9k Memory blocks", "0.8ms p99 search" and "12 Shards healthy":
+            0.8 ms is a published MLAI figure that master-reference.md §4 defines
+            as a p50 ○ target, so relabeling it p99 stated a strictly stronger
+            claim. Substituting a different latency would just be an invented
+            figure with a hedge in 11px type, so the unit and the metric name go
+            with it — a layout board needs a number-shaped string, not a
+            measurement. */}
+        <StatCard value="1,234" label="Sample metric" tint="#22d3ee" sub="sample data" />
+        <StatCard value="56%" label="Sample ratio" tint="#60a5fa" sub="sample data" />
+        <StatCard value="78" label="Sample count" tint="#34d399" sub="sample data" />
         <StatCard value="3" label="Personas online" tint="#a855f7" sub="Abi · Abbey · Aviva" />
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }} className="cn-overview-grid">
