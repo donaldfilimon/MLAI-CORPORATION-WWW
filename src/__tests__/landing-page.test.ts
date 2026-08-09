@@ -86,3 +86,72 @@ describe("site/index.html — GitHub Pages landing page", () => {
     expect(html).not.toContain('src="/public/');
   });
 });
+
+describe("pages.yml — the workflow's paths filter must cover this test's inputs", () => {
+  // Why this guard exists. The filter only listed `site/**`, the test file, and
+  // the workflow — but this test ALSO imports SITE_URL from route-meta.ts and
+  // byte-compares site/<asset> against public/<asset>. So the two inputs most
+  // likely to change (a re-skin, a canonical-host edit) triggered nothing.
+  //
+  // The concrete failure: `bun run og` writes the raster brand assets into
+  // public/ ONLY — it has no site/ step. After a re-skin, site/ silently keeps
+  // the old artwork, Pages keeps publishing it, and the drift only surfaces
+  // later as a confusing red build on the next unrelated site/ commit.
+  //
+  // Deriving the dependency list from this file's own source, rather than
+  // hardcoding it, is the point: add an import or a compared asset without
+  // widening the filter and this fails instead of going quiet.
+  const workflow = readFileSync(
+    resolve(__dirname, "../../.github/workflows/pages.yml"),
+    "utf8",
+  );
+  const selfSource = readFileSync(resolve(__dirname, "landing-page.test.ts"), "utf8");
+
+  // Narrow on purpose: only the `paths:` block of the push trigger, stopping at
+  // `workflow_dispatch`. A full YAML parse would need a dependency the repo
+  // does not carry, and this block is a flat list of quoted strings.
+  const pathsBlock = workflow.split("workflow_dispatch")[0] ?? "";
+  const filter = [...pathsBlock.matchAll(/^\s+- "([^"]+)"/gm)].map((m) => m[1] as string);
+
+  const covers = (file: string) =>
+    filter.some((p) => (p.endsWith("/**") ? file.startsWith(p.slice(0, -3) + "/") : p === file));
+
+  it("parses a non-empty paths filter (guards against the regex silently matching nothing)", () => {
+    // Deliberately NOT a minimum count. An earlier draft asserted `> 3` and so
+    // failed when the filter was narrowed — which looks right but is the wrong
+    // reason: this case exists only to catch the regex above silently matching
+    // nothing, which would make the two real assertions below vacuously pass.
+    // Coverage is their job; this one just proves the parse worked.
+    expect(filter.length).toBeGreaterThan(0);
+    expect(filter).toContain("site/**");
+  });
+
+  it("covers every @/lib module this test imports", () => {
+    const imported = [...selfSource.matchAll(/from "@\/lib\/([a-z-]+)"/g)].map(
+      (m) => `src/lib/${m[1]}.ts`,
+    );
+    expect(imported.length).toBeGreaterThan(0);
+    for (const dep of imported) {
+      expect(covers(dep), `${dep} is read by this test but no pages.yml path matches it`).toBe(
+        true,
+      );
+    }
+  });
+
+  it("covers every public/ asset this test byte-compares", () => {
+    const assets = [
+      ...new Set(
+        [...selfSource.matchAll(/"(favicon\.svg|og-image\.png|apple-touch-icon\.png)"/g)].map(
+          (m) => m[1] as string,
+        ),
+      ),
+    ];
+    expect(assets.length).toBe(3);
+    for (const a of assets) {
+      expect(
+        covers(`public/${a}`),
+        `public/${a} is byte-compared here but no pages.yml path matches it`,
+      ).toBe(true);
+    }
+  });
+});
