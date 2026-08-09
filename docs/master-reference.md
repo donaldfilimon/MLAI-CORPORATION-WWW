@@ -109,6 +109,24 @@ Vulkan backends. Runs where the data lives.
 
 **Core features**
 
+> ⚠️ **This bullet list is UNTAGGED and is not publishable copy.** Unlike the
+> table above it, nothing here carries ● / ○ / ◆, and at least three entries do
+> not survive checking:
+>
+> - "95% recall @ 8.2 ms" **contradicts the tagged table two lines up**, which
+>   records Recall@10 **98.2% ● measured** and p50 **2.3 ms ● measured**.
+> - **HNSW** — the nine WDBX docs mirrored from the source repo
+>   (`public/docs/wdbx/*.md`) never mention HNSW, `efConstruction`, or any index
+>   structure; `architecture.md` describes `src/database/*` only as "vector
+>   store, block-chain memory, sharding, snapshots". So `M=16,
+>   efConstruction=200` has no artifact behind it here.
+> - **AES-256 + RBAC** is on the external-claims forbidden list outright.
+>
+> This block caused a real incident: it was used to source home-page copy on
+> 2026-08-09, which then had to be retracted the same day. Treat it as
+> unverified working notes. **Anything moved from here into public copy must be
+> re-sourced to the mirrored WDBX docs or to a tagged row — not to this list.**
+
 - **HNSW index** — Hierarchical Navigable Small World graphs; O(log n) search;
   95% recall @ 8.2 ms on 1M vectors. Defaults M=16, efConstruction=200.
 - **Memory-mapped persistence** — Swift 6.2 `Span` zero-copy I/O, WAL journaling,
