@@ -11,12 +11,23 @@
  * `bun run build`).
  */
 import { content } from "../src/data";
+import { toSitemapDate } from "../src/lib/dates";
 import { routeMetadata, DEFAULT_ROUTE_META } from "../src/lib/route-meta";
 
 const SITE = "https://mlai-corp.com";
-const lastmod = new Date().toISOString().slice(0, 10);
 
-type Entry = { path: string; changefreq: string; priority: string };
+/**
+ * `lastmod` is per-entry and OMITTED where the content layer has no real date
+ * — it is optional in the sitemap protocol. This deliberately replaced a single
+ * build-date stamp applied to every URL, which had two costs: every `bun run
+ * build` dirtied `public/sitemap.xml` with a ~50-line diff that carried no
+ * information, and crawlers were told the whole site changed today, every day.
+ * Google discounts a `lastmod` it judges unreliable, so the daily churn was
+ * spending the signal for the few pages that had actually changed. Only blog
+ * and research entries carry dates; static pages, products, and team profiles
+ * do not, and fabricating one for them would just recreate the problem.
+ */
+type Entry = { path: string; changefreq: string; priority: string; lastmod?: string };
 
 // Indexable static routes (noindex routes — login/console/profile/404 — excluded).
 const staticEntries: Entry[] = [
@@ -52,11 +63,13 @@ const dynamicEntries: Entry[] = [
     path: `/research/${p.slug}`,
     changefreq: "yearly",
     priority: "0.6",
+    lastmod: toSitemapDate(p.date),
   })),
   ...content.blog.map((p) => ({
     path: `/blog/${p.slug}`,
     changefreq: "yearly",
     priority: "0.6",
+    lastmod: toSitemapDate(p.date),
   })),
   ...content.team
     .filter((m) => m.slug)
@@ -69,10 +82,12 @@ const dynamicEntries: Entry[] = [
 
 const entries = [...staticEntries, ...dynamicEntries];
 
+// Element order matters: the sitemap XSD declares loc/lastmod/changefreq/
+// priority as a sequence, so an omitted lastmod has to leave the rest in place.
 const sitemapBody = entries
   .map(
     (e) =>
-      `  <url><loc>${SITE}${e.path}</loc><lastmod>${lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`,
+      `  <url><loc>${SITE}${e.path}</loc>${e.lastmod ? `<lastmod>${e.lastmod}</lastmod>` : ""}<changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`,
   )
   .join("\n");
 
