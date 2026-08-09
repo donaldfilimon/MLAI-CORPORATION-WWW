@@ -81,12 +81,14 @@ export function Benchmarks() {
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
           <div>
             <Eyebrow className="mb-4">INTERACTIVE</Eyebrow>
-            {/* Was "Sharding latency model". The demo is a parallel-retrieval
-                model with illustrative constants, but as a heading it asserted
-                a WDBX sharding layer that master-reference.md §4 does not
-                document — and it sat directly under the architecture table that
-                now says single-node. The demo's own body copy still says
-                "shards"; that file is not owned here. */}
+            {/* Was "Sharding latency model". As a heading that asserted a WDBX
+                sharding layer master-reference.md §4 does not document, sitting
+                directly under the architecture table that says single-node.
+                The demo's own labels said "shards" too and have since been
+                reworded to "partitions (modeled)" with a visible note that WDBX
+                is single-node today — a browser screenshot of this section used
+                to show the contradiction in a single frame. Keep heading and
+                demo copy agreeing with that table. */}
             <h2 className="mb-3 font-display text-xl font-bold text-white">
               Parallel retrieval model
             </h2>

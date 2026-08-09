@@ -48,8 +48,16 @@ const features: Feature[] = [
     // "sits at the WAL level, not inside the index", which the mirrored docs
     // do not describe and which referenced an index this file no longer
     // claims. The property that matters is detectability, not placement.
-    description: "Interaction blocks are hash-chained, so a later edit to earlier history breaks the chain and is detectable on replay.",
-    glossary: "Each block commits to its predecessor, so history can be verified after the fact. It is not encryption and not an access-control mechanism — it tells you whether the record changed, not who may read it."
+    // The disclaimer lives in `description`, NOT `glossary`, and that placement
+    // is the point. `glossary` renders only inside the tooltip, which is
+    // portal-mounted on open — verified absent from the server-rendered HTML,
+    // so a crawler, an llms.txt consumer, or anyone who never hovers sees the
+    // CLAIM ("tamper-evident", "hash-chained") without the QUALIFIER. A hedge
+    // that is less visible than the thing it hedges is not a hedge.
+    // Rule for this file: elaboration may live in `glossary`; any sentence
+    // that LIMITS a claim must be in `description`.
+    description: "Interaction blocks are hash-chained, so a later edit to earlier history breaks the chain and is detectable on replay. It is not encryption and not an access-control mechanism — it tells you whether a record changed, not who may read it.",
+    glossary: "Each block commits to its predecessor, so verifying the chain end to end also verifies every block in it."
   },
   {
     icon: <GitBranch className="w-6 h-6 text-cyan-400" />,
