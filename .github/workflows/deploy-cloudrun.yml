@@ -6,7 +6,11 @@ name: Deploy to Cloud Run
 #
 # One-time setup (see docs/deploy-cloud-run.md):
 #   Repo → Settings → Secrets and variables → Actions
-#     Variables: GCP_PROJECT_ID, GCP_REGION, CLOUD_RUN_SERVICE
+#     Variables (required): GCP_PROJECT_ID, GCP_REGION, CLOUD_RUN_SERVICE,
+#                           APP_URL  ← the deployed origin; the deploy FAILS
+#                           without it, because it is the OAuth redirect base.
+#     Variables (optional): FRONTEND_URL (only if it differs from APP_URL),
+#                           RUNTIME_SA
 #     Secret:    GCP_SA_KEY   (JSON key of a deployer service account)
 #                — or switch to Workload Identity Federation (preferred).
 #   App runtime secrets live in Google Secret Manager (created once) and are
@@ -19,6 +23,9 @@ name: Deploy to Cloud Run
 # build runs `next build`), but a FAILING TEST could: the admin-MFA,
 # rate-limit, and telemetry-privacy suites are exactly the ones that were
 # advisory. workflow_run makes CI a real gate.
+#
+# The `branches:` filter below is a convenience pre-filter, NOT a trust
+# boundary — see the `if:` on the deploy job for the checks that are.
 on:
   workflow_run:
     workflows: ["CI"]
@@ -38,12 +45,51 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    # workflow_run fires on completion regardless of outcome, so the success
-    # check has to be explicit. workflow_dispatch has no upstream run and is
-    # allowed through deliberately, for manual redeploys.
+    # THREE separate checks, none of them redundant. Deleting any one of them
+    # reopens a real hole — read this before touching the expression.
+    #
+    #   conclusion == 'success'
+    #     workflow_run fires on completion regardless of outcome, so the
+    #     success check has to be explicit; otherwise a RED CI run deploys.
+    #
+    #   event == 'push'
+    #     ci.yml also runs on `pull_request`. A PR's CI run passing is not an
+    #     approval to ship — it validates UNMERGED code. Without this clause a
+    #     green PR check deploys code that is not on main.
+    #
+    #   head_repository.full_name == github.repository
+    #     THE trust boundary. This repo is PUBLIC, so anyone can open a PR from
+    #     a fork. For a fork PR the workflow_run payload's `head_branch` is the
+    #     FORK's source branch — a PR opened from a fork's own `main` (the most
+    #     common shape) reports head_branch == "main" and sails straight through
+    #     the `branches: [main]` filter above. This job then runs in the BASE
+    #     repo's context, with `environment: production` secrets, checks out the
+    #     fork's head_sha, and hands that tree to `gcloud run deploy --source .`
+    #     — i.e. attacker-authored Dockerfile/build scripts execute inside Cloud
+    #     Build holding GCP_SA_KEY, and attacker app code is then served on the
+    #     production origin with the real SESSION_SECRET.
+    #     Branch NAMES are attacker-controlled; repository IDENTITY is not.
+    #     Never substitute a branch-name filter for this check.
+    #
+    # workflow_dispatch has no upstream run and is allowed through deliberately,
+    # for manual redeploys (it is already gated on repo write access). On that
+    # event `github.event.workflow_run` is null; property access on null yields
+    # null rather than erroring, so the parenthesised group is simply false and
+    # the `||` carries it.
+    #
+    # The group is parenthesised even though `&&` already binds tighter than
+    # `||` — the precedence should not be something the next person editing
+    # this has to recall. Every continuation line below sits at the SAME
+    # indentation on purpose: in a YAML folded scalar a more-indented line is
+    # kept literal, newlines and all, so "prettier" hanging alignment would
+    # smuggle raw newlines into the expression.
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'workflow_dispatch'
+      || (
       github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.event == 'push'
+      && github.event.workflow_run.head_repository.full_name == github.repository
+      )
     steps:
       # Pin to the commit CI actually validated. On a workflow_run event
       # checkout defaults to the default branch's HEAD, which may already have
@@ -65,7 +111,48 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Deploy to Cloud Run
+        # Repo variables come in through env: rather than being interpolated
+        # into the script body, so their values are never spliced into the
+        # shell source that GitHub renders and executes.
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ vars.GCP_REGION }}
+          CLOUD_RUN_SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+          RUNTIME_SA: ${{ vars.RUNTIME_SA }}
+          APP_URL: ${{ vars.APP_URL }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
         run: |
+          set -euo pipefail
+
+          # ── APP_URL: REQUIRED, and this deploy stops without it ────────────
+          # workos.ts: `APP_URL = process.env.APP_URL ?? "http://localhost:3000"`
+          # and `REDIRECT_URI = ${APP_URL}/api/auth/callback`. Unset, every
+          # revision asks WorkOS to redirect to http://localhost:3000/... —
+          # not a registered redirect URI — so LOGIN AND SIGNUP FAIL FOR EVERY
+          # VISITOR while the pages themselves still return 200. Nothing in the
+          # health check or the documented curl probes notices.
+          # Setting it by hand in the console does not stick either: the
+          # --set-env-vars below REPLACES the whole env set on every deploy.
+          # Hence a hard failure — a deploy that stops is strictly better than
+          # one that silently ships a site nobody can sign in to.
+          # (Contrast RUNTIME_SA below, which only warns: an unset runtime SA
+          # is a degraded security posture on a WORKING deploy, not an outage.)
+          if [ -z "${APP_URL}" ]; then
+            echo "::error::APP_URL repo variable is unset. It is the OAuth redirect base (workos.ts builds \${APP_URL}/api/auth/callback); without it every revision sends WorkOS http://localhost:3000/api/auth/callback and login/signup break for all users. Set Settings → Secrets and variables → Actions → Variables → APP_URL to the deployed origin (e.g. https://mlai-corp.com), and allowlist the same origin in the WorkOS dashboard."
+            exit 1
+          fi
+
+          # FRONTEND_URL is genuinely optional — only set it when the frontend
+          # is served somewhere other than APP_URL. It must be OMITTED, not
+          # passed empty: workos.ts uses `process.env.FRONTEND_URL ?? APP_URL`,
+          # and `??` does NOT catch the empty string. Passing FRONTEND_URL=""
+          # would defeat the fallback and make redirectToFrontend() throw on
+          # `new URL(path, "")` — a 500 on every post-auth redirect.
+          ENV_VARS="NODE_ENV=production,DATABASE_URL=/app/data/inquiries.db,APP_URL=${APP_URL}"
+          if [ -n "${FRONTEND_URL}" ]; then
+            ENV_VARS="${ENV_VARS},FRONTEND_URL=${FRONTEND_URL}"
+          fi
+
           # --service-account is opt-in via a repo variable. Without it the
           # revision runs as the DEFAULT COMPUTE SERVICE ACCOUNT, which carries
           # project-wide Editor — one SSRF or RCE in a route handler would
@@ -73,8 +160,8 @@ jobs:
           # a minimal service account; the guard keeps the deploy working until
           # you do, rather than failing on an empty flag value.
           RUNTIME_SA_FLAG=""
-          if [ -n "${{ vars.RUNTIME_SA }}" ]; then
-            RUNTIME_SA_FLAG="--service-account=${{ vars.RUNTIME_SA }}"
+          if [ -n "${RUNTIME_SA}" ]; then
+            RUNTIME_SA_FLAG="--service-account=${RUNTIME_SA}"
           else
             echo "::warning::RUNTIME_SA is unset — this revision will run as the default Compute service account (project Editor). Create a minimal runtime SA and set the RUNTIME_SA repo variable."
           fi
@@ -85,23 +172,51 @@ jobs:
           # point. Pointing it at /app/data keeps the database in the directory
           # a volume can actually be attached to.
           #
+          # ⚠ --max-instances=1 IS A STOPGAP, NOT THE FIX. No volume is mounted
+          # at /app/data, so on Cloud Run that path is the container's writable
+          # layer — in-memory tmpfs, billed against the memory limit. At the
+          # default max-instances=100 the SQLite file is also SHARDED: instance
+          # #2 answering GET /api/inquiries reads an empty DB while instance #1
+          # holds the rows, and db.ts recreates the tables on open so the admin
+          # view shows a plausible-looking subset instead of an error. Pinning
+          # to one instance removes the sharding and makes the data at least
+          # coherent for the life of the container.
+          # STILL BROKEN with this flag: every inquiry and telemetry row is
+          # destroyed on scale-to-zero, on a container recycle, and on EVERY
+          # REDEPLOY (new revision = new container = empty tmpfs). Sales leads
+          # are lost silently. `--min-instances=1` narrows the window to
+          # redeploys only, at always-on billing, and is left as an operator
+          # opt-in rather than being switched on from a hardening change.
+          # AND IT COSTS AVAILABILITY: one instance at Cloud Run's default
+          # per-instance concurrency of 80 is the whole site's ceiling, so a
+          # launch, a link aggregator, or a crawler burst queues and then 429s.
+          # This is a data-coherence-for-throughput trade, not free.
+          # See docs/deploy-cloud-run.md → "Persisting the SQLite database" for
+          # the durable options and the gcsfuse file-locking caveat.
+          #
           # Note --set-env-vars REPLACES the whole env set, so anything added by
           # hand in the console is wiped on the next deploy. Everything the app
           # needs must therefore be listed here.
-          gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
+          # --max-instances=1 is the same footgun in a different flag: raising
+          # it in the console to survive a traffic spike is STOMPED BACK TO 1 by
+          # the next deploy, and nothing in the logs will explain why the site
+          # started throttling again — change it here. (Note the asymmetry:
+          # --min-instances is deliberately NOT passed, so an operator who sets
+          # THAT one in the console does keep it across deploys.)
+          gcloud run deploy "${CLOUD_RUN_SERVICE}" \
             --source . \
-            --project "${{ vars.GCP_PROJECT_ID }}" \
-            --region "${{ vars.GCP_REGION }}" \
+            --project "${GCP_PROJECT_ID}" \
+            --region "${GCP_REGION}" \
             --platform managed \
             --allow-unauthenticated \
+            --max-instances=1 \
             $RUNTIME_SA_FLAG \
-            --set-env-vars "NODE_ENV=production,DATABASE_URL=/app/data/inquiries.db" \
+            --set-env-vars "${ENV_VARS}" \
             --set-secrets "WORKOS_API_KEY=WORKOS_API_KEY:latest,WORKOS_CLIENT_ID=WORKOS_CLIENT_ID:latest,SESSION_SECRET=SESSION_SECRET:latest"
-          # Optional secrets — add to the --set-secrets list once created in
-          # Secret Manager: GEMINI_API_KEY, STRIPE_PAYMENT_LINK, APP_URL,
-          # FRONTEND_URL, ADMIN_REQUIRE_MFA.
-          #
-          # APP_URL matters more than "optional" suggests: it is the OAuth
-          # redirect base (workos.ts builds ${APP_URL}/api/auth/callback) and
-          # defaults to http://localhost:3000, so login is broken until it is
-          # set to the deployed origin and the service redeployed.
+          # Optional SECRETS — add to the --set-secrets list once created in
+          # Secret Manager: GEMINI_API_KEY, STRIPE_PAYMENT_LINK,
+          # ADMIN_EMAILS, ADMIN_REQUIRE_MFA.
+          # APP_URL/FRONTEND_URL are deliberately NOT in that list: they are
+          # public origins, not secrets, and they are required/optional plain
+          # env vars handled above. They were previously filed here as
+          # "optional secrets", which is how the broken-login defect survived.

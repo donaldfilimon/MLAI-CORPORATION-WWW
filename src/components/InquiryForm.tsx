@@ -263,11 +263,32 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-text-dim uppercase tracking-widest">
+                {/*
+                  The other fields associate label→control with htmlFor/id, but
+                  that does not work here: Base UI's Select.Trigger renders a
+                  `<button role="combobox">`, and HTML-AAM does not feed a
+                  `<label for>` into a button's accessible-name computation — the
+                  association would exist in the DOM and still leave the control
+                  nameless in a screen reader. Base UI's own guidance is to name
+                  the trigger instead (docs: "provide an aria-label on
+                  <Select.Trigger>"), and its `Select.Label` part does exactly
+                  this internally by feeding `aria-labelledby`. We do the same by
+                  hand, since `ui/select.tsx` maps `SelectLabel` to the in-popup
+                  group label, not the field label. Our `aria-labelledby` wins:
+                  SelectTrigger merges `elementProps` after its own defaults.
+                */}
+                <Label
+                  id="inquiry-project-type-label"
+                  className="text-xs font-bold text-text-dim uppercase tracking-widest"
+                >
                   Focus Area
                 </Label>
                 <Select name="projectType" defaultValue="research">
-                  <SelectTrigger className="bg-black/50 border-white/10 text-white h-12 rounded-xl">
+                  <SelectTrigger
+                    id="inquiry-project-type"
+                    aria-labelledby="inquiry-project-type-label"
+                    className="bg-black/50 border-white/10 text-white h-12 rounded-xl"
+                  >
                     <SelectValue placeholder="Select a focus area" />
                   </SelectTrigger>
                   <SelectContent>
@@ -286,10 +307,14 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-text-dim uppercase tracking-widest">
+                <Label
+                  htmlFor="inquiry-message"
+                  className="text-xs font-bold text-text-dim uppercase tracking-widest"
+                >
                   Message
                 </Label>
                 <Textarea
+                  id="inquiry-message"
                   name="message"
                   rows={4}
                   defaultValue=""

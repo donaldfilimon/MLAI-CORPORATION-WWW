@@ -1,6 +1,7 @@
 import { readJsonLimited } from "@/lib/server/body-limit";
 import { getDb } from "@/lib/server/db";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
+import { normalizeTelemetryPath } from "@/lib/server/telemetry-path";
 
 // Allowlisted events only; honors DNT / Sec-GPC; stores no identifiers.
 const TELEMETRY_EVENTS = new Set([
@@ -25,15 +26,21 @@ export async function POST(req: Request) {
   if (!TELEMETRY_EVENTS.has(event)) {
     return Response.json({ error: "Unknown event" }, { status: 400 });
   }
-  // Path is trimmed to a pathname (no query — queries can carry identifiers).
-  const rawPath = typeof body.path === "string" ? body.path : "";
-  const path = rawPath.startsWith("/") ? rawPath.split("?")[0]!.slice(0, 128) : "";
+  // Path is allowlisted against the real route set, exactly like `event` above
+  // — a leading-"/" check is not validation. `path` arrives unauthenticated, so
+  // anything unrecognized becomes "" rather than being stored verbatim; the
+  // request still succeeds. See `normalizeTelemetryPath` for why.
+  const path = normalizeTelemetryPath(body.path);
 
   try {
     getDb().prepare("INSERT INTO telemetry_events (event, path) VALUES (?, ?)").run(event, path);
   } catch (err) {
     console.error("Database error saving telemetry event:", err);
   }
-  // Always 204 — telemetry must never affect the user-facing flow.
+  // Always 204 — telemetry must never affect the user-facing flow. The two
+  // exceptions above are both malformed *requests*, not failures of the sink:
+  // a body over the cap (413) or one that is not a JSON object (400) from
+  // `readJsonLimited`, and an unknown event (400). A real beacon never hits
+  // them, and a DB failure below is swallowed rather than surfaced.
   return new Response(null, { status: 204 });
 }

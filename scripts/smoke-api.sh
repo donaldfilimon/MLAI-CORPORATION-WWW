@@ -10,6 +10,8 @@
 #   413 oversize          — bodies past each route's byte cap are rejected unread
 #   DNT no-store          — DNT:1 short-circuits to 204 BEFORE the DB insert
 #   400 unknown event     — non-allowlisted telemetry event rejected
+#   400 non-object body   — `null`/`[]` is valid JSON but not an object, and
+#                           must be the route's 400, never an uncaught 500
 #   401 unauthenticated   — protected endpoints without a session
 #   403 MFA-gated         — summary with a session but no admin MFA
 #                           (needs SESSION_COOKIE=mlai_session=... to exercise)
@@ -46,6 +48,17 @@ check "telemetry: unknown event → 400" 400 "$(code -X POST "$BASE_URL/api/tele
 
 check "telemetry: invalid JSON → 400" 400 "$(code -X POST "$BASE_URL/api/telemetry" \
   -H 'content-type: application/json' -d 'not-json')"
+
+# `null` and `[]` PARSE — they are valid JSON — so they used to reach the
+# handler and throw on the first `body.event` access, outside the try/catch,
+# escaping as a public 500 on an unauthenticated route (and breaking this
+# handler's own "always 204" invariant). readJsonLimited now rejects any
+# non-object body up front. A 500 here is the regression these guard.
+check "telemetry: null body → 400" 400 "$(code -X POST "$BASE_URL/api/telemetry" \
+  -H 'content-type: application/json' -d 'null')"
+
+check "telemetry: array body → 400" 400 "$(code -X POST "$BASE_URL/api/telemetry" \
+  -H 'content-type: application/json' -d '[]')"
 
 # ── csp-report ───────────────────────────────────────────────────────────────
 # Sink for report-uri/report-to in next.config.ts. Contract: always 204
@@ -133,6 +146,14 @@ check "inquiries: short name → 400" 400 "$(code -X POST "$BASE_URL/api/inquiri
 check "inquiries: bad email → 400" 400 "$(code -X POST "$BASE_URL/api/inquiries" \
   -H 'content-type: application/json' \
   -d '{"name":"Smoke Test","email":"nope","company":"ACME","message":"hello there friend"}')"
+
+# Same non-object-body defect as the telemetry pair above, on the other
+# unauthenticated POST route. Dedicated IP for the same reason as the oversize
+# probe: the inquiries limiter is 5/5min and runs before the body read, so this
+# would otherwise spend a token from the bucket the two checks above share.
+check "inquiries: null body → 400" 400 "$(code -X POST "$BASE_URL/api/inquiries" \
+  -H "x-forwarded-for: 203.0.113.252" \
+  -H 'content-type: application/json' -d 'null')"
 
 # ── opt-in write + session paths ─────────────────────────────────────────────
 if [ "${SMOKE_WRITE:-0}" = "1" ]; then

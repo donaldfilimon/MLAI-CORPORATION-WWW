@@ -1,9 +1,16 @@
 # https://www.robotstxt.org/robotstxt.html
+#
+# Deliberately no Disallow lines for /console, /login, /signup, /profile,
+# /financial-model, or /tf-pose-demo. Those six routes are noindex — every one
+# of them carries `noindex: true` in src/lib/route-meta.ts, which toNextMetadata
+# turns into `robots: { index: false, follow: false }` on the page itself.
+#
+# Do NOT re-add Disallow for them. A disallowed URL is never fetched, so the
+# crawler never SEES the noindex meta — and a robots-blocked URL can still be
+# listed as a bare URL entry when something links to it (the Navbar links to
+# /login). The Disallow actively defeats the noindex it looks like it is
+# reinforcing. Let crawlers fetch these and obey the noindex instead.
 User-agent: *
 Allow: /
-Disallow: /console
-Disallow: /login
-Disallow: /signup
-Disallow: /profile
 
 Sitemap: https://mlai-corp.com/sitemap.xml

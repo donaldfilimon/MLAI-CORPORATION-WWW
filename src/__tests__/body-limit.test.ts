@@ -107,6 +107,34 @@ describe("readJsonLimited — the shared JSON-route contract", () => {
     expect((body as Response).status).toBe(400);
   });
 
+  // Every caller does `body.someField` straight after the `instanceof Response`
+  // narrowing. These bodies are all VALID JSON, so before the shape check they
+  // parsed cleanly and then threw on property access — outside the routes'
+  // try/catch, i.e. a 500 (publicly, on /api/inquiries and /api/telemetry).
+  // The point of each case is as much "does not throw" as "is a 400".
+  describe.each([
+    ["null", "null"],
+    ["a number", "5"],
+    ["a string", '"str"'],
+    ["a boolean", "true"],
+    ["an array", "[]"],
+    ["a populated array", '[{"event":"inquiry_open"}]'],
+  ])("rejects %s — valid JSON, but not an object", (_label, payload) => {
+    it("returns a 400 Response rather than throwing or yielding a parsed value", async () => {
+      const body = await readJsonLimited(stringReq(payload), 1024);
+      expect(body).toBeInstanceOf(Response);
+      expect((body as Response).status).toBe(400);
+      // Same error shape as the unparseable branch — no new string to learn.
+      await expect((body as Response).json()).resolves.toEqual({ error: "Invalid JSON body" });
+    });
+  });
+
+  it("still accepts an empty object — the shape check rejects non-objects, not sparse ones", async () => {
+    const body = await readJsonLimited<{ event?: string }>(stringReq("{}"), 1024);
+    expect(body).not.toBeInstanceOf(Response);
+    expect((body as { event?: string }).event).toBeUndefined();
+  });
+
   it("returns a 413 when the stream errors mid-read", async () => {
     const stream = new ReadableStream<Uint8Array>({
       start(c) {

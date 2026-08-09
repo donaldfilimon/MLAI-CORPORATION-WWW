@@ -10,6 +10,7 @@
  */
 
 import { SITE_URL } from "@/lib/route-meta";
+import { bylineNames } from "@/lib/byline";
 import { toIsoDate } from "@/lib/dates";
 import type { Blog, Research, Team, Products } from "@/data";
 
@@ -25,6 +26,43 @@ const ORG_REF = {
   logo: `${SITE_URL}/icon-512.png`,
 };
 
+/*
+ * Deliberately no `image` on the Article builders, even though Google lists it
+ * as recommended. The obvious filler — the site-wide `/og-image.png` — is the
+ * exact thing `app/{blog,research}/[slug]/opengraph-image.tsx` was introduced to
+ * stop these two routes from using, because a generic card doesn't reflect the
+ * actual title. The right value is each slug's own generated OG image, but its
+ * public URL is emitted by Next's file-convention build and isn't something this
+ * module can name without guessing. Leave it absent rather than re-introduce the
+ * retired asset; wire it up from whatever `opengraph-image` actually resolves to.
+ */
+
+/**
+ * Bylines in the content layer are *team* names, not people. Every current
+ * `blog[].author` / `research.publications[].authors` value is an MLAI unit
+ * ("MLAI Research", "MLAI Safety Engineering", "MLAI Runtime Engineering") or a
+ * product surface ("WDBX Core", "Abbey", "Product", "Agent Safety"), and a
+ * multi-unit credit is joined with a **middle dot** — "MLAI Research · WDBX
+ * Core". Two things used to be wrong about how that reached schema.org:
+ *
+ *   1. The split was on `,`, a separator no entry uses, so the whole credit came
+ *      through as a single unsplit string.
+ *   2. It was emitted as `@type: "Person"`, so Google's Article parser read
+ *      "MLAI Research · WDBX Core" as one human's name.
+ *
+ * Hence: split on either separator and emit `Organization`. There is
+ * deliberately **no** person-vs-organization heuristic — none is reliable over
+ * these strings ("Agent Safety" and a two-word personal name are
+ * indistinguishable by shape), and no current value names an individual. If a
+ * named individual ever needs a byline, give the data layer a structured author
+ * field (as `team` already has, via `personLd`) rather than teaching this to
+ * guess from prose.
+ */
+function bylineOrganizations(byline: string | undefined) {
+  const names = bylineNames(byline);
+  return names.length ? names.map((name) => ({ "@type": "Organization" as const, name })) : null;
+}
+
 export function blogPostingLd(post: BlogPost) {
   const url = `${SITE_URL}/blog/${post.slug}`;
   const iso = toIsoDate(post.date);
@@ -37,7 +75,7 @@ export function blogPostingLd(post: BlogPost) {
     description: post.excerpt,
     url,
     ...(iso ? { datePublished: iso, dateModified: iso } : {}),
-    author: post.author ? { "@type": "Person", name: post.author } : ORG_REF,
+    author: bylineOrganizations(post.author) ?? ORG_REF,
     publisher: ORG_REF,
     keywords: post.tag,
   };
@@ -56,9 +94,7 @@ export function researchArticleLd(paper: ResearchPub) {
     description: paper.abstract,
     url,
     ...(iso ? { datePublished: iso, dateModified: iso } : {}),
-    author: paper.authors
-      ? paper.authors.split(",").map((name) => ({ "@type": "Person", name: name.trim() }))
-      : ORG_REF,
+    author: bylineOrganizations(paper.authors) ?? ORG_REF,
     publisher: ORG_REF,
     keywords: paper.tag,
   };
