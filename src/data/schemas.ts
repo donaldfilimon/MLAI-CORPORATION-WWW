@@ -1,11 +1,38 @@
 import { z } from 'zod';
 
+/** A titled prose card — the shape shared by `about.values` and `about.investorThesis`. */
+const CardSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+});
+
+/** Key/value rows rendered by `site/SpecList` — configuration facts, never measurements. */
+const SpecRowsSchema = z.array(z.object({
+  k: z.string(),
+  v: z.string(),
+}));
+
+/**
+ * The `site/` **product** accent axis (wdbx cyan · abi violet · abbey emerald).
+ * Distinct from the persona enum used by `ProductsSchema` below — the product
+ * "abi" is violet while the persona "Abi" is cyan. See `src/components/site/accent.ts`.
+ */
+const SiteAccentSchema = z.enum(['wdbx', 'abi', 'abbey']);
+
+/** Eyebrow/title/lead copy for a sub-section — kept in data so views hold no content. */
+const SectionChromeSchema = z.object({
+  eyebrow: z.string(),
+  title: z.string(),
+  lead: z.string(),
+});
+
 export const AboutSchema = z.object({
-  values: z.array(z.object({
-    title: z.string(),
-    description: z.string(),
-  })),
+  values: z.array(CardSchema),
   operatingPrinciples: z.array(z.string()),
+  /** Registration-level facts (SpecList rows) — ported from the design handoff's Company page. */
+  companyFacts: SpecRowsSchema,
+  /** Claim-free positioning cards — ported from the design handoff's Investors page. */
+  investorThesis: z.array(CardSchema),
 });
 
 export const PlatformSchema = z.array(z.object({
@@ -154,11 +181,38 @@ export const ProductsSchema = z.array(z.object({
   })),
 }));
 
+/** "What we say no to" — refusal callouts on the Services page. */
+export const RefusalsSchema = z.array(z.object({
+  label: z.string(),
+  accent: SiteAccentSchema,
+  body: z.string(),
+}));
+
+/**
+ * The Home "runtime underneath" block: the L6→L1 layer stack and the
+ * memory-model spec, each with its section chrome. Architecture facts only —
+ * every row is corroborated against the mirrored docs in `public/docs/wdbx/`;
+ * no figures, so no provenance tags.
+ */
+export const RuntimeSchema = z.object({
+  section: SectionChromeSchema,
+  layers: z.array(z.object({
+    /** Tier label, L6 (surface) down to L1 (audit). Rendered as the mono meta line. */
+    tier: z.string(),
+    title: z.string(),
+    description: z.string(),
+  })),
+  memorySection: SectionChromeSchema,
+  memoryModel: SpecRowsSchema,
+});
+
 export const ContentSchema = z.object({
   about: AboutSchema,
   platform: PlatformSchema,
   industries: IndustriesSchema,
   services: ServicesSchema,
+  refusals: RefusalsSchema,
+  runtime: RuntimeSchema,
   research: ResearchSchema,
   blog: BlogSchema,
   team: TeamSchema,
@@ -172,6 +226,8 @@ export type About = z.infer<typeof AboutSchema>;
 export type Platform = z.infer<typeof PlatformSchema>;
 export type Industries = z.infer<typeof IndustriesSchema>;
 export type Services = z.infer<typeof ServicesSchema>;
+export type Refusals = z.infer<typeof RefusalsSchema>;
+export type Runtime = z.infer<typeof RuntimeSchema>;
 export type Research = z.infer<typeof ResearchSchema>;
 export type Blog = z.infer<typeof BlogSchema>;
 export type Team = z.infer<typeof TeamSchema>;

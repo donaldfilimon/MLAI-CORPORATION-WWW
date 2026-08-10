@@ -16,24 +16,54 @@ interface Feature {
   glossary: string;
 }
 
+// Claims discipline (CLAUDE.md · docs/voice-guidelines.md): every line below
+// describes a design property of the WDBX *software* store that
+// docs/master-reference.md §4/§6 documents. MLAI ships no silicon, so nothing
+// here may reference hardware isolation, circuit-level logic, or a physical
+// layer; and nothing may promise an absolute outcome ("eliminates", "ensures",
+// "cannot be overridden") for a probabilistic system.
 const features: Feature[] = [
   {
     icon: <Activity className="w-6 h-6 text-cyan-400" />,
-    title: "Adaptive Context Windows",
-    description: "Dynamic resource allocation ensures the model maintains focus on critical parameters without computational waste. Context windows scale from 4K to 128K tokens based on task complexity.",
-    glossary: "DynaCon™ technology automatically adjusts the attention span of the neural engine based on the detected density of the information stream."
+    // Sourced to what the MIRRORED WDBX docs actually document
+    // (`public/docs/wdbx/architecture.md`: "vector store, block-chain memory,
+    // sharding, snapshots"), NOT to the internal fact sheet. An earlier draft
+    // of this card named HNSW with "M=16, efConstruction=200" — those appear
+    // ONLY in an untagged prose bullet in docs/master-reference.md, and the
+    // nine mirrored WDBX docs never mention HNSW, efConstruction, or any index
+    // structure at all. Publishing specific tuning parameters for an index the
+    // product's own documentation does not describe is the same class of claim
+    // the /benchmarks charts were removed for, so it is deliberately absent.
+    // Restore it only against the wdbx source, not against master-reference.
+    title: "Vector Retrieval",
+    description: "Queries resolve by similarity over stored vectors rather than by keyword match, so retrieval reflects meaning instead of surface form. Distance kernels compile to the target ISA through Zig's SIMD vectors.",
+    glossary: "Each stored item carries an embedding; a query is embedded the same way, and the store returns the nearest vectors by cosine similarity."
   },
   {
     icon: <ShieldCheck className="w-6 h-6 text-cyan-400" />,
-    title: "State-Lock Enforcement",
-    description: "Hardware-level isolation of ethical guardrails ensures system integrity even under extreme research conditions. Immutable safety constraints cannot be overridden by inference.",
-    glossary: "Hard-wired safety logic that operates at the circuit level, separate from the primary inference paths, preventing 'jailbreaking' at the physical layer."
+    title: "Tamper-Evident History",
+    // Kept, unlike the HNSW card above, because the mirrored WDBX docs DO
+    // document this: architecture.md lists "block-chain memory" under
+    // `src/database/*`. Trimmed anyway — the earlier draft asserted the chain
+    // "sits at the WAL level, not inside the index", which the mirrored docs
+    // do not describe and which referenced an index this file no longer
+    // claims. The property that matters is detectability, not placement.
+    // The disclaimer lives in `description`, NOT `glossary`, and that placement
+    // is the point. `glossary` renders only inside the tooltip, which is
+    // portal-mounted on open — verified absent from the server-rendered HTML,
+    // so a crawler, an llms.txt consumer, or anyone who never hovers sees the
+    // CLAIM ("tamper-evident", "hash-chained") without the QUALIFIER. A hedge
+    // that is less visible than the thing it hedges is not a hedge.
+    // Rule for this file: elaboration may live in `glossary`; any sentence
+    // that LIMITS a claim must be in `description`.
+    description: "Interaction blocks are hash-chained, so a later edit to earlier history breaks the chain and is detectable on replay. It is not encryption and not an access-control mechanism — it tells you whether a record changed, not who may read it.",
+    glossary: "Each block commits to its predecessor, so verifying the chain end to end also verifies every block in it."
   },
   {
     icon: <GitBranch className="w-6 h-6 text-cyan-400" />,
     title: "Directed Backtrace Graph",
-    description: "Every inference decision is logged as a node in a weighted directed graph. When uncertainty exceeds thresholds, the engine backtraces to the last high-confidence state and re-evaluates.",
-    glossary: "A recursive verification algorithm that maps every token generation back to its weighted source parameters, ensuring verifiable logic paths."
+    description: "Retrieval and generation steps are recorded as nodes in a weighted directed graph. When confidence along a path drops, the chain is traversed backward to the divergence point and the session is rewound from there.",
+    glossary: "A traversal over the recorded chain that maps a generated span back to the weighted records behind it — so a result can be traced rather than inferred from the output alone."
   }
 ];
 
@@ -49,7 +79,7 @@ export const Technology = () => {
             </div>
             <h2 id="tech-heading" className="section-title">The WDBX Engine.</h2>
             <p className="text-xl text-text-dim mb-10 leading-relaxed">
-              At the heart of MLAI's infrastructure lies the Weighted Directed Backtrace eXecution engine — a revolutionary processing unit that eliminates hallucination through structural self-correction.
+              At the heart of MLAI's infrastructure sits WDBX — the Weighted Directed Backtrace eXecution store. It is software: a Zig vector and block store that keeps retrieval as weighted, inspectable paths. Confidence signals along those paths are designed to reduce hallucination surfaces, not to remove them.
             </p>
             
             <div className="space-y-8">
@@ -69,10 +99,13 @@ export const Technology = () => {
                     <div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <h4 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors cursor-help flex items-center gap-2">
+                          {/* h3, not h4: the section's own heading is the h2
+                              above, so an h4 here skipped a level. `text-lg`
+                              keeps the original visual size. */}
+                          <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors cursor-help flex items-center gap-2">
                             {feat.title}
                             <Info className="w-3.5 h-3.5 opacity-30 group-hover:opacity-100 transition-opacity" />
-                          </h4>
+                          </h3>
                         </TooltipTrigger>
                         <TooltipContent side="right" className="max-w-60 bg-surface/90 backdrop-blur-md border-white/10">
                           <p className="text-xs leading-relaxed">{feat.glossary}</p>

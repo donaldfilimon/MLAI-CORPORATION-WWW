@@ -27,10 +27,16 @@ export const products: Products = ([
             note: "Routing isn't binary — Abi blends. High α leans empathetic and scaffolded; low α leans concise and unfiltered; in between, a factual core is wrapped in an empathetic voice.",
           },
         ],
+        // `Product.tsx` states that the per-row color IS the key linking each α
+        // band to the persona it selects, so these accents are load-bearing and
+        // were off by one: the "Pure Aviva" band rendered in Abi's cyan, telling
+        // the reader that α < 0.2 routes to the moderator. The blend band names
+        // no single persona — it is the one Abi produces — so it takes Abi's
+        // accent, which also frees Aviva's for the band that actually is Aviva.
         blendTable: [
           { range: "α > 0.8", meaning: "Pure Abbey — empathetic, scaffolded", accent: "abbey" },
-          { range: "0.2 ≤ α ≤ 0.8", meaning: "Blend — Aviva's facts, Abbey's voice", accent: "aviva" },
-          { range: "α < 0.2", meaning: "Pure Aviva — concise, unfiltered", accent: "abi" },
+          { range: "0.2 ≤ α ≤ 0.8", meaning: "Blend — Aviva's facts, Abbey's voice, mixed by Abi", accent: "abi" },
+          { range: "α < 0.2", meaning: "Pure Aviva — concise, unfiltered", accent: "aviva" },
         ],
       },
       {

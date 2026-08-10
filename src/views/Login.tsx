@@ -93,7 +93,15 @@ export function Login() {
                     ? "Authentication is not configured on this server."
                     : error === "missing_code"
                       ? "The authentication callback was missing a code. Please retry."
-                      : "An error occurred. Please try again."}
+                      : // `invalid_state` is the CSRF guard firing. It is far more
+                        // often benign than hostile — a sign-in left open past the
+                        // 10-minute nonce TTL, a second login tab overwriting the
+                        // first tab's nonce, or a browser that dropped the cookie —
+                        // so the copy has to tell an ordinary user what to actually
+                        // do, not accuse them of an attack.
+                        error === "invalid_state"
+                        ? "This sign-in link expired or was already used. Start again from this page."
+                        : "An error occurred. Please try again."}
               </m.div>
             )}
 

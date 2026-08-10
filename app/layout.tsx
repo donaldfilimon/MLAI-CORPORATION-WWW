@@ -21,6 +21,13 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.webmanifest",
+  // These openGraph/twitter/alternates blocks look redundant now that
+  // toNextMetadata emits the same defaults per route — they are not. Next
+  // replaces `openGraph`/`twitter`/`alternates` wholesale for any page that
+  // declares them, so the layout's copies reach exactly the pages that DON'T:
+  // app/not-found.tsx, the only metadata export under app/ that doesn't go
+  // through toNextMetadata (it exports title/description/robots only). Deleting
+  // these would strip the 404 page's social card and feed autodiscovery.
   alternates: {
     types: {
       "application/rss+xml": [
@@ -97,14 +104,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
         </noscript>
         <link rel="mask-icon" href="/favicon.svg" color="#22d3ee" />
+        {/* Safe only because both payloads are module constants built from
+            in-repo data — JSON.stringify does NOT escape "</script>", so never
+            widen these to user input. */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD }}
         />
       </head>

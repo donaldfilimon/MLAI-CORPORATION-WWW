@@ -1,4 +1,4 @@
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { track } from "@/lib/telemetry";
 import { Send, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Callout } from "@/components/site";
 import {
   Select,
   SelectContent,
@@ -70,7 +71,12 @@ async function submitInquiry(
         email: data.email,
         company: data.company,
         projectType: data.projectType,
-        message: data.message,
+        // The API accepts exactly name/email/company/projectType/message and
+        // silently drops unknown fields, so the optional data-locality chip is
+        // folded into the message as a prefix line rather than sent separately.
+        message: data.dataLocality
+          ? `Data locality: ${data.dataLocality}\n\n${data.message}`
+          : data.message,
       }),
     });
 
@@ -115,8 +121,13 @@ function SubmitButton() {
   );
 }
 
+const DATA_LOCALITY_OPTIONS = ["On-device only", "Hybrid", "Not sure yet"];
+
 export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
+  // Optional chip selection; carried into the FormData via a hidden input and
+  // folded into the message payload (the API has no dataLocality field).
+  const [dataLocality, setDataLocality] = useState("");
   const [state, formAction] = useActionState(submitInquiry, {
     success: false,
     errors: {} as Record<string, string[]>,
@@ -263,11 +274,32 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-text-dim uppercase tracking-widest">
+                {/*
+                  The other fields associate label→control with htmlFor/id, but
+                  that does not work here: Base UI's Select.Trigger renders a
+                  `<button role="combobox">`, and HTML-AAM does not feed a
+                  `<label for>` into a button's accessible-name computation — the
+                  association would exist in the DOM and still leave the control
+                  nameless in a screen reader. Base UI's own guidance is to name
+                  the trigger instead (docs: "provide an aria-label on
+                  <Select.Trigger>"), and its `Select.Label` part does exactly
+                  this internally by feeding `aria-labelledby`. We do the same by
+                  hand, since `ui/select.tsx` maps `SelectLabel` to the in-popup
+                  group label, not the field label. Our `aria-labelledby` wins:
+                  SelectTrigger merges `elementProps` after its own defaults.
+                */}
+                <Label
+                  id="inquiry-project-type-label"
+                  className="text-xs font-bold text-text-dim uppercase tracking-widest"
+                >
                   Focus Area
                 </Label>
                 <Select name="projectType" defaultValue="research">
-                  <SelectTrigger className="bg-black/50 border-white/10 text-white h-12 rounded-xl">
+                  <SelectTrigger
+                    id="inquiry-project-type"
+                    aria-labelledby="inquiry-project-type-label"
+                    className="bg-black/50 border-white/10 text-white h-12 rounded-xl"
+                  >
                     <SelectValue placeholder="Select a focus area" />
                   </SelectTrigger>
                   <SelectContent>
@@ -286,10 +318,48 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-text-dim uppercase tracking-widest">
+                <span
+                  id="inquiry-data-locality-label"
+                  className="block text-xs font-bold text-text-dim uppercase tracking-widest"
+                >
+                  Where does the data have to live?
+                </span>
+                <div
+                  role="group"
+                  aria-labelledby="inquiry-data-locality-label"
+                  className="flex flex-wrap gap-2"
+                >
+                  {DATA_LOCALITY_OPTIONS.map((opt) => {
+                    const on = dataLocality === opt;
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        aria-pressed={on}
+                        onClick={() => setDataLocality(on ? "" : opt)}
+                        className={`rounded-xl border px-4 py-2.5 text-xs font-mono tracking-wider transition-colors ${
+                          on
+                            ? "border-cyan-400 bg-cyan-500/10 text-cyan-400"
+                            : "border-white/10 bg-black/50 text-text-dim hover:border-white/25 hover:text-white"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+                <input type="hidden" name="dataLocality" value={dataLocality} />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="inquiry-message"
+                  className="text-xs font-bold text-text-dim uppercase tracking-widest"
+                >
                   Message
                 </Label>
                 <Textarea
+                  id="inquiry-message"
                   name="message"
                   rows={4}
                   defaultValue=""
@@ -303,6 +373,16 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
                 )}
               </div>
             </div>
+
+            <Callout label="What happens next">
+              We read every request against one question: does the data
+              genuinely have to stay on-device? If yes, you&apos;ll hear from us
+              with a scoping call. If a cloud vector store already fits,
+              we&apos;ll tell you that too.
+              <span className="font-mono mt-2 block text-[11px] text-text-dim/80">
+                No sequence. No CRM drip. One reply.
+              </span>
+            </Callout>
 
             <SubmitButton />
             <p className="text-xs text-text-dim text-center">

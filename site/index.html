@@ -18,8 +18,11 @@
          point at the canonical mlai-corp.com host (matching rel=canonical)
          so social crawlers attribute the card to the real site. -->
     <meta name="theme-color" content="#05070d" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Relative, not root-absolute: Pages serves this repo under the
+         /MLAI-CORPORATION-WWW/ project prefix, so "/favicon.svg" resolves to
+         the user-pages root and leaves the artifact entirely. -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link
       rel="alternate"
       type="application/rss+xml"

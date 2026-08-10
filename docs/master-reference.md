@@ -109,6 +109,24 @@ Vulkan backends. Runs where the data lives.
 
 **Core features**
 
+> ⚠️ **This bullet list is UNTAGGED and is not publishable copy.** Unlike the
+> table above it, nothing here carries ● / ○ / ◆, and at least three entries do
+> not survive checking:
+>
+> - "95% recall @ 8.2 ms" **contradicts the tagged table two lines up**, which
+>   records Recall@10 **98.2% ● measured** and p50 **2.3 ms ● measured**.
+> - **HNSW** — the nine WDBX docs mirrored from the source repo
+>   (`public/docs/wdbx/*.md`) never mention HNSW, `efConstruction`, or any index
+>   structure; `architecture.md` describes `src/database/*` only as "vector
+>   store, block-chain memory, sharding, snapshots". So `M=16,
+>   efConstruction=200` has no artifact behind it here.
+> - **AES-256 + RBAC** is on the external-claims forbidden list outright.
+>
+> This block caused a real incident: it was used to source home-page copy on
+> 2026-08-09, which then had to be retracted the same day. Treat it as
+> unverified working notes. **Anything moved from here into public copy must be
+> re-sourced to the mirrored WDBX docs or to a tagged row — not to this list.**
+
 - **HNSW index** — Hierarchical Navigable Small World graphs; O(log n) search;
   95% recall @ 8.2 ms on 1M vectors. Defaults M=16, efConstruction=200.
 - **Memory-mapped persistence** — Swift 6.2 `Span` zero-copy I/O, WAL journaling,
@@ -147,6 +165,31 @@ embedding generation.
 - Generated CLI registry: `zig build refresh-cli-registry`
 
 **GPU benchmarks**
+
+> ⚠️ **UNRESOLVED CONFLICT — these four are the ONLY performance figures the
+> public site still publishes, and the `abi` repo does not corroborate them.**
+> Checked 2026-08-09 against `~/abi` @ `ac69027`:
+>
+> - **No MatMul artifact exists anywhere in that repo** — no benchmark output,
+>   no harness, no recorded result. Zero hits.
+> - Its **CHANGELOG appends the same disclaimer to every GPU entry**: *"still
+>   not a general GPU speedup / CUDA / ANE claim."* Its `tasks/goals.md:208`
+>   likewise says the work does "not establish … accelerator speedups."
+> - `docs/contracts/external-claims-audit.md` — the contract this repo's
+>   CLAUDE.md cites as the SOURCE of the whole external-claims rule — **does
+>   not exist** in `abi` either.
+>
+> This is not proof the figures are invented: **● measured** means "reproduced
+> on MLAI hardware," and a measurement taken on a machine need not be committed.
+> But it does mean **nothing in any repo backs them**, while the project they
+> are attributed to explicitly disclaims this class of claim. Left in place
+> rather than deleted, because unlike the fabricated competitor charts removed
+> on 2026-08-09 this is a genuine conflict only Donald can settle.
+>
+> **Before publishing these anywhere new — or leaving them up — resolve it:**
+> produce the benchmark artifact and commit it, or retag/remove the rows. If
+> the measurement is real, the fix is to land the harness in `abi` so the next
+> audit does not re-raise this.
 
 | Workload | Speedup | Provenance |
 |---|---|---|

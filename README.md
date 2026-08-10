@@ -24,6 +24,8 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - `src/components/` - shared UI, article shells, demos, charts, and layout primitives.
 - `src/lib/` - typed API wrappers, router compatibility, telemetry, auth, and server helpers.
 - `src/data/` - single source of truth for marketing, blog, research, team, product, and FAQ content.
+- `src/film/`, `src/trailer/`, `src/mega/`, `src/explainer/` - the cinematic `/showcase/*` surfaces: a shared timeline engine and scene library in `src/film/`, plus three alternate cuts built on it.
+- `src/design/` - the `/showcase/design` design lab, lazy-loaded one board at a time.
 - `public/` - static assets, sitemap, mirrored WDBX docs, and research PDFs.
 - `docs/` - operator runbooks and project specifications.
 
@@ -67,6 +69,8 @@ External collateral must not cite unsupported benchmark, security, compliance, d
 ## Administrative Access
 
 Admin reads such as `GET /api/inquiries` and `GET /api/telemetry/summary` require a valid session and `ADMIN_EMAILS` allowlist membership. When `ADMIN_REQUIRE_MFA=true`, they also require at least one enrolled WorkOS MFA factor and fail closed if factor verification is unavailable. See `docs/mfa-workos-runbook.md`.
+
+Write endpoints are protected on two independent axes. In-memory fixed-window rate limits cap how *many* requests a client IP can make, and `src/lib/server/body-limit.ts` caps how *large* each body may be — Next 15 route handlers ship no default body cap, so every POST reads through it and returns `413` past its per-route limit (4 KB telemetry and checkout, 16 KB profile, 32 KB inquiries, 64 KB CSP reports, 128 KB LLM chat). Give any new POST route a cap sized to its real payload.
 
 ## Deployment
 

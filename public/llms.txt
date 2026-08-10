@@ -16,7 +16,7 @@ the linked repositories for implementation detail.
 - [About MLAI Corporation](https://mlai-corp.com/about): Learn how MLAI Corporation designs resilient AI systems for private deployment, retrieval provenance, safety evaluation, and operational control.
 - [MLAI Services](https://mlai-corp.com/services): Audit, design, build, and harden AI systems that need traceability, private deployment paths, evaluation gates, and operational reliability.
 - [MLAI Docs](https://mlai-corp.com/docs): Review MLAI platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.
-- [WDBX Benchmarks](https://mlai-corp.com/benchmarks): Review WDBX benchmark dashboards, workload summaries, and performance context for traceable retrieval infrastructure.
+- [WDBX Architecture & Measurements](https://mlai-corp.com/benchmarks): How WDBX is built and what has actually been measured on MLAI hardware — architectural properties, and GPU figures labeled measured or target. No head-to-head comparisons against other products.
 - [Security](https://mlai-corp.com/security): Review MLAI security principles for authentication, private deployment, auditability, protected APIs, and production AI controls.
 
 ## Products

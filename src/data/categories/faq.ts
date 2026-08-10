@@ -18,6 +18,10 @@ export const faq: FAQ = ([
     answer: "Yes. We design for VPC, on-premise, hybrid, and offline-first deployment paths when data residency, network isolation, or customer policy requires it."
   },
   {
+    question: "What platforms are supported?",
+    answer: "macOS and iOS natively via Swift 6 SDKs. WDBX backends target Metal, CUDA, and Vulkan. Abbey ships on Discord today."
+  },
+  {
     question: "Do you replace existing LLMs?",
     answer: "Usually no. MLAI focuses on orchestration, retrieval, evaluation, and safety layers that can sit around existing model providers or self-hosted models."
   },

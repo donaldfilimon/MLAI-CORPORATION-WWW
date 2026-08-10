@@ -11,9 +11,28 @@ name: Deploy static landing page to GitHub Pages
 on:
   push:
     branches: [main]
+    # These paths must cover every input the guard below actually reads, not
+    # just the directory being published. `landing-page.test.ts` imports
+    # SITE_URL from src/lib/route-meta.ts and byte-compares site/<asset>
+    # against public/<asset> — so a change to either could invalidate the
+    # published page while this workflow sat idle.
+    #
+    # The concrete failure that motivated widening this: `bun run og`
+    # regenerates the raster brand assets into public/ ONLY (it has no site/
+    # step). After a re-skin, site/ silently keeps the old artwork. With the
+    # old filter nothing ran, Pages kept serving stale branding, and the drift
+    # surfaced later as a confusing failure on the next unrelated site/ commit.
+    #
+    # Listed asset-by-asset rather than as `public/**`: only these three are
+    # duplicated into site/, and a bare wildcard would rebuild the landing page
+    # on every unrelated public/ change (mirrored WDBX docs, research PDFs).
     paths:
       - "site/**"
       - "src/__tests__/landing-page.test.ts"
+      - "src/lib/route-meta.ts"
+      - "public/favicon.svg"
+      - "public/og-image.png"
+      - "public/apple-touch-icon.png"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

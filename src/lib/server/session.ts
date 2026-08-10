@@ -93,6 +93,14 @@ export async function getSession(req: Request): Promise<SessionData | null> {
       ttl: COOKIE_MAX_AGE,
     });
 
+    // iron-session does NOT throw on a malformed or forged seal — it resolves to
+    // an empty object. Since every protected route gates with `if (!user)`, and
+    // `{}` is truthy, returning it unchecked let any request carrying
+    // `mlai_session=<anything>` pass the authentication check with an undefined
+    // userId and email. Require the identity fields the callers actually rely on.
+    if (!data || typeof data.userId !== "string" || !data.userId) return null;
+    if (typeof data.email !== "string" || !data.email) return null;
+
     // Sessions are bound to client IP + User-Agent (hardening carried over).
     const currentIp = clientIpOf(req);
     const currentUa = req.headers.get("user-agent") || "unknown";

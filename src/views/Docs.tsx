@@ -1,27 +1,34 @@
+import type { ReactNode } from "react";
 import { m } from "framer-motion";
 import {
   Book,
   Boxes,
-  Code,
-  Cpu,
-  FileCheck2,
-  GitBranch,
   LockKeyhole,
   Network,
   ServerCog,
-  ShieldCheck,
   Terminal,
   ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import {
+  Callout,
+  CardPanel,
+  DeepDive,
+  Eyebrow,
+  FeatureCard,
+  Glossary,
+  PullQuote,
+  SpecList,
+  StepList,
+} from "@/components/site";
 
 /** Inline "read the paper" cross-link from Docs into the research archive. */
 function PaperLink({ to, children }: { to: string; children: string }) {
   return (
     <Link
       to={to}
-      className="mt-5 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
+      className="mt-8 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
     >
       {children}
       <ArrowRight className="h-3 w-3" />
@@ -29,31 +36,161 @@ function PaperLink({ to, children }: { to: string; children: string }) {
   );
 }
 
-const docSections = [
+/**
+ * One documentation band inside the sidebar column.
+ *
+ * Deliberately *not* `<Section>` from `@/components/site`: that component
+ * composes `.container-custom`, which re-applies the page gutter (up to
+ * `lg:px-12`) and would inset every section heading relative to the `h1` in
+ * this already-columned layout. The header composition — `Eyebrow` kicker
+ * (the section's nav group), icon, `h2` — is the part worth sharing, and the
+ * section `id` stays exactly where the in-page anchors expect it.
+ */
+function DocSection({
+  id,
+  group,
+  icon,
+  title,
+  lead,
+  children,
+}: {
+  id: string;
+  group: string;
+  icon: ReactNode;
+  title: string;
+  lead?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section id={id} aria-labelledby={`${id}-title`} className="mt-16 scroll-mt-28">
+      <header className="mb-6">
+        <Eyebrow>{group}</Eyebrow>
+        <div className="mt-2.5 flex items-center gap-3">
+          {icon}
+          <h2 id={`${id}-title`} className="font-display text-2xl font-bold text-white">
+            {title}
+          </h2>
+        </div>
+      </header>
+      {lead && <p className="mb-6 max-w-2xl text-sm leading-relaxed text-text-dim">{lead}</p>}
+      {children}
+    </section>
+  );
+}
+
+/** Sub-heading inside a documentation band. */
+function DocSubhead({ children }: { children: ReactNode }) {
+  return <h3 className="font-display text-lg font-semibold text-white">{children}</h3>;
+}
+
+const capabilities = [
   {
     title: "Traceable Retrieval",
-    description:
-      "Index records with source metadata, confidence signals, and weighted backtrace paths so every claim has provenance and a rollback point.",
-    icon: <GitBranch className="w-8 h-8 text-primary mb-2" />,
+    desc: "Index records with source metadata, confidence signals, and weighted backtrace paths so every claim has provenance and a rollback point.",
   },
   {
     title: "Agent Policy Gates",
-    description:
-      "Bind tools to explicit permissions, approval thresholds, and review roles before execution reaches production data.",
-    icon: <ShieldCheck className="w-8 h-8 text-primary mb-2" />,
+    desc: "Bind tools to explicit permissions, approval thresholds, and review roles before execution reaches production data.",
   },
   {
     title: "Evaluation Mesh",
-    description:
-      "Run regression suites for retrieval faithfulness, prompt-injection resilience, latency, and operator review burden as a release gate.",
-    icon: <FileCheck2 className="w-8 h-8 text-primary mb-2" />,
+    desc: "Run regression suites for retrieval faithfulness, prompt-injection resilience, latency, and operator review burden as a release gate.",
   },
   {
     title: "Private Runtime",
-    description:
-      "Package orchestration, retrieval, audit logs, and controls for cloud, VPC, on-premise, and offline-first deployments.",
-    icon: <Code className="w-8 h-8 text-primary mb-2" />,
+    desc: "Package orchestration, retrieval, audit logs, and controls for cloud, VPC, on-premise, and offline-first deployments.",
   },
+];
+
+/** Build-time configuration facts for the runtime — no measurements here. */
+const runtimeSpec = [
+  {
+    k: "Top-level commands",
+    v: "help, complete, train, agent, backends, plugin, auth, twilio, tui, dashboard",
+  },
+  { k: "Build-time feature selection", v: "-Dfeat-*" },
+  {
+    k: "Enabled by default",
+    v: "ai, wdbx, gpu, accelerator, shader, mlir, os-control, tui, hash",
+  },
+];
+
+const moduleMap = [
+  { term: "database/", def: "WDBX vector/block memory, indexes, persistence, and query-path primitives" },
+  { term: "mcp/", def: "Tool-facing ABI surfaces for agent workflows" },
+  { term: "ai/agents/", def: "Abbey · Aviva · Abi persona vocabulary and routing contracts" },
+  { term: "ai/llm/", def: "Provider adapters and local inference integration points" },
+  { term: "runtime/", def: "Schedulers, allocators, telemetry, and execution primitives" },
+  { term: "shared/", def: "Shared contracts, types, and cross-module utilities" },
+];
+
+const designDecisions = [
+  {
+    title: "SIMD-native vector math",
+    body: "@Vector builtins compile distance kernels to the target ISA (AVX-512 on x86, NEON on Apple Silicon) from one source.",
+  },
+  {
+    title: "One build, every platform",
+    body: "zig build cross-compiles static binaries for macOS arm64/x86_64, Linux, and Windows. No container, no runtime, no GC pauses.",
+  },
+  {
+    title: "TLS at the edge",
+    body: "Zig's std TLS server is still pending upstream (ziglang #14171), so deployments terminate TLS at a reverse proxy by design rather than shipping an unvetted stack.",
+  },
+];
+
+/** Transport configuration for `abi-mcp`. */
+const mcpSpec = [
+  { k: "Transport", v: "JSON-RPC 2.0 over stdio" },
+  { k: "Request cap", v: "64 KB" },
+  { k: "Optional HTTP transport", v: "127.0.0.1:8080" },
+  { k: "Port override", v: "ABI_MCP_HTTP_PORT" },
+  { k: "SSE stream", v: "GET /sse" },
+  { k: "Message endpoint", v: "POST /message" },
+];
+
+const mcpTools = [
+  { term: "ai_complete", def: "Run a single completion through the selected persona profile." },
+  { term: "ai_run", def: "Execute an agent workflow with routing, retrieval, and tool calls." },
+  { term: "ai_train", def: "Update routing weights for a persona profile or all profiles." },
+  { term: "wdbx_query", def: "Vector / block retrieval against the WDBX store with ordered results." },
+  { term: "wdbx_stats", def: "Report store size, index health, and snapshot metadata." },
+  { term: "gpu_status", def: "Report GPU capability and backend, with deterministic CPU fallback." },
+  { term: "scheduler_stats", def: "Surface scheduler throughput and queue depth." },
+  { term: "connector_test", def: "Validate a connector's credentials and payload shape before live dispatch." },
+  { term: "plugin_list", def: "Enumerate registered plugins and their target features." },
+  { term: "plugin_run", def: "Invoke a registered plugin entry point." },
+];
+
+const wdbxCapabilities = [
+  {
+    title: "Weighted backtrace paths",
+    desc: "Inspect which sources were used and where confidence dropped.",
+  },
+  {
+    title: "SIMD vector search",
+    desc: "Cosine nearest-neighbor with an HNSW-style index and CPU fallback.",
+  },
+  {
+    title: "Durable snapshots",
+    desc: "JSONL serialize/restore with integrity checks and tamper rejection.",
+  },
+  {
+    title: "Opt-in persistence",
+    desc: "Completions persist only when store_result is set on the request.",
+  },
+];
+
+const wdbxV2Docs = [
+  { file: "getting-started.md", label: "Getting Started", text: "Install, first run, and the snapshot workflow." },
+  { file: "architecture.md", label: "Architecture", text: "Personas, pipeline shape, and main modules." },
+  { file: "persistence.md", label: "Persistence", text: "Snapshots and SHA-256-linked block-chain memory." },
+  { file: "acceleration.md", label: "Acceleration", text: "CPU kernels today; WGSL/WebGPU scaffolding labeled as such." },
+  { file: "api.md", label: "HTTP API", text: "Status, shards, and dashboard routes." },
+  { file: "cli.md", label: "CLI & TUI", text: "Commands, chat interface, and teaching flow." },
+  { file: "protocols.md", label: "Protocols", text: "MCP / LSP / ACP JSON-RPC surfaces." },
+  { file: "limitations.md", label: "Limitations", text: "What V2 explicitly does not claim." },
+  { file: "index.md", label: "Index", text: "The full documentation map." },
 ];
 
 const personas = [
@@ -80,40 +217,73 @@ const personas = [
   },
 ];
 
-const mcpTools = [
-  { name: "ai_complete", purpose: "Run a single completion through the selected persona profile." },
-  { name: "ai_run", purpose: "Execute an agent workflow with routing, retrieval, and tool calls." },
-  { name: "ai_train", purpose: "Update routing weights for a persona profile or all profiles." },
-  { name: "wdbx_query", purpose: "Vector / block retrieval against the WDBX store with ordered results." },
-  { name: "wdbx_stats", purpose: "Report store size, index health, and snapshot metadata." },
-  { name: "gpu_status", purpose: "Report GPU capability and backend, with deterministic CPU fallback." },
-  { name: "scheduler_stats", purpose: "Surface scheduler throughput and queue depth." },
-  { name: "connector_test", purpose: "Validate a connector's credentials and payload shape before live dispatch." },
-  { name: "plugin_list", purpose: "Enumerate registered plugins and their target features." },
-  { name: "plugin_run", purpose: "Invoke a registered plugin entry point." },
+const routingSignals = [
+  {
+    title: "Technical execution",
+    body: "Cues like debug, fix, error, build, compile, code, and test steer toward Aviva.",
+  },
+  {
+    title: "Directness",
+    body: "Cues like urgent, quick, concise, direct, or fast raise her weight further.",
+  },
+  {
+    title: "Policy overrides win",
+    body: "When the control plane flags risk, weight shifts hard toward Abi, and a disallowed action routes to Abi outright regardless of the keyword signals.",
+  },
+];
+
+const abbeyPrinciples = [
+  {
+    title: "Care first",
+    body: "Read the person's goal and state before reaching for the answer; meet them where they are, never condescending.",
+  },
+  {
+    title: "Clarity always",
+    body: "Explain the why, not just the what; teach rather than dictate, and keep jargon in service of understanding.",
+  },
+  {
+    title: "Competence throughout",
+    body: "Broad technical range, paired with the honesty to name uncertainty and defer to review instead of bluffing.",
+  },
 ];
 
 const apiRoutes = [
-  { method: "GET", path: "/api/auth/me", purpose: "Returns the public session user without exposing WorkOS tokens." },
-  { method: "GET", path: "/api/auth/verify-user", purpose: "Confirms the active session maps to a real WorkOS user." },
-  { method: "GET", path: "/api/llm/status", purpose: "Reports protected LLM provider configuration for the signed-in user." },
-  { method: "POST", path: "/api/llm/chat", purpose: "Runs server-side LLM requests behind the WorkOS session cookie." },
-  { method: "GET", path: "/api/billing/plans", purpose: "Lists available subscription plans for the console." },
-  { method: "POST", path: "/api/billing/checkout", purpose: "Creates or redirects to subscription checkout when billing is configured." },
-  { method: "PATCH", path: "/api/profile", purpose: "Updates the authenticated user's profile fields." },
-  { method: "POST", path: "/api/inquiries", purpose: "Stores a public, rate-limited sales inquiry." },
+  { term: "GET /api/auth/me", def: "Returns the public session user without exposing WorkOS tokens." },
+  { term: "GET /api/auth/verify-user", def: "Confirms the active session maps to a real WorkOS user." },
+  { term: "GET /api/llm/status", def: "Reports protected LLM provider configuration for the signed-in user." },
+  { term: "POST /api/llm/chat", def: "Runs server-side LLM requests behind the WorkOS session cookie." },
+  { term: "GET /api/billing/plans", def: "Lists available subscription plans for the console." },
+  { term: "POST /api/billing/checkout", def: "Creates or redirects to subscription checkout when billing is configured." },
+  { term: "PATCH /api/profile", def: "Updates the authenticated user's profile fields." },
+  { term: "POST /api/inquiries", def: "Stores a public, rate-limited sales inquiry." },
 ];
 
-const deploymentChecklist = [
-  "Set WorkOS credentials and configure the AuthKit redirect URI.",
-  "Enable MFA and passkeys in the WorkOS dashboard for the production environment.",
-  "Set server-only LLM provider keys; never expose them to browser bundles.",
-  "Configure billing links or replace the billing scaffold with Stripe Checkout sessions.",
-  "Run evaluation gates before allowing autonomous write actions or external tool calls.",
+const deploymentSteps = [
+  {
+    title: "WorkOS credentials",
+    body: "Set WorkOS credentials and configure the AuthKit redirect URI.",
+  },
+  {
+    title: "MFA and passkeys",
+    body: "Enable MFA and passkeys in the WorkOS dashboard for the production environment.",
+  },
+  {
+    title: "Server-only provider keys",
+    body: "Set server-only LLM provider keys; never expose them to browser bundles.",
+  },
+  {
+    title: "Billing",
+    body: "Configure billing links or replace the billing scaffold with Stripe Checkout sessions.",
+  },
+  {
+    title: "Evaluation gates",
+    body: "Run evaluation gates before allowing autonomous write actions or external tool calls.",
+  },
 ];
 
 // Single source of truth for the docs section nav — drives both the desktop
-// sidebar and the mobile section bar. Every anchor maps to a real section id.
+// sidebar and the mobile section bar. Every anchor maps to a real section id,
+// and each group name is reused as that section's Eyebrow kicker.
 const docNav = [
   {
     group: "Getting Started",
@@ -200,30 +370,28 @@ export function Docs() {
               operator-ready audit trails — exposed over a local CLI and an MCP server.
             </p>
 
-            <div className="grid sm:grid-cols-2 gap-6 mb-12">
-              {docSections.map((section) => (
-                <div key={section.title} className="glass-card group flex flex-col justify-between">
-                  <div>
-                    <div className="mb-4 text-primary">{section.icon}</div>
-                    <h3 className="text-lg font-bold text-white mb-2">{section.title}</h3>
-                    <p className="text-sm text-text-dim leading-relaxed">{section.description}</p>
-                  </div>
-                </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {capabilities.map((c) => (
+                <FeatureCard key={c.title} title={c.title} desc={c.desc} />
               ))}
             </div>
 
             {/* ABI Runtime */}
-            <section id="runtime" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <Terminal className="h-5 w-5 text-cyan-400" />
-                <h2 className="text-2xl font-bold text-white">ABI Runtime</h2>
-              </div>
-              <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                ABI is a Zig 0.17 framework for local AI orchestration, semantic vector
-                storage, and GPU capability reporting. Build the CLI and MCP server from a
-                pinned toolchain; on macOS use the <code className="text-cyan-300">./build.sh</code> wrapper.
-              </p>
-              <div className="bg-[#0D1117] rounded-lg p-4 border border-white/10 mb-8 font-mono text-sm overflow-x-auto">
+            <DocSection
+              id="runtime"
+              group="Getting Started"
+              icon={<Terminal className="h-5 w-5 text-cyan-400" />}
+              title="ABI Runtime"
+              lead={
+                <>
+                  ABI is a Zig 0.17 framework for local AI orchestration, semantic vector
+                  storage, and GPU capability reporting. Build the CLI and MCP server from a
+                  pinned toolchain; on macOS use the{" "}
+                  <code className="text-cyan-300">./build.sh</code> wrapper.
+                </>
+              }
+            >
+              <div className="bg-[#0D1117] rounded-lg p-4 border border-white/10 font-mono text-sm overflow-x-auto">
                 <div className="flex gap-2 mb-3">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -240,136 +408,84 @@ export function Docs() {
                 <code className="text-cyan-400">abi</code> <code className="text-white">agent plan</code><br />
                 <code className="text-cyan-400">abi</code> <code className="text-white">agent os execute --confirm</code>
               </div>
-              <p className="text-xs text-text-dim/70 leading-relaxed max-w-2xl">
-                Top-level commands: <span className="text-text-dim">help, complete, train, agent, backends, plugin, auth, twilio, tui, dashboard.</span> Feature
-                modules are selected at build time via <code className="text-cyan-300">-Dfeat-*</code> flags
-                (ai, wdbx, gpu, accelerator, shader, mlir, os-control, tui, hash enabled by default).
-              </p>
 
-              <div className="mt-8 grid gap-4 lg:grid-cols-2">
-                <div className="glass-card p-5">
-                  <h3 className="text-sm font-bold text-white mb-3">Module map</h3>
-                  <dl className="space-y-2">
-                    {[
-                      ["database/", "WDBX vector/block memory, indexes, persistence, and query-path primitives"],
-                      ["mcp/", "Tool-facing ABI surfaces for agent workflows"],
-                      ["ai/agents/", "Abbey · Aviva · Abi persona vocabulary and routing contracts"],
-                      ["ai/llm/", "Provider adapters and local inference integration points"],
-                      ["runtime/", "Schedulers, allocators, telemetry, and execution primitives"],
-                      ["shared/", "Shared contracts, types, and cross-module utilities"],
-                    ].map(([mod, desc]) => (
-                      <div key={mod} className="flex gap-3 text-sm">
-                        <dt className="w-24 shrink-0 font-mono text-xs text-cyan-300">{mod}</dt>
-                        <dd className="text-text-dim leading-snug">{desc}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-                <div className="glass-card p-5">
-                  <h3 className="text-sm font-bold text-white mb-3">Design decisions</h3>
-                  <ul className="space-y-2.5 text-sm text-text-dim leading-relaxed">
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
-                      <span><span className="text-white">SIMD-native vector math</span> — <code className="text-cyan-300">@Vector</code> builtins compile distance kernels to the target ISA (AVX-512 on x86, NEON on Apple Silicon) from one source.</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
-                      <span><span className="text-white">One build, every platform</span> — <code className="text-cyan-300">zig build</code> cross-compiles static binaries for macOS arm64/x86_64, Linux, and Windows. No container, no runtime, no GC pauses.</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
-                      <span><span className="text-white">TLS at the edge</span> — Zig's std TLS server is still pending upstream (ziglang #14171), so deployments terminate TLS at a reverse proxy by design rather than shipping an unvetted stack.</span>
-                    </li>
-                  </ul>
-                </div>
+              {/* Stacked, not a 2-up grid: `Glossary`'s term track is capped at
+                  10rem, so inside a half-width card the definitions get ~150px
+                  and every module wraps to four lines. Full width keeps them
+                  one line each. */}
+              <div className="mt-8 space-y-5">
+                <CardPanel title="Build configuration">
+                  <SpecList rows={runtimeSpec} />
+                </CardPanel>
+                <CardPanel title="Module map">
+                  <Glossary items={moduleMap} />
+                </CardPanel>
               </div>
-            </section>
+
+              <div className="mt-8">
+                <DocSubhead>Design decisions</DocSubhead>
+                <DeepDive className="mt-5" cols={3} items={designDecisions} />
+              </div>
+            </DocSection>
 
             {/* MCP Server */}
-            <section id="mcp" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <Network className="h-5 w-5 text-sky-400" />
-                <h2 className="text-2xl font-bold text-white">MCP Server</h2>
+            <DocSection
+              id="mcp"
+              group="Platform"
+              icon={<Network className="h-5 w-5 text-sky-400" />}
+              title="MCP Server"
+              lead={
+                <>
+                  The <code className="text-cyan-300">abi-mcp</code> server speaks JSON-RPC 2.0
+                  over stdio, with an optional local HTTP transport.
+                </>
+              }
+            >
+              <SpecList rows={mcpSpec} />
+              <div className="mt-8">
+                <DocSubhead>Tools</DocSubhead>
+                <Glossary className="mt-5" items={mcpTools} />
               </div>
-              <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                The <code className="text-cyan-300">abi-mcp</code> server speaks JSON-RPC 2.0 over stdio
-                (64&nbsp;KB request cap) and an optional HTTP transport on{" "}
-                <code className="text-cyan-300">127.0.0.1:8080</code> — configurable with{" "}
-                <code className="text-cyan-300">ABI_MCP_HTTP_PORT</code>, exposing{" "}
-                <code className="text-cyan-300">GET /sse</code> and{" "}
-                <code className="text-cyan-300">POST /message</code>.
-              </p>
-              <div className="glass-card p-0 overflow-hidden">
-                {mcpTools.map((tool) => (
-                  <div
-                    key={tool.name}
-                    className="grid gap-4 border-b border-white/5 p-4 last:border-b-0 md:grid-cols-[12rem_1fr] hover:bg-white/1 transition-colors"
-                  >
-                    <div className="font-mono text-xs font-bold text-sky-400">{tool.name}</div>
-                    <p className="text-sm leading-relaxed text-text-dim">{tool.purpose}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            </DocSection>
 
             {/* WDBX */}
-            <section id="wdbx" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <Boxes className="h-5 w-5 text-cyan-400" />
-                <h2 className="text-2xl font-bold text-white">WDBX Retrieval</h2>
-              </div>
-              <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                WDBX is the Weighted Directed Backtrace eXecution store. It keeps context as
-                weighted paths so retrieval can be inspected, not just ranked. The store exposes
-                key-value, vector (cosine search with a SIMD path), and block/spatial surfaces,
-                with JSONL snapshot persistence guarded by SHA-256 integrity checks. Disabled
-                builds fail closed with explicit errors rather than degrading silently.
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  { icon: <GitBranch className="h-4 w-4 text-cyan-400" />, label: "Weighted backtrace paths", text: "Inspect which sources were used and where confidence dropped." },
-                  { icon: <Cpu className="h-4 w-4 text-cyan-400" />, label: "SIMD vector search", text: "Cosine nearest-neighbor with an HNSW-style index and CPU fallback." },
-                  { icon: <ServerCog className="h-4 w-4 text-cyan-400" />, label: "Durable snapshots", text: "JSONL serialize/restore with integrity checks and tamper rejection." },
-                  { icon: <ShieldCheck className="h-4 w-4 text-cyan-400" />, label: "Opt-in persistence", text: "Completions persist only when store_result is set on the request." },
-                ].map((item) => (
-                  <div key={item.label} className="glass-card p-5">
-                    <div className="mb-2 flex items-center gap-2">{item.icon}<span className="text-sm font-bold text-white">{item.label}</span></div>
-                    <p className="text-sm leading-relaxed text-text-dim">{item.text}</p>
-                  </div>
+            <DocSection
+              id="wdbx"
+              group="Platform"
+              icon={<Boxes className="h-5 w-5 text-cyan-400" />}
+              title="WDBX Retrieval"
+              lead={
+                <>
+                  WDBX is the Weighted Directed Backtrace eXecution store. It keeps context as
+                  weighted paths so retrieval can be inspected, not just ranked. The store exposes
+                  key-value, vector (cosine search with a SIMD path), and block/spatial surfaces,
+                  with JSONL snapshot persistence guarded by SHA-256 integrity checks.
+                </>
+              }
+            >
+              <div className="grid gap-5 sm:grid-cols-2">
+                {wdbxCapabilities.map((c) => (
+                  <FeatureCard key={c.title} title={c.title} desc={c.desc} accent="wdbx" />
                 ))}
               </div>
+              <Callout className="mt-6" label="Fail closed">
+                Disabled builds fail closed with explicit errors rather than degrading silently.
+              </Callout>
               <PaperLink to="/research/wdbx-weighted-backtrace-memory-store">
                 Read the paper: WDBX weighted-backtrace store
               </PaperLink>
-            </section>
+            </DocSection>
 
             {/* WDBX V2 documentation set */}
-            <section id="wdbx-v2" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <Boxes className="h-5 w-5 text-sky-400" />
-                <h2 className="text-2xl font-bold text-white">WDBX V2 Documentation</h2>
-              </div>
-              <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                The V2 release of the Abbey/WDBX runtime ships an observable
-                pipeline: block-chain memory with temporal queries, multimodal
-                input fusion, an async neural path, and research-alignment
-                telemetry scored on every turn. The complete Markdown
-                documentation set is mirrored here from the wdbx repository —
-                including its limitations page, which states plainly what is
-                scaffolding versus shipped.
-              </p>
+            <DocSection
+              id="wdbx-v2"
+              group="Platform"
+              icon={<Boxes className="h-5 w-5 text-sky-400" />}
+              title="WDBX V2 Documentation"
+              lead="The V2 release of the Abbey/WDBX runtime ships an observable pipeline: block-chain memory with temporal queries, multimodal input fusion, an async neural path, and research-alignment telemetry scored on every turn. The complete Markdown documentation set is mirrored here from the wdbx repository — including its limitations page, which states plainly what is scaffolding versus shipped."
+            >
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {[
-                  { file: "getting-started.md", label: "Getting Started", text: "Install, first run, and the snapshot workflow." },
-                  { file: "architecture.md", label: "Architecture", text: "Personas, pipeline shape, and main modules." },
-                  { file: "persistence.md", label: "Persistence", text: "Snapshots and SHA-256-linked block-chain memory." },
-                  { file: "acceleration.md", label: "Acceleration", text: "CPU kernels today; WGSL/WebGPU scaffolding labeled as such." },
-                  { file: "api.md", label: "HTTP API", text: "Status, shards, and dashboard routes." },
-                  { file: "cli.md", label: "CLI & TUI", text: "Commands, chat interface, and teaching flow." },
-                  { file: "protocols.md", label: "Protocols", text: "MCP / LSP / ACP JSON-RPC surfaces." },
-                  { file: "limitations.md", label: "Limitations", text: "What V2 explicitly does not claim." },
-                  { file: "index.md", label: "Index", text: "The full documentation map." },
-                ].map((doc) => (
+                {wdbxV2Docs.map((doc) => (
                   <a
                     key={doc.file}
                     href={`/docs/wdbx/${doc.file}`}
@@ -395,37 +511,35 @@ export function Docs() {
               <PaperLink to="/blog/wdbx-v2-release">
                 Read the release note: WDBX V2
               </PaperLink>
-            </section>
+            </DocSection>
 
             {/* Personas */}
-            <section id="personas" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <Boxes className="h-5 w-5 text-sky-400" />
-                <h2 className="text-2xl font-bold text-white">Persona Routing</h2>
-              </div>
-              <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                The Abbey–Aviva–Abi framework answers one question: how do you get
-                advanced capability without giving up governance? Instead of one agent
-                that plans, reviews, and executes, it separates those roles across three
-                persona profiles. Routing between them is deterministic and weight-based —
-                an inspectable trace event, not a hidden model call.
-              </p>
-              <div className="grid gap-4 sm:grid-cols-3">
+            <DocSection
+              id="personas"
+              group="Platform"
+              icon={<Boxes className="h-5 w-5 text-sky-400" />}
+              title="Persona Routing"
+              lead="The Abbey–Aviva–Abi framework answers one question: how do you get advanced capability without giving up governance? Instead of one agent that plans, reviews, and executes, it separates those roles across three persona profiles. Routing between them is deterministic and weight-based — an inspectable trace event, not a hidden model call."
+            >
+              {/* Persona dot colors are the fixed *persona* axis (Abbey emerald,
+                  Aviva violet, Abi cyan) — deliberately not the product accent
+                  axis in `site/accent.ts`, where "abi" is violet. */}
+              <div className="grid gap-5 sm:grid-cols-3">
                 {personas.map((p) => (
-                  <div key={p.name} className="glass-card p-5">
-                    <div className="mb-3 flex items-center gap-2">
+                  <CardPanel key={p.name} gap="sm">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: p.accent }} aria-hidden="true" />
                       <span className="text-base font-bold text-white">{p.name}</span>
                       <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/60">{p.role}</span>
                     </div>
                     <p className="text-sm leading-relaxed text-text-dim">{p.description}</p>
-                  </div>
+                  </CardPanel>
                 ))}
               </div>
 
-              <div className="glass-card mt-4 p-6">
-                <h3 className="text-base font-bold text-white mb-3">How a profile is selected</h3>
-                <p className="text-sm leading-relaxed text-text-dim mb-4">
+              <div className="mt-10">
+                <DocSubhead>How a profile is selected</DocSubhead>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-dim">
                   Routing starts from a baseline weight per profile, then adjusts
                   it from inspectable input signals. The adjusted weights are
                   normalized to a distribution; the largest becomes primary and
@@ -435,99 +549,58 @@ export function Docs() {
                   expert — she gains weight when the request reads as hands-on or
                   time-pressed:
                 </p>
-                <ul className="space-y-2.5 text-sm text-text-dim">
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" aria-hidden="true" />
-                    <span><span className="text-white">Technical execution</span> — debug, fix, error, build, compile, code, test cues steer toward Aviva.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" aria-hidden="true" />
-                    <span><span className="text-white">Directness</span> — urgent, quick, concise, direct, or fast cues raise her weight further.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true" />
-                    <span><span className="text-white">Policy overrides win</span> — when the control plane flags risk, weight shifts hard toward Abi, and a disallowed action routes to Abi outright regardless of the keyword signals.</span>
-                  </li>
-                </ul>
-                <p className="text-sm leading-relaxed text-text-dim mt-4">
+                <DeepDive className="mt-6" cols={3} items={routingSignals} />
+                <Callout className="mt-6" label="Authority boundary">
                   Aviva plans and proposes; she holds no autonomous write or
                   execute authority — that boundary belongs to Abi, and only on
                   plans that have cleared review.
-                </p>
+                </Callout>
               </div>
 
-              <div className="glass-card mt-4 p-6">
-                <h3 className="text-base font-bold text-white mb-3">Abbey&apos;s voice</h3>
-                <p className="text-sm leading-relaxed text-text-dim mb-4">
+              <div className="mt-10">
+                <DocSubhead>Abbey&apos;s voice</DocSubhead>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-dim">
                   Abbey is the profile you hear most in explanation and review, so her
                   voice sets the tone for the whole framework. It follows one principle
                   set, summed up by the motto the system is built around:
                 </p>
-                <p className="font-display text-lg font-semibold text-sky-300 mb-5">
+                <PullQuote accent="abbey">
                   &ldquo;Care first. Clarity always. Competence throughout.&rdquo;
-                </p>
-                <ul className="space-y-2.5 text-sm text-text-dim">
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" aria-hidden="true" />
-                    <span><span className="text-white">Care first</span> — read the person&apos;s goal and state before reaching for the answer; meet them where they are, never condescending.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" aria-hidden="true" />
-                    <span><span className="text-white">Clarity always</span> — explain the why, not just the what; teach rather than dictate, and keep jargon in service of understanding.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" aria-hidden="true" />
-                    <span><span className="text-white">Competence throughout</span> — broad technical range, paired with the honesty to name uncertainty and defer to review instead of bluffing.</span>
-                  </li>
-                </ul>
+                </PullQuote>
+                <DeepDive cols={3} accent="abbey" items={abbeyPrinciples} />
               </div>
 
               <PaperLink to="/research/policy-locked-tool-use-multi-agent">
                 Read the paper: policy-locked tool use
               </PaperLink>
-            </section>
+            </DocSection>
 
             {/* Protected API */}
-            <section id="api" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <LockKeyhole className="h-5 w-5 text-cyan-400" />
-                <h2 className="text-2xl font-bold text-white">Protected Console API</h2>
-              </div>
-              <p className="text-sm text-text-dim leading-relaxed mb-6 max-w-2xl">
-                The MLAI console is served behind a WorkOS AuthKit session (an encrypted{" "}
-                <code className="text-cyan-300">mlai_session</code> cookie). Protected routes
-                require a valid session; inquiry submission is public and rate-limited.
-              </p>
-              <div className="glass-card p-0 overflow-hidden">
-                {apiRoutes.map((route) => (
-                  <div
-                    key={route.path}
-                    className="grid gap-4 border-b border-white/5 p-5 last:border-b-0 md:grid-cols-[14rem_1fr] hover:bg-white/1 transition-colors"
-                  >
-                    <div className="font-mono text-xs font-bold text-cyan-400">{route.method} {route.path}</div>
-                    <p className="text-sm leading-relaxed text-text-dim">{route.purpose}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <DocSection
+              id="api"
+              group="Console"
+              icon={<LockKeyhole className="h-5 w-5 text-cyan-400" />}
+              title="Protected Console API"
+              lead={
+                <>
+                  The MLAI console is served behind a WorkOS AuthKit session (an encrypted{" "}
+                  <code className="text-cyan-300">mlai_session</code> cookie). Protected routes
+                  require a valid session; inquiry submission is public and rate-limited.
+                </>
+              }
+            >
+              <Glossary items={apiRoutes} />
+            </DocSection>
 
             {/* Deployment */}
-            <section id="deployment" className="mt-16">
-              <div className="mb-6 flex items-center gap-3">
-                <ServerCog className="h-5 w-5 text-sky-400" />
-                <h2 className="text-2xl font-bold text-white">Deployment Checklist</h2>
-              </div>
-              <div className="grid gap-4">
-                {deploymentChecklist.map((item, index) => (
-                  <div key={item} className="glass-card flex gap-5 p-5 items-center">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 font-mono text-xs font-bold text-cyan-400 ring-1 ring-cyan-500/20">
-                      {index + 1}
-                    </span>
-                    <p className="text-sm leading-relaxed text-text-dim">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <DocSection
+              id="deployment"
+              group="Getting Started"
+              icon={<ServerCog className="h-5 w-5 text-sky-400" />}
+              title="Deployment Checklist"
+            >
+              <StepList steps={deploymentSteps} />
+            </DocSection>
           </m.div>
         </div>
         </main>

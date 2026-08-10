@@ -11,11 +11,12 @@ import {
   Code,
   CheckCircle2,
 } from "lucide-react";
-import { services } from '@/data/categories/services';
+import { services, refusals } from '@/data/categories/services';
 import { useUI } from "../lib/ui-context";
 import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
 import { Card, CardContent } from "@/components/ui/card";
+import { Callout, Section, StepList, type Step } from "@/components/site";
 
 const icons = [
   <Cpu className="w-7 h-7 text-cyan-400" />,
@@ -31,24 +32,22 @@ const icons = [
 
 // How an engagement runs — a real ordered sequence (the page's own
 // "audit, design, build, harden"), so numbered rows are honest here.
-const engagement = [
+// Rendered by `StepList`, which owns the 01–04 numbering rail and the <ol>
+// semantics; the phase numerals are therefore not repeated in the data.
+const engagement: readonly Step[] = [
   {
-    kick: "Phase 01",
     title: "Audit",
     body: "Map workflows, prompt surfaces, data paths, and approval gates to determine what is safe to automate and what still needs a human in the loop.",
   },
   {
-    kick: "Phase 02",
     title: "Design",
     body: "Specify the retrieval, orchestration, and safety layers — index strategy, agent roles, tool permissions, and the evaluation harness that will gate releases.",
   },
   {
-    kick: "Phase 03",
     title: "Build",
     body: "Implement against production-like traffic with traces, audit events, and benchmark baselines wired in from the first commit, not bolted on later.",
   },
   {
-    kick: "Phase 04",
     title: "Harden",
     body: "Red-team the system, tighten policy locks, and package private deployment, monitoring, and rollback paths for governed production.",
   },
@@ -138,55 +137,38 @@ export const Services = () => {
             );
           })}
         </CardGrid>
-
-        {/* Engagement process — numbered rows (numrow), a genuine sequence. */}
-        <div className="mt-24">
-          <div className="mb-12 max-w-2xl">
-            <div className="label-chip mb-5">HOW AN ENGAGEMENT RUNS</div>
-            <h2 className="section-title">From audit to governed production.</h2>
-            <p className="section-subtitle mb-0">
-              Four phases, in order. Each one ends with evidence — a register, a
-              harness, a baseline — that gates the next.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {engagement.map((step, i) => {
-              const motionProps = shouldReduceMotion
-                ? { initial: false }
-                : {
-                    initial: { opacity: 0, y: 16 },
-                    whileInView: { opacity: 1, y: 0 },
-                    transition: { delay: i * 0.06 },
-                  };
-              return (
-                <m.div
-                  key={step.title}
-                  viewport={{ once: true }}
-                  {...motionProps}
-                  className="glass-card flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:gap-7"
-                >
-                  <div
-                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 font-mono text-lg font-bold text-cyan-300"
-                    aria-hidden="true"
-                  >
-                    0{i + 1}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-dim/60">
-                      {step.kick}
-                    </div>
-                    <h3 className="mt-1 text-xl font-bold text-white">{step.title}</h3>
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-dim">
-                      {step.body}
-                    </p>
-                  </div>
-                </m.div>
-              );
-            })}
-          </div>
-        </div>
       </div>
+
+      {/*
+        Engagement process. `Section` supplies the band rhythm + page gutter and
+        `StepList` the numbered rail, so this renders as a sibling of the
+        container above rather than inside it (double gutters otherwise).
+        `pb-0` defers the trailing space to the outer section's own `section-y`.
+      */}
+      <Section
+        eyebrow="HOW AN ENGAGEMENT RUNS"
+        title="From audit to governed production."
+        lead="Four phases, in order. Each one ends with evidence — a register, a harness, a baseline — that gates the next."
+        className="pb-0"
+      >
+        <StepList steps={engagement} />
+      </Section>
+
+      {/*
+        Refusal copy — the fit boundary that closes the page. Same Section
+        band pattern as the engagement process above; as the last band it
+        takes `pb-0` and defers trailing space to the outer `section-y`.
+        Copy lives in the data layer (`refusals`), not here.
+      */}
+      <Section eyebrow="FIT" title="What we say no to" className="pb-0">
+        <div className="grid items-start gap-6 md:grid-cols-2">
+          {refusals.map((refusal) => (
+            <Callout key={refusal.label} label={refusal.label} accent={refusal.accent}>
+              {refusal.body}
+            </Callout>
+          ))}
+        </div>
+      </Section>
     </section>
   );
 };

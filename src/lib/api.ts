@@ -108,21 +108,56 @@ export type MfaStatus = {
   factors: Array<{ id: string; type: string; createdAt: string }>;
 };
 
-/** Like apiJson, but 401/403 resolve to a typed failure instead of throwing —
- *  the MFA gate on admin reads is an expected state the UI must render. */
+/** Like apiJson, but an *expected* non-2xx resolves to a typed failure instead
+ *  of throwing — the MFA gate on admin reads (401/403), and the two structured
+ *  billing outcomes below, are states the UI has to render, not errors to
+ *  swallow in a catch.
+ *
+ *  Two knobs, both additive so the original callers are unchanged:
+ *
+ *  - `init` lets a gated call be a POST. Without it this was GET-only, which is
+ *    why `createCheckout` could not use it and went through `apiJson` instead.
+ *  - `expectStatuses` is what stops "gated" from meaning "every failure is a
+ *    business outcome". When supplied, only those statuses — and only when the
+ *    body is the handler's own structured JSON — resolve; anything else (a 500,
+ *    an HTML 503 from the load balancer) still throws so the caller's catch
+ *    fires. Callers that omit it keep the original resolve-on-any-non-ok
+ *    behavior, which is what the 401/403 MFA gate below wants.
+ *
+ *  The failure branch also carries the parsed `body`, because a handler's
+ *  structured non-error response can hold more than `error` (billing adds a
+ *  `nextStep`) and that copy is exactly what the UI needs to show. */
 async function apiJsonGated<T>(
   path: string,
-): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string }> {
-  const res = await fetch(path, { headers: { "Content-Type": "application/json" } });
+  opts?: { init?: RequestInit; expectStatuses?: readonly number[] },
+): Promise<
+  | { ok: true; data: T }
+  | { ok: false; status: number; error: string; body: Record<string, unknown> | null }
+> {
+  const res = await fetch(path, {
+    ...opts?.init,
+    headers: { "Content-Type": "application/json", ...opts?.init?.headers },
+  });
   if (!res.ok) {
-    let error = `Request failed: ${res.status}`;
+    let body: Record<string, unknown> | null = null;
     try {
-      const body = await res.json();
-      if (typeof body?.error === "string") error = body.error;
+      const parsed: unknown = await res.json();
+      if (parsed && typeof parsed === "object") body = parsed as Record<string, unknown>;
     } catch {
       /* non-JSON error body — keep the status message */
     }
-    return { ok: false, status: res.status, error };
+    // A *structured* response is one the handler wrote on purpose: JSON with a
+    // string `error`. The distinction matters because infrastructure emits the
+    // same statuses — a Cloud Run cold-start 503 arrives as HTML — and rendering
+    // "Request failed: 503" as if it were product copy is the failure mode this
+    // whole change exists to remove. So a listed status only counts as an
+    // outcome when the handler actually spoke.
+    const structured = typeof body?.error === "string";
+    const error = structured ? (body!.error as string) : `Request failed: ${res.status}`;
+    if (opts?.expectStatuses && !(structured && opts.expectStatuses.includes(res.status))) {
+      throw new Error(error);
+    }
+    return { ok: false, status: res.status, error, body };
   }
   return { ok: true, data: (await res.json()) as T };
 }
@@ -144,9 +179,39 @@ export function getBillingPlans() {
   }>("/api/billing/plans");
 }
 
-export function createCheckout(planId: string) {
-  return apiJson<{ ok: boolean; url?: string; error?: string; nextStep?: string }>("/api/billing/checkout", {
-    method: "POST",
-    body: JSON.stringify({ planId }),
+export type CheckoutResult =
+  | { ok: true; url: string }
+  | { ok: false; error: string; nextStep?: string };
+
+/**
+ * POST /api/billing/checkout answers two *structured, non-error* outcomes at
+ * non-2xx statuses: **400** when the plan is priced individually (Platform has
+ * no self-serve checkout) and **503** when `STRIPE_PAYMENT_LINK` is unset. Both
+ * carry `error` + `nextStep` copy written to be shown to the user.
+ *
+ * This used to route through `apiJson`, which throws on any `!res.ok` — so both
+ * branches of the declared `{ ok, url?, error?, nextStep? }` contract were
+ * unreachable and a signed-in user clicking Platform was told the system was
+ * broken instead of being pointed at sales. Gate exactly those two statuses:
+ * a 500 or a network fault still rejects, so `Profile`'s catch keeps meaning
+ * "something actually went wrong".
+ */
+export async function createCheckout(planId: string): Promise<CheckoutResult> {
+  const res = await apiJsonGated<{ ok: boolean; url?: string }>("/api/billing/checkout", {
+    init: { method: "POST", body: JSON.stringify({ planId }) },
+    expectStatuses: [400, 503],
   });
+
+  if (!res.ok) {
+    return {
+      ok: false,
+      error: res.error,
+      ...(typeof res.body?.nextStep === "string" ? { nextStep: res.body.nextStep } : {}),
+    };
+  }
+
+  // A 200 with no payment link is a broken handler, not a business outcome —
+  // throw so it surfaces as a failure rather than as silent copy-less UI.
+  if (!res.data.url) throw new Error("Checkout response did not include a payment URL.");
+  return { ok: true, url: res.data.url };
 }

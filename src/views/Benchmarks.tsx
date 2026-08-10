@@ -1,93 +1,101 @@
 import { Dashboard } from "../components/wdbx-benchmark/Dashboard";
 import { CosineSimDemo } from "../components/demos/CosineSimDemo";
 import { ShardingLatencyDemo } from "../components/demos/ShardingLatencyDemo";
+import { CardPanel, DataTable, Eyebrow } from "@/components/site";
 
 // Architectural comparison — properties, not performance numbers. Each cell
 // describes a design choice verifiable from the WDBX sources.
+const ARCH_COLS = ["Property", "WDBX", "SQL", "NoSQL"] as const;
 const ARCH_ROWS: [string, string, string, string][] = [
   ["Primary type", "Vectors (ℝᵈ)", "Rows / columns", "Documents"],
-  ["Scaling model", "Vector-aware sharding", "Manual / replicas", "Hash auto-shard"],
-  ["Concurrency", "Lock-free MVCC", "ACID locking", "Eventual (BASE)"],
+  // Was "Vector-aware sharding" — distributed sharding is on the forbidden
+  // list in CLAUDE.md and master-reference.md §4 describes no sharding layer.
+  // Memory-mapped single-node persistence is what §4 actually documents.
+  ["Scaling model", "Single-node, memory-mapped", "Manual / replicas", "Hash auto-shard"],
+  // "Lock-free" was an adjective §4 does not carry; it says MVCC transactions.
+  ["Concurrency", "MVCC transactions", "ACID locking", "Eventual (BASE)"],
   ["Integrity", "Hash-chained blocks", "WAL logs", "Replication logs"],
   ["Runtime", "Zig (no GC)", "C++ / Java (GC)", "Java / Go (GC)"],
+];
+
+// How the benchmark surfaces are framed. Prose, not figures — no provenance
+// tag applies because none of these is a measurement.
+const FRAMING: readonly (readonly [string, string])[] = [
+  [
+    "Repeatable",
+    "Figures state workload shape, hardware target, and where the number came from.",
+  ],
+  [
+    "Operational",
+    "Metrics are chosen for release decisions, not vanity dashboards.",
+  ],
+  [
+    "Private-first",
+    "Benchmark paths support local, VPC, and edge deployment constraints.",
+  ],
 ];
 
 export function Benchmarks() {
   return (
     <div className="w-full bg-bg min-h-screen pt-32 pb-20 relative overflow-hidden noise-overlay">
       <div className="container-custom relative z-10 mb-12">
-        <div className="label-chip mb-6">PERFORMANCE LAB</div>
+        <Eyebrow className="mb-6">PERFORMANCE LAB</Eyebrow>
         <h1 className="section-title">Benchmarks with operating context.</h1>
         <p className="section-subtitle max-w-3xl">
-          Performance analytics for WDBX retrieval and agent orchestration,
-          framed around latency budgets, throughput targets, GPU acceleration,
-          and repeatable workloads.
+          How WDBX retrieval and agent orchestration are built, and what we can
+          currently show for it — architectural properties first, then the one
+          GPU benchmark set we can attribute, each figure tagged measured or
+          target. We do not publish head-to-head numbers against other products.
         </p>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {[
-            [
-              "Repeatable",
-              "Charts separate workload shape, hardware target, and runtime notes.",
-            ],
-            [
-              "Operational",
-              "Metrics are chosen for release decisions, not vanity dashboards.",
-            ],
-            [
-              "Private-first",
-              "Benchmark paths support local, VPC, and edge deployment constraints.",
-            ],
-          ].map(([title, body]) => (
-            <div key={title} className="glass-card">
-              <h2 className="font-bold text-white text-lg mb-2">{title}</h2>
-              <p className="text-sm leading-relaxed text-text-dim">{body}</p>
-            </div>
+          {/* `CardPanel` rather than `FeatureCard` because these keep their
+              <h2>: FeatureCard hardcodes <h3>, which would put an h3 ahead of
+              the page's first real h2 ("How WDBX differs by construction"). */}
+          {FRAMING.map(([title, body]) => (
+            <CardPanel key={title} gap="sm">
+              <h2 className="font-display text-lg font-semibold text-white">
+                {title}
+              </h2>
+              <p className="text-sm leading-relaxed text-text-dim text-pretty">
+                {body}
+              </p>
+            </CardPanel>
           ))}
         </div>
 
         <div className="mt-14">
-          <div className="label-chip mb-4">ARCHITECTURE, NOT ADJECTIVES</div>
+          <Eyebrow className="mb-4">ARCHITECTURE, NOT ADJECTIVES</Eyebrow>
           <h2 className="mb-3 font-display text-2xl font-bold text-white">
             How WDBX differs by construction
           </h2>
-          <p className="mb-6 max-w-3xl text-sm leading-relaxed text-text-dim">
-            A comparison of design properties — each one a structural choice,
-            not a performance claim.
-          </p>
-          <div className="glass-card overflow-x-auto p-0">
-            <table className="w-full min-w-140 text-left text-sm">
-              <thead>
-                <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-text-dim">
-                  <th className="px-5 py-3.5 font-medium">Property</th>
-                  <th className="px-5 py-3.5 font-medium text-sky-300">WDBX</th>
-                  <th className="px-5 py-3.5 font-medium">SQL</th>
-                  <th className="px-5 py-3.5 font-medium">NoSQL</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ARCH_ROWS.map(([prop, wdbx, sql, nosql]) => (
-                  <tr key={prop} className="border-b border-white/5 last:border-0">
-                    <td className="px-5 py-3.5 font-medium text-white">{prop}</td>
-                    <td className="px-5 py-3.5 text-sky-200">{wdbx}</td>
-                    <td className="px-5 py-3.5 text-text-dim">{sql}</td>
-                    <td className="px-5 py-3.5 text-text-dim">{nosql}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* The framing line is the table's <caption> rather than a paragraph
+              above it — same words, now bound to the table it qualifies. */}
+          <DataTable
+            cols={ARCH_COLS}
+            rows={ARCH_ROWS}
+            highlightCol={1}
+            caption="A comparison of design properties — each one a structural choice, not a performance claim."
+          />
         </div>
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
           <div>
-            <div className="label-chip mb-4">INTERACTIVE</div>
+            <Eyebrow className="mb-4">INTERACTIVE</Eyebrow>
+            {/* Was "Sharding latency model". As a heading that asserted a WDBX
+                sharding layer master-reference.md §4 does not document, sitting
+                directly under the architecture table that says single-node.
+                The demo's own labels said "shards" too and have since been
+                reworded to "partitions (modeled)" with a visible note that WDBX
+                is single-node today — a browser screenshot of this section used
+                to show the contradiction in a single frame. Keep heading and
+                demo copy agreeing with that table. */}
             <h2 className="mb-3 font-display text-xl font-bold text-white">
-              Sharding latency model
+              Parallel retrieval model
             </h2>
             <ShardingLatencyDemo />
           </div>
           <div>
-            <div className="label-chip mb-4">INTERACTIVE</div>
+            <Eyebrow className="mb-4">INTERACTIVE</Eyebrow>
             <h2 className="mb-3 font-display text-xl font-bold text-white">
               Cosine similarity, felt
             </h2>

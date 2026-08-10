@@ -1,8 +1,17 @@
 import { useState } from "react";
 
 // Interactive latency MODEL: L = α + βS/n — fixed overhead plus a scan term
-// that parallelizes across shards. Parameters are illustrative (a model of
-// how vector-aware sharding behaves), not measured production numbers.
+// that parallelizes across partitions. Parameters are illustrative, not
+// measured production numbers.
+//
+// The "model, not product" framing must stay VISIBLE, not just live in this
+// comment. On /benchmarks this renders roughly 200px below an architecture
+// table whose Scaling model row reads "Single-node, memory-mapped" — so the
+// earlier wording ("8 active shards", "More shards parallelize retrieval")
+// had the page contradicting itself within one screenful, and distributed
+// sharding is on the forbidden-claims list besides. A reader cannot see a
+// source comment. Keep the on-screen copy saying that WDBX is single-node
+// today and this is a general scaling curve.
 export function ShardingLatencyDemo() {
   const [n, setN] = useState(8);
   const alpha = 12;
@@ -20,10 +29,10 @@ export function ShardingLatencyDemo() {
           </div>
           <div className="text-xs text-text-dim">modeled retrieval latency (illustrative parameters)</div>
         </div>
-        <span className="label-chip">{n} active shards</span>
+        <span className="label-chip">{n} partitions (modeled)</span>
       </div>
       <div className="my-4 rounded-lg bg-black/30 px-3 py-2 font-mono text-xs text-sky-300/80">
-        L_shard = {alpha} + {betaS}/{n} = {L.toFixed(1)} ms
+        L(n) = {alpha} + {betaS}/{n} = {L.toFixed(1)} ms
       </div>
       <input
         type="range" min={1} max={32} value={n}
@@ -46,9 +55,13 @@ export function ShardingLatencyDemo() {
         })}
       </div>
       <p className="mt-3 text-xs text-text-dim">
-        More shards parallelize retrieval — latency falls toward the fixed
-        overhead α. The shape of the curve is the point; the constants here are
-        illustrative, not benchmark results.
+        Splitting a scan across more partitions drives latency toward the fixed
+        overhead α — the shape of that curve is the point, and the constants are
+        illustrative rather than benchmark results.{" "}
+        <strong className="text-text-dim/90">
+          WDBX is single-node today, as the table above says; this models how
+          partitioned retrieval scales in general, not a WDBX feature.
+        </strong>
       </p>
     </div>
   );

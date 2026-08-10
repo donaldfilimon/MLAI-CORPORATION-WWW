@@ -61,3 +61,47 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
   open state in a portal.
 - Button variants: `default | secondary | outline | ghost | destructive | link`;
   Badge adds `success`; Alert adds `success | warning | destructive`.
+
+## Two layers: primitives and section blocks
+
+The primitives above are the `general` group. There is a second layer — the `site` group —
+of **section-level blocks** for marketing and documentation pages. Build page sections from
+these rather than re-deriving them from primitives:
+
+| Purpose | Components |
+|---|---|
+| Page structure | `Section` (eyebrow + title + lead + children), `SplitSection` (sticky heading, prose right), `Eyebrow`, `Prose` |
+| Cards & grids | `FeatureCard`, `DeepDive`, `IndexCard`, `PersonaCard`, `ThroughputCard` |
+| Figures & data | `StatBlock`, `DataTable`, `SpecList`, `StepList`, `Glossary` |
+| Editorial | `Callout`, `PullQuote`, `FAQList`, `NextUp`, `PublicationIndex` |
+| Chrome & decoration | `AccentGlow`, `HeroBench`, `LogoMark`, `ProvTag`, `ProvLegend` |
+
+### The product accent axis
+
+Most `site` components take `accent?: "wdbx" | "abi" | "abbey"` (default `"wdbx"`), which
+selects a ramp: **wdbx → cyan**, **abi → violet**, **abbey → emerald**.
+
+**This is not the persona color axis.** Personas are fixed and different: Abbey is emerald,
+Aviva is violet, Abi is **cyan**. The *product* named "abi" is violet; the *persona* named
+"Abi" is cyan. Pick the axis that matches what you are labeling — `PersonaCard` takes
+`personas` keyed `abbey | aviva | abi` and applies the persona colors, not the accents.
+
+### Provenance is mandatory on figures
+
+Every published metric carries one of three classes — `measured` (reproduced on MLAI
+hardware), `target` (an engineering goal, not achieved), `reported` (a cited figure) — and
+they are **never conflated**. `StatBlock` and `ThroughputCard` *require* a `tag` on each
+figure; `ProvTag` renders the chip and `ProvLegend` the explainer (`variant="inline"` is the
+compact footer form). Never present a target as an achievement, and never invent
+performance numbers — no QPS, latency, recall, or speedup figures without a real source.
+
+### These components hold no content
+
+Every `site` component takes its copy and data as props; none ships sample text or figures.
+Supply real content at the call site. `NextUp` and `PublicationIndex` render plain `<a>`
+elements by default and accept an optional `linkComponent` for client-side routing.
+
+### Dark-only
+
+There is no light theme. Render these on the ink canvas (`background: var(--background)`,
+≈ `#05070d`) — components built for that canvas look washed out or invisible on white.

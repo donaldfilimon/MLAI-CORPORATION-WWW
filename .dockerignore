@@ -30,6 +30,10 @@ inquiries.db
 # Scratch / non-source outputs (gitignored or throwaway)
 output
 ds-bundle
+.ds-sync
+.design-sync
+.remember
+tsconfig.tsbuildinfo
 *.log
 coverage
 
