@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { about, companyFacts, investorThesis } from '@/data/categories/about';
+import { about } from '@/data/categories/about';
 import { Button } from "@/components/ui/button";
 import { ContactCTA } from "../components/ContactCTA";
 import { useUI } from "@/lib/ui-context";
@@ -123,7 +123,7 @@ export const About = () => {
         className="relative z-10"
       >
         <CardGrid cols={3} className="gap-5">
-          {investorThesis.map((item) => (
+          {about.investorThesis.map((item) => (
             <FeatureCard
               key={item.title}
               title={item.title}
@@ -142,7 +142,7 @@ export const About = () => {
         title="The company on paper"
         className="relative z-10 py-0"
       >
-        <SpecList rows={companyFacts} className="max-w-2xl" />
+        <SpecList rows={about.companyFacts} className="max-w-2xl" />
       </Section>
 
       <ContactCTA onOpenInquiry={openInquiry} />

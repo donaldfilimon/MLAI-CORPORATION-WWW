@@ -1,4 +1,4 @@
-import type { Services } from '../schemas';
+import type { Refusals, Services } from '../schemas';
 
 /**
  * "What we say no to" — the refusal copy, ported verbatim from the design
@@ -6,13 +6,7 @@ import type { Services } from '../schemas';
  * Rendered as `site/Callout` asides on the Services view; `accent` is the
  * product accent axis the handoff assigned each callout.
  */
-export interface Refusal {
-  label: string;
-  accent: "wdbx" | "abi" | "abbey";
-  body: string;
-}
-
-export const refusals: readonly Refusal[] = [
+export const refusals: Refusals = [
   {
     label: "Scope discipline",
     accent: "abbey",

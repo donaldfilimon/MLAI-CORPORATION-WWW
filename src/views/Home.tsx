@@ -21,13 +21,7 @@ import {
   type NextUpItem,
 } from '@/components/site';
 import { industries } from '@/data/categories/industries';
-import {
-  memoryModel,
-  memoryModelSection,
-  platform,
-  runtimeLayers,
-  runtimeSection,
-} from '@/data/categories/platform';
+import { platform, runtime } from '@/data/categories/platform';
 import { products } from '@/data/categories/products';
 import { research } from '@/data/categories/research';
 import { services } from '@/data/categories/services';
@@ -85,7 +79,7 @@ const platformLayers = platform.map((item) => ({
  * card shape with the tier label as the mono footnote. Accented `abi` — the
  * product/runtime axis, not the persona axis.
  */
-const runtimeLayerCards = runtimeLayers.map((layer) => ({
+const runtimeLayerCards = runtime.layers.map((layer) => ({
   title: layer.title,
   body: layer.description,
   meta: layer.tier,
@@ -229,20 +223,20 @@ export function Home() {
           {/* The L6→L1 runtime stack the capabilities above are built on.
               Copy + corroboration notes live in `data/categories/platform.ts`. */}
           <div className="mt-16">
-            <Eyebrow accent="abi" className="mb-4">{runtimeSection.eyebrow}</Eyebrow>
-            <h3 className="font-display text-2xl font-bold tracking-tight text-white">{runtimeSection.title}</h3>
-            <p className="mt-3 max-w-3xl text-base leading-relaxed text-text-dim">{runtimeSection.lead}</p>
+            <Eyebrow accent="abi" className="mb-4">{runtime.section.eyebrow}</Eyebrow>
+            <h3 className="font-display text-2xl font-bold tracking-tight text-white">{runtime.section.title}</h3>
+            <p className="mt-3 max-w-3xl text-base leading-relaxed text-text-dim">{runtime.section.lead}</p>
             <DeepDive items={runtimeLayerCards} cols={3} accent="abi" className="mt-8" />
           </div>
 
           {/* Memory-model spec — configuration facts from the mirrored WDBX docs. */}
           <div className="mt-16 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div>
-              <Eyebrow accent="wdbx" className="mb-4">{memoryModelSection.eyebrow}</Eyebrow>
-              <h3 className="font-display text-2xl font-bold tracking-tight text-white">{memoryModelSection.title}</h3>
-              <p className="mt-3 text-base leading-relaxed text-text-dim">{memoryModelSection.lead}</p>
+              <Eyebrow accent="wdbx" className="mb-4">{runtime.memorySection.eyebrow}</Eyebrow>
+              <h3 className="font-display text-2xl font-bold tracking-tight text-white">{runtime.memorySection.title}</h3>
+              <p className="mt-3 text-base leading-relaxed text-text-dim">{runtime.memorySection.lead}</p>
             </div>
-            <SpecList rows={memoryModel} />
+            <SpecList rows={runtime.memoryModel} />
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">

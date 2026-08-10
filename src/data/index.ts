@@ -1,7 +1,7 @@
 import { about } from './categories/about';
-import { platform } from './categories/platform';
+import { platform, runtime } from './categories/platform';
 import { industries } from './categories/industries';
-import { services } from './categories/services';
+import { refusals, services } from './categories/services';
 import { research } from './categories/research';
 import { blog } from './categories/blog';
 import { team } from './categories/team';
@@ -28,6 +28,8 @@ export const content = {
   platform,
   industries,
   services,
+  refusals,
+  runtime,
   research,
   blog,
   team,

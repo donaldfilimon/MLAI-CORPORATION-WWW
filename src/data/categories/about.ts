@@ -32,37 +32,37 @@ export const about: About = ({
     "No retrieval claim without a traceable source or confidence signal.",
     "No benchmark without environment notes, workload shape, and reproducibility context.",
     "No deployment plan that ignores rollback, incident review, and human escalation."
-  ]
+  ],
+
+  // The company on paper — registration-level facts, not measurements, which is
+  // why they render through `SpecList` (configuration facts) rather than a
+  // provenance-tagged `StatBlock`. Ported from the design handoff's Company page.
+  companyFacts: [
+    { k: "Legal name", v: "Machine Learning Advanced Innovations, Inc." },
+    { k: "Entity", v: "Delaware C-Corp" },
+    { k: "Location", v: "Orlando, FL" },
+    { k: "Languages", v: "Zig, Swift, TypeScript" },
+    { k: "Model", v: "SDK licensing + integration services" },
+  ],
+
+  // Positioning thesis — three claim-free cards on why on-device wins, ported
+  // verbatim from the design handoff's Investors page. Deliberately carries no
+  // figures; any number here would need a provenance tag and a repo artifact.
+  investorThesis: [
+    {
+      title: "Privacy is becoming law",
+      description:
+        "Regulated industries increasingly cannot send corpora to third-party clouds. On-device is the compliance story, not a feature.",
+    },
+    {
+      title: "The silicon is already shipped",
+      description:
+        "Apple Silicon's unified memory and Neural Engine sit idle in hundreds of millions of devices. We write the software that spends them.",
+    },
+    {
+      title: "Zero marginal cloud cost",
+      description:
+        "Local-first inference and storage carry no per-query COGS. Unit economics improve with adoption instead of degrading.",
+    },
+  ],
 });
-
-// The company on paper — registration-level facts, not measurements, which is
-// why they render through `SpecList` (configuration facts) rather than a
-// provenance-tagged `StatBlock`. Ported from the design handoff's Company page.
-export const companyFacts: readonly { k: string; v: string }[] = [
-  { k: "Legal name", v: "Machine Learning Advanced Innovations, Inc." },
-  { k: "Entity", v: "Delaware C-Corp" },
-  { k: "Location", v: "Orlando, FL" },
-  { k: "Languages", v: "Zig, Swift, TypeScript" },
-  { k: "Model", v: "SDK licensing + integration services" },
-];
-
-// Positioning thesis — three claim-free cards on why on-device wins, ported
-// verbatim from the design handoff's Investors page. Deliberately carries no
-// figures; any number here would need a provenance tag and a repo artifact.
-export const investorThesis: readonly { title: string; description: string }[] = [
-  {
-    title: "Privacy is becoming law",
-    description:
-      "Regulated industries increasingly cannot send corpora to third-party clouds. On-device is the compliance story, not a feature.",
-  },
-  {
-    title: "The silicon is already shipped",
-    description:
-      "Apple Silicon's unified memory and Neural Engine sit idle in hundreds of millions of devices. We write the software that spends them.",
-  },
-  {
-    title: "Zero marginal cloud cost",
-    description:
-      "Local-first inference and storage carry no per-query COGS. Unit economics improve with adoption instead of degrading.",
-  },
-];

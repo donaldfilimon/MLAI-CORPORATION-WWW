@@ -1,4 +1,4 @@
-import type { Platform } from '../schemas';
+import type { Platform, Runtime } from '../schemas';
 
 export const platform: Platform = ([
   {
@@ -42,15 +42,17 @@ export const platform: Platform = ([
  * no index-structure claims (a documented removed decision), no encryption/RBAC
  * claims, no performance numbers. Facts the handoff asserted that the mirrored
  * docs do NOT support are omitted here — see the layer notes below.
+ *
+ * Shape is pinned by `RuntimeSchema` and validated through `ContentSchema`
+ * with the rest of the copy (content.test.ts).
  */
-export interface RuntimeLayer {
-  /** Tier label, L6 (surface) down to L1 (audit). Rendered as the mono meta line. */
-  tier: string;
-  title: string;
-  description: string;
-}
-
-export const runtimeLayers: RuntimeLayer[] = [
+export const runtime: Runtime = ({
+  section: {
+    eyebrow: "The runtime underneath",
+    title: "Six layers, each with one job.",
+    lead: "Beneath the platform capabilities sits the WDBX runtime: thin interfaces over persona routing, retrieval, and acceleration, with every turn landing in chained, append-only memory.",
+  },
+  layers: [
   {
     tier: "L6",
     title: "Interface",
@@ -96,41 +98,32 @@ export const runtimeLayers: RuntimeLayer[] = [
     // protocols.md: teach/note "writes append-only WDBX memory";
     // architecture.md pipeline shape ends with "memory write, and telemetry".
     description: "Append-only chained block memory plus telemetry. Every pipeline turn ends by writing memory and a telemetry record, so the layers above leave receipts.",
+    },
+  ],
+
+  memorySection: {
+    eyebrow: "Memory model",
+    title: "Memory that keeps receipts.",
+    lead: "Every pipeline turn ends with a memory write. The store keeps vector records beside chained block memory, snapshots both together, and exposes the same search to external tools.",
   },
-];
 
-/**
- * Memory-model spec rows for `site/SpecList` (configuration facts, no
- * provenance tags needed). Every row is corroborated by the mirrored WDBX
- * docs; rows from the handoff that were not are dropped, not softened:
- * the docs never name the hash algorithm or a WAL, never describe MVCC or
- * lock-free concurrency (api.md documents an RwLock-guarded pipeline),
- * and never mention weighted provenance paths, per-record point-in-time
- * rollback, or on-open chain verification.
- */
-export const memoryModel: { k: string; v: string }[] = [
-  // protocols.md: teach/note writes append-only WDBX memory.
-  { k: "Journal", v: "Append-only block memory" },
-  // architecture.md: vector store + block-chain memory in src/database/*.
-  { k: "Structure", v: "Chained blocks + vector records" },
-  // persistence.md: snapshots save and restore both together.
-  { k: "Snapshots", v: "Save / restore vectors + blocks" },
-  // architecture.md: sharding in src/database/*; api.md: /api/shards.
-  { k: "Sharding", v: "Shard-routed store" },
-  // protocols.md: wdbx.memory.search advertised over MCP.
-  { k: "Tool access", v: "Memory search over MCP" },
-];
-
-/** Sub-section chrome for the runtime-layer block (copy lives here, not in the view). */
-export const runtimeSection = {
-  eyebrow: "The runtime underneath",
-  title: "Six layers, each with one job.",
-  lead: "Beneath the platform capabilities sits the WDBX runtime: thin interfaces over persona routing, retrieval, and acceleration, with every turn landing in chained, append-only memory.",
-};
-
-/** Sub-section chrome for the memory-model block (copy lives here, not in the view). */
-export const memoryModelSection = {
-  eyebrow: "Memory model",
-  title: "Memory that keeps receipts.",
-  lead: "Every pipeline turn ends with a memory write. The store keeps vector records beside chained block memory, snapshots both together, and exposes the same search to external tools.",
-};
+  // Memory-model spec rows for `site/SpecList` (configuration facts, no
+  // provenance tags needed). Every row is corroborated by the mirrored WDBX
+  // docs; rows from the handoff that were not are dropped, not softened:
+  // the docs never name the hash algorithm or a WAL, never describe MVCC or
+  // lock-free concurrency (api.md documents an RwLock-guarded pipeline),
+  // and never mention weighted provenance paths, per-record point-in-time
+  // rollback, or on-open chain verification.
+  memoryModel: [
+    // protocols.md: teach/note writes append-only WDBX memory.
+    { k: "Journal", v: "Append-only block memory" },
+    // architecture.md: vector store + block-chain memory in src/database/*.
+    { k: "Structure", v: "Chained blocks + vector records" },
+    // persistence.md: snapshots save and restore both together.
+    { k: "Snapshots", v: "Save / restore vectors + blocks" },
+    // architecture.md: sharding in src/database/*; api.md: /api/shards.
+    { k: "Sharding", v: "Shard-routed store" },
+    // protocols.md: wdbx.memory.search advertised over MCP.
+    { k: "Tool access", v: "Memory search over MCP" },
+  ],
+});
