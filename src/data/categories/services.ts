@@ -1,5 +1,30 @@
 import type { Services } from '../schemas';
 
+/**
+ * "What we say no to" — the refusal copy, ported verbatim from the design
+ * handoff (design-sources/handoffs/design_handoff_mlai_site Services page).
+ * Rendered as `site/Callout` asides on the Services view; `accent` is the
+ * product accent axis the handoff assigned each callout.
+ */
+export interface Refusal {
+  label: string;
+  accent: "wdbx" | "abi" | "abbey";
+  body: string;
+}
+
+export const refusals: readonly Refusal[] = [
+  {
+    label: "Scope discipline",
+    accent: "abbey",
+    body: "We don't take work that puts your data in our hands. If the engagement requires your corpus to leave your hardware, the engagement is designed wrong — and we'll say so.",
+  },
+  {
+    label: "Claims discipline",
+    accent: "wdbx",
+    body: "Deliverables ship with provenance-tagged numbers. Targets are framed as targets; nothing is reported as measured until it reproduces on your hardware.",
+  },
+];
+
 export const services: Services = ([
   {
     title: "Autonomy Readiness Audit",

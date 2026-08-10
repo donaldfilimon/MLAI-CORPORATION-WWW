@@ -11,12 +11,12 @@ import {
   Code,
   CheckCircle2,
 } from "lucide-react";
-import { services } from '@/data/categories/services';
+import { services, refusals } from '@/data/categories/services';
 import { useUI } from "../lib/ui-context";
 import { PageHeader } from "@/components/PageHeader";
 import { CardGrid } from "@/components/CardGrid";
 import { Card, CardContent } from "@/components/ui/card";
-import { Section, StepList, type Step } from "@/components/site";
+import { Callout, Section, StepList, type Step } from "@/components/site";
 
 const icons = [
   <Cpu className="w-7 h-7 text-cyan-400" />,
@@ -152,6 +152,22 @@ export const Services = () => {
         className="pb-0"
       >
         <StepList steps={engagement} />
+      </Section>
+
+      {/*
+        Refusal copy — the fit boundary that closes the page. Same Section
+        band pattern as the engagement process above; as the last band it
+        takes `pb-0` and defers trailing space to the outer `section-y`.
+        Copy lives in the data layer (`refusals`), not here.
+      */}
+      <Section eyebrow="FIT" title="What we say no to" className="pb-0">
+        <div className="grid items-start gap-6 md:grid-cols-2">
+          {refusals.map((refusal) => (
+            <Callout key={refusal.label} label={refusal.label} accent={refusal.accent}>
+              {refusal.body}
+            </Callout>
+          ))}
+        </div>
       </Section>
     </section>
   );

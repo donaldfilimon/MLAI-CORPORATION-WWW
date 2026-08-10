@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { about } from '@/data/categories/about';
+import { about, companyFacts, investorThesis } from '@/data/categories/about';
 import { Button } from "@/components/ui/button";
 import { ContactCTA } from "../components/ContactCTA";
 import { useUI } from "@/lib/ui-context";
@@ -15,7 +15,7 @@ import {
 
 // The mono rail beside the page header — four standing facts, one per row.
 const identity = [
-  "ESTABLISHED 2024 · PALO ALTO, CA",
+  "ESTABLISHED 2024 · ORLANDO, FL",
   "PIONEERING WDBX ARCHITECTURE",
   "TRACEABLE RETRIEVAL AND AGENT SAFETY FOCUS",
   "AUDIT-READY SECURITY CONTROLS",
@@ -114,6 +114,35 @@ export const About = () => {
             <Callout key={principle}>{principle}</Callout>
           ))}
         </CardGrid>
+      </Section>
+
+      {/* Positioning thesis — three claim-free cards; copy lives in about.ts. */}
+      <Section
+        eyebrow="Thesis"
+        title="Why on-device wins"
+        className="relative z-10"
+      >
+        <CardGrid cols={3} className="gap-5">
+          {investorThesis.map((item) => (
+            <FeatureCard
+              key={item.title}
+              title={item.title}
+              desc={item.description}
+            />
+          ))}
+        </CardGrid>
+      </Section>
+
+      {/*
+        Registration-level facts, so a `SpecList` (configuration facts), not a
+        provenance-tagged `StatBlock` — same reasoning as `missionFacts` above.
+      */}
+      <Section
+        eyebrow="Facts"
+        title="The company on paper"
+        className="relative z-10 py-0"
+      >
+        <SpecList rows={companyFacts} className="max-w-2xl" />
       </Section>
 
       <ContactCTA onOpenInquiry={openInquiry} />

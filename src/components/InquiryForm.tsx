@@ -1,4 +1,4 @@
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { track } from "@/lib/telemetry";
 import { Send, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Callout } from "@/components/site";
 import {
   Select,
   SelectContent,
@@ -70,7 +71,12 @@ async function submitInquiry(
         email: data.email,
         company: data.company,
         projectType: data.projectType,
-        message: data.message,
+        // The API accepts exactly name/email/company/projectType/message and
+        // silently drops unknown fields, so the optional data-locality chip is
+        // folded into the message as a prefix line rather than sent separately.
+        message: data.dataLocality
+          ? `Data locality: ${data.dataLocality}\n\n${data.message}`
+          : data.message,
       }),
     });
 
@@ -115,8 +121,13 @@ function SubmitButton() {
   );
 }
 
+const DATA_LOCALITY_OPTIONS = ["On-device only", "Hybrid", "Not sure yet"];
+
 export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
+  // Optional chip selection; carried into the FormData via a hidden input and
+  // folded into the message payload (the API has no dataLocality field).
+  const [dataLocality, setDataLocality] = useState("");
   const [state, formAction] = useActionState(submitInquiry, {
     success: false,
     errors: {} as Record<string, string[]>,
@@ -307,6 +318,40 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               </div>
 
               <div className="space-y-2">
+                <span
+                  id="inquiry-data-locality-label"
+                  className="block text-xs font-bold text-text-dim uppercase tracking-widest"
+                >
+                  Where does the data have to live?
+                </span>
+                <div
+                  role="group"
+                  aria-labelledby="inquiry-data-locality-label"
+                  className="flex flex-wrap gap-2"
+                >
+                  {DATA_LOCALITY_OPTIONS.map((opt) => {
+                    const on = dataLocality === opt;
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        aria-pressed={on}
+                        onClick={() => setDataLocality(on ? "" : opt)}
+                        className={`rounded-xl border px-4 py-2.5 text-xs font-mono tracking-wider transition-colors ${
+                          on
+                            ? "border-cyan-400 bg-cyan-500/10 text-cyan-400"
+                            : "border-white/10 bg-black/50 text-text-dim hover:border-white/25 hover:text-white"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+                <input type="hidden" name="dataLocality" value={dataLocality} />
+              </div>
+
+              <div className="space-y-2">
                 <Label
                   htmlFor="inquiry-message"
                   className="text-xs font-bold text-text-dim uppercase tracking-widest"
@@ -328,6 +373,16 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
                 )}
               </div>
             </div>
+
+            <Callout label="What happens next">
+              We read every request against one question: does the data
+              genuinely have to stay on-device? If yes, you&apos;ll hear from us
+              with a scoping call. If a cloud vector store already fits,
+              we&apos;ll tell you that too.
+              <span className="font-mono mt-2 block text-[11px] text-text-dim/80">
+                No sequence. No CRM drip. One reply.
+              </span>
+            </Callout>
 
             <SubmitButton />
             <p className="text-xs text-text-dim text-center">
