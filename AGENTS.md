@@ -16,6 +16,7 @@
 - `bun run build` first regenerates `public/sitemap.xml` and `public/llms.txt`, then runs `next build`. Do not hand-edit either generated file.
 - CI runs `bun run lint` -> `bun run test` -> `bun run build`. Run that order for production-impacting work; route, metadata, content, and sitemap changes require the build.
 - `bun run crawl` needs `bun run dev` in another shell or `BASE_URL=<origin>`. It is the real-browser check for dead compat-shim links, asset failures, soft 404s, and console errors. Playwright is deliberately not a root dependency; the script also resolves it from `.ds-sync/node_modules` and prints setup instructions if absent.
+- `bun run design-sync:css` compiles `src/index.css` into the gitignored `.design-sync/lab-compiled.css` that `.design-sync/config.json` hands the claude.ai/design converter; rerun it every sync, never commit the output. `design-sync.test.ts` pins that config against the real files.
 - `bun run smoke` also needs a running app. Its default API matrix includes body-limit checks; `SMOKE_WRITE=1` adds an inquiry DB write, `SMOKE_RATELIMIT=1` adds the 61-request CSP limiter burst, and `SESSION_COOKIE=...` exercises authenticated admin behavior. Neither crawl nor smoke runs in CI.
 
 ## Routes, Metadata, And Generated Surfaces

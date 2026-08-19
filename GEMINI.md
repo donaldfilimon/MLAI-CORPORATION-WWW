@@ -15,6 +15,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - `bun run build` — Regenerate sitemap, then `next build`
 - `bun run start` — Production `next start` on port 3000
 - `bun run crawl` — Real-browser link-integrity crawl (`scripts/crawl-links.mjs`), needs a dev server or `BASE_URL=`
+- `bun run design-sync:css` — Compile `src/index.css` → gitignored `.design-sync/lab-compiled.css` for the design-sync converter (`scripts/design-sync-css.mjs`)
 - `bun run smoke` — API contract matrix; `SMOKE_WRITE=1` adds the inquiry write, `SMOKE_RATELIMIT=1` adds the csp-report 429 burst (oversize-body `413` cases run by default)
 
 ## Critical Setup
