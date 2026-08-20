@@ -40,6 +40,22 @@ export function createSiteTools(siteDir: string, onEvent: (ev: GenerationEvent) 
 }
 
 export async function runGeneration({ client, siteDir, prompt, onEvent }: { client: EngineClient; siteDir: string; prompt: string; onEvent: (ev: GenerationEvent) => void }): Promise<void> {
+  // Exactly one terminal event ("done" or "error") is emitted, and this function never throws —
+  // even if the caller's onEvent itself throws while handling that terminal event (or any event
+  // along the way). `terminal` guards against a double terminal emission; wrapping the emission in
+  // try/catch guarantees a throwing consumer can't escape runGeneration.
+  let terminal = false;
+  const emitTerminal = (ev: GenerationEvent): void => {
+    if (terminal) return;
+    terminal = true;
+    try {
+      onEvent(ev);
+    } catch {
+      // A throwing consumer must not escape runGeneration nor trigger a second terminal event.
+    }
+  };
+
+  let finalEvent: GenerationEvent;
   try {
     const runner = client.beta.messages.toolRunner({
       model: "claude-opus-5",
@@ -54,8 +70,9 @@ export async function runGeneration({ client, siteDir, prompt, onEvent }: { clie
         if (block.type === "text" && block.text) onEvent({ type: "text", text: block.text });
       }
     }
-    onEvent({ type: "done" });
+    finalEvent = { type: "done" };
   } catch (err) {
-    onEvent({ type: "error", message: err instanceof Error ? err.message : String(err) });
+    finalEvent = { type: "error", message: err instanceof Error ? err.message : String(err) };
   }
+  emitTerminal(finalEvent);
 }
