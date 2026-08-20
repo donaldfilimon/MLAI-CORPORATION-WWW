@@ -46,10 +46,10 @@ apps/quasar           Expo SDK 53 / React 19 / Expo Router app (web + iOS +
    pure SSE framing is deferred.
 4. `POST /api/sites/:id/preview/start` spawns `next dev` for that site on an
    allocated port (4710+), health-checks it by polling `http://localhost:<port>/`
-   for a 200, and returns a status with the URL; the app opens it in an
-   iframe (web) or via `Linking` (native, rewriting `localhost` to the
-   Settings-configured host so it resolves correctly from a phone on the
-   LAN).
+   for a 200, and returns a status with the URL; the app rewrites `localhost`
+   to the Settings-configured host (so it resolves correctly from a phone on
+   the LAN) before displaying the URL and opening it — in an iframe (web) or
+   via `Linking` (native).
 5. Data lives entirely on disk under `~/.quasar/` (a registry JSON file plus
    one real, editor-openable Next.js project per site) and in the Anthropic
    account behind whatever credential the service resolves. There is no

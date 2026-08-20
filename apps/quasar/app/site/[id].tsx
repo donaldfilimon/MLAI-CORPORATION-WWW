@@ -189,9 +189,9 @@ export default function SiteDetail() {
       }
     } finally {
       // A stale call from a previous id/epoch must not clear the pending
-      // flag: the id-change reset already zeroed it for the new epoch, and
-      // this reset must not stomp back over a genuinely in-flight call for
-      // the new epoch.
+      // flag: both epoch-bump sites (id change and edit submission) zero it
+      // for the new epoch, and this reset must not stomp back over a
+      // genuinely in-flight call for the new epoch.
       if (epoch === epochRef.current) {
         previewPendingRef.current = false;
         setPreviewPending(false);
@@ -216,9 +216,9 @@ export default function SiteDetail() {
       }
     } finally {
       // A stale call from a previous id/epoch must not clear the pending
-      // flag: the id-change reset already zeroed it for the new epoch, and
-      // this reset must not stomp back over a genuinely in-flight call for
-      // the new epoch.
+      // flag: both epoch-bump sites (id change and edit submission) zero it
+      // for the new epoch, and this reset must not stomp back over a
+      // genuinely in-flight call for the new epoch.
       if (epoch === epochRef.current) {
         previewPendingRef.current = false;
         setPreviewPending(false);
@@ -257,9 +257,15 @@ export default function SiteDetail() {
       // cursor/events back in after this reset. A tick from the prior
       // epoch now skips its own inFlightRef reset (see tick's finally), so
       // this reset must claim it for the new epoch here or the poll loop
-      // would deadlock forever on the next tick.
+      // would deadlock forever on the next tick. Same reasoning applies to
+      // previewPendingRef/setPreviewPending: a stale startPreview/stopPreview
+      // call from the prior epoch skips its own reset in its finally block
+      // (see there), so this bump must also reset it here or the preview
+      // buttons and tick's preview polling would stay stuck forever.
       epochRef.current += 1;
       inFlightRef.current = false;
+      previewPendingRef.current = false;
+      setPreviewPending(false);
       setSite(nextSite);
       prevStatusRef.current = nextSite.status;
       setEditPrompt("");
