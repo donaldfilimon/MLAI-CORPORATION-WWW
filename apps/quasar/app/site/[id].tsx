@@ -249,10 +249,16 @@ export default function SiteDetail() {
 
   const submitEdit = useCallback(async () => {
     if (!id || editPrompt.trim().length === 0) return;
+    const epoch = epochRef.current;
     setEditPending(true);
     setEditError(null);
     try {
       const nextSite = await editSite(id, editPrompt.trim());
+      // Data-write guard: if the id changed mid-flight, the id-change effect
+      // already reset state for the new id — bail out before applying this
+      // stale result, and without bumping the epoch again ourselves. The
+      // unconditional finally below still clears editPending.
+      if (epoch !== epochRef.current) return;
       // Invalidate any in-flight poll tick so it can't write a stale
       // cursor/events back in after this reset. A tick from the prior
       // epoch now skips its own inFlightRef reset (see tick's finally), so
@@ -272,8 +278,18 @@ export default function SiteDetail() {
       cursorRef.current = 0;
       setEvents([]);
     } catch (err) {
-      setEditError(err instanceof Error ? err.message : String(err));
+      // Data-write guard: same epoch check as the success path — a stale
+      // failure for a site the user navigated away from must not surface an
+      // error on the newly displayed site.
+      if (epoch === epochRef.current) {
+        setEditError(err instanceof Error ? err.message : String(err));
+      }
     } finally {
+      // Unconditional, not epoch-guarded: submitEdit bumps epochRef.current
+      // itself on success, so a naive `epoch === epochRef.current` check here
+      // would fail against its OWN bump and strand editPending true forever.
+      // Clearing the pending flag unconditionally can only ever un-stick the
+      // UI, never strand it.
       setEditPending(false);
     }
   }, [id, editPrompt]);
@@ -284,15 +300,25 @@ export default function SiteDetail() {
       setDeleteArmed(true);
       return;
     }
+    const epoch = epochRef.current;
     setDeletePending(true);
     setDeleteError(null);
     try {
       await deleteSite(id);
       router.back();
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : String(err));
+      // Data-write guard: mirrors submitEdit's catch — a stale delete
+      // failure for a site the user has since navigated away from must not
+      // surface an error (or re-arm delete) on the currently displayed site.
+      if (epoch === epochRef.current) {
+        setDeleteError(err instanceof Error ? err.message : String(err));
+        setDeleteArmed(false);
+      }
+      // Unconditional, not epoch-guarded: same rationale as submitEdit's
+      // finally — an interleaved submitEdit bumps the epoch itself, so an
+      // epoch check here could strand deletePending true forever. Clearing
+      // it unconditionally can only ever un-stick the UI.
       setDeletePending(false);
-      setDeleteArmed(false);
     }
   }, [id, deleteArmed]);
 
