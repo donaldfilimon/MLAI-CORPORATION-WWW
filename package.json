@@ -1,0 +1,9 @@
+{
+  "name": "quasar",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "typecheck": "bun run --filter '*' typecheck",
+    "test": "bun test packages"
+  }
+}
