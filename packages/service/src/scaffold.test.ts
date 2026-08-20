@@ -70,3 +70,10 @@ test("scaffoldSite with install:true actually runs `bun install` in siteDir", as
   const installed = await readdir(path.join(siteDir, "node_modules"));
   expect(installed).toContain("local-dep");
 }, 15000);
+
+test("scaffoldSite rejects when `bun install` fails, surfacing exit code + stderr tail", async () => {
+  // Invalid JSON guarantees `bun install` fails fast, offline, with no retries.
+  await writeFile(path.join(templateDir, "package.json"), "{ this is not valid json");
+
+  await expect(scaffoldSite(templateDir, siteDir, { install: true })).rejects.toThrow(/install/i);
+}, 15000);

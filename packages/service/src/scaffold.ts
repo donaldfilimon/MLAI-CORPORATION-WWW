@@ -18,6 +18,8 @@ async function copyDir(src: string, dest: string): Promise<void> {
   }
 }
 
+const STDERR_TAIL_LINES = 10;
+
 export async function scaffoldSite(
   templateDir: string,
   siteDir: string,
@@ -29,8 +31,16 @@ export async function scaffoldSite(
     const proc = Bun.spawn(["bun", "install"], {
       cwd: siteDir,
       stdout: "ignore",
-      stderr: "ignore",
+      stderr: "pipe",
     });
-    await proc.exited;
+    const [exitCode, stderr] = await Promise.all([proc.exited, new Response(proc.stderr).text()]);
+    if (exitCode !== 0) {
+      const tail = stderr
+        .split("\n")
+        .filter((line) => line.length > 0)
+        .slice(-STDERR_TAIL_LINES)
+        .join("\n");
+      throw new Error(`bun install failed in ${siteDir} (exit ${exitCode})${tail ? `:\n${tail}` : ""}`);
+    }
   }
 }
