@@ -19,9 +19,14 @@ bun run web               # react-native-web
 bun run typecheck         # tsc --noEmit, strict
 bun run test              # jest (jest-expo) — pure-logic unit suites
 bun run lint              # expo lint (eslint-config-expo)
+
+bun run test __tests__/cloud.test.ts     # single test file
+bun run test -- -t "adds a note"         # single test by name
 ```
 
 **Verification gates** (all should pass after a change): `bun run typecheck`, `bun run test` (jest-expo), `bun run lint`, and `bunx expo export --platform web` (confirms all routes bundle). The test suite has both pure-logic suites (mocking `expo-secure-store` to exercise the local-fallback repository) and component-render suites via `@testing-library/react-native` (v13 — v14 no-ops under jest-expo). Render tests cover `ErrorScreen`, `NoteForm`, and the Vault add/edit/delete/search flows (router + auth mocked).
+
+To see a change running in the real app (launch, drive, screenshot), use the project's `run-mlai-mobile` skill (`.claude/skills/run-mlai-mobile/`) — it drives the react-native-web target with headless Chrome.
 
 ### Native CloudKit build (Vault feature)
 
@@ -57,7 +62,7 @@ This is the most important thing to understand. **Two layers detect whether nati
 
 There is no shared MLAI backend in either path; data lives on the user's hardware (their private CloudKit DB or on-device keychain).
 
-Adding a CloudKit field touches four places: the Swift module (`ios/MlaiCloudKitModule.swift`), the `CloudFields`/`CloudRecord` types (`modules/mlai-cloudkit/src/MlaiCloudKit.types.ts`), the `VaultItem` mapping in `cloud.ts`, and the `VaultItem` record type in CloudKit Dashboard (see README for schema: `title`, `body`, `createdAt` — `createdAt` must be Sortable + Queryable).
+Adding a CloudKit field touches four places: the Swift module (`modules/mlai-cloudkit/ios/MlaiCloudKitModule.swift`), the `CloudFields`/`CloudRecord` types (`modules/mlai-cloudkit/src/MlaiCloudKit.types.ts`), the `VaultItem` mapping in `cloud.ts`, and the `VaultItem` record type in CloudKit Dashboard (see README for schema: `title`, `body`, `createdAt` — `createdAt` must be Sortable + Queryable).
 
 ### Facts + theme (single sources of truth)
 
