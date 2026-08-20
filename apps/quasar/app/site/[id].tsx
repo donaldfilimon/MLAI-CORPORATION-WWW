@@ -70,11 +70,20 @@ export default function SiteDetail() {
   const previewPendingRef = useRef(false);
 
   useEffect(() => {
-    previewPendingRef.current = previewPending;
-  }, [previewPending]);
-
-  useEffect(() => {
     if (!id) return;
+    // Reset all id-scoped state up front so a param change (web back/forward,
+    // or navigating detail -> detail) can't leak site A's cursor/feed/preview
+    // into site B while this effect spins back up.
+    cursorRef.current = 0;
+    inFlightRef.current = false;
+    epochRef.current += 1;
+    prevStatusRef.current = null;
+    setSite(null);
+    setEvents([]);
+    setLoadError(null);
+    setPreview(null);
+    setPreviewError(null);
+
     let cancelled = false;
 
     async function tick() {
@@ -120,15 +129,16 @@ export default function SiteDetail() {
             const status = await previewStatus(id);
             if (!cancelled && epoch === epochRef.current) {
               setPreview(status);
+              setPreviewError(null);
             }
           } catch (err) {
-            if (!cancelled) {
+            if (!cancelled && epoch === epochRef.current) {
               setPreviewError(err instanceof Error ? err.message : String(err));
             }
           }
         }
       } catch (err) {
-        if (!cancelled) {
+        if (!cancelled && epoch === epochRef.current) {
           setLoadError(err instanceof Error ? err.message : String(err));
         }
       } finally {
@@ -146,6 +156,7 @@ export default function SiteDetail() {
 
   const startPreview = useCallback(async () => {
     if (!id) return;
+    previewPendingRef.current = true;
     setPreviewPending(true);
     setPreviewError(null);
     try {
@@ -154,12 +165,14 @@ export default function SiteDetail() {
     } catch (err) {
       setPreviewError(err instanceof Error ? err.message : String(err));
     } finally {
+      previewPendingRef.current = false;
       setPreviewPending(false);
     }
   }, [id]);
 
   const stopPreview = useCallback(async () => {
     if (!id) return;
+    previewPendingRef.current = true;
     setPreviewPending(true);
     setPreviewError(null);
     try {
@@ -168,6 +181,7 @@ export default function SiteDetail() {
     } catch (err) {
       setPreviewError(err instanceof Error ? err.message : String(err));
     } finally {
+      previewPendingRef.current = false;
       setPreviewPending(false);
     }
   }, [id]);
@@ -284,13 +298,18 @@ export default function SiteDetail() {
         {previewError ? <Text style={styles.error}>{previewError}</Text> : null}
         <Text style={styles.dim}>State: {preview?.state ?? "unknown"}</Text>
         {preview?.state === "running" && preview.url ? (
-          Platform.OS === "web" ? (
-            <WebPreviewFrame url={preview.url} />
-          ) : (
-            <Pressable style={styles.button} onPress={openNative}>
-              <Text style={styles.buttonText}>Open preview</Text>
-            </Pressable>
-          )
+          <>
+            <Text selectable style={styles.previewUrl}>
+              {preview.url}
+            </Text>
+            {Platform.OS === "web" ? (
+              <WebPreviewFrame url={preview.url} />
+            ) : (
+              <Pressable style={styles.button} onPress={openNative}>
+                <Text style={styles.buttonText}>Open preview</Text>
+              </Pressable>
+            )}
+          </>
         ) : null}
         <View style={styles.row}>
           <Pressable
@@ -400,6 +419,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   feedTool: {
+    color: color.textDim,
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+    fontSize: 13,
+  },
+  previewUrl: {
     color: color.textDim,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
     fontSize: 13,
