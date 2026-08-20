@@ -174,46 +174,78 @@ export default function SiteDetail() {
 
   const startPreview = useCallback(async () => {
     if (!id) return;
+    const epoch = epochRef.current;
     previewPendingRef.current = true;
     setPreviewPending(true);
     setPreviewError(null);
     try {
       const status = await previewStart(id);
-      setPreview(status);
+      if (epoch === epochRef.current) {
+        setPreview(status);
+      }
     } catch (err) {
-      setPreviewError(err instanceof Error ? err.message : String(err));
+      if (epoch === epochRef.current) {
+        setPreviewError(err instanceof Error ? err.message : String(err));
+      }
     } finally {
-      previewPendingRef.current = false;
-      setPreviewPending(false);
+      // A stale call from a previous id/epoch must not clear the pending
+      // flag: the id-change reset already zeroed it for the new epoch, and
+      // this reset must not stomp back over a genuinely in-flight call for
+      // the new epoch.
+      if (epoch === epochRef.current) {
+        previewPendingRef.current = false;
+        setPreviewPending(false);
+      }
     }
   }, [id]);
 
   const stopPreview = useCallback(async () => {
     if (!id) return;
+    const epoch = epochRef.current;
     previewPendingRef.current = true;
     setPreviewPending(true);
     setPreviewError(null);
     try {
       const status = await previewStop(id);
-      setPreview(status);
+      if (epoch === epochRef.current) {
+        setPreview(status);
+      }
     } catch (err) {
-      setPreviewError(err instanceof Error ? err.message : String(err));
+      if (epoch === epochRef.current) {
+        setPreviewError(err instanceof Error ? err.message : String(err));
+      }
     } finally {
-      previewPendingRef.current = false;
-      setPreviewPending(false);
+      // A stale call from a previous id/epoch must not clear the pending
+      // flag: the id-change reset already zeroed it for the new epoch, and
+      // this reset must not stomp back over a genuinely in-flight call for
+      // the new epoch.
+      if (epoch === epochRef.current) {
+        previewPendingRef.current = false;
+        setPreviewPending(false);
+      }
     }
   }, [id]);
 
-  const openNative = useCallback(() => {
-    if (!preview?.url) return;
+  // Rewrites the preview host from "localhost" to the hostname of the
+  // configured base URL, so the preview works when this app is opened from
+  // another device pointed at a LAN base URL (a no-op when the base URL
+  // host is itself localhost).
+  const toDisplayUrl = useCallback((url: string) => {
     let host = "localhost";
     try {
       host = new URL(getBaseUrl()).hostname;
     } catch {
       // keep default
     }
-    Linking.openURL(preview.url.replace("localhost", host));
-  }, [preview]);
+    return url.replace("localhost", host);
+  }, []);
+
+  const displayUrl = preview?.url ? toDisplayUrl(preview.url) : null;
+
+  const openNative = useCallback(() => {
+    if (!preview?.url) return;
+    Linking.openURL(toDisplayUrl(preview.url));
+  }, [preview, toDisplayUrl]);
 
   const submitEdit = useCallback(async () => {
     if (!id || editPrompt.trim().length === 0) return;
@@ -319,13 +351,13 @@ export default function SiteDetail() {
       <View style={styles.card}>
         {previewError ? <Text style={styles.error}>{previewError}</Text> : null}
         <Text style={styles.dim}>State: {preview?.state ?? "unknown"}</Text>
-        {preview?.state === "running" && preview.url ? (
+        {preview?.state === "running" && preview.url && displayUrl ? (
           <>
             <Text selectable style={styles.previewUrl}>
-              {preview.url}
+              {displayUrl}
             </Text>
             {Platform.OS === "web" ? (
-              <WebPreviewFrame url={preview.url} />
+              <WebPreviewFrame url={displayUrl} />
             ) : (
               <Pressable style={styles.button} onPress={openNative}>
                 <Text style={styles.buttonText}>Open preview</Text>
