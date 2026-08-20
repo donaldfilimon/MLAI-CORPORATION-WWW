@@ -10,12 +10,14 @@ export function setBaseUrl(url: string): void {
   baseUrl = url;
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(
+  path: string,
+  init?: Omit<RequestInit, "headers">
+): Promise<T> {
   const res = await fetch(`${getBaseUrl()}${path}`, {
     ...init,
     headers: {
       "content-type": "application/json",
-      ...init?.headers,
     },
   });
 
