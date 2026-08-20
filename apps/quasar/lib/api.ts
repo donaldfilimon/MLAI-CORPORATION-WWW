@@ -16,14 +16,12 @@ async function request<T>(
 ): Promise<T> {
   const res = await fetch(`${getBaseUrl()}${path}`, {
     ...init,
-    headers: {
-      "content-type": "application/json",
-    },
+    ...(init?.body ? { headers: { "content-type": "application/json" } } : {}),
   });
 
   if (!res.ok) {
     const bodyText = await res.text();
-    throw new Error(bodyText);
+    throw new Error(bodyText || res.statusText);
   }
 
   if (res.status === 204) {
