@@ -142,7 +142,14 @@ export default function SiteDetail() {
           setLoadError(err instanceof Error ? err.message : String(err));
         }
       } finally {
-        inFlightRef.current = false;
+        // A tick from a previous id/epoch must not clear the flag: the
+        // id-change reset already zeroed it for the new epoch, and a slow
+        // stale tick resolving late would otherwise stomp it back to false
+        // while the new epoch's own tick is genuinely in flight, letting
+        // two ticks run concurrently for the new id.
+        if (epoch === epochRef.current) {
+          inFlightRef.current = false;
+        }
       }
     }
 
@@ -204,8 +211,12 @@ export default function SiteDetail() {
     try {
       const nextSite = await editSite(id, editPrompt.trim());
       // Invalidate any in-flight poll tick so it can't write a stale
-      // cursor/events back in after this reset.
+      // cursor/events back in after this reset. A tick from the prior
+      // epoch now skips its own inFlightRef reset (see tick's finally), so
+      // this reset must claim it for the new epoch here or the poll loop
+      // would deadlock forever on the next tick.
       epochRef.current += 1;
+      inFlightRef.current = false;
       setSite(nextSite);
       prevStatusRef.current = nextSite.status;
       setEditPrompt("");
