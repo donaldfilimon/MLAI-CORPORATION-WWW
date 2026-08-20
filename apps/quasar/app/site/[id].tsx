@@ -73,16 +73,27 @@ export default function SiteDetail() {
     if (!id) return;
     // Reset all id-scoped state up front so a param change (web back/forward,
     // or navigating detail -> detail) can't leak site A's cursor/feed/preview
-    // into site B while this effect spins back up.
+    // into site B while this effect spins back up. This includes the
+    // destructive delete-arm state: an armed delete must never carry across
+    // ids, or a stray tap on the confirm button for the new site could
+    // delete it immediately.
     cursorRef.current = 0;
     inFlightRef.current = false;
     epochRef.current += 1;
     prevStatusRef.current = null;
+    previewPendingRef.current = false;
     setSite(null);
     setEvents([]);
     setLoadError(null);
     setPreview(null);
     setPreviewError(null);
+    setPreviewPending(false);
+    setEditPrompt("");
+    setEditPending(false);
+    setEditError(null);
+    setDeleteArmed(false);
+    setDeletePending(false);
+    setDeleteError(null);
 
     let cancelled = false;
 

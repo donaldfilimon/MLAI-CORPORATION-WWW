@@ -113,21 +113,27 @@ that touches the service or app:
 ## v1 status and limitations
 
 **Verified by this build:** `bun install`, `bun run typecheck` (all three
-TypeScript workspaces), `bun run test` (56 `bun:test` cases across 10 files —
-path guard, site filesystem tools, registry atomicity, port allocation,
-event buffering, scaffold, preview manager, HTTP routing, and a
-mocked-client engine test; the preview-manager tests do spawn real local
-processes and poll `localhost`, but nothing in the suite calls the Anthropic
-API or needs credentials), and `bunx expo export --platform web` for
-`apps/quasar` all pass clean as of this task.
+TypeScript workspaces), `bun run test` (60 `bun:test` cases across 10 files —
+path guard, site filesystem tools (including the read-side size cap),
+registry atomicity, port allocation, event buffering, scaffold, preview
+manager, HTTP routing, a mocked-client engine test, a typed-error-mapping
+unit test, and two streaming regression tests that point a real `Anthropic`
+client at local `Bun.serve` stubs — one asserting the request actually
+leaves the client over SSE, one asserting a 429 stub maps end-to-end to the
+rate-limit message; the preview-manager tests do spawn real local processes
+and poll `localhost`, and the streaming regression tests spawn local HTTP
+stubs, but nothing in the suite calls the Anthropic API or needs
+credentials), and `bunx expo export --platform web` for `apps/quasar` all
+pass clean as of this task.
 
 **Not exercised in this build environment:** a real end-to-end generation
 run against the live Anthropic API. The engine's tool loop, path guard, and
-error mapping are unit-tested against a mocked client, but no run in this
-environment has held a valid `ANTHROPIC_API_KEY` / `ant auth login` session
-to actually call Claude, scaffold a real prompt, and preview the result. The
-manual acceptance flow above is the way to close that gap on a machine that
-has credentials configured.
+error mapping are unit-tested against a mocked client (and, for the
+streaming wire format, a local stub server), but no run in this environment
+has held a valid `ANTHROPIC_API_KEY` / `ant auth login` session to actually
+call Claude, scaffold a real prompt, and preview the result. The manual
+acceptance flow above is the way to close that gap on a machine that has
+credentials configured.
 
 **Known v1 constraints, by design:**
 
@@ -143,6 +149,10 @@ has credentials configured.
   gets a 409.
 - **No auth, no multi-user, no billing** — anyone who can reach the service's
   port (loopback, or your LAN if you've shared the IP) can drive it.
+- **CORS is wide open (`Access-Control-Allow-Origin: *`)** — this is a wider
+  hole than "any LAN peer": since there's no origin check, any webpage open
+  in a browser on the LAN (not just a device or person you trust) can drive
+  the service via a cross-origin `fetch` from that page's own JavaScript.
 
 ## Docs
 
