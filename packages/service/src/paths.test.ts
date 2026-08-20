@@ -22,6 +22,11 @@ test("rejects blocked segments", async () => {
     await expect(resolveSitePath(site, p)).rejects.toBeInstanceOf(PathGuardError);
   }
 });
+test("rejects case-insensitive blocked segments", async () => {
+  for (const p of [".GIT/config", "NODE_MODULES/x.js", ".NEXT/cache", ".Git/config", "Node_Modules/lib"]) {
+    await expect(resolveSitePath(site, p)).rejects.toBeInstanceOf(PathGuardError);
+  }
+});
 test("rejects symlink escape", async () => {
   const outside = await mkdtemp(path.join(tmpdir(), "quasar-out-"));
   await symlink(outside, path.join(site, "leak"));

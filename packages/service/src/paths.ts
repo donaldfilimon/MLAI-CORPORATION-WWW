@@ -9,7 +9,7 @@ export async function resolveSitePath(siteDir: string, relPath: string): Promise
   if (path.isAbsolute(relPath)) throw new PathGuardError(`absolute path not allowed: ${relPath}`);
   const segments = relPath.split(/[\\/]+/).filter(Boolean);
   if (segments.some((s) => s === "..")) throw new PathGuardError(`path traversal not allowed: ${relPath}`);
-  if (segments.some((s) => BLOCKED.has(s))) throw new PathGuardError(`blocked path segment in: ${relPath}`);
+  if (segments.some((s) => BLOCKED.has(s.toLowerCase()))) throw new PathGuardError(`blocked path segment in: ${relPath}`);
   const rootReal = await realpath(siteDir);
   const abs = path.join(rootReal, ...segments);
   // realpath the deepest existing ancestor to catch symlink escapes
