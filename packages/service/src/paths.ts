@@ -3,7 +3,7 @@ import { realpath } from "node:fs/promises";
 
 export class PathGuardError extends Error {}
 export const MAX_FILE_BYTES = 512 * 1024;
-const BLOCKED = new Set([".git", "node_modules", ".next"]);
+export const BLOCKED: ReadonlySet<string> = new Set([".git", "node_modules", ".next"]);
 
 export async function resolveSitePath(siteDir: string, relPath: string): Promise<string> {
   if (path.isAbsolute(relPath)) throw new PathGuardError(`absolute path not allowed: ${relPath}`);
