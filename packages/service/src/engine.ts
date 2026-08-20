@@ -1,15 +1,46 @@
+import Anthropic from "@anthropic-ai/sdk";
 import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod/v4";
 import { listSiteFiles, readSiteFile, writeSiteFile } from "./siteFs";
 import type { GenerationEvent } from "@quasar/shared";
 import { buildSystemPrompt } from "./systemPrompt";
 
+// The tool runner is invoked with `stream: true` (required at max_tokens
+// 64000 — see mapEngineError / runGeneration below), which makes it yield
+// one stream handle per turn instead of one message per turn. Each stream
+// handle exposes `finalMessage()`, resolving to the same `{content}` shape
+// a non-streaming turn would have yielded directly.
+export interface EngineStream {
+  finalMessage(): Promise<{ content: unknown[] }>;
+}
+
 export interface EngineClient {
   beta: {
     messages: {
-      toolRunner: (params: Record<string, unknown>) => AsyncIterable<{ content: unknown[] }> & { done(): Promise<unknown> };
+      toolRunner: (params: Record<string, unknown>) => AsyncIterable<EngineStream> & { done(): Promise<unknown> };
     };
   };
+}
+
+// Maps SDK errors (and anything else runGeneration's try/catch can see) to a
+// user-readable message for the job's terminal "error" event. Checked in an
+// order that matters: RateLimitError/AuthenticationError/APIConnectionError
+// all extend the generic APIError, so their specific branches must come
+// before the generic APIError fallback or they'd never be reached.
+export function mapEngineError(err: unknown): string {
+  if (err instanceof Anthropic.RateLimitError) {
+    return "Rate limited by the Anthropic API — try again shortly.";
+  }
+  if (err instanceof Anthropic.AuthenticationError) {
+    return "Anthropic credentials missing or invalid — set ANTHROPIC_API_KEY or run `ant auth login`.";
+  }
+  if (err instanceof Anthropic.APIConnectionError) {
+    return "Could not reach the Anthropic API — check your connection.";
+  }
+  if (err instanceof Anthropic.APIError) {
+    return `Anthropic API error ${err.status}: ${err.message}`;
+  }
+  return err instanceof Error ? err.message : String(err);
 }
 
 export function createSiteTools(siteDir: string, onEvent: (ev: GenerationEvent) => void): unknown[] {
@@ -57,22 +88,28 @@ export async function runGeneration({ client, siteDir, prompt, onEvent }: { clie
 
   let finalEvent: GenerationEvent;
   try {
+    // `stream: true` is required, not optional: at max_tokens 64000 the SDK
+    // throws client-side ("Streaming is required for operations that may
+    // take longer than 10 minutes") before any request leaves the process
+    // if this is omitted. See engine.test.ts's streaming regression test.
     const runner = client.beta.messages.toolRunner({
       model: "claude-opus-5",
       max_tokens: 64000,
       thinking: { type: "adaptive" },
+      stream: true,
       system: buildSystemPrompt(),
       tools: createSiteTools(siteDir, onEvent),
       messages: [{ role: "user", content: prompt }],
     });
-    for await (const message of runner) {
+    for await (const stream of runner) {
+      const message = await stream.finalMessage();
       for (const block of message.content as Array<{ type: string; text?: string }>) {
         if (block.type === "text" && block.text) onEvent({ type: "text", text: block.text });
       }
     }
     finalEvent = { type: "done" };
   } catch (err) {
-    finalEvent = { type: "error", message: err instanceof Error ? err.message : String(err) };
+    finalEvent = { type: "error", message: mapEngineError(err) };
   }
   emitTerminal(finalEvent);
 }

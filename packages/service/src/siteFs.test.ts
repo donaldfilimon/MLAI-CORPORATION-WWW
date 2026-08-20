@@ -39,3 +39,9 @@ test("writeSiteFile rejects content larger than MAX_FILE_BYTES", async () => {
 test("readSiteFile rejects path traversal", async () => {
   await expect(readSiteFile(site, "../x")).rejects.toBeInstanceOf(PathGuardError);
 });
+
+test("readSiteFile rejects a file larger than MAX_FILE_BYTES", async () => {
+  const big = "x".repeat(512 * 1024 + 1);
+  await writeFile(path.join(site, "huge.txt"), big);
+  await expect(readSiteFile(site, "huge.txt")).rejects.toBeInstanceOf(PathGuardError);
+});

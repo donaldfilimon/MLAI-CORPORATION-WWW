@@ -33,7 +33,7 @@
       "name": "@quasar/service",
       "version": "0.0.1",
       "dependencies": {
-        "@anthropic-ai/sdk": "latest",
+        "@anthropic-ai/sdk": "^0.120.0",
         "@quasar/shared": "workspace:*",
         "zod": "^3.25.0",
       },

@@ -110,7 +110,9 @@ export function createServer(deps: ServerDeps): ReturnType<typeof Bun.serve> {
       bus.emit(ev);
       if (ev.type === "done" || ev.type === "error") {
         terminal = true;
-        void finalizeJob(site.id, ev);
+        void finalizeJob(site.id, ev).catch((err) => {
+          console.error("quasar: registry write failed", err);
+        });
       }
     };
 
@@ -133,7 +135,14 @@ export function createServer(deps: ServerDeps): ReturnType<typeof Bun.serve> {
         const message = err instanceof Error ? err.message : String(err);
         onEvent({ type: "error", message });
       }
-    })();
+    })().catch((err) => {
+      // Belt-and-suspenders: everything inside the IIFE is already wrapped
+      // in try/catch, so this only fires if a subscriber called from
+      // `onEvent`'s own `bus.emit` throws synchronously — but an unhandled
+      // rejection here would otherwise crash the process for a job that's
+      // unrelated to whatever request happens to be in flight.
+      console.error("quasar: generation job failed unexpectedly", err);
+    });
   }
 
   async function listSites(): Promise<Response> {

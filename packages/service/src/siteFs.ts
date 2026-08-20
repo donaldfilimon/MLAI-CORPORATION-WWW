@@ -1,5 +1,5 @@
 import path from "node:path";
-import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { resolveSitePath, MAX_FILE_BYTES, PathGuardError, BLOCKED } from "./paths";
 
 async function collectFiles(rootReal: string, dir: string, out: string[]): Promise<void> {
@@ -25,6 +25,10 @@ export async function listSiteFiles(siteDir: string): Promise<string[]> {
 
 export async function readSiteFile(siteDir: string, relPath: string): Promise<string> {
   const abs = await resolveSitePath(siteDir, relPath);
+  const info = await stat(abs);
+  if (info.size > MAX_FILE_BYTES) {
+    throw new PathGuardError("file too large");
+  }
   return readFile(abs, "utf8");
 }
 

@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": { "typecheck": "tsc --noEmit", "start": "bun run src/index.ts" },
-  "dependencies": { "@quasar/shared": "workspace:*", "@anthropic-ai/sdk": "latest", "zod": "^3.25.0" },
+  "dependencies": { "@quasar/shared": "workspace:*", "@anthropic-ai/sdk": "^0.120.0", "zod": "^3.25.0" },
   "devDependencies": { "typescript": "^5.8.0", "bun-types": "latest" }
 }
