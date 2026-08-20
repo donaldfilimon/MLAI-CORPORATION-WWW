@@ -4,6 +4,21 @@ import { PreviewManager } from "./preview";
 
 const cwd = tmpdir();
 
+const serveCommand = (p: number): string[] => [
+  "bun",
+  "-e",
+  `Bun.serve({ port: ${p}, fetch: () => new Response("ok") }); setInterval(() => {}, 1e9);`,
+];
+
+async function isPortUp(port: number): Promise<boolean> {
+  try {
+    const res = await fetch(`http://localhost:${port}/`, { signal: AbortSignal.timeout(300) });
+    return res.status === 200;
+  } catch {
+    return false;
+  }
+}
+
 let manager: PreviewManager | undefined;
 
 afterEach(async () => {
@@ -51,6 +66,60 @@ test("start resolves crashed (not a rejected promise) when the command itself ca
   expect(status.state).toBe("crashed");
   expect(status.url).toBeNull();
 });
+
+test("concurrent start() calls for the same siteId leave exactly one tracked entry and no orphaned process", async () => {
+  const portA = 45241;
+  const portB = 45242;
+  manager = new PreviewManager({
+    command: (_siteDir, p) => serveCommand(p),
+  });
+
+  const [statusA, statusB] = await Promise.all([
+    manager.start("site-race", cwd, portA),
+    manager.start("site-race", cwd, portB),
+  ]);
+
+  // Each call reports a definite outcome for its own process.
+  expect(["running", "crashed"]).toContain(statusA.state);
+  expect(["running", "crashed"]).toContain(statusB.state);
+
+  // Exactly one of the two ports is the tracked slot for this siteId.
+  const tracked = manager.status("site-race");
+  expect(tracked.port).not.toBeNull();
+  expect([portA, portB]).toContain(tracked.port as number);
+
+  await manager.stopAll();
+
+  // Neither port should still be answering: the tracked one was stopped by
+  // stopAll(), and the "losing" racer must have been torn down by start()
+  // itself rather than leaked as an untracked orphan.
+  expect(await isPortUp(portA)).toBe(false);
+  expect(await isPortUp(portB)).toBe(false);
+}, 20000);
+
+test("stop() racing a still-polling start() leaves the entry stopped, not resurrected to crashed", async () => {
+  const port = 45243;
+  manager = new PreviewManager({
+    command: (_siteDir, p) => [
+      "bun",
+      "-e",
+      `await new Promise((r) => setTimeout(r, 1500)); Bun.serve({ port: ${p}, fetch: () => new Response("ok") }); setInterval(() => {}, 1e9);`,
+    ],
+  });
+
+  const startPromise = manager.start("site-race-2", cwd, port);
+  // Let start() spawn and enter its poll loop, then kill it out from under
+  // itself well before the server would ever come up (~1500ms).
+  await new Promise((resolve) => setTimeout(resolve, 200));
+  await manager.stop("site-race-2");
+
+  await startPromise;
+
+  // stop()'s explicit "stopped" must win: start()'s own completion (which
+  // will see its process already dead) must not overwrite it to "crashed".
+  expect(manager.status("site-race-2").state).toBe("stopped");
+  expect(await isPortUp(port)).toBe(false);
+}, 20000);
 
 test("status returns a default stopped status for unknown siteId", () => {
   manager = new PreviewManager();

@@ -25,6 +25,13 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Bun leaves `exitCode` null when a process dies from a signal (e.g. our own
+// `.kill()`) — only `signalCode` gets set in that case. Any "has this
+// process already terminated?" check needs both, or it'll miss kills.
+function hasExited(proc: ReturnType<typeof Bun.spawn>): boolean {
+  return proc.exitCode !== null || proc.signalCode !== null;
+}
+
 function pushLine(logTail: string[], line: string): void {
   logTail.push(line);
   if (logTail.length > LOG_TAIL_SIZE) logTail.shift();
@@ -96,7 +103,7 @@ export class PreviewManager {
 
     let running = false;
     for (let i = 0; i < HEALTH_POLL_TRIES; i++) {
-      if (proc.exitCode !== null) break;
+      if (hasExited(proc)) break;
       try {
         const res = await fetch(`http://localhost:${port}/`);
         if (res.status === 200) {
@@ -106,37 +113,55 @@ export class PreviewManager {
       } catch {
         // server not up yet
       }
-      if (proc.exitCode !== null) break;
+      if (hasExited(proc)) break;
       await sleep(HEALTH_POLL_INTERVAL_MS);
     }
 
     // The health check can succeed on a response emitted just before the
     // process died; re-check exit status before declaring victory.
-    if (running && proc.exitCode !== null) running = false;
+    if (running && hasExited(proc)) running = false;
 
-    if (running) {
-      entry.status = { state: "running", port, url: `http://localhost:${port}`, logTail };
-    } else {
-      if (proc.exitCode === null) {
-        proc.kill();
-        await proc.exited.catch(() => {});
-      }
-      entry.status = { state: "crashed", port, url: null, logTail };
+    if (!running && !hasExited(proc)) {
+      proc.kill();
+      await proc.exited.catch(() => {});
     }
 
-    this.procs.set(siteId, entry);
-    return cloneStatus(entry.status);
+    const finalStatus: PreviewStatus = running
+      ? { state: "running", port, url: `http://localhost:${port}`, logTail }
+      : { state: "crashed", port, url: null, logTail };
+
+    // Another start()/stop() may have raced us while we were awaiting the
+    // health poll / kill above. Only claim the tracked slot for this siteId
+    // if we're still the entry that's there (by proc identity) and nobody
+    // has explicitly stopped it out from under us in the meantime.
+    const current = this.procs.get(siteId);
+    if (current && current.proc === proc && current.status.state !== "stopped") {
+      current.status = finalStatus;
+    } else if (!hasExited(proc)) {
+      // We lost the race: someone else now owns this siteId's slot (or it
+      // was explicitly stopped). Don't leak our own untracked child process.
+      proc.kill();
+      await proc.exited.catch(() => {});
+    }
+
+    return cloneStatus(finalStatus);
   }
 
   async stop(siteId: string): Promise<void> {
     const entry = this.procs.get(siteId);
     if (!entry) return;
-    if (entry.proc && entry.proc.exitCode === null) {
-      entry.proc.kill();
-      await entry.proc.exited.catch(() => {});
+    const proc = entry.proc;
+    if (proc && !hasExited(proc)) {
+      proc.kill();
+      await proc.exited.catch(() => {});
     }
-    entry.status = { state: "stopped", port: null, url: null, logTail: entry.status.logTail };
-    this.procs.set(siteId, entry);
+    // Re-fetch after the await: a concurrent start() may have already
+    // replaced this siteId's entry with a new (different) process. Only
+    // write "stopped" back if we're still looking at the entry we killed.
+    const current = this.procs.get(siteId);
+    if (current && current.proc === proc) {
+      current.status = { state: "stopped", port: null, url: null, logTail: current.status.logTail };
+    }
   }
 
   status(siteId: string): PreviewStatus {

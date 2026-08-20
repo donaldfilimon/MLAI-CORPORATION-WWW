@@ -75,5 +75,17 @@ test("scaffoldSite rejects when `bun install` fails, surfacing exit code + stder
   // Invalid JSON guarantees `bun install` fails fast, offline, with no retries.
   await writeFile(path.join(templateDir, "package.json"), "{ this is not valid json");
 
-  await expect(scaffoldSite(templateDir, siteDir, { install: true })).rejects.toThrow(/install/i);
+  let error: unknown;
+  try {
+    await scaffoldSite(templateDir, siteDir, { install: true });
+  } catch (err) {
+    error = err;
+  }
+
+  expect(error).toBeInstanceOf(Error);
+  const message = (error as Error).message;
+  expect(message).toMatch(/install/i);
+  expect(message).toMatch(/exit \d+/);
+  // the stderr tail is actually included, not just an "install failed" stub
+  expect(message).toMatch(/Parser|json/i);
 }, 15000);
