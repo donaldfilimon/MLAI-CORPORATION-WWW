@@ -35,7 +35,10 @@ interface Harness {
 
 const harnesses: Harness[] = [];
 
-async function makeHarness(engine: EngineFn, opts?: { templateDir?: string }): Promise<Harness> {
+async function makeHarness(
+  engine: EngineFn,
+  opts?: { templateDir?: string; makeClient?: ServerDeps["makeClient"] }
+): Promise<Harness> {
   const home = await realpath(await mkdtemp(path.join(tmpdir(), "quasar-home-")));
   let templateDir = opts?.templateDir;
   if (templateDir === undefined) {
@@ -48,7 +51,7 @@ async function makeHarness(engine: EngineFn, opts?: { templateDir?: string }): P
     home,
     templateDir,
     engine,
-    makeClient: () => ({} as never),
+    makeClient: opts?.makeClient ?? (() => ({} as never)),
     preview,
     scaffoldInstall: false,
     port: 0,
@@ -146,6 +149,66 @@ test("an error event sets status 'error' and records lastError; a later success 
   const recovered = await pollUntilIdle(baseUrl, site.id);
   expect(recovered.status).toBe("idle");
   expect(recovered.lastError).toBeUndefined();
+});
+
+test("a throwing makeClient() still drives the site to a terminal 'error' state, not a permanent wedge", async () => {
+  const { baseUrl } = await makeHarness(stubEngine([{ type: "done" }], 10), {
+    makeClient: () => {
+      throw new Error("no resolvable credentials");
+    },
+  });
+
+  const createRes = await fetch(`${baseUrl}/api/sites`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ name: "No Creds Site", prompt: "p" }),
+  });
+  // The create request itself succeeds optimistically (the failure happens
+  // in the fire-and-forget job, same as any other engine-reported error) —
+  // 202 with status "generating", then the job settles to "error".
+  expect(createRes.status).toBe(202);
+  const site = await createRes.json();
+  expect(site.status).toBe("generating");
+
+  const settled = await pollUntilIdle(baseUrl, site.id);
+  expect(settled.status).toBe("error");
+  expect(settled.lastError).toBe("no resolvable credentials");
+
+  // The site must not be wedged: a subsequent edit is accepted (not a
+  // permanent 409), proving status genuinely reached a terminal state.
+  const editRes = await fetch(`${baseUrl}/api/sites/${site.id}/edit`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ prompt: "retry" }),
+  });
+  expect(editRes.status).toBe(202);
+});
+
+test("an engine promise rejection (instead of an onEvent error) still reaches a terminal 'error' state", async () => {
+  const rejectingEngine: EngineFn = async () => {
+    await sleep(10);
+    throw new Error("engine crashed before emitting anything");
+  };
+  const { baseUrl } = await makeHarness(rejectingEngine);
+
+  const createRes = await fetch(`${baseUrl}/api/sites`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ name: "Rejects Site", prompt: "p" }),
+  });
+  expect(createRes.status).toBe(202);
+  const site = await createRes.json();
+
+  const settled = await pollUntilIdle(baseUrl, site.id);
+  expect(settled.status).toBe("error");
+  expect(settled.lastError).toBe("engine crashed before emitting anything");
+
+  const editRes = await fetch(`${baseUrl}/api/sites/${site.id}/edit`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ prompt: "retry" }),
+  });
+  expect(editRes.status).toBe(202);
 });
 
 test("POST edit while a job is running returns 409, and edit updates promptHistory", async () => {

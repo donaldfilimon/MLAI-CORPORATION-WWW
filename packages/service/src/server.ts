@@ -105,13 +105,35 @@ export function createServer(deps: ServerDeps): ReturnType<typeof Bun.serve> {
     const siteDir = siteDirFor(site.slug);
     eventBus.reset(site.id);
     const bus = eventBus.get(site.id);
+    let terminal = false;
     const onEvent = (ev: GenerationEvent): void => {
       bus.emit(ev);
       if (ev.type === "done" || ev.type === "error") {
+        terminal = true;
         void finalizeJob(site.id, ev);
       }
     };
-    void deps.engine({ client: deps.makeClient(), siteDir, prompt, onEvent });
+
+    // A job must always reach a terminal registry state ("idle" or "error"),
+    // even if it never gets the chance to emit its own terminal event:
+    // `deps.makeClient()` can throw synchronously (e.g. no resolvable
+    // credentials), and `deps.engine(...)`'s returned promise can reject
+    // instead of routing failure through `onEvent`. Either case, unhandled,
+    // leaves the site permanently wedged in "generating" (every future edit
+    // then 409s forever) and produces an unhandled rejection. Route both
+    // through the same onEvent("error") path used for engine-reported
+    // errors, guarded by `terminal` so we never double-report if the engine
+    // *did* already emit its own terminal event before rejecting.
+    void (async () => {
+      try {
+        const client = deps.makeClient();
+        await deps.engine({ client, siteDir, prompt, onEvent });
+      } catch (err) {
+        if (terminal) return;
+        const message = err instanceof Error ? err.message : String(err);
+        onEvent({ type: "error", message });
+      }
+    })();
   }
 
   async function listSites(): Promise<Response> {
