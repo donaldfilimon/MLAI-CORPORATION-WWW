@@ -1,5 +1,9 @@
 # Goals
 
+## Merge MLAI Corporation WWW site into mlai-mobile
+status: in_progress
+- Source: /Users/donaldfilimon/sources/repos/mlai-website (package `mlai-corporation-www`, 143 commits, remote github.com/donaldfilimon/MLAI-CORPORATION-WWW). Vendoring via `git subtree` at prefix `www/`, same pattern as `quasar/`. Acceptance: mlai-mobile gates stay green (typecheck, 41/41 jest, lint) with www/ fenced out of its tsconfig/eslint/jest, and the www project's own gates pass from its new location.
+
 ## Fix all mlai-mobile verification gates
 status: done
 - All four gates verified green with zero changes needed (typecheck, 41/41 jest tests, lint, 16-route web export) — 2026-08-19.
