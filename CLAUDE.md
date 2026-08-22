@@ -40,13 +40,20 @@ bunx eas build --profile development --platform ios   # cloud build
 
 `ios/` is generated, not committed — never hand-edit it; change `app.json` / `plugins/withCloudKit.js` and re-prebuild.
 
-## Nested project: `quasar/`
+## Nested projects: `quasar/` and `www/`
 
-`quasar/` is a **separate, self-contained project** vendored into this repo via `git subtree` (its own Bun workspaces monorepo: a local AI website-builder service + Expo app + Next 15 template). It is not part of the mlai-mobile app and does not share its toolchain.
+Two **separate, self-contained projects** are vendored into this repo via `git subtree`. Neither is part of the mlai-mobile Expo app and neither shares its toolchain:
 
-- Run its gates from inside it: `cd quasar && bun install && bun run typecheck && bun run test`.
-- mlai-mobile's own tooling deliberately excludes it — `tsconfig.json` has `"exclude": ["quasar"]` and `eslint.config.js` ignores `quasar/**`. Keep those fences in place, or `bun run typecheck`/`bun run lint` at the root will start failing on Quasar's sources.
-- Its docs live at `quasar/README.md`, `quasar/docs/superpowers/specs/`, and `quasar/docs/superpowers/plans/`.
+| Path | What it is | Its own gates |
+|---|---|---|
+| `quasar/` | Bun-workspaces monorepo: local AI website-builder service + Expo app + Next 15 template | `cd quasar && bun install && bun run typecheck && bun run test` (bun:test) |
+| `www/` | `mlai-corporation-www` — the Next 15 App Router marketing/console site on Bun | `cd www && bun install && bun run lint && bun run test` (tsc + vitest) |
+
+mlai-mobile's own tooling deliberately fences both out — `tsconfig.json` `"exclude": ["quasar", "www"]`, `eslint.config.js` ignores `quasar/**` and `www/**`, and `jest.config.js` sets `testPathIgnorePatterns` for both (critical: `www/src/__tests__/*.test.ts` are **vitest** suites that this repo's `testMatch` would otherwise sweep into jest). Keep those fences, or the root gates start failing on foreign sources.
+
+To pull upstream changes for either, use the subtree they came from, e.g.
+`git subtree pull --prefix=www /Users/donaldfilimon/sources/repos/mlai-website main`.
+`www/` also has its own `CLAUDE.md`, `AGENTS.md`, and `docs/` that apply when working inside it.
 
 ## Architecture
 

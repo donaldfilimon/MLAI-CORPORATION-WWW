@@ -12,5 +12,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ],
-  "exclude": ["quasar"]
+  "exclude": ["quasar", "www"]
 }
