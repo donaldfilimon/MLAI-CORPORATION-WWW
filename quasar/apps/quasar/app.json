@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Quasar",
+    "slug": "quasar",
+    "version": "1.0.0",
+    "scheme": "quasar",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "backgroundColor": "#070509",
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router"]
+  }
+}
