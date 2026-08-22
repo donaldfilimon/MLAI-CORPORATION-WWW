@@ -1,10 +1,19 @@
 # Goals
 
 ## Unify design language across mobile, web, and Quasar
-status: in_progress
+status: done
 - Finding (from source, 2026-08-20): the three surfaces in this repo ship three different identities. mlai-mobile is on the superseded Sora/Manrope + #00D4FF lineage while its `lib/theme.ts` still claims to "mirror the web identity"; www/ ships the "Lab" system (Spectral serif + Geist + #22d3ee on #05070d) whose own CSS says it "replaces the prior indigo Signal identity"; quasar/ has an unrelated amber (#F59E0B) identity of its own.
 - Deliverable: a clickable design canvas (Claude Design preview, published as an Artifact) proposing unification on Lab — 6 artboards: mobile Home + Vault, web hero, Quasar console, a system reference sheet, and a brand-drift comparison. Working files: /Users/donaldfilimon/.claude/jobs/76a893a6/tmp/design/ (scratch; re-seed from these to update).
 - Acceptance: canvas published and opening on the unified page. NOT yet done: no application code has been re-themed — this is a design proposal, not a migration.
+- 2026-08-20 DONE: canvas published — https://claude.ai/code/artifact/0726aeb0-c11d-40bc-98c5-e8c01a7f8948 — 6 clickable artboards over 2 pages (mobile Home + Vault, web hero, Quasar console, system sheet; drift comparison on page 2). Every token/metric lifted from lib/theme.ts, www/src/index.css, lib/brand.ts; provenance glyphs preserved so no target reads as a result. Seed checker clean after fixing one artboard overlap.
+- **Residual (unchanged): this is a PROPOSAL.** Zero application code re-themed — mobile still ships Sora/#00D4FF, Quasar still ships amber. Adopting Lab in code is a separate, unstarted goal.
+
+## Consolidate design-system sync into "MLAI Design System"
+status: in_progress
+- Donald's calls (2026-08-20): consolidate into project 6d97fa83 ("MLAI Design System"), and run from the SOURCE repo /Users/donaldfilimon/sources/repos/mlai-website (not the vendored mlai-mobile/www copy) so config/NOTES improvements land where development happens.
+- Ruling: upload WRITES-ONLY, no reconciliation deletes. The target project also holds the mobile cards + guidelines synced earlier today plus older uploads/trailer templates; a standard sync would delete every remote file this repo doesn't produce. Merge intent beats tidiness. Cost if wrong: genuinely stale files from earlier syncs linger — recoverable later, unlike deleted ones.
+- Groundwork verified: converter toolchain now available (previous run's NOTES record it was NOT — only the repo-side half ran then); Lab stylesheet recompiled clean (211 KB, OKLCH tokens + utilities self-checked); Chrome can serve as the capture browser via DS_CHROMIUM_PATH so no browser download into the repo; Playwright to be staged in gitignored .ds-sync/.
+- Acceptance: every synced component verified before upload, project holds www's components AND the pre-existing mobile layer, `.design-sync/` config+NOTES updated and committed in the source repo. Multi-hour job.
 
 ## Merge MLAI Corporation WWW site into mlai-mobile
 status: done
