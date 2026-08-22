@@ -9,11 +9,14 @@ status: done
 - **Residual (unchanged): this is a PROPOSAL.** Zero application code re-themed — mobile still ships Sora/#00D4FF, Quasar still ships amber. Adopting Lab in code is a separate, unstarted goal.
 
 ## Consolidate design-system sync into "MLAI Design System"
-status: in_progress
+status: done
 - Donald's calls (2026-08-20): consolidate into project 6d97fa83 ("MLAI Design System"), and run from the SOURCE repo /Users/donaldfilimon/sources/repos/mlai-website (not the vendored mlai-mobile/www copy) so config/NOTES improvements land where development happens.
 - Ruling: upload WRITES-ONLY, no reconciliation deletes. The target project also holds the mobile cards + guidelines synced earlier today plus older uploads/trailer templates; a standard sync would delete every remote file this repo doesn't produce. Merge intent beats tidiness. Cost if wrong: genuinely stale files from earlier syncs linger — recoverable later, unlike deleted ones.
 - Groundwork verified: converter toolchain now available (previous run's NOTES record it was NOT — only the repo-side half ran then); Lab stylesheet recompiled clean (211 KB, OKLCH tokens + utilities self-checked); Chrome can serve as the capture browser via DS_CHROMIUM_PATH so no browser download into the repo; Playwright to be staged in gitignored .ds-sync/.
 - Acceptance: every synced component verified before upload, project holds www's components AND the pre-existing mobile layer, `.design-sync/` config+NOTES updated and committed in the source repo. Multi-hour job.
+- 2026-08-20 DONE (● measured): first true end-to-end sync this repo has had — prior runs could only do the repo-side half because the converter was unavailable. Build clean (40 components, 988 KB bundle, 36 authored previews reused, 4 documented floor cards); `package-validate.mjs` exit 0 (40/40 previews render, anchor matches disk, styles.css closure resolves); 216 files uploaded to 6d97fa83 in the fenced order (sentinel → content → sentinel → anchor last). Post-upload `list_files` confirms BOTH the 40 new components and the untouched pre-existing layer (all 8 preview/mobile-* cards, guidelines, uploads, trailer template). Committed ef5ac59 in the source repo, merged into mlai-mobile as c075fb7.
+- Blocker hit and solved: npm self-reference symlinks (`<pkg>/node_modules/<pkg> -> ..`) made the .d.ts glob traverse infinitely (ENAMETOOLONG) because its node_modules negation filters results without pruning the walk. One was deleted (gitignored scratch, npm-generated); the repo's own was neutralized only for the build and restored unconditionally. Recipe + the interactive-`rm` gotcha recorded in NOTES.
+- **Residual (deliberate):** writes-only, so stale prior-sync files remain in the project (`components/lab/**` duplicates `components/general/**`, plus `components/site/{Footer,Logo,Nav}`, `vendor/**`, `_ds/**`). Cleaning them is a destructive decision Donald has not made; NOTES lists them so no future run infers it from a diff.
 
 ## Merge MLAI Corporation WWW site into mlai-mobile
 status: done
