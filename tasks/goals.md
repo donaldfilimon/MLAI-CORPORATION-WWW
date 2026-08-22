@@ -1,8 +1,9 @@
 # Goals
 
 ## Merge MLAI Corporation WWW site into mlai-mobile
-status: in_progress
+status: done
 - Source: /Users/donaldfilimon/sources/repos/mlai-website (package `mlai-corporation-www`, 143 commits, remote github.com/donaldfilimon/MLAI-CORPORATION-WWW). Vendoring via `git subtree` at prefix `www/`, same pattern as `quasar/`. Acceptance: mlai-mobile gates stay green (typecheck, 41/41 jest, lint) with www/ fenced out of its tsconfig/eslint/jest, and the www project's own gates pass from its new location.
+- 2026-08-20 DONE (● measured): subtree-merged at `www/` preserving all 143 commits (e36fa01), 408 files / 3.5MB source. Fenced from mlai-mobile tooling in 98122d1 — the load-bearing one was jest `testPathIgnorePatterns`, since www ships 20 vitest suites under `src/__tests__/` that this repo's `testMatch` would have swept in. Verified after merge: mlai-mobile typecheck clean + 41/41 jest + lint clean; www `tsc --noEmit` clean + 220/220 vitest across 20 files. Source repo left intact at /Users/donaldfilimon/sources/repos/mlai-website (3 uncommitted files there — AGENTS.md/CLAUDE.md/GEMINI.md — were NOT merged; subtree takes committed state only).
 
 ## Fix all mlai-mobile verification gates
 status: done
