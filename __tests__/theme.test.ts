@@ -2,8 +2,8 @@ import { tint, accentColor } from "@/lib/theme";
 
 describe("tint", () => {
   it("appends an 8-bit alpha suffix to a 6-digit hex", () => {
-    expect(tint("#00D4FF", 1)).toBe("#00D4FFff");
-    expect(tint("#00D4FF", 0)).toBe("#00D4FF00");
+    expect(tint("#22D3EE", 1)).toBe("#22D3EEff");
+    expect(tint("#22D3EE", 0)).toBe("#22D3EE00");
   });
 
   it("defaults to ~12% alpha (0.12 * 255 -> 0x1f)", () => {
@@ -11,7 +11,7 @@ describe("tint", () => {
   });
 
   it("always yields a parseable 8-digit hex", () => {
-    expect(tint("#7C3AED", 0.3)).toMatch(/^#[0-9A-Fa-f]{8}$/);
+    expect(tint("#A855F7", 0.3)).toMatch(/^#[0-9A-Fa-f]{8}$/);
   });
 });
 

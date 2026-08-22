@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TextProps, StyleSheet, View } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
-import { color, type as t, font } from "@/lib/theme";
+import { color, type as t, font , gradient } from "@/lib/theme";
 
 type Variant = keyof typeof t;
 
@@ -30,7 +30,7 @@ export function Eyebrow({ children, color: c = color.wdbx }: { children: React.R
 export function GradientText({
   children,
   variant = "hero",
-  colors = [color.wdbx, color.abi, color.abbey],
+  colors = gradient,
 }: {
   children: React.ReactNode;
   variant?: Variant;

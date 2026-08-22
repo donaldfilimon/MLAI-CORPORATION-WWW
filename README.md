@@ -8,7 +8,7 @@ same chip-stack identity.
 ```
 Expo SDK 53 · React 19 · React Native 0.79 · Expo Router v5 · New Architecture
 Reanimated 3 · react-native-svg · expo-linear-gradient · expo-haptics · expo-blur
-Sora / Manrope / JetBrains Mono via @expo-google-fonts
+Spectral / Geist / JetBrains Mono via @expo-google-fonts
 ```
 
 ## Run it

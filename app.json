@@ -8,11 +8,11 @@
     "scheme": "mlai",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
-    "backgroundColor": "#05070B",
+    "backgroundColor": "#05070D",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#05070B"
+      "backgroundColor": "#05070D"
     },
     "ios": {
       "supportsTablet": true,
@@ -34,7 +34,7 @@
       "userInterfaceStyle": "dark",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#05070B"
+        "backgroundColor": "#05070D"
       },
       "edgeToEdgeEnabled": true
     },
@@ -51,7 +51,7 @@
         {
           "image": "./assets/splash.png",
           "resizeMode": "contain",
-          "backgroundColor": "#05070B"
+          "backgroundColor": "#05070D"
         }
       ],
       "./plugins/withCloudKit"

@@ -7,6 +7,25 @@ status: done
 - Acceptance: canvas published and opening on the unified page. NOT yet done: no application code has been re-themed — this is a design proposal, not a migration.
 - 2026-08-20 DONE: canvas published — https://claude.ai/code/artifact/0726aeb0-c11d-40bc-98c5-e8c01a7f8948 — 6 clickable artboards over 2 pages (mobile Home + Vault, web hero, Quasar console, system sheet; drift comparison on page 2). Every token/metric lifted from lib/theme.ts, www/src/index.css, lib/brand.ts; provenance glyphs preserved so no target reads as a result. Seed checker clean after fixing one artboard overlap.
 - **Residual (unchanged): this is a PROPOSAL.** Zero application code re-themed — mobile still ships Sora/#00D4FF, Quasar still ships amber. Adopting Lab in code is a separate, unstarted goal.
+- 2026-08-22: the mobile half of that residual is now its own goal — see **Adopt Lab tokens in mobile app code** below. `quasar/`'s amber and `www/`'s already-Lab identity stay out of scope.
+
+## Adopt Lab tokens in mobile app code
+status: done
+- Scope: **mlai-mobile only.** Retire the Sora/Manrope + #00D4FF lineage from `lib/theme.ts` and its consumers, replacing it with the Lab identity www already ships. `quasar/` (amber) and `www/` (already Lab) are untouched; the root gates fence both out anyway.
+- Source of truth for every value: `www/src/index.css` `:root`. Raw hex tokens (`--ink`, `--cyan`, `--violet`, `--emerald`, `--amber`) are used verbatim; the three oklch tokens that have no raw form (`--foreground`, `--muted-foreground`, `--secondary`) are converted to sRGB hex with gamut clipping, conversion validated against known Lab values first (`oklch(0.79 0.13 207)` → `#25D1E5` vs documented `#22D3EE`).
+- Acceptance (all falsifiable):
+  1. No occurrence of `00D4FF`, `7C3AED`, `10B981`, `05070B`, `Sora`, or `Manrope` survives outside `tasks/goals.md`'s own history bullets — checked by the wide grep, which also covers `app.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`.
+  2. `@expo-google-fonts/sora` and `/manrope` removed from `package.json`; `/spectral` and `/geist` added and actually loaded in `app/_layout.tsx`.
+  3. Accent tokens stay **6-digit hex** — `tint()` and four call sites (`sign-in.tsx:32`, `Hero.tsx:50`/`:55`, `product/[slug].tsx:35`) string-concatenate an alpha suffix onto them; an `rgba()` or 8-digit value there silently produces an invalid color RN drops.
+  4. Four gates green: typecheck, lint, jest, `expo export --platform web`.
+  5. **Screenshot verification** — the gates cannot see a pixel, so Home, Vault and sign-in are driven and compared against the pre-existing baseline in `.claude/skills/run-mlai-mobile/screenshots/`. Goal does not reach `done` on green gates alone.
+- 2026-08-22 DONE (● measured, all five criteria met).
+  - **Values shipped:** ink `#05070D` (Lab `--ink`), accents `#22D3EE`/`#A855F7`/`#34D399`/`#FBBF24` (`--cyan`/`--violet`/`--emerald`/`--amber`), surfaces `#0E1218` (`--secondary`) and `#171B21` (extrapolated one Lab step above it — mobile needs a third surface Lab does not define, marked as such in the file), text ramp `#E8EBF1`/`#94A0AE` from `--foreground`/`--muted-foreground` plus two ramp continuations. Borders now `rgba(255,255,255,0.10)` (`--border`). New `gradient` export carries Lab's signature `--grad` (cyan → blue → violet) and is `GradientText`'s default, replacing the ad-hoc wdbx/abi/abbey triple.
+  - **Fonts:** Sora/Manrope removed from `package.json`; Spectral (display) + Geist (body) installed via `bunx expo install` and loaded in `app/_layout.tsx`. All five export names verified against the installed packages before use, since an undefined value in `useFonts` fails at runtime, not typecheck. JetBrains Mono unchanged — Lab uses the same face. Heading tracking now mirrors Lab's `-0.015em`; line-heights stay mobile-tuned.
+  - **Caught only by the screenshots:** at 40px the Spectral hero wrapped and orphaned "that" out of "AI infrastructure that". Fixed by stepping the hero to 34 — the same move Lab makes for narrow viewports (`text-h3 sm:text-h2 md:text-h1`). Re-captured and confirmed as two clean lines. Every gate had been green *before* this fix, which is exactly why criterion 5 exists.
+  - **Also updated:** `app.json` (4 splash/adaptive-icon grounds), `README.md`, `CLAUDE.md`, `AGENTS.md` (all named the retired `#05070B`), and `theme.test.ts`'s sample hexes. Wide grep confirms no `00D4FF`/`7C3AED`/`10B981`/`05070B`/`Sora`/`Manrope` survives outside this ledger's own history bullets.
+  - **Verification:** typecheck clean, lint clean, 41/41 jest, `expo export --platform web` all routes — run again after the hero fix. Screenshots driven through the real react-native-web build (sign-in, Home, Stack, Vault, Company); pre-Lab baseline preserved at `scratchpad/baseline-pre-lab/` because the driver wipes its output dir.
+  - **Residual:** mobile only, as scoped. `quasar/` still ships amber and is untouched. Native iOS/Android were not driven — the driver runs the web target; Sign in with Apple and CloudKit still need a signed build on a device.
 
 ## Consolidate design-system sync into "MLAI Design System"
 status: done

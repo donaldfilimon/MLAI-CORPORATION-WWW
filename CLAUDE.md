@@ -96,7 +96,7 @@ Reanimated requires `react-native-reanimated/plugin` in `babel.config.js` — it
 
 - Path alias `@/*` → repo root (`tsconfig.json`). Import as `@/lib/theme`, `@/components/ui/Text`.
 - TypeScript `strict` is on; keep `bun run typecheck` clean.
-- Dark UI only (`userInterfaceStyle: "dark"`, near-black `color.ink` `#05070B`).
+- Dark UI only (`userInterfaceStyle: "dark"`, near-black `color.ink` `#05070D` (Lab `--ink`)).
 - Dependency set is pinned to the Expo SDK 53 family (the verified React 19 baseline). To bump: `bunx expo install expo@latest --fix`.
 
 ## Integrity rules (shared with the web)

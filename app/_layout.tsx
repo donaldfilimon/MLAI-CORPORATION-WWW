@@ -5,8 +5,8 @@ import { StatusBar } from "expo-status-bar";
 import { Stack, useRouter, useSegments, type ErrorBoundaryProps } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import * as SystemUI from "expo-system-ui";
-import { useFonts, Sora_600SemiBold, Sora_700Bold } from "@expo-google-fonts/sora";
-import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold } from "@expo-google-fonts/manrope";
+import { useFonts, Spectral_600SemiBold, Spectral_700Bold } from "@expo-google-fonts/spectral";
+import { Geist_400Regular, Geist_500Medium, Geist_600SemiBold } from "@expo-google-fonts/geist";
 import { JetBrainsMono_500Medium } from "@expo-google-fonts/jetbrains-mono";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { ErrorScreen } from "@/components/ErrorScreen";
@@ -62,11 +62,11 @@ function RootNavigator() {
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Sora_600SemiBold,
-    Sora_700Bold,
-    Manrope_400Regular,
-    Manrope_500Medium,
-    Manrope_600SemiBold,
+    Spectral_600SemiBold,
+    Spectral_700Bold,
+    Geist_400Regular,
+    Geist_500Medium,
+    Geist_600SemiBold,
     JetBrainsMono_500Medium,
   });
 

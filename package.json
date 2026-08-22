@@ -13,9 +13,9 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@expo-google-fonts/geist": "^0.4.2",
     "@expo-google-fonts/jetbrains-mono": "^0.4.0",
-    "@expo-google-fonts/manrope": "^0.4.0",
-    "@expo-google-fonts/sora": "^0.4.0",
+    "@expo-google-fonts/spectral": "^0.4.1",
     "@react-native-masked-view/masked-view": "0.3.2",
     "expo": "~53.0.0",
     "expo-apple-authentication": "~7.2.4",
