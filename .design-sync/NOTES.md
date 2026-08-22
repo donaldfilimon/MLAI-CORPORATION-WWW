@@ -344,3 +344,31 @@ otherwise.
   rather than trusting this line — it is only true of the build it was run against.
 - **Stale remote paths are unchanged and still not cleaned** (see the watch-list above);
   the re-run of `/design-sync` was NOT treated as authorization to enable deletes.
+
+### Stale-path cleanup (2026-08-22) — the writes-only debt, partly paid
+
+On Donald's explicit go-ahead, **85 enumerated paths** were deleted from the project. The
+plan listed every path literally — **no `components/**` or `guidelines/**` glob** — because
+the standard reconciliation globs would take the preserved mobile/design layer with them.
+That constraint is permanent while this project holds non-repo material; re-read the
+retarget section before any future delete.
+
+Deleted: `components/lab/**` (16 primitives × 4 files — duplicates of the current
+`components/general/**`), `components/site/{Footer,Logo,Nav}/**` (12), `components/vendor/**`
+(LabRuntime + SiteRuntime, 6), `_preview/{Footer,Logo,Nav}.js` (3). Sequence was sentinel →
+deletes → sentinel re-arm; `_ds_sync.json` was left untouched because none of these paths
+are in the anchor, so it never described them.
+
+Confirmed intact after the pass: all 6 `guidelines/`, all 24 `preview/*.html` (the 8
+`mobile-*` cards included), `uploads/**`, `templates/vision-trailer/**`, `ui_kits/**`,
+`vendor/**`, `_ds/**`, `assets/**`, and the app-regenerated `_ds_manifest.json` +
+`_adherence.oxlintrc.json` — those last two come from the self-check, not from `ds-bundle/`,
+so a naive "not in my bundle → delete" rule would wrongly sweep them.
+
+**Two stale items found during the pass and deliberately NOT deleted** (outside what was
+approved; both safe to remove whenever someone says so):
+- `components/site/LogoMark/**` — the current build emits LogoMark under `general` only, so
+  the `site` copy is orphaned prior-sync output.
+- `_preview/{Dialog,DropdownMenu,Toaster,Tooltip}.js` — leftovers from a sync when those had
+  previews. They are floor cards now, and floor-card HTML references no `_preview/` file
+  (verified by grep), so nothing points at them.
