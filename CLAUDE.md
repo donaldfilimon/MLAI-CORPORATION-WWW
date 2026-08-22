@@ -40,6 +40,14 @@ bunx eas build --profile development --platform ios   # cloud build
 
 `ios/` is generated, not committed — never hand-edit it; change `app.json` / `plugins/withCloudKit.js` and re-prebuild.
 
+## Nested project: `quasar/`
+
+`quasar/` is a **separate, self-contained project** vendored into this repo via `git subtree` (its own Bun workspaces monorepo: a local AI website-builder service + Expo app + Next 15 template). It is not part of the mlai-mobile app and does not share its toolchain.
+
+- Run its gates from inside it: `cd quasar && bun install && bun run typecheck && bun run test`.
+- mlai-mobile's own tooling deliberately excludes it — `tsconfig.json` has `"exclude": ["quasar"]` and `eslint.config.js` ignores `quasar/**`. Keep those fences in place, or `bun run typecheck`/`bun run lint` at the root will start failing on Quasar's sources.
+- Its docs live at `quasar/README.md`, `quasar/docs/superpowers/specs/`, and `quasar/docs/superpowers/plans/`.
+
 ## Architecture
 
 ### Routing + auth gate (`app/`)
