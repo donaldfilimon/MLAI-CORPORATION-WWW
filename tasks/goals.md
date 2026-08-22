@@ -1,5 +1,11 @@
 # Goals
 
+## Unify design language across mobile, web, and Quasar
+status: in_progress
+- Finding (from source, 2026-08-20): the three surfaces in this repo ship three different identities. mlai-mobile is on the superseded Sora/Manrope + #00D4FF lineage while its `lib/theme.ts` still claims to "mirror the web identity"; www/ ships the "Lab" system (Spectral serif + Geist + #22d3ee on #05070d) whose own CSS says it "replaces the prior indigo Signal identity"; quasar/ has an unrelated amber (#F59E0B) identity of its own.
+- Deliverable: a clickable design canvas (Claude Design preview, published as an Artifact) proposing unification on Lab — 6 artboards: mobile Home + Vault, web hero, Quasar console, a system reference sheet, and a brand-drift comparison. Working files: /Users/donaldfilimon/.claude/jobs/76a893a6/tmp/design/ (scratch; re-seed from these to update).
+- Acceptance: canvas published and opening on the unified page. NOT yet done: no application code has been re-themed — this is a design proposal, not a migration.
+
 ## Merge MLAI Corporation WWW site into mlai-mobile
 status: done
 - Source: /Users/donaldfilimon/sources/repos/mlai-website (package `mlai-corporation-www`, 143 commits, remote github.com/donaldfilimon/MLAI-CORPORATION-WWW). Vendoring via `git subtree` at prefix `www/`, same pattern as `quasar/`. Acceptance: mlai-mobile gates stay green (typecheck, 41/41 jest, lint) with www/ fenced out of its tsconfig/eslint/jest, and the www project's own gates pass from its new location.
