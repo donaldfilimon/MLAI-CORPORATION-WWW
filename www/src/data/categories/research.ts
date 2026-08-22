@@ -1,0 +1,572 @@
+import type { Research } from '../schemas';
+
+export const research: Research = ({
+  tracks: [
+    {
+      name: "WDBX Core",
+      description: "Backtrace-aware retrieval, graph weighting, chunk provenance, and high-throughput vector search for production AI systems."
+    },
+    {
+      name: "Agent Safety",
+      description: "Permissioning, policy locks, prompt-injection resistance, role separation, and human escalation protocols."
+    },
+    {
+      name: "Runtime Performance",
+      description: "GPU acceleration, memory layout, low-latency search, edge deployment, and repeatable benchmark design."
+    }
+  ],
+  publications: [
+    {
+      slug: "wdbx-weighted-backtrace-memory-store",
+      tag: "CORE ARCHITECTURE",
+      title: "WDBX: A Weighted-Backtrace Memory Store for Traceable Retrieval",
+      date: "JUNE 2026",
+      abstract: "The formal data model and scoring math behind WDBX — hierarchical vector search, temporal–causal reranking, authority-weighted records, and a hash-chained audit log — as implemented in the ABI runtime.",
+      readTime: "14 min read",
+      authors: "MLAI Research · WDBX Core",
+      body: [
+        {
+          paragraphs: [
+            "WDBX is the durable memory store underneath the ABI runtime. It is designed so that retrieval is not a black box: every record carries provenance, every ranking decision decomposes into named factors, and every write lands in a hash-chained log that can be re-verified later. This note states the model and the scoring math precisely, so the behaviour of the store can be reasoned about rather than inferred from outputs.",
+            "The formalism below mirrors the reference implementation. Where the design names a target it is labelled as such; none of the equations encode measured benchmark results."
+          ]
+        },
+        {
+          heading: "Records and authority",
+          paragraphs: [
+            "A memory record is a tuple of an embedding, a kind (note, constraint, decision, contradiction, …), a source authority, and bookkeeping for supersession. Authority is the trust the store assigns a record by the reliability of its source — an inferred guess is not treated like a system-pinned fact:"
+          ],
+          math: [
+            "\\mathrm{trust}(a) = \\begin{cases} 0.30 & a = \\textsf{inferred} \\\\ 0.78 & a = \\textsf{user\\_stated} \\\\ 0.86 & a = \\textsf{tool\\_verified} \\\\ 0.90 & a = \\textsf{file\\_verified} \\\\ 1.00 & a = \\textsf{system\\_pinned} \\end{cases}"
+          ]
+        },
+        {
+          heading: "Semantic search",
+          paragraphs: [
+            "Records are indexed in a hierarchical navigable small-world (HNSW) graph and retrieved by cosine similarity between the query embedding q and each candidate v_j. The store keeps a SIMD path and a deterministic CPU fallback that compute the same quantity:"
+          ],
+          math: [
+            "\\sigma_j \\;=\\; \\cos(q, v_j) \\;=\\; \\frac{\\langle q, v_j\\rangle}{\\lVert q\\rVert\\,\\lVert v_j\\rVert} \\;=\\; \\frac{\\sum_{d} q_d\\, v_{j,d}}{\\sqrt{\\sum_d q_d^2}\\,\\sqrt{\\sum_d v_{j,d}^2}}"
+          ]
+        },
+        {
+          heading: "Temporal–causal reranking",
+          paragraphs: [
+            "Semantic similarity alone ignores recency and relatedness. WDBX reranks candidates with an exponential recency decay (half-life t½) and a causal-hop weight that decays with graph distance h_j from the query focus but never falls below a floor, so unrelated records are down-weighted rather than erased:"
+          ],
+          math: [
+            "\\tau_j \\;=\\; \\max\\!\\Big(0,\\ \\min\\!\\big(1,\\ 2^{-(t_0 - t_j)/t_{1/2}}\\big)\\Big)",
+            "\\gamma_j \\;=\\; \\max\\!\\big(c_{\\mathrm{floor}},\\ c_{\\mathrm{decay}}^{\\,h_j}\\big), \\qquad c_{\\mathrm{decay}} = 0.6,\\ \\ c_{\\mathrm{floor}} = 0.25"
+          ]
+        },
+        {
+          heading: "The hybrid score",
+          paragraphs: [
+            "The final rank of candidate j with respect to query focus i is the product of four bounded factors — semantic, temporal, causal, and a persona weight π_j supplied by the router. Because each factor lies in [0,1], the product is well-behaved and every contribution is individually inspectable:"
+          ],
+          math: [
+            "s_{ij} \\;=\\; \\sigma_j \\,\\cdot\\, \\tau_j \\,\\cdot\\, \\gamma_j \\,\\cdot\\, \\pi_j, \\qquad \\sigma_j,\\tau_j,\\gamma_j,\\pi_j \\in [0,1]"
+          ],
+          list: [
+            "Provenance falls out of the structure: the factors that produced a rank are stored with it, so a result can be explained after the fact.",
+            "Confidence is a property of the same factors — low semantic support or contradictory causal paths show up as low s, not as a separate self-reported number."
+          ]
+        },
+        {
+          heading: "A hash-chained audit log",
+          paragraphs: [
+            "Conversation events are appended as blocks, each hashing the previous block together with its own timestamp, sequence number, persona label, and metadata. Any later mutation of the chain's contents invalidates every subsequent hash, so the log is verifiable without a trusted third party:"
+          ],
+          math: [
+            "H_i \\;=\\; \\mathrm{SHA256}\\big(H_{i-1} \\,\\Vert\\, t_i \\,\\Vert\\, \\mathrm{seq}_i \\,\\Vert\\, p_i \\,\\Vert\\, m_i\\big), \\qquad H_0 = \\mathbf{0}"
+          ]
+        },
+        {
+          heading: "What the model buys you",
+          paragraphs: [
+            "Stating retrieval this way turns three operational questions — why was this returned, how confident should we be, and what depended on a record we now distrust — into reads over a stored structure rather than guesses about a ranked list. That is the property the rest of the ABI runtime is built to exploit."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "sparse-evidence-attention-context-assembly",
+      tag: "RESEARCH",
+      title: "Sparse Evidence Attention for Bounded Context Assembly",
+      date: "JUNE 2026",
+      abstract: "SEA selects which durable records enter a context pack by scoring each candidate across eight independent criteria, then packing greedily under a hard token budget and a diversity constraint. The full scoring and selection math, as implemented.",
+      readTime: "13 min read",
+      authors: "MLAI Research · Abbey",
+      body: [
+        {
+          paragraphs: [
+            "Long-context models do not remove the need to choose what goes in the context — they raise the cost of choosing badly. Sparse Evidence Attention (SEA) is the selection layer that decides which durable WDBX records become part of a context pack. It scores each candidate across eight independent criteria, combines them under a fixed weight vector, and then packs greedily under a hard token budget with a per-cluster diversity cap.",
+            "The criteria are deliberately heterogeneous so they fail differently: a semantically perfect but stale record, or a high-authority but off-task one, is caught by a criterion other than the one that ranked it highly."
+          ]
+        },
+        {
+          heading: "Eight criteria",
+          paragraphs: [
+            "Each candidate c (a record evaluated against query q and task context) receives eight scores. Two representative ones: keyword overlap is the fraction of query terms present in the record, and recency decays smoothly with the record's age in days:"
+          ],
+          math: [
+            "s_{\\mathrm{kw}}(q, c) \\;=\\; \\frac{\\big|\\,\\mathrm{terms}(q) \\cap \\mathrm{terms}(c)\\,\\big|}{\\big|\\,\\mathrm{terms}(q)\\,\\big|}",
+            "s_{\\mathrm{rec}}(c) \\;=\\; \\frac{1}{1 + \\mathrm{age}_{\\mathrm{days}}(c)/30}"
+          ],
+          list: [
+            "Semantic, keyword, and metadata fit; recency and source authority; graph connectivity; an explicit contradiction flag; and task-fit against the inferred task type.",
+            "Authority reuses the WDBX trust scale; contradiction is a hard signal so conflicting records can be surfaced rather than buried."
+          ]
+        },
+        {
+          heading: "Weighted combination",
+          paragraphs: [
+            "The criteria combine into a single score by a fixed weight vector w over the eight dimensions, clamped to the unit interval. The default weights put most mass on semantic similarity but never let a single criterion dominate:"
+          ],
+          math: [
+            "\\mathrm{score}(c) \\;=\\; \\mathrm{clamp}_{[0,1]}\\!\\Big(\\textstyle\\sum_{i \\in \\mathcal{D}} w_i\\, s_i(c)\\Big), \\quad \\mathcal{D} = \\{s,k,m,r,a,g,c,t\\}",
+            "w \\;=\\; (0.30,\\ 0.15,\\ 0.15,\\ 0.10,\\ 0.10,\\ 0.10,\\ 0.05,\\ 0.05)"
+          ]
+        },
+        {
+          heading: "Selection under budget",
+          paragraphs: [
+            "Candidates are sorted by score and admitted greedily. A candidate is rejected if its cluster already holds enough high-scoring members (unless its own score clears a high bar), if the record cap is reached, or if admitting it would exceed the token budget B. Token cost is estimated from length:"
+          ],
+          math: [
+            "\\mathrm{tok}(x) \\;=\\; \\max\\!\\big(1,\\ \\lceil |x| / 4 \\rceil\\big), \\qquad \\sum_{c \\in S} \\mathrm{tok}(c) \\;\\le\\; B"
+          ],
+          list: [
+            "The token budget is a hard constraint, not a soft preference — the pack never overflows the window it is built for.",
+            "The per-cluster cap enforces evidence diversity, so the pack is not eight paraphrases of the same record."
+          ]
+        },
+        {
+          heading: "Why sparsity is the point",
+          paragraphs: [
+            "SEA returns not just the selected set but the rejected set and the reason each candidate was dropped. That makes context assembly auditable: an operator can see why a record that 'should' have been included was not — budget, diversity, or score — which is exactly the kind of decision that is invisible in a naive top-k stuffing approach."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "wdbx-graph-weights-traceable-retrieval",
+      tag: "CORE ARCHITECTURE",
+      title: "WDBX Graph Weights for Traceable Neural Retrieval",
+      date: "MAY 2026",
+      abstract: "A practical architecture note on storing retrieval context as weighted directed paths so answers can preserve provenance, confidence, and rollback points.",
+      readTime: "11 min read",
+      authors: "MLAI Research · WDBX Core",
+      body: [
+        {
+          paragraphs: [
+            "Most retrieval-augmented systems treat retrieval as a ranked list: embed the query, return the top-k nearest records, and hand them to the model. That works until someone has to explain, after the fact, why a particular answer was produced. A ranked list tells you which records were available; it does not tell you which ones carried the answer, whether any of them contradicted each other, or where confidence quietly dropped along the way.",
+            "WDBX — the Weighted Directed Backtrace eXecution store — is built around the claim that retrieval context should be a weighted directed graph, not a flat list. This note describes the data model, why the weights matter, and how the structure pays for itself during incident review."
+          ]
+        },
+        {
+          heading: "The data model",
+          paragraphs: [
+            "Each retrieved record is a node. Edges connect a query to the records that informed it and connect records to one another where they share derivation. Every edge carries a weight reflecting how strongly that path contributed to the generated answer. The store persists these structures with JSONL snapshots guarded by SHA-256 integrity checks, so a graph produced last quarter can be reopened and walked today without re-running the model."
+          ]
+        },
+        {
+          heading: "Why weighting changes the question you can ask",
+          paragraphs: [
+            "Once retrieval is a weighted graph, three questions become answerable from the artifact alone, rather than by guesswork:"
+          ],
+          list: [
+            "Provenance — which sources actually carried the answer, separated from the ones that were merely nearby in embedding space.",
+            "Confidence — read as a property of the structure: source coverage, graph distance from query to supporting evidence, and contradiction between competing paths.",
+            "Rollback — if a path is later found to be poisoned or stale, walk the graph forward to every downstream decision that depended on it, instead of estimating blast radius."
+          ]
+        },
+        {
+          heading: "Cost and fallback",
+          paragraphs: [
+            "The store exposes key-value, vector (cosine search with a SIMD path), and block/spatial surfaces. Vector search falls back deterministically to a CPU path when native acceleration is unavailable, and disabled builds fail closed with explicit errors rather than silently degrading. The graph overhead is paid at write time and at snapshot, not on the hot read path, which keeps the structure affordable for the high-throughput retrieval it is meant to make explainable.",
+            "The bet is simple: as agents take on higher-stakes work, the retrieval layer has to carry relationships, not just neighbors. Ranking tells you what was close. Backtrace tells you what was responsible."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "policy-locked-tool-use-multi-agent",
+      tag: "SAFETY",
+      title: "Policy-Locked Tool Use in Multi-Agent Systems",
+      date: "APRIL 2026",
+      abstract: "A design pattern for separating creative planning, compliance review, and execution so agents can collaborate without inheriting unrestricted tool authority.",
+      readTime: "9 min read",
+      authors: "MLAI Safety Engineering",
+      body: [
+        {
+          paragraphs: [
+            "When a single agent plans an action, judges whether it is safe, and then executes it, it is acting as its own auditor — and its permission set is the union of everything it might ever need. That union is a large, hard-to-reason-about attack surface. Policy-locked tool use is the pattern we use to shrink it: separate the roles, then scope tool authority per role."
+          ]
+        },
+        {
+          heading: "Three roles, three permission sets",
+          paragraphs: [
+            "The Abbey–Aviva–Abi framework splits the work into distinct profiles, and the control plane grants each only what its job requires:"
+          ],
+          list: [
+            "Aviva (expert) — plans and proposes. Reads broadly; holds no write or execute authority.",
+            "Abbey (polymath) — reviews. Can block or request changes; cannot execute.",
+            "Abi (moderator) — routes and executes, but only on plans that already passed review, and only through tools bound to explicit permissions."
+          ]
+        },
+        {
+          heading: "Locking tools to policy",
+          paragraphs: [
+            "A tool is not simply available to an agent; it is bound to a permission, an approval threshold, and a review role before execution can reach production data. Routing between profiles is deterministic and weight-based rather than a hidden model call, which means the choice of role is itself an inspectable trace event. An operator can see not just what the system did, but which profile decided to do it and under which policy.",
+            "The connector layer enforces the boundary at the edge: Discord credentials are validated for printable non-whitespace content and snowflake-like IDs; Twilio payloads are checked for account/token shape, transport, and escaping before any live dispatch. A policy lock that the connector does not enforce is a suggestion, not a control."
+          ],
+          math: [
+            "w^{(0)} = (w_{\\text{Abbey}},\\ w_{\\text{Aviva}},\\ w_{\\text{Abi}}) = (0.45,\\ 0.35,\\ 0.20)",
+            "w'_i = \\frac{\\max(0,\\ w_i)}{\\sum_j \\max(0,\\ w_j)}, \\qquad \\mathrm{primary} = \\arg\\max_i\\, w'_i",
+            "\\mathrm{strategy} = \\begin{cases} \\textsf{single} & w'_{\\max} > 0.90 \\\\ \\textsf{parallel} & 0.50 \\le w'_{\\max} \\le 0.90 \\\\ \\textsf{consensus} & w'_{\\max} < 0.50 \\end{cases}"
+          ]
+        },
+        {
+          heading: "Why separation is the point",
+          paragraphs: [
+            "Role separation is not ceremony. It makes intervention points explicit: there is a defined moment where review happens before execution, a defined boundary an action cannot cross without approval, and a defined place an operator can step in. \"No autonomous write action without an observable policy boundary\" is far easier to keep when the boundary is a different agent with a different mandate and a smaller key ring."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "latency-budgets-real-time-orchestration",
+      tag: "ENGINEERING",
+      title: "Latency Budgets for Real-Time AI Orchestration",
+      date: "MARCH 2026",
+      abstract: "How to allocate milliseconds across retrieval, model calls, safety checks, and UI feedback loops without hiding reliability work behind optimistic averages.",
+      readTime: "8 min read",
+      authors: "MLAI Runtime Engineering",
+      body: [
+        {
+          paragraphs: [
+            "A real-time AI workflow is a chain of operations, each of which spends time: retrieval, one or more model calls, safety checks, tool invocations, and the UI feedback that tells the user something is happening. A latency budget is the discipline of deciding, in advance, how many milliseconds each link is allowed — and then measuring against that budget with tail percentiles, not averages."
+          ]
+        },
+        {
+          heading: "Averages hide the work that matters",
+          paragraphs: [
+            "Mean latency is the number that demos well and the number that lies. The user who abandons a workflow is on the tail, not the mean. Budgets are written and enforced against p95/p99 so that the safety check you added last week shows up as the regression it is, rather than being absorbed into a comfortable average."
+          ]
+        },
+        {
+          heading: "Allocating the budget",
+          paragraphs: [
+            "A workable allocation treats each stage as a line item with its own ceiling:"
+          ],
+          list: [
+            "Retrieval — bounded by the WDBX read path, which keeps graph overhead off the hot path and falls back to CPU vector search deterministically.",
+            "Model calls — the largest and most variable line item; budgeted with explicit timeouts and degradation paths rather than open-ended waits.",
+            "Safety checks — gated and parallelized where possible so review cost does not serialize behind the model.",
+            "UI feedback — budgeted first, because perceived latency is a product surface: progressive disclosure and streamed feedback buy real headroom for the stages behind them."
+          ],
+          math: [
+            "L_{\\mathrm{total}} = L_{\\mathrm{api}} + L_{\\mathrm{model}} + L_{\\mathrm{db}} + L_{\\mathrm{moderation}}",
+            "T = \\frac{C \\cdot N_{\\mathrm{shards}} \\cdot N_{\\mathrm{gpu}}}{L_{\\mathrm{total}}}"
+          ]
+        },
+        {
+          heading: "Budgets as release gates",
+          paragraphs: [
+            "A latency budget is only real if it can fail a release. Tied into the evaluation mesh, a change that blows the retrieval line item or widens the p99 is a gate failure, not a footnote on a dashboard. That is the difference between knowing your system is slow and being prevented from shipping it slower."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "backtrace-confidence-signals-hallucination",
+      tag: "RESEARCH",
+      title: "Backtrace Confidence Signals for Hallucination Reduction",
+      date: "FEBRUARY 2026",
+      abstract: "A framework for combining source coverage, graph distance, contradiction checks, and model uncertainty into operator-visible confidence signals.",
+      readTime: "12 min read",
+      authors: "MLAI Research",
+      body: [
+        {
+          paragraphs: [
+            "\"Confidence\" attached to a model output is usually a single scalar with no provenance — a number the model emits about itself. For high-stakes answers that is not enough. When retrieval is a weighted backtrace graph, confidence stops being a self-report and becomes something you can compute from the structure that produced the answer."
+          ]
+        },
+        {
+          heading: "Four signals, read off the graph",
+          paragraphs: [
+            "Rather than trust one number, the framework combines several independent signals, each of which fails differently:"
+          ],
+          list: [
+            "Source coverage — what fraction of the answer's claims trace back to a retrieved record versus model memory.",
+            "Graph distance — how far the supporting evidence sits from the query along the backtrace path; distant support is weaker support.",
+            "Contradiction checks — whether competing paths in the graph disagree, which should lower confidence even when coverage is high.",
+            "Model uncertainty — the model's own signal, used as one input among four rather than the verdict."
+          ],
+          math: [
+            "\\kappa(a) = \\mathrm{clamp}_{[0,1]}\\!\\Big(\\textstyle\\sum_{k=1}^{4} \\lambda_k\\, \\phi_k(a)\\Big), \\qquad \\textstyle\\sum_{k} \\lambda_k = 1"
+          ]
+        },
+        {
+          heading: "Abstention as the correct output",
+          paragraphs: [
+            "The point of combining these signals is to make abstention a first-class behavior. An agent that escalates when coverage is low and paths contradict is behaving correctly; an agent that fabricates a confident answer under the same conditions has failed, regardless of how often it is right elsewhere. This is where role separation helps operationally: Abbey's safety-oriented review can flag a low-confidence retrieval before Abi's execution profile ever acts on it."
+          ]
+        },
+        {
+          heading: "Surfacing it to operators",
+          paragraphs: [
+            "A confidence signal that lives only in logs changes no decisions. The signals resolve into an operator-visible band on the control surface, so a human can calibrate trust at a glance instead of treating every output as equally certain. Reducing hallucination, in practice, is less about a better model and more about refusing to present low-evidence answers as if they were high-evidence ones."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "vector-index-maintenance-continuous-ingestion",
+      tag: "SCALABILITY",
+      title: "Vector Index Maintenance Under Continuous Ingestion",
+      date: "JANUARY 2026",
+      abstract: "Operational tactics for keeping high-volume indexes fresh while protecting recall quality, write latency, and audit history.",
+      readTime: "10 min read",
+      authors: "MLAI Runtime Engineering · WDBX Core",
+      body: [
+        {
+          paragraphs: [
+            "A vector index that never changes is easy. A vector index that ingests continuously — while still being queried, while staying recall-accurate, and while preserving an audit trail — is where the operational difficulty lives. This note collects the tactics that keep a live WDBX index fresh without trading away the properties that make it trustworthy."
+          ]
+        },
+        {
+          heading: "The three things you are protecting",
+          paragraphs: [
+            "Every maintenance decision is a trade against one of three properties, and the job is to avoid sacrificing any of them silently:"
+          ],
+          list: [
+            "Recall quality — new records must become findable without degrading search over existing ones.",
+            "Write latency — ingestion must not stall behind index rebuilds, and queries must not stall behind ingestion.",
+            "Audit history — snapshots and their integrity checks must remain coherent across continuous mutation, so the store can still be reopened and verified."
+          ]
+        },
+        {
+          heading: "Snapshots as the coherence boundary",
+          paragraphs: [
+            "WDBX persists through JSONL snapshots with SHA-256 integrity and tamper rejection. Treating the snapshot as the coherence boundary lets ingestion proceed against the live structure while audit history is pinned to verifiable points in time. The block-chain entry model gives a stable lookup for prior states even as the working set moves underneath it."
+          ]
+        },
+        {
+          heading: "Verifying under load",
+          paragraphs: [
+            "Contract coverage in the WDBX core verifies ordered vector-search results, block metadata round-tripping, and block-chain snapshot lookup — the invariants that continuous ingestion is most likely to quietly break. The maintenance discipline is to keep those contracts green while the index is moving, not just when it is idle."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "human-approval-gates-operators-use",
+      tag: "ETHICS & SAFETY",
+      title: "Human Approval Gates That Operators Actually Use",
+      date: "DECEMBER 2025",
+      abstract: "A field guide to designing approval flows that reduce risk without creating alert fatigue, rubber-stamping, or invisible escalation paths.",
+      readTime: "7 min read",
+      authors: "MLAI Safety Engineering · Product",
+      body: [
+        {
+          paragraphs: [
+            "An approval gate that fires on everything trains operators to approve on reflex. An approval gate that fires on nothing is theater. The hard part of human-in-the-loop design is not adding the gate — it is calibrating it so that the human attention it demands is attention worth spending."
+          ]
+        },
+        {
+          heading: "Failure modes of bad gates",
+          paragraphs: [
+            "Most approval flows fail in one of three recognizable ways:"
+          ],
+          list: [
+            "Alert fatigue — too many low-stakes prompts, so the operator stops reading them.",
+            "Rubber-stamping — the prompt lacks the context to make a real decision, so approval becomes a click.",
+            "Invisible escalation — the path to a human exists on paper but is buried, so under pressure no one finds it."
+          ]
+        },
+        {
+          heading: "Designing the gate around the decision",
+          paragraphs: [
+            "A gate that operators use shows them a decision diff — what changed between the proposed action and the last approved state — so review is a focused comparison rather than a re-read of everything. It surfaces the confidence band behind the action so the operator can calibrate. And it keeps the emergency stop visible and always reachable, because a control that is hard to find is not a control.",
+            "The review burden itself is a metric. If every run needs a human, the system does not scale; if no run does, the gates are probably theater. We track the ratio over time and treat a sharp move in either direction as a signal to retune the control plane, not just the model."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "chunk-provenance-long-context-retrieval",
+      tag: "CORE ARCHITECTURE",
+      title: "Chunk Provenance in Long-Context Retrieval Systems",
+      date: "NOVEMBER 2025",
+      abstract: "A study of source segmentation, citation persistence, and drift detection for teams using large private corpora in regulated environments.",
+      readTime: "9 min read",
+      authors: "MLAI Research · WDBX Core",
+      body: [
+        {
+          paragraphs: [
+            "As context windows grow, it becomes tempting to stuff more source material into a single prompt and let the model sort it out. For regulated teams, that temptation is a liability: when an answer is challenged, \"the model read the whole corpus\" is not a citation. Chunk provenance is the discipline of keeping each retrieved segment traceable to its source, even inside a long context."
+          ]
+        },
+        {
+          heading: "Segmentation that survives retrieval",
+          paragraphs: [
+            "How a corpus is segmented determines what can later be cited. Chunks carry source metadata into the WDBX store so that a claim in the generated answer resolves to a specific segment of a specific document, not to an undifferentiated blob of context. The backtrace graph preserves the path from claim to chunk to source."
+          ]
+        },
+        {
+          heading: "Citation persistence and drift",
+          paragraphs: [
+            "Two properties matter most for teams with large private corpora in regulated environments:"
+          ],
+          list: [
+            "Citation persistence — a citation produced today must still resolve to the same source segment months later, which is what the integrity-checked snapshot model is for.",
+            "Drift detection — when the underlying corpus changes, the system should notice that previously cited segments have moved or changed, rather than silently citing stale text."
+          ]
+        },
+        {
+          heading: "Why this is a compliance feature",
+          paragraphs: [
+            "Provenance is not an aesthetic preference here; it is what makes a long-context system defensible under review. The ability to point from an answer to the exact segment that supports it — and to prove that segment has not drifted — is the difference between a system a regulated team can deploy and one they cannot."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "offline-first-ai-sensitive-data",
+      tag: "ENGINEERING",
+      title: "Offline-First AI Workflows for Sensitive Data",
+      date: "OCTOBER 2025",
+      abstract: "Deployment notes for packaging retrieval, inference, and audit services where cloud egress is limited or prohibited by policy.",
+      readTime: "8 min read",
+      authors: "MLAI Runtime Engineering",
+      body: [
+        {
+          paragraphs: [
+            "Some workloads cannot send their context to unmanaged infrastructure — data residency, network isolation, or customer policy makes cloud egress a non-starter. Offline-first is the design stance that treats that constraint as the default case rather than an exception, and packages retrieval, inference, and audit so that going private subtracts nothing from observability."
+          ]
+        },
+        {
+          heading: "The runtime travels with its controls",
+          paragraphs: [
+            "The Private Runtime packages LLM orchestration, retrieval, audit logs, and controls together for cloud, VPC, on-premise, and offline-first deployments. The design intent is that the same controls an operator would have in a hosted deployment are present inside the boundary:"
+          ],
+          list: [
+            "Local audit trails — traces persist inside the boundary with integrity checks, not shipped to an external service.",
+            "Repeatable evals — regression suites run on demand without a network round-trip.",
+            "Release gates — the evaluation mesh runs against local scenarios before changes reach production, air-gapped or not.",
+            "Operator-visible confidence — the same retrieval confidence and source-coverage signals a hosted deployment would show."
+          ]
+        },
+        {
+          heading: "Deterministic by design",
+          paragraphs: [
+            "Offline-first rewards determinism. GPU status and vector operations fall back deterministically to CPU when native kernels are unavailable, so a workflow behaves the same on a workstation as in a constrained data center. The reference architecture even uses deterministic local embeddings so the system is self-contained and testable, with the embedding backend swappable while the retrieval API stays fixed.",
+            "Private and auditable are not in tension. They are the same requirement seen from two sides: keep the data inside the boundary, and keep its rigor inside the boundary too."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "prompt-injection-drills-agentic-systems",
+      tag: "SAFETY",
+      title: "Prompt Injection Drills for Agentic Systems",
+      date: "SEPTEMBER 2025",
+      abstract: "A repeatable drill catalog for testing tool permission boundaries, source poisoning resilience, and confused-deputy failure modes.",
+      readTime: "10 min read",
+      authors: "MLAI Safety Engineering",
+      body: [
+        {
+          paragraphs: [
+            "Prompt injection is not a single bug to patch; it is a class of failure that re-emerges every time an agent gains a new tool or a new source. Treating it as a one-time audit guarantees regressions. The alternative is a drill catalog: repeatable scenarios that run as part of the evaluation mesh, so resilience is re-tested on every change."
+          ]
+        },
+        {
+          heading: "The drills",
+          paragraphs: [
+            "Each drill targets a distinct way an agentic system gets subverted:"
+          ],
+          list: [
+            "Permission boundary — adversarial input that tries to make an agent attempt an action outside its granted tools. Scored on whether the attempt is even made, not just whether it is blocked.",
+            "Source poisoning — malicious content embedded in a retrieved document that tries to redirect the agent's goal or exfiltrate context.",
+            "Confused deputy — input that tricks a privileged agent into acting on behalf of an unprivileged one, crossing a role boundary it should not.",
+            "Contradictory context — conflicting instructions across sources, testing whether the agent abstains and escalates rather than picking one arbitrarily.",
+            "Approval bypass — attempts to reach a write action without passing the human approval gate."
+          ]
+        },
+        {
+          heading: "Why drills beat audits",
+          paragraphs: [
+            "A drill catalog turns prompt-injection resilience into a release gate. Because role separation already scopes permissions per profile — planning reads but cannot write, review blocks but cannot execute — many of these drills are testing that the boundaries hold under adversarial pressure, not that they exist. When a drill fails, it fails loudly in CI, with a concrete trace to reproduce from, rather than quietly in production."
+          ]
+        }
+      ]
+    },
+    {
+      slug: "multi-persona-routing-policy-weights",
+      tag: "ROUTING",
+      title: "Multi-Persona Routing Under Uncertainty: Policy Weights and Request Classification",
+      date: "JUNE 2026",
+      abstract: "Beyond role-based separation, the runtime layer that decides which persona handles an inbound request: soft policy weights, confidence-thresholded routing strategies, and an auditable decision trail that keeps every routing choice explainable and human-overridable.",
+      readTime: "9 min read",
+      authors: "MLAI Research · Agent Safety",
+      body: [
+        {
+          paragraphs: [
+            "The Abbey/Aviva/Abi separation defines what each persona is allowed to do. This note covers the layer in front of that: deciding which persona — or which blend of personas — should handle an inbound request in the first place. Request classification is lossy. A message can be forty percent technical question and sixty percent frustrated human, and a hard arg-max over personas throws that structure away. The router described here keeps it.",
+            "As elsewhere in this series, the equations state the design as implemented in the routing layer; none of them encode measured benchmark results."
+          ]
+        },
+        {
+          heading: "Soft policy weights",
+          paragraphs: [
+            "The router scores each persona against the input I and conversation context C, then normalizes the scores into a weight vector rather than a single winner:"
+          ],
+          math: [
+            "P(p \\mid I, C) = \\mathrm{softmax}\\big( f_\\theta(I, C) / \\tau \\big)"
+          ]
+        },
+        {
+          paragraphs: [
+            "The temperature τ controls how decisive the router is: low τ sharpens toward a single persona, high τ preserves ambiguity for the strategies below. Keeping the full weight vector — not just its arg-max — is what makes blending and escalation possible downstream:"
+          ],
+          math: [
+            "R_{\\text{final}} = \\alpha \\cdot R_{\\text{Abbey}} + (1 - \\alpha) \\cdot R_{\\text{Aviva}}, \\quad \\alpha = P(\\text{Abbey} \\mid I, C)"
+          ]
+        },
+        {
+          heading: "Three routing strategies",
+          paragraphs: [
+            "The maximum weight w_max selects between three regimes, so the router degrades gracefully as classification confidence falls:"
+          ],
+          list: [
+            "Single-winner (w_max above the high threshold) — one persona clearly fits; it handles the request with its full capability set.",
+            "Blend (intermediate w_max) — no persona dominates; the response combines the factual core of one persona with the delivery style of another, weighted by α.",
+            "Consensus escalation (w_max below the low threshold) — classification is genuinely uncertain; the request escalates to the moderator persona (Abi), which can ask a clarifying question instead of guessing."
+          ]
+        },
+        {
+          heading: "Classification features",
+          paragraphs: [
+            "The scoring function f_θ consumes named features rather than an opaque embedding alone, because named features are what make the audit trail legible:"
+          ],
+          list: [
+            "Sentiment and frustration signals from the input text.",
+            "Technical-domain density — how much of the message is code, identifiers, or domain vocabulary.",
+            "Task-type inference: support, expert answer, moderation, or planning.",
+            "Source authority of the requesting channel.",
+            "Historical persona fit on similar past requests, retrieved from the WDBX store."
+          ]
+        },
+        {
+          heading: "Every decision leaves a trail",
+          paragraphs: [
+            "Each routing decision is logged with its full weight vector and the feature scores that produced it. An operator can answer why a request went to Aviva instead of Abbey by reading the decision record, not by re-running the classifier. When the routed persona fails — timeout, out-of-domain answer, moderation flag — the moderator re-routes from the recorded weights without re-classifying, so the fallback path is deterministic.",
+            "This is the same governance posture as the rest of the stack: the router is allowed to be uncertain, but it is never allowed to be unexplainable. Misclassification is treated as a recoverable, inspectable event — a re-route plus a log entry — rather than a silent quality drop."
+          ]
+        }
+      ]
+    }
+  ]
+});

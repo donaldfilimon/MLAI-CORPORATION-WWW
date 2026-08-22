@@ -1,0 +1,174 @@
+import { m, useReducedMotion } from "framer-motion";
+import {
+  Cpu,
+  Network,
+  Database,
+  Layers,
+  BarChart3,
+  Lock,
+  Globe,
+  Shield,
+  Code,
+  CheckCircle2,
+} from "lucide-react";
+import { services, refusals } from '@/data/categories/services';
+import { useUI } from "../lib/ui-context";
+import { PageHeader } from "@/components/PageHeader";
+import { CardGrid } from "@/components/CardGrid";
+import { Card, CardContent } from "@/components/ui/card";
+import { Callout, Section, StepList, type Step } from "@/components/site";
+
+const icons = [
+  <Cpu className="w-7 h-7 text-cyan-400" />,
+  <Network className="w-7 h-7 text-cyan-400" />,
+  <Database className="w-7 h-7 text-cyan-400" />,
+  <Layers className="w-7 h-7 text-cyan-400" />,
+  <BarChart3 className="w-7 h-7 text-cyan-400" />,
+  <Lock className="w-7 h-7 text-cyan-400" />,
+  <Globe className="w-7 h-7 text-cyan-400" />,
+  <Shield className="w-7 h-7 text-cyan-400" />,
+  <Code className="w-7 h-7 text-cyan-400" />,
+];
+
+// How an engagement runs — a real ordered sequence (the page's own
+// "audit, design, build, harden"), so numbered rows are honest here.
+// Rendered by `StepList`, which owns the 01–04 numbering rail and the <ol>
+// semantics; the phase numerals are therefore not repeated in the data.
+const engagement: readonly Step[] = [
+  {
+    title: "Audit",
+    body: "Map workflows, prompt surfaces, data paths, and approval gates to determine what is safe to automate and what still needs a human in the loop.",
+  },
+  {
+    title: "Design",
+    body: "Specify the retrieval, orchestration, and safety layers — index strategy, agent roles, tool permissions, and the evaluation harness that will gate releases.",
+  },
+  {
+    title: "Build",
+    body: "Implement against production-like traffic with traces, audit events, and benchmark baselines wired in from the first commit, not bolted on later.",
+  },
+  {
+    title: "Harden",
+    body: "Red-team the system, tighten policy locks, and package private deployment, monitoring, and rollback paths for governed production.",
+  },
+];
+
+export const Services = () => {
+  const { openInquiry } = useUI();
+  const shouldReduceMotion = useReducedMotion();
+
+  return (
+    <section
+      id="services"
+      className="section-y relative overflow-hidden font-sans"
+      aria-labelledby="services-heading"
+    >
+      <div className="container-custom">
+        <PageHeader
+          id="services-heading"
+          tag="WHAT WE OFFER"
+          title="Core Services"
+          subtitle="Audit, design, build, and harden AI systems that need traceability, private deployment options, and operational control."
+          align="center"
+        />
+
+        <CardGrid cols={3}>
+          {services.map((service, i) => {
+            const motionProps = shouldReduceMotion
+              ? { initial: false }
+              : {
+                  initial: { opacity: 0, scale: 0.95 },
+                  whileInView: { opacity: 1, scale: 1 },
+                  transition: { delay: i * 0.08 },
+                };
+
+            return (
+              <m.div
+                key={service.title}
+                viewport={{ once: true }}
+                className="h-full"
+                {...motionProps}
+              >
+                <Card
+                  variant="glass"
+                  className="group relative overflow-hidden h-full flex flex-col justify-between p-0"
+                >
+                  <CardContent className="p-8">
+                    <div
+                      className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all"
+                      aria-hidden="true"
+                    >
+                      {icons[i]}
+                    </div>
+                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-text-dim leading-relaxed text-sm mb-6">
+                      {service.description}
+                    </p>
+                    <div className="space-y-2 mb-6">
+                      {service.outcomes.map((outcome) => (
+                        <div
+                          key={outcome}
+                          className="flex items-center gap-2 text-xs text-text-dim"
+                        >
+                          <CheckCircle2
+                            className="h-3.5 w-3.5 shrink-0 text-cyan-400"
+                            aria-hidden="true"
+                          />
+                          <span>{outcome}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <div className="mt-auto p-6 border-t border-white/5 bg-white/2">
+                    <button
+                      onClick={openInquiry}
+                      className="text-sm font-semibold text-cyan-400 flex items-center gap-2 hover:gap-3 transition-all opacity-85 group-hover:opacity-100 cursor-pointer"
+                    >
+                      Discuss Service{" "}
+                      <span className="text-lg leading-none" aria-hidden="true">
+                        →
+                      </span>
+                    </button>
+                  </div>
+                </Card>
+              </m.div>
+            );
+          })}
+        </CardGrid>
+      </div>
+
+      {/*
+        Engagement process. `Section` supplies the band rhythm + page gutter and
+        `StepList` the numbered rail, so this renders as a sibling of the
+        container above rather than inside it (double gutters otherwise).
+        `pb-0` defers the trailing space to the outer section's own `section-y`.
+      */}
+      <Section
+        eyebrow="HOW AN ENGAGEMENT RUNS"
+        title="From audit to governed production."
+        lead="Four phases, in order. Each one ends with evidence — a register, a harness, a baseline — that gates the next."
+        className="pb-0"
+      >
+        <StepList steps={engagement} />
+      </Section>
+
+      {/*
+        Refusal copy — the fit boundary that closes the page. Same Section
+        band pattern as the engagement process above; as the last band it
+        takes `pb-0` and defers trailing space to the outer `section-y`.
+        Copy lives in the data layer (`refusals`), not here.
+      */}
+      <Section eyebrow="FIT" title="What we say no to" className="pb-0">
+        <div className="grid items-start gap-6 md:grid-cols-2">
+          {refusals.map((refusal) => (
+            <Callout key={refusal.label} label={refusal.label} accent={refusal.accent}>
+              {refusal.body}
+            </Callout>
+          ))}
+        </div>
+      </Section>
+    </section>
+  );
+};

@@ -1,0 +1,73 @@
+# MLAI Corporation
+
+> MLAI Corporation builds private, traceable AI infrastructure for teams moving agents, retrieval, and evaluation from demos to governed production systems.
+
+MLAI Corporation builds WDBX (a weighted-backtrace, hash-chained retrieval and
+memory store) and the ABI runtime's Abbey/Aviva/Abi persona orchestration.
+This file follows the llms.txt convention (https://llmstxt.org) so language
+models and agentic crawlers can enumerate the site's real content without
+scraping rendered HTML. Content claims here are load-bearing on the same
+verifiable-architecture discipline as the rest of the site — see /docs and
+the linked repositories for implementation detail.
+
+## Platform
+
+- [MLAI Corporation](https://mlai-corp.com/): MLAI Corporation builds private, traceable AI infrastructure for teams moving agents, retrieval, and evaluation from demos to governed production systems.
+- [About MLAI Corporation](https://mlai-corp.com/about): Learn how MLAI Corporation designs resilient AI systems for private deployment, retrieval provenance, safety evaluation, and operational control.
+- [MLAI Services](https://mlai-corp.com/services): Audit, design, build, and harden AI systems that need traceability, private deployment paths, evaluation gates, and operational reliability.
+- [MLAI Docs](https://mlai-corp.com/docs): Review MLAI platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.
+- [WDBX Architecture & Measurements](https://mlai-corp.com/benchmarks): How WDBX is built and what has actually been measured on MLAI hardware — architectural properties, and GPU figures labeled measured or target. No head-to-head comparisons against other products.
+- [Security](https://mlai-corp.com/security): Review MLAI security principles for authentication, private deployment, auditability, protected APIs, and production AI controls.
+
+## Products
+
+- [ABI Framework](https://mlai-corp.com/products/abi): The executive function of the system. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — steering a shared neural core via persona-token injection at the attention layer.
+- [Abbey](https://mlai-corp.com/products/abbey): Engineered as a genuine intellectual partner, not a utility — positioned at the confluence of technical expertise and humanistic insight. Its mission: a force for cognitive transformation that turns apprehension into fascination.
+
+## Research
+
+- [WDBX: A Weighted-Backtrace Memory Store for Traceable Retrieval](https://mlai-corp.com/research/wdbx-weighted-backtrace-memory-store): The formal data model and scoring math behind WDBX — hierarchical vector search, temporal–causal reranking, authority-weighted records, and a hash-chained audit log — as implemented in the ABI runtime.
+- [Sparse Evidence Attention for Bounded Context Assembly](https://mlai-corp.com/research/sparse-evidence-attention-context-assembly): SEA selects which durable records enter a context pack by scoring each candidate across eight independent criteria, then packing greedily under a hard token budget and a diversity constraint. The full scoring and selection math, as implemented.
+- [WDBX Graph Weights for Traceable Neural Retrieval](https://mlai-corp.com/research/wdbx-graph-weights-traceable-retrieval): A practical architecture note on storing retrieval context as weighted directed paths so answers can preserve provenance, confidence, and rollback points.
+- [Policy-Locked Tool Use in Multi-Agent Systems](https://mlai-corp.com/research/policy-locked-tool-use-multi-agent): A design pattern for separating creative planning, compliance review, and execution so agents can collaborate without inheriting unrestricted tool authority.
+- [Latency Budgets for Real-Time AI Orchestration](https://mlai-corp.com/research/latency-budgets-real-time-orchestration): How to allocate milliseconds across retrieval, model calls, safety checks, and UI feedback loops without hiding reliability work behind optimistic averages.
+- [Backtrace Confidence Signals for Hallucination Reduction](https://mlai-corp.com/research/backtrace-confidence-signals-hallucination): A framework for combining source coverage, graph distance, contradiction checks, and model uncertainty into operator-visible confidence signals.
+- [Vector Index Maintenance Under Continuous Ingestion](https://mlai-corp.com/research/vector-index-maintenance-continuous-ingestion): Operational tactics for keeping high-volume indexes fresh while protecting recall quality, write latency, and audit history.
+- [Human Approval Gates That Operators Actually Use](https://mlai-corp.com/research/human-approval-gates-operators-use): A field guide to designing approval flows that reduce risk without creating alert fatigue, rubber-stamping, or invisible escalation paths.
+- [Chunk Provenance in Long-Context Retrieval Systems](https://mlai-corp.com/research/chunk-provenance-long-context-retrieval): A study of source segmentation, citation persistence, and drift detection for teams using large private corpora in regulated environments.
+- [Offline-First AI Workflows for Sensitive Data](https://mlai-corp.com/research/offline-first-ai-sensitive-data): Deployment notes for packaging retrieval, inference, and audit services where cloud egress is limited or prohibited by policy.
+- [Prompt Injection Drills for Agentic Systems](https://mlai-corp.com/research/prompt-injection-drills-agentic-systems): A repeatable drill catalog for testing tool permission boundaries, source poisoning resilience, and confused-deputy failure modes.
+- [Multi-Persona Routing Under Uncertainty: Policy Weights and Request Classification](https://mlai-corp.com/research/multi-persona-routing-policy-weights): Beyond role-based separation, the runtime layer that decides which persona handles an inbound request: soft policy weights, confidence-thresholded routing strategies, and an auditable decision trail that keeps every routing choice explainable and human-overridable.
+
+## Lab Notes
+
+- [WDBX V2: Observable Memory, Multimodal Inputs, and Research Alignment](https://mlai-corp.com/blog/wdbx-v2-release): The second iteration of the WDBX runtime ships an observable pipeline: block-chain memory with temporal queries, multimodal input fusion, an async neural job queue, and a research-alignment telemetry layer that scores every turn against the constitution.
+- [On Saying “I'm Not Sure”](https://mlai-corp.com/blog/on-saying-im-not-sure): A note in Abbey's voice — the empathetic-polymath persona — on why an honest “I don't know” is one of the most useful things an agent can say.
+- [Inside the WDBX Hybrid Ranker: Four Factors, One Score](https://mlai-corp.com/blog/inside-wdbx-hybrid-ranker): Semantic similarity is only the first of four factors. Here is the exact score WDBX uses to rank retrieval candidates — and why every factor is bounded to [0,1].
+- [How Sparse Evidence Attention Decides What the Model Sees](https://mlai-corp.com/blog/what-the-model-sees-sea): Before a model reasons, something must choose which records reach the context window. SEA scores eight criteria, then packs greedily under a hard token budget.
+- [The Weights Behind Abbey, Aviva, and Abi](https://mlai-corp.com/blog/weights-behind-the-personas): Persona routing is not a hidden model call. It is a normalized weight vector with hard policy overrides and an inspectable strategy decision.
+- [Designing AI Systems That Can Explain Their Last Move](https://mlai-corp.com/blog/explainable-last-move): A practical guide to capturing retrieval paths, policy checks, and operator decisions so teams can debug autonomous workflows after the fact.
+- [What We Measure Before Calling an Agent Production-Ready](https://mlai-corp.com/blog/production-ready-agent-metrics): Latency and accuracy are not enough. We track tool-boundary violations, source coverage, rollback paths, abstention quality, and human-review burden.
+- [From Vector Search to Weighted Backtrace Graphs](https://mlai-corp.com/blog/vector-search-to-backtrace-graphs): Why retrieval infrastructure needs relationship-aware context and why ranking alone is not sufficient for high-stakes answer generation.
+- [The Case for Separate Planning, Review, and Execution Agents](https://mlai-corp.com/blog/separate-planning-review-execution): Role separation lets teams encode checks and balances into an AI workflow instead of relying on a single agent to police itself.
+- [Making AI Control Surfaces Feel Calm Under Pressure](https://mlai-corp.com/blog/calm-control-surfaces): Interface details that prevent overload: progressive disclosure, confidence bands, decision diffs, and emergency stop affordances.
+- [What Incident Reviews Need From AI Logs](https://mlai-corp.com/blog/incident-reviews-from-ai-logs): How to structure traces so teams can reconstruct context, model output, policy decisions, tool calls, and human overrides after a production event.
+- [Private AI Does Not Mean Invisible AI](https://mlai-corp.com/blog/private-ai-is-not-invisible-ai): Offline and VPC deployments still need measurable controls: local audit trails, release gates, repeatable evals, and operator-visible confidence signals.
+- [Neural Backtracking: What a Block Chain Buys an AI Memory](https://mlai-corp.com/blog/neural-backtracking): Hallucination debugging is archaeology. WDBX chains every interaction block to its parent so you can walk back to the exact moment a model drifted — and prove nobody edited the record.
+- [Surviving Writergate: Migrating ABI to Zig 0.16](https://mlai-corp.com/blog/zig-016-migration): Zig 0.16 rebuilt std.io around vtable-based Reader and Writer interfaces. Ninety-five files later, here's what the migration actually looked like — and the patterns we standardized on.
+- [Why WDBX Is Written in Zig](https://mlai-corp.com/blog/why-zig): Garbage collection pauses are invisible in the mean and fatal in the tail. WDBX is Zig because a real-time vector database is a p99 product, not a p50 product.
+
+## Team
+
+- [Donald Filimon](https://mlai-corp.com/team/donald-filimon): Building privacy-first AI infrastructure — durable memory, traceable retrieval, and bounded autonomy — close to the metal across Zig, Rust, and Swift.
+
+## Legal
+
+- [Privacy Policy](https://mlai-corp.com/privacy): Review how MLAI Corporation handles privacy, data practices, and responsible information handling for website and platform users.
+- [Terms of Service](https://mlai-corp.com/terms): Read the MLAI Corporation terms governing access to the website, services, protected console, and related materials.
+
+## Other machine-readable endpoints
+
+- [Sitemap](https://mlai-corp.com/sitemap.xml)
+- [RSS feed — Lab Notes + Research](https://mlai-corp.com/feed.xml)
+- [robots.txt](https://mlai-corp.com/robots.txt)

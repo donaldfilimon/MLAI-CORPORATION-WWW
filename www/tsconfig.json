@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "preserve",
+    "jsxImportSource": "react",
+    "incremental": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "react-router-dom": [
+        "./src/lib/router-compat.tsx"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": [
+      "node"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "app",
+    "next-env.d.ts",
+    "next.config.ts",
+    "src",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".next",
+    "server",
+    "server.ts",
+    "rust"
+  ]
+}

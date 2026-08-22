@@ -1,0 +1,105 @@
+{
+  "pkg": "mlai-corporation-www",
+  "globalName": "MlaiLab",
+  "shape": "package",
+  "srcDir": "src/components",
+  "tsconfig": "./tsconfig.json",
+  "entry": "./src/components/ds.ts",
+  "componentSrcMap": {
+    "Accordion": "src/components/ui/accordion.tsx",
+    "Alert": "src/components/ui/alert.tsx",
+    "Badge": "src/components/ui/badge.tsx",
+    "Button": "src/components/ui/button.tsx",
+    "Card": "src/components/ui/card.tsx",
+    "Dialog": "src/components/ui/dialog.tsx",
+    "DropdownMenu": "src/components/ui/dropdown-menu.tsx",
+    "Input": "src/components/ui/input.tsx",
+    "Label": "src/components/ui/label.tsx",
+    "Select": "src/components/ui/select.tsx",
+    "Separator": "src/components/ui/separator.tsx",
+    "Skeleton": "src/components/ui/skeleton.tsx",
+    "Tabs": "src/components/ui/tabs.tsx",
+    "Textarea": "src/components/ui/textarea.tsx",
+    "Tooltip": "src/components/ui/tooltip.tsx",
+    "Toaster": "src/components/ui/toaster.tsx",
+    "ProvTag": "src/components/site/ProvTag.tsx",
+    "ProvLegend": "src/components/site/ProvTag.tsx",
+    "Eyebrow": "src/components/site/Eyebrow.tsx",
+    "Section": "src/components/site/Section.tsx",
+    "SplitSection": "src/components/site/Section.tsx",
+    "FeatureCard": "src/components/site/FeatureCard.tsx",
+    "StatBlock": "src/components/site/StatBlock.tsx",
+    "SpecList": "src/components/site/SpecList.tsx",
+    "StepList": "src/components/site/StepList.tsx",
+    "DataTable": "src/components/site/DataTable.tsx",
+    "DeepDive": "src/components/site/DeepDive.tsx",
+    "Callout": "src/components/site/Callout.tsx",
+    "PullQuote": "src/components/site/Callout.tsx",
+    "Glossary": "src/components/site/Glossary.tsx",
+    "FAQList": "src/components/site/FAQList.tsx",
+    "NextUp": "src/components/site/NextUp.tsx",
+    "Prose": "src/components/site/Prose.tsx",
+    "AccentGlow": "src/components/site/AccentGlow.tsx",
+    "PersonaCard": "src/components/site/PersonaCard.tsx",
+    "IndexCard": "src/components/site/IndexCard.tsx",
+    "ThroughputCard": "src/components/site/ThroughputCard.tsx",
+    "HeroBench": "src/components/site/HeroBench.tsx",
+    "PublicationIndex": "src/components/site/PublicationIndex.tsx",
+    "LogoMark": "src/components/LogoMark.tsx",
+    "ACCENTS": null,
+    "Toast": null,
+    "ToastAction": null,
+    "ToastClose": null,
+    "ToastDescription": null,
+    "ToastProvider": null,
+    "ToastTitle": null,
+    "ToastViewport": null
+  },
+  "cssEntry": ".design-sync/lab-compiled.css",
+  "runtimeFontPrefixes": [
+    "Spectral",
+    "JetBrains Mono"
+  ],
+  "readmeHeader": ".design-sync/conventions.md",
+  "projectId": "c535eba1-9a32-465a-a804-0926c7d0c8ad",
+  "overrides": {
+    "Section": {
+      "cardMode": "column"
+    },
+    "SplitSection": {
+      "cardMode": "column",
+      "viewport": "1280x900"
+    },
+    "DeepDive": {
+      "cardMode": "column",
+      "viewport": "1280x900"
+    },
+    "StepList": {
+      "cardMode": "column"
+    },
+    "DataTable": {
+      "cardMode": "column"
+    },
+    "FAQList": {
+      "cardMode": "column"
+    },
+    "Prose": {
+      "cardMode": "column"
+    },
+    "Glossary": {
+      "cardMode": "column"
+    },
+    "PublicationIndex": {
+      "cardMode": "column"
+    },
+    "HeroBench": {
+      "cardMode": "column"
+    },
+    "NextUp": {
+      "cardMode": "column"
+    },
+    "SpecList": {
+      "cardMode": "column"
+    }
+  }
+}
