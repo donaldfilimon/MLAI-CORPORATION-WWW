@@ -308,3 +308,39 @@ disk, styles.css closure resolves, 2 tokens missing (below threshold). Uploaded 
 - **Assumed toolchain**: node 26.7, bun 1.4, converter staged into `.ds-sync/` from the
   design-sync skill. The skill's scripts change; re-copy them every run rather than trusting a
   stale `.ds-sync/`.
+
+## Re-sync verification run (2026-08-22) — clean no-op, and two facts worth keeping
+
+`src/` was unchanged since the first end-to-end run, and the driver confirmed it end to end:
+`resync.mjs --remote` → build ok, diff ok, validate exit 0, capture **skipped
+(`empty_worklist`)**, `anchor: "ok"`, **40/40 unchanged**, `upload.any: false`. Nothing
+uploaded, nothing re-graded, no canary. A verdict shaped like that is the expected result of
+a no-change re-sync, not a failure — read `ds-bundle/.resync-verdict.json` before assuming
+otherwise.
+
+- **The pipeline is byte-deterministic. Measured, not assumed.** `bun run design-sync:css`
+  regenerated `lab-compiled.css` **byte-identical** (sha256 `2069e897…`), and the freshly
+  built `ds-bundle/_ds_sync.json` **diffs clean against the anchor fetched from the project
+  before the run** — same `styleSha 475ddc…`, same `bundleSha12 ca9d43de3db8`, all 40
+  `renderHashes`/`sourceKeys` identical. That is the direct proof, not an inference from the
+  verdict's `upload.any: false`; reproduce it with
+  `diff .design-sync/.cache/remote-sync.json ds-bundle/_ds_sync.json`. This **closes the "styleSha will change whenever the CSS output changes,
+  which re-verifies everything" worry** in the risks list above: it does not churn on its own.
+  A styleSha change from here means a real source or config change. Practical consequence: a
+  no-change re-sync costs ~2 minutes, so there is no reason to skip one.
+- **`cp` is aliased to `cp -i`, exactly like `rm`.** The gotcha above records the `rm` case;
+  `cp` bites the same way and the re-stage step is where it lands. With no tty the copy
+  **silently refuses and still exits 0** ("not overwritten" per file), so a stale `.ds-sync/`
+  survives a `cp -r` that looked like it worked — meaning the *old* converter runs against
+  the *new* instructions. Use `command cp -rf`. Verify with
+  `diff -rq "<skill-base-dir>/lib" .ds-sync/lib` (must be empty).
+- **`tokens/` in the output is empty by design here** — this DS has no separately scraped
+  token files; every token lives in the compiled `_ds_bundle.css`, which `styles.css`
+  `@import`s. The closure is 57 B `styles.css` → 216 KB `_ds_bundle.css` + 1.6 KB
+  `fonts/fonts.css`. Not a missing-tokens defect.
+- **`conventions.md` re-validated against the fresh build: zero drift.** All 21 utility
+  classes, 11 tokens, 40 component names, the compound parts, `linkComponent`/`personas`/
+  `accent`, and every Button/Badge/Alert variant it names still resolve. Re-run that check
+  rather than trusting this line — it is only true of the build it was run against.
+- **Stale remote paths are unchanged and still not cleaned** (see the watch-list above);
+  the re-run of `/design-sync` was NOT treated as authorization to enable deletes.
