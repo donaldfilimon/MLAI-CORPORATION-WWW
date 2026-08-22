@@ -227,3 +227,84 @@ for the portal reason recorded above.
 toolchain is external to this repo and unavailable in this environment. Everything above
 is the repo-side half: config integrity, the compiled `cssEntry`, and the token fix the
 capture would otherwise have rendered wrong.
+
+
+## Retargeted to "MLAI Design System" (2026-08-20)
+
+`projectId` moved from `c535eba1…` ("MLAI Lab UI Primitives") to
+`6d97fa83-1224-4573-9c22-46f67ac46f3c` ("MLAI Design System") on Donald's explicit call:
+one project is to hold both this repo's components and the mobile-app design layer
+(8 `preview/mobile-*.html` cards + 6 `guidelines/` docs) synced there earlier the same day.
+
+**Upload is WRITES-ONLY for this consolidation — no reconciliation deletes.** The target is
+non-empty and holds material this repo does not produce (the mobile layer, `uploads/`, the
+vision-trailer template, `Canvas.dc.html`). The standard reconciliation pass deletes every
+remote path a sync's own bundle doesn't contain, which would destroy all of it. Merge intent
+beats tidiness here; the cost is that genuinely stale files from earlier syncs linger.
+If a future run wants the tidy behaviour, it must first confirm the non-repo material is
+expendable — do not re-enable deletes silently.
+
+**Converter availability changed.** The previous run recorded the converter toolchain as
+"external to this repo and unavailable in this environment"; it is available now (shipped
+with the design-sync skill), so an end-to-end build/verify/upload is possible for the first
+time. Playwright is staged into the gitignored `.ds-sync/` and driven against the installed
+Google Chrome via `DS_CHROMIUM_PATH`, so no browser binary is downloaded into the repo.
+
+## First end-to-end run (2026-08-20) — what bit, and what to do next time
+
+**Self-referential symlinks break the `.d.ts` walk. This is the trap of this repo.**
+`lib/dts.mjs` globs `${root}/**/*.d.ts` with a `!**/node_modules/**` negation, but the
+negation only *filters results* — fast-glob still **traverses**. This repo has npm
+self-reference links (`<pkg>/node_modules/<pkg> -> ..`) which make traversal infinite; the
+build dies with `ENAMETOOLONG: scandir` on a path repeating the package name ~25 times.
+`root` is the repo root here because synth-entry mode has no `types` field to narrow it
+(`findTypesRoot` falls through to `pkgDir`).
+
+Two existed:
+- `design-sources/variants/mlai-operating-system/node_modules/mlai-operating-system -> ..`
+  — **deleted permanently**. `design-sources/` is gitignored with zero tracked files, and the
+  link is npm-generated, so nothing was lost. It will come back if that scratch package is
+  reinstalled.
+- `node_modules/mlai-corporation-www -> ..` — the repo's OWN self-link. **Do not delete
+  it**; npm manages it and app code may self-import. The build recipe is to unlink it, build,
+  and restore it in the same command so it is restored even on failure:
+  ```sh
+  SL=node_modules/mlai-corporation-www; HAD=0
+  [ -L "$SL" ] && unlink "$SL" && HAD=1
+  node .ds-sync/package-build.mjs …; EXIT=$?
+  [ "$HAD" = 1 ] && ln -s .. "$SL"
+  exit $EXIT
+  ```
+  A cleaner permanent fix would be a `libOverrides` fork of `dts.mjs` that skips symlinked
+  dirs, or a `publishConfig.types` narrowing `root` to `src/` — neither was needed to ship.
+
+**Interactive `rm`.** The shell aliases `rm` to `rm -i`; with no tty it *silently skips the
+delete and still exits 0*, so a `rm x && echo done` chain lies. Use `unlink` / `command rm -f`.
+
+**No browser download needed.** `package-capture.mjs` honours `DS_CHROMIUM_PATH`; pointing it
+at `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome` avoids Playwright's
+chromium download. npm's blocked install-scripts warning for esbuild was benign — the binary
+loaded fine.
+
+**Result.** Build clean (40 components, 988 KB bundle, 36 authored previews reused, 4 floor
+cards as documented). `package-validate.mjs` exit 0: 40/40 previews render, anchor matches
+disk, styles.css closure resolves, 2 tokens missing (below threshold). Uploaded 216 files.
+
+## Re-sync risks (watch-list for the next run)
+
+- **The upload was WRITES-ONLY** (see the retarget section). The target therefore still holds
+  files this repo does not produce and which no diff will ever reconcile: `components/lab/**`,
+  `components/site/{Footer,Logo,Nav}`, `components/vendor/**`, `vendor/**`, `_ds/**`,
+  `colors_and_type.css`, `_ds_manifest.json`, `SKILL.md`, `preview/**`, `assets/**`,
+  `ui_kits/**`, `templates/**`, `uploads/**`. Some are genuinely stale prior-sync output
+  (`components/lab/**` duplicates `components/general/**`); the rest is the deliberately
+  preserved mobile/design layer. Cleaning the stale half requires an explicit decision — do
+  not infer it from a diff.
+- **The anchor now in the project describes THIS build.** Next re-sync can diff against it
+  normally; the styleSha will change whenever `bun run design-sync:css` output changes, which
+  re-verifies everything.
+- **`.design-sync/lab-compiled.css` is gitignored and MUST be regenerated** before every build
+  (`bun run design-sync:css`) — a stale one silently ships classes that don't exist.
+- **Assumed toolchain**: node 26.7, bun 1.4, converter staged into `.ds-sync/` from the
+  design-sync skill. The skill's scripts change; re-copy them every run rather than trusting a
+  stale `.ds-sync/`.
