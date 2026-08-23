@@ -1,0 +1,9 @@
+{
+  "name": "run-mlai-mobile-driver",
+  "private": true,
+  "type": "module",
+  "description": "Headless web-target driver for the MLAI mobile app (run-skill harness).",
+  "dependencies": {
+    "playwright-core": "^1.49.0"
+  }
+}
