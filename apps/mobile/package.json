@@ -1,5 +1,5 @@
 {
-  "name": "mlai-mobile",
+  "name": "@mlai/mobile",
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -13,6 +13,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@mlai/contracts": "file:../../packages/contracts",
     "@expo-google-fonts/geist": "^0.4.2",
     "@expo-google-fonts/jetbrains-mono": "^0.4.0",
     "@expo-google-fonts/spectral": "^0.4.1",

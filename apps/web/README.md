@@ -4,6 +4,10 @@
 
 # MLAI Corporation WWW
 
+The canonical website now lives at `apps/web/` in the MLAI integration
+repository. Run commands here or use the root `bun run check:web` gate. The
+historical mobile `www/` snapshot is retained in Git history only.
+
 Production-grade marketing and private-console website for MLAI Corporation. The active stack is **Next.js 15 App Router + React 19 + TailwindCSS v4**, served as one Bun-managed application with `/api/*` route handlers in the same process.
 
 The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. Do not extend or restore them; active work belongs in the TypeScript/TSX Next.js surface.

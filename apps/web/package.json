@@ -1,5 +1,5 @@
 {
-  "name": "mlai-corporation-www",
+  "name": "@mlai/web",
   "private": true,
   "version": "1.0.0",
   "packageManager": "bun@1.4.0",
@@ -19,6 +19,7 @@
     "design-sync:css": "bun scripts/design-sync-css.mjs"
   },
   "dependencies": {
+    "@mlai/contracts": "file:../../packages/contracts",
     "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@tailwindcss/postcss": "^4.3.1",

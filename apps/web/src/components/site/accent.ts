@@ -14,7 +14,9 @@
  * here; the persona named "Abi" is cyan there. They are different axes that
  * happen to share a name, so always pick the one matching what you're labeling.
  */
-export type Accent = "wdbx" | "abi" | "abbey";
+import type { ProductAccent } from "@mlai/contracts";
+
+export type Accent = ProductAccent;
 
 export const ACCENTS: readonly Accent[] = ["wdbx", "abi", "abbey"] as const;
 

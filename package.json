@@ -1,0 +1,20 @@
+{
+  "name": "@mlai/platform",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "bun@1.4.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "bun install && (cd apps/web && bun install) && (cd apps/mobile && bun install) && (cd apps/quasar && bun install)",
+    "check": "bun run check:topology && bun run check:web && bun run check:mobile && bun run check:quasar",
+    "check:topology": "bun packages/tooling/src/check-topology.ts",
+    "check:web": "cd apps/web && bun run lint && bun run test && bun run build",
+    "check:mobile": "cd apps/mobile && bun run typecheck && bun run test -- --runInBand && bun run lint && bunx expo export --platform web",
+    "check:quasar": "cd apps/quasar && bun run typecheck && bun run test && (cd apps/quasar && bunx expo export --platform web)",
+    "dev:web": "cd apps/web && bun run dev",
+    "dev:mobile": "cd apps/mobile && bun run start",
+    "dev:quasar": "cd apps/quasar/apps/quasar && bun run start"
+  }
+}

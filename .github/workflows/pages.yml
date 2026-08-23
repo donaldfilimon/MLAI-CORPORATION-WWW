@@ -1,6 +1,6 @@
 name: Deploy static landing page to GitHub Pages
 
-# Publishes the self-contained static page in ./site to GitHub Pages.
+# Publishes the self-contained static page in apps/web/site to GitHub Pages.
 # This is a lightweight landing page only — the full Next.js app (pages +
 # /api/* route handlers) is deployed separately to Cloud Run (see
 # deploy-cloudrun.yml). The Next app is NOT statically exported here.
@@ -27,12 +27,12 @@ on:
     # duplicated into site/, and a bare wildcard would rebuild the landing page
     # on every unrelated public/ change (mirrored WDBX docs, research PDFs).
     paths:
-      - "site/**"
-      - "src/__tests__/landing-page.test.ts"
-      - "src/lib/route-meta.ts"
-      - "public/favicon.svg"
-      - "public/og-image.png"
-      - "public/apple-touch-icon.png"
+      - "apps/web/site/**"
+      - "apps/web/src/__tests__/landing-page.test.ts"
+      - "apps/web/src/lib/route-meta.ts"
+      - "apps/web/public/favicon.svg"
+      - "apps/web/public/og-image.png"
+      - "apps/web/public/apple-touch-icon.png"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -63,11 +63,13 @@ jobs:
         with:
           bun-version: "1.4"
       - run: bun install --frozen-lockfile
+        working-directory: apps/web
       - run: bunx vitest run src/__tests__/landing-page.test.ts
+        working-directory: apps/web
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: apps/web/site
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -1,4 +1,5 @@
 import type { Accent } from "./theme";
+import type { Provenance } from "@mlai/contracts";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Facts source of truth for the mobile app. Mirrors the web lib/brand.ts.
@@ -8,7 +9,7 @@ import type { Accent } from "./theme";
    "Built on Apple's public frameworks — Metal, Accelerate, Core ML."
    ────────────────────────────────────────────────────────────────────────── */
 
-export type Provenance = "measured" | "target" | "reported";
+export type { Provenance } from "@mlai/contracts";
 
 export type Stat = {
   value: string;

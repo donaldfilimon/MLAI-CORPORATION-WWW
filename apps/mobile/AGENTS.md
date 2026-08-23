@@ -41,20 +41,20 @@ bunx eas build --profile development --platform ios   # cloud build
 
 `ios/` is generated, not committed — never hand-edit it; change `app.json` / `plugins/withCloudKit.js` and re-prebuild.
 
-## Nested projects: `quasar/` and `www/`
+## Sibling applications in the integration repository
 
-Two **separate, self-contained projects** are vendored into this repo via `git subtree`. Neither is part of the mlai-mobile Expo app and neither shares its toolchain:
+This app now lives at `apps/mobile/` in the MLAI integration repository. The
+other surfaces are siblings, not children of the Expo project:
 
 | Path | What it is | Its own gates |
 |---|---|---|
-| `quasar/` | Bun-workspaces monorepo: local AI website-builder service + Expo app + Next 15 template | `cd quasar && bun install && bun run typecheck && bun run test` (bun:test) |
-| `www/` | `mlai-corporation-www` — the Next 15 App Router marketing/console site on Bun | `cd www && bun install && bun run lint && bun run test` (tsc + vitest) |
+| `../quasar/` | Bun-workspaces monorepo: local AI website-builder service + Expo app + Next 15 template | from the repository root: `bun run check:quasar` |
+| `../web/` | Canonical Next 15 App Router marketing/console site on Bun | from the repository root: `bun run check:web` |
 
-mlai-mobile's own tooling deliberately fences both out — `tsconfig.json` `"exclude": ["quasar", "www"]`, `eslint.config.js` ignores `quasar/**` and `www/**`, and `jest.config.js` sets `testPathIgnorePatterns` for both (critical: `www/src/__tests__/*.test.ts` are **vitest** suites that this repo's `testMatch` would otherwise sweep into jest). Keep those fences, or the root gates start failing on foreign sources.
-
-To pull upstream changes for either, use the subtree they came from, e.g.
-`git subtree pull --prefix=www /Users/donaldfilimon/sources/repos/mlai-website main`.
-`www/` also has its own `CLAUDE.md`, `AGENTS.md`, and `docs/` that apply when working inside it.
+The app's TypeScript, ESLint, and Jest roots are `apps/mobile`, so sibling
+sources are naturally fenced out. The historical `www/` subtree is retained in
+Git history only; never recreate it. Read each sibling's own guidance before
+working there.
 
 ## Architecture
 

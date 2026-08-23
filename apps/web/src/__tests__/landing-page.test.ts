@@ -102,7 +102,7 @@ describe("pages.yml — the workflow's paths filter must cover this test's input
   // hardcoding it, is the point: add an import or a compared asset without
   // widening the filter and this fails instead of going quiet.
   const workflow = readFileSync(
-    resolve(__dirname, "../../.github/workflows/pages.yml"),
+    resolve(__dirname, "../../../../.github/workflows/pages.yml"),
     "utf8",
   );
   const selfSource = readFileSync(resolve(__dirname, "landing-page.test.ts"), "utf8");
@@ -123,7 +123,7 @@ describe("pages.yml — the workflow's paths filter must cover this test's input
     // nothing, which would make the two real assertions below vacuously pass.
     // Coverage is their job; this one just proves the parse worked.
     expect(filter.length).toBeGreaterThan(0);
-    expect(filter).toContain("site/**");
+    expect(filter).toContain("apps/web/site/**");
   });
 
   it("covers every @/lib module this test imports", () => {
@@ -132,7 +132,7 @@ describe("pages.yml — the workflow's paths filter must cover this test's input
     );
     expect(imported.length).toBeGreaterThan(0);
     for (const dep of imported) {
-      expect(covers(dep), `${dep} is read by this test but no pages.yml path matches it`).toBe(
+      expect(covers(`apps/web/${dep}`), `${dep} is read by this test but no pages.yml path matches it`).toBe(
         true,
       );
     }
@@ -149,7 +149,7 @@ describe("pages.yml — the workflow's paths filter must cover this test's input
     expect(assets.length).toBe(3);
     for (const a of assets) {
       expect(
-        covers(`public/${a}`),
+        covers(`apps/web/public/${a}`),
         `public/${a} is byte-compared here but no pages.yml path matches it`,
       ).toBe(true);
     }

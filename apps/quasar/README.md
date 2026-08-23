@@ -1,5 +1,9 @@
 # Quasar
 
+Quasar lives at `apps/quasar/` inside the MLAI integration repository but
+remains an independent Bun workspace with its own lockfile. From the repository
+root, `bun run check:quasar` runs its native type, unit, and Expo export gates.
+
 Quasar is an AI website builder: describe a site in a prompt, Claude scaffolds
 and writes a real **Next.js 15 App Router** project, and you preview it live
 on your own machine. **v1** is intentionally small — a local Bun service plus

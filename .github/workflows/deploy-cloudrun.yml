@@ -1,6 +1,6 @@
 name: Deploy to Cloud Run
 
-# Builds the Dockerfile via Cloud Build and deploys the full Next.js app
+# Builds apps/web/Dockerfile via Cloud Build and deploys the full Next.js app
 # (pages + /api/* route handlers) to Cloud Run. This is the documented
 # deployment path — GitHub Pages cannot host the server/auth/API surface.
 #
@@ -204,7 +204,7 @@ jobs:
           # --min-instances is deliberately NOT passed, so an operator who sets
           # THAT one in the console does keep it across deploys.)
           gcloud run deploy "${CLOUD_RUN_SERVICE}" \
-            --source . \
+            --source apps/web \
             --project "${GCP_PROJECT_ID}" \
             --region "${GCP_REGION}" \
             --platform managed \

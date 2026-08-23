@@ -10,6 +10,7 @@
    not define — both are marked below. */
 
 import { Platform } from "react-native";
+import type { ProductAccent } from "@mlai/contracts";
 
 export const color = {
   ink: "#05070D", // Lab --ink, verbatim
@@ -35,7 +36,7 @@ export const color = {
 /** Lab's signature gradient (--grad: cyan -> blue -> violet). */
 export const gradient: [string, string, string] = ["#22D3EE", "#60A5FA", "#A855F7"];
 
-export type Accent = "wdbx" | "abi" | "abbey";
+export type Accent = ProductAccent;
 
 export const accentColor: Record<Accent, string> = {
   wdbx: color.wdbx,
