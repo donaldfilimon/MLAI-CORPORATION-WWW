@@ -252,7 +252,7 @@ export const PAGES: Record<string, DocPage> = {
     title: "Quickstart",
     toc: [
       ["install", "Install"],
-      ["first-index", "Your first index"],
+      ["first-index", "Verify the index"],
       ["next", "Next steps"],
     ],
     body: () => (
@@ -266,20 +266,23 @@ export const PAGES: Record<string, DocPage> = {
           Telemetry is off until you enable it in Settings. Every memory write is SHA-256-chained and verified
           on read.
         </Callout>
-        <H2 id="install">Install</H2>
-        <P>WDBX ships as a single static binary (written in Zig). Pull it and verify the checksum:</P>
-        <CodeBlock
-          label="shell"
-          code={`curl -fsSL https://get.mlai.dev/wdbx | sh\nwdbx verify --self        # checks the signed release\nwdbx version              # → wdbx 2.4.0 · zig 0.13`}
-        />
-        <H2 id="first-index">Your first index</H2>
+        <H2 id="install">Build from source</H2>
         <P>
-          Create an HNSW index, upsert a few vectors, then query for nearest neighbors. The history is chained
-          automatically.
+          WDBX is a Rust workspace consumed by ABI and Abbey through sibling path dependencies. Clone the
+          public source and run its declared verification gate:
         </P>
         <CodeBlock
-          label="python"
-          code={`from wdbx import Client\n\ndb = Client(local=True)              # on-device\nidx = db.create_index("docs", dim=768, metric="cosine")\n\nidx.upsert([(id, vector, meta) for ...])\nhits = idx.query(q, k=10, ef=200)    # HNSW search\n\nassert db.verify_chain()             # SHA-256 integrity`}
+          label="shell"
+          code={`git clone https://github.com/donaldfilimon/wdbx.git\ncd wdbx\ncargo test --workspace`}
+        />
+        <H2 id="first-index">Verify the index</H2>
+        <P>
+          The real-store integration test rebuilds a layered HNSW graph from stored vectors, validates the
+          graph, and compares approximate search with the exact index.
+        </P>
+        <CodeBlock
+          label="shell"
+          code={`cargo test -p abi-wdbx --lib hnsw\ncargo test -p abi-wdbx --test real_store`}
         />
         <H2 id="next">Next steps</H2>
         <P>
@@ -300,16 +303,16 @@ export const PAGES: Record<string, DocPage> = {
     body: () => (
       <>
         <P>
-          WDBX is a purpose-built vector-database runtime — HNSW search, sharded storage, SHA-256-chained
-          history and lock-free MVCC concurrency. Memory you can verify.
+          WDBX is a purpose-built vector-database runtime — HNSW search, durable WAL-backed storage,
+          SHA-256-chained history and lock-free MVCC concurrency. Memory you can verify.
         </P>
         <H2 id="model">Storage model</H2>
         <P>
-          Vectors are sharded across nodes; each shard owns an HNSW graph plus a write-ahead log. Reads are
-          served from the graph; writes append to the log and link to the previous block.
+          Each store rebuilds its HNSW graph from a durable snapshot and records writes through a CRC-framed
+          write-ahead log. Cluster support provides replication and read repair; it is not production sharding.
         </P>
-        <Callout kind="info" title="Sharding">
-          Don't shard below ~10M vectors — coordination overhead outweighs parallelism. Re-evaluate at 50M.
+        <Callout kind="info" title="Replication">
+          Replication and read repair are substrate capabilities, not a claim of a hosted multi-node service.
         </Callout>
         <H2 id="integrity">Verifiable memory</H2>
         <P>
@@ -318,7 +321,7 @@ export const PAGES: Record<string, DocPage> = {
         </P>
         <CodeBlock
           label="shell"
-          code={`wdbx chain verify --index docs\n# 142,887 blocks · 0 mismatches · ok`}
+          code={`cargo test -p abi-wdbx --lib hash\ncargo test -p abi-wdbx --lib durable`}
         />
         <H2 id="concurrency">Concurrency</H2>
         <P>
@@ -346,7 +349,7 @@ export const PAGES: Record<string, DocPage> = {
         <ParamTable
           rows={[
             ["M", "16", "Edges per node. Higher = better recall, more memory."],
-            ["ef_construction", "200", "Candidate list size at build time. Higher = better graph, slower build."],
+            ["ef_construction", "40", "Candidate list size at build time. Higher = better graph, slower build."],
             ["metric", "cosine", "cosine for text embeddings; L2 for clustering."],
           ]}
         />
@@ -354,12 +357,12 @@ export const PAGES: Record<string, DocPage> = {
         <ParamTable
           rows={[
             ["k", "10", "Number of neighbors to return."],
-            ["ef", "200", "Search breadth. Higher = better recall, higher latency."],
+            ["ef", "32", "Search breadth. Higher = better recall, higher latency."],
           ]}
         />
         <H2 id="guidance">Guidance</H2>
         <Callout kind="warn" title="Aviva says">
-          Use HNSW. M=16, ef=200. Cosine for text, L2 for clustering. Done.
+          Use HNSW. M=16, ef=32. Cosine for text, L2 for clustering. Done.
         </Callout>
         <P>
           Numbers above are defaults, not benchmarks. Publish measured latency/recall only against a
@@ -394,7 +397,7 @@ export const PAGES: Record<string, DocPage> = {
         </Callout>
         <H2 id="aviva">Aviva · Unfiltered Expert</H2>
         <Callout kind="warn" title="Violet · vision">
-          Direct, dense, zero hedging. "Use HNSW. M=16, ef=200. Cosine for text, L2 for clustering. Done."
+          Direct, dense, zero hedging. "Use HNSW. M=16, ef=32. Cosine for text, L2 for clustering. Done."
         </Callout>
       </>
     ),

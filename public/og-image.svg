@@ -13,8 +13,8 @@
       <stop offset="1" stop-color="#0EA5E9"/>
     </linearGradient>
     <linearGradient id="accent" x1="96" y1="0" x2="760" y2="0" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#A5B4FC"/>
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#canvas)"/>
@@ -29,17 +29,17 @@
   <circle cx="152" cy="148" r="7" fill="#FFFFFF"/>
   <circle cx="180" cy="126" r="8" fill="#FFFFFF"/>
   <circle cx="180" cy="178" r="9.5" fill="#FFFFFF" opacity="0.92"/>
-  <text x="232" y="172" font-family="Outfit, Geist, system-ui, sans-serif" font-size="44" font-weight="700" fill="#FFFFFF">MLAI<tspan fill="#98A2B0"> CORP</tspan></text>
+  <text x="232" y="172" font-family="Geist, system-ui, sans-serif" font-size="44" font-weight="700" fill="#FFFFFF">MLAI<tspan fill="#98A2B0"> CORP</tspan></text>
 
   <!-- headline -->
-  <text x="96" y="338" font-family="Outfit, Geist, system-ui, sans-serif" font-size="78" font-weight="700" fill="#FFFFFF">Infrastructure for</text>
-  <text x="96" y="430" font-family="Outfit, Geist, system-ui, sans-serif" font-size="78" font-weight="700" fill="url(#accent)">resilient intelligence.</text>
+  <text x="96" y="338" font-family="Spectral, Georgia, serif" font-size="78" font-weight="700" fill="#FFFFFF">Infrastructure for</text>
+  <text x="96" y="430" font-family="Spectral, Georgia, serif" font-size="78" font-weight="700" fill="url(#accent)">resilient intelligence.</text>
 
   <!-- subline -->
   <text x="96" y="512" font-family="Geist, system-ui, sans-serif" font-size="30" fill="#98A2B0">Private, traceable AI infrastructure for production teams.</text>
 
   <!-- chips -->
-  <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="17" letter-spacing="0.5" fill="#A5B4FC">
+  <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="17" letter-spacing="0.5" fill="#A78BFA">
     <rect x="96" y="546" width="262" height="44" rx="22" fill="#22d3ee" fill-opacity="0.08" stroke="#22d3ee" stroke-opacity="0.25"/>
     <text x="122" y="574">TRACEABLE RETRIEVAL</text>
     <rect x="374" y="546" width="190" height="44" rx="22" fill="#22d3ee" fill-opacity="0.08" stroke="#22d3ee" stroke-opacity="0.25"/>

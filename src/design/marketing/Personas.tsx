@@ -34,7 +34,7 @@ const MINDS: readonly Mind[] = [
     Icon: IZap,
     line: "research · vision",
     traits: ["Direct", "Maximum density", "Zero hedging"],
-    quote: "Use HNSW. M=16, ef=200. Cosine for text, L2 for clustering. Done.",
+    quote: "Use HNSW. M=16, ef=32. Cosine for text, L2 for clustering. Done.",
   },
   {
     key: "Abi",

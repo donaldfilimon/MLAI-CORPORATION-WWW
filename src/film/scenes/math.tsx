@@ -237,7 +237,7 @@ export const MATH: MathDef[] = [
     eqs: [{ tex: <span>cos θ = (<Tok c={AVC}>a</Tok>·<Tok c={AV}>b</Tok>) / (‖<Tok c={AVC}>a</Tok>‖ ‖<Tok c={AV}>b</Tok>‖)</span>, note: "Relevance is the angle between two embeddings." }],
     bullets: ["Vectors normalized to unit length", "Dot product over 768+ dimensions", "Zig @Vector SIMD — many lanes per cycle"] },
   { idx: "M2", label: "Index", badge: "partial", title: "HNSW search", motif: "graph",
-    eqs: [{ tex: <span>search ≈ O(<Tok c={AVC}>log N</Tok>) &nbsp; · &nbsp; M=16, ef=200</span>, note: "A hierarchical navigable small-world graph." }],
+    eqs: [{ tex: <span>search ≈ O(<Tok c={AVC}>log N</Tok>) &nbsp; · &nbsp; M=16, ef=32</span>, note: "A hierarchical navigable small-world graph." }],
     bullets: ["Coarse top layers, dense bottom layer", "Greedy descent toward the query", "Results returned in non-increasing score"] },
   { idx: "M3", label: "Hybrid rank", badge: "partial", title: "Beyond similarity", motif: "curve",
     eqs: [{ tex: <span>score = <Tok c={AVC}>sem</Tok> × <Tok c="#60a5fa">temp</Tok> × <Tok c={C.green}>causal</Tok> × <Tok c={AV}>persona</Tok></span> },
