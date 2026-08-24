@@ -29,6 +29,7 @@ const scriptSrc = [
   "'wasm-unsafe-eval'",
   "blob:",
   "https://cdn.jsdelivr.net",
+  "https://challenges.cloudflare.com",
 ];
 
 // `next dev` evaluates strings (HMR, eval-based source maps), so development
@@ -46,6 +47,7 @@ const CSP = [
   "connect-src 'self' data: blob: https://storage.googleapis.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co https://fonts.gstatic.com https://fonts.googleapis.com",
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
+  "frame-src https://challenges.cloudflare.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

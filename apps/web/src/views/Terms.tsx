@@ -5,7 +5,7 @@ export function Terms() {
   return (
     <LegalPage
       title="Terms of Service"
-      lastUpdated="May 15, 2026"
+      lastUpdated="August 24, 2026"
       icon={<FileText className="w-6 h-6" />}
       content={
         <div className="space-y-8">
@@ -14,7 +14,7 @@ export function Terms() {
               1. Acceptable Use
             </h2>
             <p className="text-text-dim">
-              Users of MLAI Corporation services, demos, protected APIs, and
+              Users of Quesar, MLAI services, demos, protected APIs, and
               research materials must not use them to build malicious
               automation, evade security controls, conduct unauthorized
               surveillance, or generate large-scale deception.
@@ -25,9 +25,10 @@ export function Terms() {
               2. Account Responsibility
             </h2>
             <p className="text-text-dim">
-              You are responsible for maintaining account security, using MFA or
-              passkeys when available, and ensuring only authorized users access
-              your workspace or API usage.
+              Quesar is invite-only. You are responsible for maintaining account
+              security, using required MFA or passkeys, and ensuring only
+              authorized members use your organization access. Do not share or
+              attempt to bypass an invitation or session boundary.
             </p>
           </section>
           <section>
@@ -46,15 +47,28 @@ export function Terms() {
               4. Experimental And Preview Features
             </h2>
             <p className="text-text-dim">
-              Some console, LLM, benchmark, billing, and research features may
-              be prototypes or preview capabilities. Do not rely on preview
-              features for production decisions without a written agreement and
+              Quesar is a beta service. Model output can be incomplete or wrong
+              and must not be treated as professional, safety-critical, legal,
+              medical, or financial advice. Do not rely on preview features for
+              production decisions without independent validation and a written
               deployment review.
             </p>
           </section>
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">
-              5. Limitation of Liability
+              5. Conversation Audit Consent
+            </h2>
+            <p className="text-text-dim">
+              Protected generation requires explicit consent to the displayed
+              one-year encrypted-audit policy. You may withdraw consent for
+              future chats and may inspect, export, or delete your live records.
+              Withdrawal does not retroactively erase records you have not
+              deleted or provider processing already completed.
+            </p>
+          </section>
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              6. Limitation of Liability
             </h2>
             <p className="text-text-dim">
               MLAI provides website, research, and preview API materials as-is

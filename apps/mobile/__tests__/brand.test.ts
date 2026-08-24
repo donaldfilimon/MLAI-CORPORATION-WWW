@@ -1,4 +1,4 @@
-import { provenanceMeta, products, productOrder, heroStats, parseStatValue } from "@/lib/brand";
+import { investorHighlights, provenanceMeta, products, productOrder } from "@/lib/brand";
 import { color, accentColor } from "@/lib/theme";
 
 describe("provenance metadata", () => {
@@ -21,24 +21,22 @@ describe("catalog integrity", () => {
     expect([...productOrder].sort()).toEqual(Object.keys(products).sort());
   });
 
-  it("every product stat and hero stat carries a known provenance", () => {
+  it("every published investor stat carries a known provenance", () => {
     const valid = new Set(["measured", "target", "reported"]);
-    for (const slug of productOrder) {
-      for (const s of products[slug].stats) expect(valid.has(s.provenance)).toBe(true);
-    }
-    for (const s of heroStats) expect(valid.has(s.provenance)).toBe(true);
-  });
-});
-
-describe("parseStatValue", () => {
-  it("splits the leading number from its unit suffix", () => {
-    expect(parseStatValue("2.3ms")).toEqual({ number: 2.3, suffix: "ms" });
-    expect(parseStatValue("98.2%")).toEqual({ number: 98.2, suffix: "%" });
-    expect(parseStatValue("16.5K")).toEqual({ number: 16.5, suffix: "K" });
+    for (const stat of investorHighlights) expect(valid.has(stat.provenance)).toBe(true);
   });
 
-  it("drives the hero metrics from brand.ts (no hardcoded duplication)", () => {
-    expect(parseStatValue(heroStats[0].value)).toEqual({ number: 2.3, suffix: "ms" });
-    expect(parseStatValue(heroStats[1].value)).toEqual({ number: 98.2, suffix: "%" });
+  it("does not publish uncorroborated ABI speedups or Abbey quality scores", () => {
+    expect(JSON.stringify(products)).not.toMatch(/5×|84×|295×|13×|empathy score|technical accuracy/);
+    expect(products.abi).not.toHaveProperty("stats");
+    expect(products.abbey).not.toHaveProperty("stats");
+  });
+
+  it("uses the active Rust WDBX graph defaults", () => {
+    const hnsw = products.wdbx.features.find((feature) => feature.title === "Layered HNSW");
+    expect(hnsw?.desc).toContain("M=16");
+    expect(hnsw?.desc).toContain("EF_CONSTRUCTION=40");
+    expect(hnsw?.desc).toContain("EF_SEARCH=32");
+    expect(products.wdbx.intro.join(" ")).toContain("active Rust substrate");
   });
 });

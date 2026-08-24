@@ -31,24 +31,24 @@ export const metadata: Metadata = {
   alternates: {
     types: {
       "application/rss+xml": [
-        { url: "/feed.xml", title: "MLAI Corporation — Lab Notes & Research" },
+        { url: "/feed.xml", title: "Quesar by MLAI — Research & Lab Notes" },
       ],
     },
   },
   openGraph: {
     type: "website",
-    siteName: "MLAI Corporation",
-    title: "MLAI Corporation | Private AI Infrastructure",
+    siteName: "Quesar by MLAI",
+    title: "Quesar by MLAI | Private AI Operations",
     description:
-      "Private, traceable AI infrastructure for teams moving agents, retrieval, and evaluation from demos to governed production systems.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MLAI Corporation — private, traceable AI infrastructure" }],
+      "Invite-only AI operations with organization-gated access and encrypted, user-controlled conversation audits.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Quesar by MLAI — private AI operations with an audit trail" }],
     url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "MLAI Corporation | Private AI Infrastructure",
+    title: "Quesar by MLAI | Private AI Operations",
     description:
-      "Private, traceable AI infrastructure: WDBX retrieval, Abbey · Aviva · Abi orchestration, and operator-ready controls.",
+      "Invite-only AI operations with organization-gated access and encrypted, user-controlled conversation audits.",
     images: ["/og-image.png"],
   },
 };
@@ -62,12 +62,13 @@ const ORG_JSON_LD = JSON.stringify({
   "@type": "Organization",
   name: "MLAI Corporation",
   legalName: "Machine Learning Advanced Innovations, Inc.",
-  url: "https://mlai-corp.com",
-  logo: "https://mlai-corp.com/icon-512.png",
-  image: "https://mlai-corp.com/og-image.png",
+  url: "https://quesar.cloud",
+  logo: "https://quesar.cloud/icon-512.png",
+  image: "https://quesar.cloud/og-image.png",
+  brand: { "@type": "Brand", name: "Quesar" },
   description:
     "Leading AI and ML research lab providing high-integrity frameworks for neural AI orchestration.",
-  founder: { "@type": "Person", name: "Donald Filimon", url: "https://mlai-corp.com/team/donald-filimon" },
+  founder: { "@type": "Person", name: "Donald Filimon", url: "https://quesar.cloud/team/donald-filimon" },
   sameAs: ["https://github.com/donaldfilimon"],
   address: {
     "@type": "PostalAddress",
@@ -80,8 +81,8 @@ const ORG_JSON_LD = JSON.stringify({
 const WEBSITE_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "MLAI Corporation",
-  url: "https://mlai-corp.com",
+  name: "Quesar by MLAI",
+  url: "https://quesar.cloud",
 });
 
 export default function RootLayout({ children }: { children: ReactNode }) {

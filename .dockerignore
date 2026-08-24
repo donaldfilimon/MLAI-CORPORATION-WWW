@@ -1,0 +1,17 @@
+.git
+.gitignore
+**/node_modules
+**/.next
+**/.expo
+**/dist
+**/coverage
+**/.DS_Store
+**/.env
+**/.env.*
+!**/.env.example
+apps/mobile
+apps/quasar
+packages/design-tokens
+packages/tooling
+Archive
+tasks

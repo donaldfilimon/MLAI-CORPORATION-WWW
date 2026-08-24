@@ -33,21 +33,6 @@ export const company = {
   ],
 } as const;
 
-export const heroStats: Stat[] = [
-  { value: "2.3ms", label: "p50 search latency", provenance: "measured" },
-  { value: "98.2%", label: "Recall@10", provenance: "measured" },
-  { value: "16.5K", label: "QPS — stress objective", provenance: "target" },
-  { value: "0.8ms", label: "p50 @ 1M vectors", provenance: "target" },
-];
-
-/** Split a formatted stat value like "2.3ms" or "98.2%" into its leading number
-   and unit suffix — so a component can animate the number (e.g. the hero
-   count-up) without re-hardcoding the value that lives here in brand.ts. */
-export function parseStatValue(value: string): { number: number; suffix: string } {
-  const m = value.match(/^([\d.]+)(.*)$/);
-  return { number: m ? parseFloat(m[1]) : 0, suffix: m ? m[2] : "" };
-}
-
 export type Product = {
   slug: Accent;
   name: string;
@@ -56,7 +41,6 @@ export type Product = {
   blurb: string;
   intro: string[];
   features: { title: string; desc: string }[];
-  stats: Stat[];
 };
 
 export const products: Record<Accent, Product> = {
@@ -65,24 +49,18 @@ export const products: Record<Accent, Product> = {
     name: "WDBX",
     kicker: "Storage",
     accent: "wdbx",
-    blurb: "A privacy-first vector database that runs where the data lives.",
+    blurb: "A local-first Rust vector store that keeps retrieval inspectable.",
     intro: [
       "A vector database has one job: given a query vector, find the nearest stored vectors fast, and keep doing it correctly as the data grows. Most systems solve this in the cloud. WDBX solves it on the device.",
-      "Written in Zig for control without a runtime — no garbage collector in the hot path, SIMD as a language feature, and a single static binary. The same distance kernel compiles to AVX-512 on a server and NEON on Apple Silicon.",
+      "The active Rust substrate combines a dimension-checked store, layered HNSW retrieval, durable snapshots and WAL recovery, MVCC history, and reference vector codecs. Optional accelerator paths retain a deterministic CPU oracle.",
     ],
     features: [
-      { title: "HNSW indexing", desc: "Hierarchical Navigable Small World graphs — logarithmic search, tunable recall (M=16, efC=200)." },
-      { title: "Memory-mapped persistence", desc: "mmap + write-ahead log. Near-instant cold starts; durable, checksummed writes." },
-      { title: "Quantization", desc: "Product & scalar quantization for large datasets that fit in unified memory." },
-      { title: "Metal GPU", desc: "Distance calculations on Apple GPU via the ABI Framework. App Store-shippable." },
-      { title: "MVCC", desc: "Readers never block writers; writers never block readers." },
-      { title: "Hash-chained WAL", desc: "Tamper-evident audit trail at the log level — integrity without taxing search." },
-    ],
-    stats: [
-      { value: "2.3ms", label: "p50 search latency", provenance: "measured" },
-      { value: "98.2%", label: "Recall@10", provenance: "measured" },
-      { value: "16.5K", label: "QPS — stress objective", provenance: "target" },
-      { value: "0.8ms", label: "p50 @ 1M vectors", provenance: "target" },
+      { title: "Layered HNSW", desc: "Dimension-checked graph search with M=16, EF_CONSTRUCTION=40, and EF_SEARCH=32." },
+      { title: "Durable recovery", desc: "Snapshots and a write-ahead log rebuild the store and HNSW graph after restart." },
+      { title: "Reference codecs", desc: "Deterministic scalar, product-quantization, Huffman, rANS, and autoencoder artifact paths." },
+      { title: "Optional Metal path", desc: "Supported macOS builds verify vector execution against the deterministic CPU oracle." },
+      { title: "MVCC", desc: "Append-only versions preserve inspectable transaction history and conflicts." },
+      { title: "Chained audit history", desc: "Immutable blocks make the local history independently checkable." },
     ],
   },
   abi: {
@@ -90,22 +68,16 @@ export const products: Record<Accent, Product> = {
     name: "ABI Framework",
     kicker: "Compute",
     accent: "abi",
-    blurb: "The GPU compute layer — tensors and Metal kernels on Apple Silicon.",
+    blurb: "Rust accelerator contracts with deterministic CPU and optional Metal execution.",
     intro: [
-      "ABI is the compute layer that runs the math. WDBX needs distance calculations and embeddings; Abbey needs inference. ABI spends the GPU to make both fast.",
-      "On Apple Silicon the CPU and GPU share one pool of memory, so a tensor produced by one stage is visible to the next without moving a byte. ABI is written around that fact — pipelines are zero-copy by construction.",
+      "ABI owns the compute and orchestration contracts shared by the stack. Its deterministic CPU SIMD implementation is the correctness baseline.",
+      "On supported macOS builds, optional Metal dot, cosine, norm, and batch-cosine paths are called runtime-verified only after they match the CPU oracle. Availability alone is not reported as execution.",
     ],
     features: [
-      { title: "N-dimensional tensors", desc: "Automatic differentiation, SIMD CPU paths, and Metal GPU kernels." },
-      { title: "Neural-network layers", desc: "Dense, Conv2D, LSTM, Attention with full backpropagation." },
-      { title: "Zero-copy pipelines", desc: "Unified memory means no host↔device copy between stages." },
-      { title: "Capability reporting", desc: "Adapts to the GPU it runs on across M-series generations." },
-    ],
-    stats: [
-      { value: "5×", label: "GPU matmul, 128²", provenance: "measured" },
-      { value: "84×", label: "GPU matmul, 1024²", provenance: "measured" },
-      { value: "295×", label: "GPU matmul, 4096²", provenance: "target" },
-      { value: "13×", label: "10-layer NN forward", provenance: "measured" },
+      { title: "Typed accelerator contracts", desc: "Object-safe backends expose one explicit execution boundary." },
+      { title: "Deterministic CPU SIMD", desc: "Stable CPU results remain the oracle for optional accelerators." },
+      { title: "Optional Metal kernels", desc: "macOS vector kernels are scoped to the operations actually exercised." },
+      { title: "Evidence ladder", desc: "Compiled, available, initialized, executed, and runtime-verified are distinct states." },
     ],
   },
   abbey: {
@@ -123,12 +95,6 @@ export const products: Record<Accent, Product> = {
       { title: "Local memory", desc: "Conversations embedded and stored in WDBX, on-device. Recall is a vector lookup." },
       { title: "Neural backtracking", desc: "Hash-chained interaction blocks rewind to the divergence point on drift." },
       { title: "Multi-provider", desc: "OpenAI, Anthropic, or a local model via Ollama — the model is pluggable." },
-    ],
-    stats: [
-      { value: "0.92", label: "Abbey empathy score", provenance: "reported" },
-      { value: "90.5%", label: "Abbey technical accuracy", provenance: "reported" },
-      { value: "30%", label: "Aviva latency reduction", provenance: "reported" },
-      { value: "40%", label: "Aviva density gain", provenance: "reported" },
     ],
   },
 };

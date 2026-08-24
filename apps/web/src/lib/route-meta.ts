@@ -8,7 +8,7 @@ import { content } from "@/data";
 import { bylineNames } from "@/lib/byline";
 import { toIsoDate } from "@/lib/dates";
 
-export const SITE_URL = "https://mlai-corp.com";
+export const SITE_URL = "https://quesar.cloud";
 
 /**
  * Site-level social/feed defaults.
@@ -17,19 +17,19 @@ export const SITE_URL = "https://mlai-corp.com";
  * toNextMetadata for why app/layout.tsx cannot supply them. Paths stay
  * relative; `metadataBase` in app/layout.tsx expands them to absolute URLs.
  */
-const SITE_NAME = "MLAI Corporation";
+const SITE_NAME = "Quesar by MLAI";
 const OG_IMAGE_URL = "/og-image.png";
 const DEFAULT_OG_IMAGES = [
   {
     url: OG_IMAGE_URL,
     width: 1200,
     height: 630,
-    alt: "MLAI Corporation — private, traceable AI infrastructure",
+    alt: "Quesar by MLAI — private AI operations with an audit trail",
   },
 ];
 const FEED_ALTERNATE_TYPES = {
   "application/rss+xml": [
-    { url: "/feed.xml", title: "MLAI Corporation — Lab Notes & Research" },
+    { url: "/feed.xml", title: "Quesar by MLAI — Research & Lab Notes" },
   ],
 };
 
@@ -77,9 +77,9 @@ export type RouteMeta = {
 };
 
 export const DEFAULT_ROUTE_META: RouteMeta = {
-  title: "MLAI Corporation | Private AI Infrastructure for Production Teams",
+  title: "Quesar by MLAI | Private AI Operations with an Audit Trail",
   description:
-    "MLAI Corporation builds private, traceable AI infrastructure for teams moving agents, retrieval, and evaluation from demos to governed production systems.",
+    "Quesar is MLAI's invite-only AI operations console with organization-gated access, minimized provider data, and encrypted user-controlled conversation audits.",
 };
 
 export const routeMetadata: Record<string, RouteMeta> = {
@@ -90,12 +90,12 @@ export const routeMetadata: Record<string, RouteMeta> = {
       "Learn how MLAI Corporation designs resilient AI systems for private deployment, retrieval provenance, safety evaluation, and operational control.",
   },
   "/research": {
-    title: "MLAI Research | Traceable Retrieval and Agent Safety",
+    title: "MLAI Research | Quesar",
     description:
       "Explore MLAI research notes on WDBX retrieval, graph provenance, policy-gated agents, offline workflows, and production AI safety.",
   },
   "/services": {
-    title: "MLAI Services | AI System Audits, Architecture, and Deployment",
+    title: "MLAI Engineering Services | Quesar",
     description:
       "Audit, design, build, and harden AI systems that need traceability, private deployment paths, evaluation gates, and operational reliability.",
   },
@@ -110,7 +110,7 @@ export const routeMetadata: Record<string, RouteMeta> = {
       "Read field notes on retrieval, agent safety, operator UX, evaluation, deployment, and the engineering discipline behind production AI.",
   },
   "/docs": {
-    title: "MLAI Docs | Platform Concepts and Protected API Guide",
+    title: "Quesar Architecture | Identity, Inference, and Audit Boundaries",
     description:
       "Review MLAI platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.",
   },
@@ -121,14 +121,14 @@ export const routeMetadata: Record<string, RouteMeta> = {
   // sitemap publish, so overclaiming here re-exports the problem the page
   // removal was meant to fix.
   "/benchmarks": {
-    title: "WDBX Architecture & Measurements | MLAI Corporation",
+    title: "WDBX Architecture & Evidence | Quesar by MLAI",
     description:
       "How WDBX is built and what has actually been measured on MLAI hardware — architectural properties, and GPU figures labeled measured or target. No head-to-head comparisons against other products.",
   },
   "/demo": {
     title: "Live Demo | WDBX In-Browser Miniature",
     description:
-      "Run a faithful in-browser miniature of the WDBX query path — real cosine search over deterministic embeddings, shard routing, MVCC snapshots, and a hash-chained query log.",
+      "Run an in-browser WDBX query-path miniature with cosine search over deterministic embeddings, an illustrative partition model, MVCC snapshots, and a hash-chained query log.",
   },
   "/financial-model": {
     title: "3-Statement Model | Interactive Tool",
@@ -157,29 +157,29 @@ export const routeMetadata: Record<string, RouteMeta> = {
       "Read the MLAI Corporation terms governing access to the website, services, protected console, and related materials.",
   },
   "/security": {
-    title: "Security | MLAI Corporation",
+    title: "Quesar Security | Identity, Encryption, and Audit Access",
     description:
       "Review MLAI security principles for authentication, private deployment, auditability, protected APIs, and production AI controls.",
   },
   "/login": {
-    title: "Sign In | MLAI Corporation",
-    description: "Sign in to access the protected MLAI console.",
+    title: "Enter Quesar | Invite-Only Beta",
+    description: "Sign in with an active MLAI organization invitation to access Quesar.",
     noindex: true,
   },
   "/signup": {
-    title: "Create Account | MLAI Corporation",
-    description: "Create an account to access the protected MLAI console.",
+    title: "Request Quesar Access | Invite-Only Beta",
+    description: "Request an invitation to evaluate Quesar with a scoped governed workflow.",
     noindex: true,
   },
   "/console": {
-    title: "Console | MLAI Corporation",
+    title: "Quesar Console | Private AI Operations",
     description:
-      "Access protected MLAI console workflows and authenticated platform previews.",
+      "Use Quesar's organization-gated Gemini workspace and manage encrypted conversation audits.",
     noindex: true,
   },
   "/profile": {
-    title: "Profile | MLAI Corporation",
-    description: "Manage your MLAI account profile.",
+    title: "Quesar Profile | Account and Access",
+    description: "Manage the WorkOS profile used for Quesar access.",
     noindex: true,
   },
   "/showcase": {
@@ -213,7 +213,7 @@ export const routeMetadata: Record<string, RouteMeta> = {
       "The MLAI design-system lab: brand, foundations, hero studies, marketing and console UI kits, and documentation boards.",
   },
   "/tf-pose-demo": {
-    title: "Pose Detection Demo | MLAI Corporation",
+    title: "Pose Detection Demo | Quesar by MLAI",
     description:
       "An isolated TensorFlow.js pose-detection prototype, separate from the MLAI platform.",
     noindex: true,
@@ -221,7 +221,7 @@ export const routeMetadata: Record<string, RouteMeta> = {
 };
 
 export const NOT_FOUND_META: RouteMeta = {
-  title: "Page Not Found | MLAI Corporation",
+  title: "Page Not Found | Quesar by MLAI",
   description: "The page you are looking for could not be found.",
   noindex: true,
 };
@@ -230,7 +230,7 @@ export function blogMeta(slug: string): RouteMeta {
   const post = content.blog.find((p) => p.slug === slug);
   if (!post) return NOT_FOUND_META;
   return {
-    title: `${post.title} | MLAI Lab Notes`,
+    title: `${post.title} | Quesar Research Notes`,
     description: post.excerpt,
     ogType: "article",
     publishedTime: toIsoDate(post.date),

@@ -350,7 +350,7 @@ const VOICE: readonly VoiceItem[] = [
     role: "Unfiltered Expert",
     c: "violet",
     desc: "Direct, concise, zero hedging or preamble. Optimized for technical density and speed.",
-    sample: "“Use HNSW. M=16, ef=200. Cosine for text, L2 for clustering. Done.”",
+    sample: "“Use HNSW. M=16, ef=32. Cosine for text, L2 for clustering. Done.”",
   },
   {
     icon: IFlow,
@@ -412,7 +412,7 @@ const TYPE: readonly TypeSpec[] = [
     spec: "System sans · 15–16px · slate-300",
     el: (
       <span className="text-base text-slate-300" style={{ fontFamily: "system-ui" }}>
-        A purpose-built substrate fusing sharding, integrity, and concurrency.
+        A purpose-built substrate fusing durable retrieval, integrity, and concurrency.
       </span>
     ),
   },
@@ -800,8 +800,8 @@ export default function BrandBoard(): ReactNode {
               success
             </span>
             <kbd className="text-xs px-2 py-1 rounded-lg border border-white/10 text-slate-400">⌘K</kbd>
-            {/* Mono-inline sample. Was "295×" — a published MLAI target, which
-                a brand board strips of its target framing. */}
+            {/* Mono-inline sample. The previous performance value had no
+                reproducible harness; a layout board must use sample data. */}
             <span className="font-mono text-cyan-200 text-sm bg-black/30 rounded-lg px-3 py-1.5">1,234</span>
           </div>
         </Card>

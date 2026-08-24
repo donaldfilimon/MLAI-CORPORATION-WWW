@@ -15,7 +15,7 @@ export const Demo = () => {
           id="demo-heading"
           tag="LIVE DEMO"
           title="Run the miniature."
-          subtitle="An in-browser simulation of the WDBX query path — real cosine similarity over deterministic embeddings, hash-partitioned shard routing, an MVCC snapshot counter, and a block-chained query log. Everything runs locally in this tab: no network, no keys. It is a faithful miniature of the engine's concepts, not the Zig engine itself."
+          subtitle="An illustrative in-browser query model — real cosine similarity over deterministic embeddings, local partition labels, an MVCC-style snapshot counter, and a block-chained query log. Everything runs in this tab: no network, no keys. It is not the active Rust engine, and the partition display is not a WDBX sharding claim."
         />
 
         <WdbxLiveDemo />

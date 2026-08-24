@@ -9,7 +9,7 @@ them one discoverable layout and one coordination command.
 
 | Path | Purpose | Native gate |
 |---|---|---|
-| `apps/web/` | Next.js 15 website, API routes, private console, and Cloud Run deployment | `bun run check:web` |
+| `apps/web/` | Next.js 15 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
 | `apps/mobile/` | Expo SDK 53 mobile companion and native CloudKit module | `bun run check:mobile` |
 | `apps/quasar/` | Independent nested Bun workspace for the local AI site builder | `bun run check:quasar` |
 | `packages/contracts/` | Shared type vocabulary for product, persona, and claim provenance axes | `bun run check:topology` |

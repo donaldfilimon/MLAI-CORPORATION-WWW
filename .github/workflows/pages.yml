@@ -8,32 +8,40 @@ name: Deploy static landing page to GitHub Pages
 # One-time: Repo → Settings → Pages → Build and deployment → Source:
 # "GitHub Actions". (configure-pages below will enable it if permitted.)
 
+# Gated on CI, mirroring deploy-cloudrun.yml. Previously this fired on
+# `push: branches: [main]` with a paths filter, independent of ci.yml — so a
+# commit that broke the type-check or the vitest suite still republished the
+# landing page. The page duplicates brand copy and assets from the Next app,
+# so "the app is broken but the landing page shipped anyway" is a real state
+# this closes.
+#
+# WHY THE `paths:` FILTER IS GONE, deliberately rather than by oversight.
+# workflow_run does not support `paths:`, so it could not have been carried
+# over as-is. It is also not worth reconstructing with a git-diff step:
+#
+#   * The trigger is already far narrower than it was. This now runs only on
+#     a CI-GREEN push to main — i.e. roughly once per merged PR — where the
+#     old trigger fired on every matching push regardless of CI.
+#   * The filter's own documented failure mode was being TOO NARROW. The
+#     comment it replaced recorded the `bun run og` incident: that script
+#     regenerates raster brand assets into public/ only, site/ silently kept
+#     the old artwork, nothing matched the filter, and Pages served stale
+#     branding until an unrelated commit exposed it. Every path-filter fix is
+#     a guess at the complete input set, and that guess was already wrong
+#     once. Publishing unconditionally cannot go stale.
+#   * A deploy is idempotent and cheap (one bun install + one vitest file).
+#     Re-publishing an unchanged page costs a minute; failing to publish a
+#     changed one serves wrong content to the public until someone notices.
+#
+# Reconstructing the filter via `git diff HEAD^ HEAD` was considered and
+# rejected: a push containing several commits would only diff the last one, so
+# a site/ change in an earlier commit of that push would be skipped — which is
+# precisely the stale-publish failure above, reintroduced.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
-    # These paths must cover every input the guard below actually reads, not
-    # just the directory being published. `landing-page.test.ts` imports
-    # SITE_URL from src/lib/route-meta.ts and byte-compares site/<asset>
-    # against public/<asset> — so a change to either could invalidate the
-    # published page while this workflow sat idle.
-    #
-    # The concrete failure that motivated widening this: `bun run og`
-    # regenerates the raster brand assets into public/ ONLY (it has no site/
-    # step). After a re-skin, site/ silently keeps the old artwork. With the
-    # old filter nothing ran, Pages kept serving stale branding, and the drift
-    # surfaced later as a confusing failure on the next unrelated site/ commit.
-    #
-    # Listed asset-by-asset rather than as `public/**`: only these three are
-    # duplicated into site/, and a bare wildcard would rebuild the landing page
-    # on every unrelated public/ change (mirrored WDBX docs, research PDFs).
-    paths:
-      - "apps/web/site/**"
-      - "apps/web/src/__tests__/landing-page.test.ts"
-      - "apps/web/src/lib/route-meta.ts"
-      - "apps/web/public/favicon.svg"
-      - "apps/web/public/og-image.png"
-      - "apps/web/public/apple-touch-icon.png"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -51,14 +59,64 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    # THREE separate checks, none of them redundant — the same guard as
+    # deploy-cloudrun.yml, and for the same reasons. Read that file's comment
+    # before editing either; they must not drift apart.
+    #
+    #   conclusion == 'success'
+    #     workflow_run fires on completion regardless of outcome, so without
+    #     this an explicitly RED CI run publishes.
+    #
+    #   event == 'push'
+    #     ci.yml also runs on `pull_request`. A PR's CI passing validates
+    #     UNMERGED code; it is not approval to publish.
+    #
+    #   head_repository.full_name == github.repository
+    #     THE trust boundary, and the one that matters most for THIS change.
+    #     Under the old `push:` trigger a fork could not reach this workflow at
+    #     all. workflow_run changes that: this repo is PUBLIC, anyone may open a
+    #     PR from a fork, and for a fork PR the payload's `head_branch` is the
+    #     FORK's branch — a PR from a fork's own `main` reports
+    #     head_branch == "main" and passes the `branches: [main]` filter above.
+    #     This job then runs in the BASE repo's context with `pages: write` and
+    #     id-token, checks out the fork's head_sha, and hands attacker-authored
+    #     apps/web/site/ content to actions/deploy-pages — publishing it on the real
+    #     Pages origin. Branch NAMES are attacker-controlled; repository
+    #     IDENTITY is not. Never substitute a branch-name filter for this.
+    #
+    # workflow_dispatch has no upstream run and is allowed through deliberately
+    # for manual republishes (already gated on repo write access). On that event
+    # `github.event.workflow_run` is null; property access on null yields null
+    # rather than erroring, so the parenthesised group is simply false and the
+    # `||` carries it.
+    #
+    # Every continuation line sits at the SAME indentation on purpose: in a YAML
+    # folded scalar a more-indented line is kept literal, newlines and all, so
+    # "prettier" hanging alignment would smuggle raw newlines into the
+    # expression.
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || (
+      github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.event == 'push'
+      && github.event.workflow_run.head_repository.full_name == github.repository
+      )
     steps:
-      - uses: actions/checkout@v4
+      # Pin to the commit CI actually validated. On a workflow_run event
+      # checkout defaults to the default branch's HEAD, which may already have
+      # moved past the run that just passed — so without this we can publish a
+      # different commit than the one the gate approved.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       # Gate the publish on the landing-page drift guard
-      # (src/__tests__/landing-page.test.ts): canonical URL, complete social
+      # (apps/web/src/__tests__/landing-page.test.ts): canonical URL, complete social
       # card, brand assets physically present in site/, no /_next/ or
-      # /public/ paths Pages can't serve. Cheap insurance — this page is
-      # hand-maintained and duplicates brand/copy from the Next app.
+      # /public/ paths Pages can't serve. Kept even though CI is now an
+      # upstream gate — CI runs the whole suite against the Next app, while
+      # this asserts the specific invariants of the hand-maintained static
+      # page. Cheap insurance, and the two are not substitutes.
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.4"
@@ -67,9 +125,9 @@ jobs:
       - run: bunx vitest run src/__tests__/landing-page.test.ts
         working-directory: apps/web
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: apps/web/site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

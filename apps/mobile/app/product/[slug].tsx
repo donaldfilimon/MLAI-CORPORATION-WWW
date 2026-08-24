@@ -5,7 +5,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Txt, Eyebrow } from "@/components/ui/Text";
 import { Surface } from "@/components/ui/Surface";
-import { StatBlock, ProvLegend } from "@/components/ui/StatBlock";
 import { FeatureCard } from "@/components/ui/Layout";
 import { Reveal, PressableScale } from "@/components/ui/Motion";
 import { color, space, accentColor, type Accent } from "@/lib/theme";
@@ -57,20 +56,6 @@ export default function ProductDetail() {
             </Txt>
           </Reveal>
         </View>
-
-        {/* stats */}
-        <Reveal delay={80} style={styles.section}>
-          <View style={styles.statGrid}>
-            {product.stats.map((s) => (
-              <View key={s.label} style={styles.statCell}>
-                <StatBlock stat={s} accent={accent} />
-              </View>
-            ))}
-          </View>
-          <View style={{ marginTop: space.lg }}>
-            <ProvLegend />
-          </View>
-        </Reveal>
 
         {/* how it works */}
         <Reveal delay={60} style={styles.section}>
@@ -127,7 +112,5 @@ const styles = StyleSheet.create({
   section: { marginTop: space.xxxl },
   eyebrowRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: space.sm },
   tick: { width: 18, height: 1.5, borderRadius: 1 },
-  statGrid: { flexDirection: "row", flexWrap: "wrap", gap: space.md },
-  statCell: { width: "47%", flexGrow: 1 },
   btn: { marginTop: space.lg, borderRadius: 10, paddingHorizontal: 18, paddingVertical: 11 },
 });

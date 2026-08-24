@@ -34,10 +34,8 @@ const FEATURES: readonly Feature[] = [
 ];
 
 // Placeholder figures for a layout board. `/showcase/design` is a public,
-// indexed route, so it must not carry MLAI's published performance numbers:
-// 295× / 0.8 ms / 16.5k are only publishable inside `Stats.tsx`, which supplies
-// the "ENGINEERING TARGETS … not guaranteed results" framing that does not
-// travel with a lifted card (see CLAUDE.md, "Styling").
+// indexed route, so it must not carry performance numbers without a
+// reproducible harness and published methodology.
 const STATS: ReadonlyArray<readonly [value: string, label: string, color: string]> = [
   ["1,234", "sample metric", "var(--spectrum-cyan)"],
   ["56%", "sample ratio", "var(--spectrum-blue)"],

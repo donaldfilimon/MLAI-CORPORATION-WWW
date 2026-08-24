@@ -68,8 +68,8 @@ assets/                   icon · adaptive-icon · splash (chip mark)
   the OS reduce-motion setting automatically.
 - **Spring press feedback** — every card and button scales on press and fires a
   light haptic (`PressableScale`).
-- **Count-up hero metric** — the `2.3ms` figure animates 0 → target via an
-  animated `TextInput` driven by a shared value.
+- **Evidence strip** — the hero names source-backed HNSW/MVCC and CPU-oracle
+  accelerator parity without publishing uncorroborated performance figures.
 - **Gradient masking** — the hero accent is real gradient-filled text on native
   (`MaskedView` + `LinearGradient`).
 - **Native feel** — iOS blur tab bar, edge-to-edge, dark system UI.

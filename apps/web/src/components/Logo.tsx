@@ -5,7 +5,7 @@ import { LogoMark } from "./LogoMark";
 export { LogoMark, type LogoMarkProps } from "./LogoMark";
 
 interface LogoProps {
-  /** Render the "MLAI CORP" wordmark next to the mark. */
+  /** Render the Quesar product wordmark and MLAI endorsement. */
   withWordmark?: boolean;
   /** Visual size of the mark. */
   size?: "sm" | "md";
@@ -30,10 +30,10 @@ export function Logo({
     <>
       <LogoMark size={size} mono={mono} />
       {withWordmark && (
-        <span className="font-display font-bold tracking-tight leading-none">
-          <span className={mono ? "text-current" : "text-white"}>MLAI</span>
-          <span className={cn("ml-1", mono ? "text-current opacity-70" : "text-text-dim/70")}>
-            CORP
+        <span className="flex flex-col leading-none">
+          <span className={cn("font-display font-bold tracking-tight", mono ? "text-current" : "text-white")}>Quesar</span>
+          <span className={cn("mt-1 font-mono text-[8px] font-medium uppercase tracking-[0.22em]", mono ? "text-current opacity-60" : "text-cyan-200/55")}>
+            by MLAI
           </span>
         </span>
       )}
@@ -51,7 +51,7 @@ export function Logo({
   }
 
   return (
-    <Link to="/" className={classes} aria-label="MLAI Corporation — home">
+    <Link to="/" className={classes} aria-label="Quesar by MLAI — home">
       {content}
     </Link>
   );

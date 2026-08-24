@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
-  BrainCircuit,
   DatabaseZap,
   GitBranch,
   Play,
@@ -14,47 +13,53 @@ import { Magnetic } from "./Magnetic";
 import { BacktracePanel } from "./BacktracePanel";
 
 const TRUSTED_LOGOS = [
-  "Private retrieval",
-  "Policy-gated agents",
-  "Audit-ready traces",
-  "On-premise paths",
-  "GPU-aware runtime",
+  "WorkOS organization access",
+  "Gemini 3.7 Flash",
+  "Cloudflare AI Gateway",
+  "Cloud SQL Postgres",
+  "Google Cloud KMS",
 ];
 
 const PRODUCT_SIGNALS = [
   {
-    label: "WDBX",
-    title: "Traceable retrieval",
-    detail: "Weighted backtrace memory for evidence-aware context.",
-    icon: DatabaseZap,
+    label: "Identity",
+    title: "Invite-only access",
+    detail: "Active organization membership is rechecked before generation.",
+    icon: ShieldCheck,
   },
   {
-    label: "Abbey · Aviva · Abi",
-    title: "Persona routing",
-    detail: "Empathy, direct expertise, and adaptive moderation.",
-    icon: BrainCircuit,
-  },
-  {
-    label: "Operator layer",
-    title: "Bounded autonomy",
-    detail: "Approval gates, audit trails, and deployment controls.",
+    label: "Audit",
+    title: "User-controlled records",
+    detail: "Per-record encryption, one-year expiry, export, and deletion.",
     icon: GitBranch,
+  },
+  {
+    label: "WDBX",
+    title: "Inspectable retrieval",
+    detail: "HNSW and MVCC paths grounded in the active Rust substrate.",
+    icon: DatabaseZap,
   },
 ];
 
 export const Hero = () => {
   const shouldReduceMotion = useReducedMotion();
 
-  // Mount the signature neural canvases after client-side navigation (neural.js
-  // auto-mounts on first load; this covers SPA route changes). The cleanup tears
-  // them down on unmount so the rAF loop + listeners don't leak when leaving home.
+  // React is the sole owner of the neural host DOM. The script never auto-mounts
+  // during DOMContentLoaded; doing so raced hydration by appending a canvas to
+  // server HTML before React committed. If afterInteractive has not loaded yet,
+  // wait for its explicit ready event.
   useEffect(() => {
     const neural = () =>
       (window as unknown as {
         MLAINeural?: { mount: () => void; unmount: () => void };
       }).MLAINeural;
-    neural()?.mount();
-    return () => neural()?.unmount();
+    const mount = () => neural()?.mount();
+    mount();
+    window.addEventListener("mlai-neural-ready", mount);
+    return () => {
+      window.removeEventListener("mlai-neural-ready", mount);
+      neural()?.unmount();
+    };
   }, []);
 
   const stagger: Variants = {
@@ -109,7 +114,7 @@ export const Hero = () => {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
               </span>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              PRIVATE AI INFRASTRUCTURE
+              QUESAR BY MLAI
             </m.div>
 
             <m.h1
@@ -117,9 +122,9 @@ export const Hero = () => {
               id="hero-heading"
               className="mb-5 max-w-4xl font-display text-4xl font-bold leading-[1.03] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
             >
-              Traceable AI systems for{" "}
+              Private AI operations with{" "}
               <span className="bg-linear-to-r from-cyan-300 via-sky-200 to-cyan-500 bg-clip-text text-transparent">
-                real production constraints.
+                an audit trail.
               </span>
             </m.h1>
 
@@ -127,9 +132,9 @@ export const Hero = () => {
               variants={fadeUp}
               className="mb-6 max-w-3xl text-base leading-relaxed text-text-dim md:text-lg"
             >
-              MLAI connects WDBX memory, Abbey · Aviva · Abi routing, and
-              operator controls into infrastructure for agents that need to
-              explain decisions, respect boundaries, and stay observable.
+              Quesar is the governed access layer for teams that need private
+              generation, explicit consent, revocable identity, and records
+              that can be inspected without sending user identity to the model.
             </m.p>
 
             <m.div variants={fadeUp} className="mb-7 flex flex-wrap gap-3 sm:gap-4">
@@ -139,8 +144,8 @@ export const Hero = () => {
                   size="lg"
                   className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50"
                 >
-                  <Link to="/showcase">
-                    View the System
+                  <Link to="/login">
+                    Enter Quesar
                     <ArrowRight
                       className="h-4 w-4 transition-transform group-hover:translate-x-1"
                       aria-hidden="true"
@@ -156,14 +161,14 @@ export const Hero = () => {
                   size="lg"
                   className="group h-12 gap-3 rounded-full border border-white/10 px-5 text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Link to="/benchmarks">
+                  <Link to="/security">
                     <span
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all group-hover:border-cyan-400/50 group-hover:bg-cyan-400/5"
                       aria-hidden="true"
                     >
                       <Play className="h-4 w-4 fill-current" />
                     </span>
-                    WDBX Benchmarks
+                    Review the trust boundary
                   </Link>
                 </Button>
               </Magnetic>
@@ -217,7 +222,7 @@ export const Hero = () => {
           className="mt-10 border-t border-white/5 pt-6"
         >
           <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/60">
-            Built around production constraints
+            Production boundary
           </p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
             {TRUSTED_LOGOS.map((name) => (

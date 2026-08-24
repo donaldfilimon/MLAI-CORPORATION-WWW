@@ -1,6 +1,6 @@
 # Repository Guide
 
-## Runtime And Boundaries
+This application lives at `apps/web/` in the MLAI integration repository. Run app-local commands from this directory or use `bun run check:web` at the repository root; web-specific OpenTofu also lives here under `infra/`.\n\n## Runtime And Boundaries
 
 - The active application is Bun 1.4 + Next.js 15 App Router + React 19 + TailwindCSS v4. Next serves pages and `app/api/*` route handlers in one process. Vite, Hono, Rust/Axum, `server.ts`, and `src/pages/` are retired; do not restore them.
 - Route `page.tsx` files are thin server components. Standard pages expose `src/views/*` through a per-route `client.tsx` (`"use client"` re-export). Browser-only views use `next/dynamic(..., { ssr: false })`; copy that form from `/showcase/*` or `/tf-pose-demo` only when the view needs browser APIs.
@@ -31,7 +31,7 @@
 ## Components And Styling
 
 - Build primitives from `src/components/ui/` and section-level page blocks from `src/components/site/`. `site/` blocks take content as props, keep router dependencies out, and require `measured | target | reported` provenance on figures.
-- `FAQ.tsx`/`Stats.tsx` intentionally differ from `site/FAQList`/`site/StatBlock`. Do not collapse them. Figures in `src/data/categories/stats.ts` are publishable only inside `Stats.tsx`'s explicit target framing; do not lift them into standalone cards or previews.
+- `FAQ.tsx`/`Stats.tsx` intentionally differ from `site/FAQList`/`site/StatBlock`. Do not collapse them. `Stats.tsx` now presents operating-model facts only; performance figures require a reproducible repository harness and published methodology.
 - `src/components/ds.ts` is bundled for claude.ai/design. Anything reachable from it must be transitively free of `react-router-dom` and `next/*`; those imports crash the standalone browser bundle. `LogoMark` is exported, while router-dependent `Logo` is intentionally excluded.
 - Tailwind v4 has no `tailwind.config.js`; canonical tokens and custom utilities live in `src/index.css`. Preserve the current Lab identity: cyan/sky brand chrome, near-black ink, Spectral display type, and violet/emerald/amber persona accents. Do not revive the retired indigo/fuchsia Signal palette.
 - `src/design/` is real `/showcase/design` source. It is distinct from partially tracked `.design-sync/`, ignored `ds-bundle/` output, and ignored `.ds-sync/` staging. `src/design/mlai-ds-tokens.css` stays scoped under `.mlai-ds` through `CinematicShell`; do not promote it to global `:root`.
@@ -41,7 +41,7 @@
 
 - Blog and research bodies are structured data, not JSX. Slugs, bodies, metadata, feeds, JSON-LD, OG images, sitemap entries, and `llms.txt` all derive from the content layer; `content.test.ts` enforces slug/body contracts.
 - Public copy must not invent or overstate benchmark, security, compliance, distributed-sharding, scaling, partnership, or certification claims. Unverified metrics are targets. Preserve provenance from `docs/master-reference.md`: measured, target, and reported are not interchangeable.
-- For WDBX architecture, mirrored source docs in `public/docs/wdbx/` outrank untagged prose in `docs/master-reference.md`; tagged tables outrank untagged bullets. Apple wording is limited to "built on Apple's public frameworks", never partnership or endorsement.
+- For WDBX architecture the **sibling Rust substrate `~/dev/active/wdbx/crates/` outranks everything here**; a tagged table outranks an untagged bullet always. The mirrored docs in `public/docs/wdbx/` are a frozen Zig-era snapshot with no live upstream, so their silence is missing documentation, not a missing feature — do not cite it as proof a claim is invented. That inference was drawn once, on 2026-08-24, and the substrate refuted it: `crates/abi-wdbx/src/hnsw.rs` is a real layered HNSW graph and `mvcc.rs` is real. The real defaults are `M = 16`, `EF_CONSTRUCTION = 40`, and `EF_SEARCH = 32`; stale public `200` values were corrected on 2026-08-24 and `claims.test.ts` prevents their return. `cluster_rpc.rs` states it is "not ... sharding", so distributed-sharding copy stays forbidden. Apple wording is limited to "built on Apple's public frameworks", never partnership or endorsement.
 - `/benchmarks` may not contain competitor comparisons or untagged figures. New numbers require a reproducible repository harness and published methodology; otherwise omit them.
 - Telemetry persists only allowlisted event + pathname + timestamp; both fields pass through the allowlists in `src/lib/server/telemetry-path.ts`. Never add free-text or identifying fields.
 - Multi-team bylines join on a middle dot; split them with `bylineNames` from `src/lib/byline.ts`, never a local comma-split (that bug shipped twice).
@@ -49,15 +49,18 @@
 ## Server And Deployment Traps
 
 - Every handler that consumes a request body must use `src/lib/server/body-limit.ts`; Next route handlers have no default body cap. Rate limits cap request count, not bytes. `readJsonLimited<T>` returns `T | Response`, guarantees only a non-null plain-object shape, and still requires route-level field validation. Current caps are 4 KB telemetry/checkout, 16 KB profile, 32 KB inquiries, 64 KB CSP reports, and 128 KB LLM chat.
-- Keep `/api/auth/login` and `/api/auth/signup` behind shared `src/lib/server/authkit-entry.ts`; splitting them can drift the shared rate-limit bucket and return-path guard.
+- Keep `/api/auth/login` behind `src/lib/server/authkit-entry.ts`; `/api/auth/signup` intentionally redirects to the request-access funnel and must not restore open self-provisioning.
 - The CSP is a specific-origin allowlist in `next.config.ts`; add origins to the narrow directive, never a bare `https:` wildcard. Keep both `report-to` and `report-uri`. In `app/api/csp-report/route.ts`, the rate-limit check must remain the first statement, and reports stay in stdout rather than privacy-limited telemetry storage.
 - OAuth state is nonce-bound to the `mlai_auth_state` cookie. `APP_URL` is required in deployments. Normally `FRONTEND_URL`, when set, must use the same host so the state cookie returns; a mismatch is valid only behind a proxy that preserves that cookie topology. Leave `FRONTEND_URL` unset rather than empty because an empty string defeats the fallback.
 - Production sessions require `SESSION_SECRET` with at least 32 characters; missing or short values fail closed.
-- A set `LLM_PROVIDER` is authoritative: without that provider's key, `/api/llm/*` serves the scaffold fallback even if the other provider's key is present. Leave it blank for key-based auto-detection.
-- Production admin reads fail closed without `ADMIN_EMAILS`; `ADMIN_REQUIRE_MFA=true` additionally requires a WorkOS factor.
-- Cloud Run's `/app/data/inquiries.db` has no mounted volume. `--max-instances=1` prevents cross-instance SQLite divergence but does not provide persistence: inquiries and telemetry disappear on recycle or redeploy. Also note that deploy `--set-env-vars` replaces console-set environment variables.
+- Generation is fixed to stable `google/gemini-3.7-flash` through Cloudflare AI Gateway's authenticated REST `/ai/v1/chat/completions` endpoint. The app has no direct Gemini/Anthropic production bypass. Keep payload collection and gateway caching disabled on every request, and never serialize the user's email into provider messages.
+- Production admin reads fail closed without `ADMIN_EMAILS`. With `ADMIN_REQUIRE_MFA=true`, non-SSO sessions additionally require a WorkOS TOTP factor, the verified Required-policy attestation, and a fresh signed `auth_time`; SSO sessions require the separate `WORKOS_SSO_MFA_POLICY_VERIFIED=true` IdP-policy attestation because WorkOS MFA does not apply to SSO. Impersonated sessions are denied. All admin access also requires active organization membership.
+- Cloud SQL Postgres is the only persistent runtime store. Production connects through the Cloud SQL Unix socket; `DATABASE_URL` remains for local/external Postgres only. Schema migration uses a transaction-scoped advisory lock, and the app fails closed rather than opening a local file.
+- Conversation payloads require explicit versioned consent, per-record AES-256-GCM keys wrapped by Cloud KMS, a 365-day expiry, user read/export/delete controls, and MFA/reason-gated admin reads whose outcomes are logged. The daily expiry endpoint accepts only a Google OIDC token for the exact scheduler service account and audience.
+- Public inquiry/access requests require Cloudflare Turnstile. The server must call canonical Siteverify, fail closed, and validate both action and deployment-specific hostname; production hostnames may not include localhost.
 - Automatic Cloud Run deployment is gated on successful push CI and checks out the validated SHA; `workflow_dispatch` is the deliberate manual exception. Preserve the workflow's `workflow_run.event == 'push'` and `head_repository.full_name == github.repository` trust checks so fork PRs never receive production deployment context.
-- Set `RUNTIME_SA` to a least-privilege service account. If omitted, the workflow deploys with the default Compute service account and only emits a warning even though that account may have project-wide Editor access.
+- The deploy uses GitHub OIDC, an immutable Artifact Registry image, a required least-privilege `RUNTIME_SA`, load-balancer-only ingress, a disabled `run.app` URL, and a Cloud SQL mount. Do not restore a long-lived `GCP_SA_KEY` or make the origin directly reachable.
+- OpenTofu in `infra/` owns Cloud SQL, KMS, Secret Manager containers, identities/OIDC, the external HTTPS load balancer, Cloud Armor's Cloudflare-only source ACL, and the retention scheduler. Refresh Cloudflare's published proxy ranges add-first/remove-second before apply.
 
 ## Instruction Maintenance
 

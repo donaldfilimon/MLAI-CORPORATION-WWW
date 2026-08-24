@@ -34,8 +34,8 @@ const REPLIES: Record<PersonaName, string[]> = {
     "Here's the gentle version, then the precise one — tell me where to stop.",
   ],
   Aviva: [
-    "Use HNSW. M=16, ef=200. Cosine for text, L2 for clustering. Done.",
-    "Don't shard below 10M vectors — overhead outweighs parallelism. Re-evaluate at 50M.",
+    "Use HNSW. M=16, ef=32. Cosine for text, L2 for clustering. Done.",
+    "Replicate for resilience when the topology requires it. Don't market replication as distributed sharding.",
     "Chain the writes with SHA-256, verify on read, reject on mismatch. No exceptions.",
   ],
 };

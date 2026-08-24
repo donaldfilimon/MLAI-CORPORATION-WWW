@@ -6,6 +6,8 @@ import {
   decodeAuthState,
   readAuthStateNonce,
   timingSafeEqualString,
+  checkOrganizationAccess,
+  accessTokenAuthTime,
 } from "@/lib/server/workos";
 import { setSessionCookie } from "@/lib/server/session";
 
@@ -59,7 +61,7 @@ export async function GET(req: Request) {
     const { user, accessToken, refreshToken, organizationId, authenticationMethod } =
       await auth.userManagement.authenticateWithCode({ code, clientId: CLIENT_ID });
 
-    const cookie = await setSessionCookie(req, {
+    const candidate = {
       userId: user.id,
       email: user.email,
       firstName: user.firstName,
@@ -69,8 +71,18 @@ export async function GET(req: Request) {
       useCase: user.metadata?.use_case ?? null,
       organizationId: organizationId ?? null,
       authenticationMethod: authenticationMethod ?? null,
+      // `auth_time` advances only after active authentication. Callback time
+      // does not: AuthKit can complete a code exchange from an existing SSO
+      // session, so stamping Date.now() here would manufacture freshness.
+      authenticatedAt: accessTokenAuthTime(accessToken) ?? undefined,
       accessToken,
       refreshToken,
+    };
+    const access = await checkOrganizationAccess(candidate);
+    if (!access.ok) return failRedirect("organization_access_required");
+    const cookie = await setSessionCookie(req, {
+      ...candidate,
+      organizationId: access.organizationId,
     });
 
     // Two Set-Cookie values, so a Headers instance with append() — an object

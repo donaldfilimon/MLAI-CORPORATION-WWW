@@ -169,7 +169,7 @@ const wdbxCapabilities = [
   },
   {
     title: "SIMD vector search",
-    desc: "Cosine nearest-neighbor with an HNSW-style index and CPU fallback.",
+    desc: "Cosine nearest-neighbor through the active Rust substrate's layered HNSW index (M=16, EF_CONSTRUCTION=40, EF_SEARCH=32).",
   },
   {
     title: "Durable snapshots",
@@ -186,7 +186,7 @@ const wdbxV2Docs = [
   { file: "architecture.md", label: "Architecture", text: "Personas, pipeline shape, and main modules." },
   { file: "persistence.md", label: "Persistence", text: "Snapshots and SHA-256-linked block-chain memory." },
   { file: "acceleration.md", label: "Acceleration", text: "CPU kernels today; WGSL/WebGPU scaffolding labeled as such." },
-  { file: "api.md", label: "HTTP API", text: "Status, shards, and dashboard routes." },
+  { file: "api.md", label: "HTTP API", text: "Historical status and dashboard routes from the frozen Zig-era snapshot." },
   { file: "cli.md", label: "CLI & TUI", text: "Commands, chat interface, and teaching flow." },
   { file: "protocols.md", label: "Protocols", text: "MCP / LSP / ACP JSON-RPC surfaces." },
   { file: "limitations.md", label: "Limitations", text: "What V2 explicitly does not claim." },
@@ -250,12 +250,15 @@ const abbeyPrinciples = [
 const apiRoutes = [
   { term: "GET /api/auth/me", def: "Returns the public session user without exposing WorkOS tokens." },
   { term: "GET /api/auth/verify-user", def: "Confirms the active session maps to a real WorkOS user." },
-  { term: "GET /api/llm/status", def: "Reports protected LLM provider configuration for the signed-in user." },
-  { term: "POST /api/llm/chat", def: "Runs server-side LLM requests behind the WorkOS session cookie." },
+  { term: "GET /api/llm/status", def: "Revalidates invited WorkOS organization access and reports the fixed Gemini/gateway boundary." },
+  { term: "POST /api/llm/chat", def: "Requires active organization membership and explicit consent, then returns only after the encrypted audit is durable." },
+  { term: "GET/POST/DELETE /api/consent", def: "Reads, accepts, or withdraws the versioned one-year conversation-audit policy." },
+  { term: "GET /api/audits", def: "Lists the signed-in user's encrypted conversation records." },
+  { term: "GET/DELETE /api/audits/:id", def: "Reads, exports, or deletes one user-owned live audit; backup copies age out under retention." },
   { term: "GET /api/billing/plans", def: "Lists available subscription plans for the console." },
   { term: "POST /api/billing/checkout", def: "Creates or redirects to subscription checkout when billing is configured." },
   { term: "PATCH /api/profile", def: "Updates the authenticated user's profile fields." },
-  { term: "POST /api/inquiries", def: "Stores a public, rate-limited sales inquiry." },
+  { term: "POST /api/inquiries", def: "Stores a public, rate-limited inquiry only after exact-action/hostname Turnstile verification." },
 ];
 
 const deploymentSteps = [

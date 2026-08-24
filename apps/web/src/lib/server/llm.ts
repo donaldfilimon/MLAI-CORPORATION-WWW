@@ -1,19 +1,3 @@
-/**
- * LLM provider call — Gemini and Anthropic, with a safe scaffold fallback.
- *
- * Provider selection (most specific first):
- *   1. `LLM_PROVIDER=gemini|anthropic` — an explicit choice always wins, provided
- *      that provider's API key is present (otherwise we fall through to scaffold,
- *      surfacing the misconfiguration rather than silently using the other one).
- *   2. Otherwise auto-detect by which key is configured (Gemini wins a tie, to
- *      preserve the prior default behaviour).
- *   3. No usable key → the graceful scaffold response (the app builds with no key;
- *      a key is only needed at runtime).
- *
- * Gemini path ported verbatim from the retired Hono server. Anthropic path calls
- * the Messages API directly (raw fetch — no SDK in this surface), defaulting to
- * `claude-opus-4-8` with env overrides.
- */
 import type { SessionData } from "./session";
 
 export type ChatMessage = {
@@ -21,153 +5,107 @@ export type ChatMessage = {
   content: string;
 };
 
-type LlmResult = { provider: string; model: string; text: string };
-type Provider = "gemini" | "anthropic";
+export type LlmResult = { provider: "gemini" | "local-fallback"; model: string; text: string };
 
-const systemPreamble = (email: string) =>
-  `You are MLAI's private AI systems assistant. Be direct, technical, and safety-conscious. The signed-in user is ${email}.`;
+const GEMINI_MODEL = "gemini-3.7-flash";
+const GATEWAY_MODEL = `google/${GEMINI_MODEL}`;
+const SYSTEM_PREAMBLE =
+  "You are Quesar, MLAI's private AI systems assistant. Be direct, technical, safety-conscious, and explicit about uncertainty. Never imply that an unverified target is a measured result.";
 
-function hasKey(name: string): boolean {
-  const v = process.env[name];
-  return typeof v === "string" && v.trim().length > 0;
-}
-
-function resolveProvider(): Provider | null {
-  const explicit = process.env.LLM_PROVIDER?.trim().toLowerCase();
-  if (explicit === "anthropic") return hasKey("ANTHROPIC_API_KEY") ? "anthropic" : null;
-  if (explicit === "gemini") return hasKey("GEMINI_API_KEY") ? "gemini" : null;
-  // No explicit setting — auto-detect. Gemini wins a tie (prior default).
-  if (hasKey("GEMINI_API_KEY")) return "gemini";
-  if (hasKey("ANTHROPIC_API_KEY")) return "anthropic";
-  return null;
-}
-
-async function callGemini(messages: ChatMessage[], user: SessionData): Promise<LlmResult | null> {
-  const model = process.env.GEMINI_MODEL ?? "gemini-1.5-flash";
-  const prompt = messages
-    .map((message) => `${message.role.toUpperCase()}: ${message.content}`)
-    .join("\n\n");
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: `${systemPreamble(user.email)}\n\n${prompt}` }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.4,
-          maxOutputTokens: 900,
-        },
-      }),
-    },
-  );
-
-  if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`Gemini request failed: ${res.status} ${detail}`);
+function gatewayConfig(): { url: string; token: string; gatewayId: string } | null {
+  const rawUrl = process.env.CLOUDFLARE_AI_GATEWAY_URL?.trim();
+  const token = process.env.CLOUDFLARE_AI_GATEWAY_TOKEN?.trim();
+  const gatewayId = process.env.CLOUDFLARE_AI_GATEWAY_ID?.trim();
+  if (!rawUrl || !token || !gatewayId) return null;
+  const url = new URL(rawUrl);
+  if (
+    url.protocol !== "https:" ||
+    url.hostname !== "api.cloudflare.com" ||
+    !/^\/client\/v4\/accounts\/[^/]+\/ai\/v1\/chat\/completions$/.test(url.pathname) ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error(
+      "CLOUDFLARE_AI_GATEWAY_URL must be the Cloudflare AI REST chat-completions endpoint",
+    );
   }
-
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts
-    ?.map((part: { text?: string }) => part.text ?? "")
-    .join("")
-    .trim();
-  return text ? { provider: "gemini", model, text } : null;
+  return { url: url.toString(), token, gatewayId };
 }
 
-async function callAnthropic(messages: ChatMessage[], user: SessionData): Promise<LlmResult | null> {
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-opus-4-8";
-  const maxTokensEnv = Number(process.env.ANTHROPIC_MAX_TOKENS);
-  const maxTokens = Number.isFinite(maxTokensEnv) && maxTokensEnv > 0 ? maxTokensEnv : 1024;
+async function callGemini(messages: ChatMessage[]): Promise<LlmResult | null> {
+  const gateway = gatewayConfig();
+  if (!gateway) return null;
 
-  // Anthropic takes the system prompt at the top level; only user/assistant turns
-  // belong in `messages`. Fold any inline system turns into the system preamble.
-  const systemTurns = messages
-    .filter((message) => message.role === "system")
-    .map((message) => message.content);
   const turns = messages
     .filter((message) => message.role === "user" || message.role === "assistant")
     .map((message) => ({ role: message.role, content: message.content }));
-  if (turns.length === 0) return null;
+  const inlinePolicy = messages
+    .filter((message) => message.role === "system")
+    .map((message) => message.content)
+    .join("\n\n");
+  if (!turns.some((message) => message.role === "user")) return null;
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch(gateway.url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY!,
-      "anthropic-version": "2023-06-01",
+      Authorization: `Bearer ${gateway.token}`,
+      "cf-aig-gateway-id": gateway.gatewayId,
+      // Cloudflare logs payloads by default. Quesar keeps the only content log
+      // in its own KMS-encrypted audit store; the gateway retains metadata only.
+      "cf-aig-collect-log-payload": "false",
+      "cf-aig-skip-cache": "true",
+      "cf-aig-request-timeout": "25000",
+      "cf-aig-max-attempts": "2",
     },
+    signal: AbortSignal.timeout(30_000),
     body: JSON.stringify({
-      model,
-      max_tokens: maxTokens,
-      // Note: no `temperature` — Opus 4.x rejects sampling params with a 400.
-      system: [systemPreamble(user.email), ...systemTurns].join("\n\n"),
-      messages: turns,
+      model: GATEWAY_MODEL,
+      messages: [
+        { role: "system", content: [SYSTEM_PREAMBLE, inlinePolicy].filter(Boolean).join("\n\n") },
+        ...turns,
+      ],
+      temperature: 0.4,
+      max_tokens: 900,
     }),
   });
 
-  if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`Anthropic request failed: ${res.status} ${detail}`);
+  if (!response.ok) {
+    throw new Error(`Cloudflare AI Gateway request failed with status ${response.status}`);
   }
-
-  const data = await res.json();
-  const text = (Array.isArray(data?.content) ? data.content : [])
-    .filter((block: { type?: string }) => block?.type === "text")
-    .map((block: { text?: string }) => block.text ?? "")
-    .join("")
-    .trim();
-  return text ? { provider: "anthropic", model, text } : null;
+  const data: unknown = await response.json();
+  const choice =
+    data && typeof data === "object" && Array.isArray((data as { choices?: unknown }).choices)
+      ? (data as { choices: Array<{ message?: { content?: unknown } }> }).choices[0]
+      : undefined;
+  const text = typeof choice?.message?.content === "string" ? choice.message.content.trim() : "";
+  return text ? { provider: "gemini", model: GEMINI_MODEL, text } : null;
 }
 
-/**
- * Public-safe description of the active LLM configuration (no secrets) for the
- * `/api/llm/status` surface. `configured` is true only when the resolved
- * provider has a usable key; otherwise the chat route returns the scaffold.
- */
-export function getLlmStatus(): { provider: string; configured: boolean; model: string } {
-  const provider = resolveProvider();
-  if (provider === "anthropic") {
-    return { provider: "anthropic", configured: true, model: process.env.ANTHROPIC_MODEL ?? "claude-opus-4-8" };
+export function getLlmStatus(): { provider: string; configured: boolean; model: string; gateway: string } {
+  let configured = false;
+  try {
+    configured = gatewayConfig() !== null;
+  } catch {
+    configured = false;
   }
-  if (provider === "gemini") {
-    return { provider: "gemini", configured: true, model: process.env.GEMINI_MODEL ?? "gemini-1.5-flash" };
-  }
-  // No usable key — report the requested/default provider as unconfigured.
-  const requested = process.env.LLM_PROVIDER?.trim().toLowerCase();
-  const reported = requested === "anthropic" ? "anthropic" : "gemini";
-  return {
-    provider: reported,
-    configured: false,
-    model:
-      reported === "anthropic"
-        ? process.env.ANTHROPIC_MODEL ?? "claude-opus-4-8"
-        : process.env.GEMINI_MODEL ?? "gemini-1.5-flash",
-  };
+  return { provider: "gemini", configured, model: GEMINI_MODEL, gateway: "cloudflare-ai-gateway" };
 }
 
-export async function generateLlmResponse(messages: ChatMessage[], user: SessionData): Promise<LlmResult> {
-  const lastUserMessage =
-    [...messages].reverse().find((message) => message.role === "user")?.content ?? "";
-
-  const provider = resolveProvider();
-  if (provider === "anthropic") {
-    const out = await callAnthropic(messages, user);
-    if (out) return out;
-  } else if (provider === "gemini") {
-    const out = await callGemini(messages, user);
-    if (out) return out;
-  }
-
+// `_user` is retained as a compatibility parameter for callers/tests, but is
+// intentionally never serialized or sent to the model provider.
+export async function generateLlmResponse(
+  messages: ChatMessage[],
+  _user?: SessionData,
+): Promise<LlmResult> {
+  const output = await callGemini(messages);
+  if (output) return output;
+  const lastUserMessage = [...messages].reverse().find((message) => message.role === "user")?.content;
   return {
     provider: "local-fallback",
-    model: "mlai-safe-scaffold",
-    text: `LLM provider is not configured yet, so this protected API returned a scaffolded response. Received request: ${lastUserMessage || "No prompt provided."}\n\nNext steps: set GEMINI_API_KEY or ANTHROPIC_API_KEY (with LLM_PROVIDER) server-side, keep calls behind WorkOS sessions, and add workflow-specific policies before enabling production actions.`,
+    model: "quesar-safe-scaffold",
+    text: `Gemini is not configured through Cloudflare AI Gateway yet. Received request: ${
+      lastUserMessage || "No prompt provided."
+    }\n\nConfigure the authenticated gateway and its stored Google AI Studio provider key before enabling production generation.`,
   };
 }

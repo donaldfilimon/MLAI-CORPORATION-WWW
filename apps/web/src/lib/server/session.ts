@@ -4,6 +4,7 @@
  * sessions keep working across the migration.
  */
 import { sealData, unsealData } from "iron-session";
+import { isIP } from "node:net";
 
 const COOKIE_NAME = "mlai_session";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -39,6 +40,7 @@ export interface SessionData {
   useCase?: string | null;
   organizationId?: string | null;
   authenticationMethod?: string | null;
+  authenticatedAt?: number;
   refreshToken?: string;
   accessToken: string;
   clientIp?: string;
@@ -52,16 +54,25 @@ export function toPublicUser(data: SessionData): PublicSessionUser {
   return publicUser;
 }
 
-// X-Forwarded-For is only trustworthy behind a proxy that overwrites it
-// (Cloud Run does). Use the leftmost entry — the original client — so a
-// spoofed multi-hop header can't manufacture a "matching" IP string.
 export function clientIpOf(req: Request): string {
+  // The production origin is reachable only through Cloudflare and the Google
+  // load balancer. Cloudflare-Connecting-IP is the one value Cloudflare
+  // overwrites with the connecting visitor; an incoming X-Forwarded-For chain
+  // may already contain attacker-controlled entries before either proxy
+  // appends to it.
+  const cloudflareIp = req.headers.get("cf-connecting-ip")?.trim();
+  if (cloudflareIp && isIP(cloudflareIp)) return cloudflareIp;
+  if (process.env.NODE_ENV === "production") return "unknown";
+
+  // Direct local/test traffic has no Cloudflare header. Accept only a valid
+  // first hop, and never carry arbitrary header text into session/rate keys.
   const xff = req.headers.get("x-forwarded-for");
   if (xff) {
     const first = xff.split(",")[0]?.trim();
-    if (first) return first;
+    if (first && isIP(first)) return first;
   }
-  return req.headers.get("x-real-ip") || "unknown";
+  const realIp = req.headers.get("x-real-ip")?.trim();
+  return realIp && isIP(realIp) ? realIp : "unknown";
 }
 
 export async function setSessionCookie(req: Request, data: SessionData): Promise<string> {

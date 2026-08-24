@@ -5,166 +5,68 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/lib/auth";
+import { useUI } from "@/lib/ui-context";
 
 export function Login() {
-  const { user, loading, login, signup } = useAuth();
+  const { user, loading, login } = useAuth();
+  const { openInquiry } = useUI();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const error = params.get("error");
-  const mode = params.get("mode") === "signup" ? "signup" : "signin";
+  const requesting = params.get("mode") === "request-access";
 
-  // Already signed in — go home
   useEffect(() => {
-    if (!loading && user) navigate("/");
+    if (!loading && user) navigate("/console");
   }, [user, loading, navigate]);
 
+  const errorCopy =
+    error === "organization_access_required"
+      ? "This account is not an active member of the Quesar beta organization. Request access or ask your organization administrator for an invitation."
+      : error === "auth_failed"
+        ? "Authentication failed. Please try again."
+        : error === "auth_not_configured"
+          ? "Authentication is not configured on this server."
+          : error === "missing_code"
+            ? "The authentication callback was missing a code. Please retry."
+            : error === "invalid_state"
+              ? "This sign-in link expired or was already used. Start again from this page."
+              : error
+                ? "An error occurred. Please try again."
+                : null;
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 pt-20 pb-20 relative overflow-hidden font-sans">
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-
-      <m.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-5xl relative z-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch"
-      >
-        <div className="hidden overflow-hidden glass-card p-10 flex-col justify-between lg:flex">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 pb-20 pt-20 font-sans">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-200 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[120px]" />
+      <m.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="relative z-10 grid w-full max-w-5xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <section className="glass-card hidden flex-col justify-between overflow-hidden p-10 lg:flex" aria-labelledby="login-context-heading">
           <div>
-            <div className="label-chip mb-8">
-              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              WORKOS PROTECTED
-            </div>
-            <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white mb-6 leading-tight">
-              Secure access for private AI workflows.
-            </h1>
-            <p className="text-sm leading-relaxed text-text-dim">
-              Create an MLAI account to access protected LLM APIs, private
-              orchestration tools, and future team workspaces behind AuthKit
-              sessions.
-            </p>
+            <div className="label-chip mb-8"><ShieldCheck className="h-3.5 w-3.5" /> INVITE-ONLY BETA</div>
+            <h1 id="login-context-heading" className="mb-6 font-display text-4xl font-bold leading-tight tracking-tight text-white">A private console with a record you can inspect.</h1>
+            <p className="max-w-xl text-sm leading-relaxed text-text-dim">Quesar revalidates WorkOS organization membership before every generation, routes Gemini through Cloudflare without payload logging, and stores the resulting conversation under a one-year encrypted audit policy.</p>
           </div>
-          <div className="mt-12 grid gap-4">
-            {[
-              "Hosted sign-in and sign-up via WorkOS AuthKit",
-              "HttpOnly encrypted MLAI session cookie",
-              "Protected API routes for LLM workflow features",
-            ].map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-3 rounded-2xl border border-white/5 bg-bg/40 p-4 text-xs text-text-dim font-mono"
-              >
-                <Sparkles
-                  className="h-4 w-4 shrink-0 text-cyan-400"
-                  aria-hidden="true"
-                />
-                {item}
-              </div>
-            ))}
+          <div className="mt-12 grid gap-3">
+            {["Organization membership, not open signup", "Explicit consent before the first chat", "User export and deletion; MFA-gated admin reads"].map((item) => <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/5 bg-bg/40 p-4 font-mono text-xs text-text-dim"><Sparkles className="h-4 w-4 shrink-0 text-cyan-400" />{item}</div>)}
           </div>
-        </div>
+        </section>
 
-        <div className="glass-card flex flex-col justify-between">
-          <div className="text-center pb-2">
-            <div className="flex justify-center mb-6">
-              <Logo withWordmark={false} />
-            </div>
-            <h2 className="text-2xl font-display font-bold text-white mb-2">
-              {mode === "signup"
-                ? "Create your MLAI account"
-                : "Welcome to MLAI"}
-            </h2>
-            <p className="text-sm text-text-dim mb-6">
-              {mode === "signup"
-                ? "Sign up with AuthKit to enter the private console"
-                : "Sign in with your preferred provider via AuthKit"}
-            </p>
+        <section className="glass-card flex flex-col justify-between" aria-labelledby="login-heading">
+          <div className="pb-2 text-center">
+            <div className="mb-7 flex justify-center"><Logo /></div>
+            <h2 id="login-heading" className="mb-3 font-display text-2xl font-bold text-white">{requesting ? "Request Quesar access" : "Enter Quesar"}</h2>
+            <p className="text-sm text-text-dim">{requesting ? "Tell MLAI which governed workflow you want to evaluate." : "Continue with the account named in your organization invitation."}</p>
           </div>
 
-          <div className="space-y-4 py-4">
-            {error && (
-              <m.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-400"
-              >
-                {error === "auth_failed"
-                  ? "Authentication failed. Please try again."
-                  : error === "auth_not_configured"
-                    ? "Authentication is not configured on this server."
-                    : error === "missing_code"
-                      ? "The authentication callback was missing a code. Please retry."
-                      : // `invalid_state` is the CSRF guard firing. It is far more
-                        // often benign than hostile — a sign-in left open past the
-                        // 10-minute nonce TTL, a second login tab overwriting the
-                        // first tab's nonce, or a browser that dropped the cookie —
-                        // so the copy has to tell an ordinary user what to actually
-                        // do, not accuse them of an attack.
-                        error === "invalid_state"
-                        ? "This sign-in link expired or was already used. Start again from this page."
-                        : "An error occurred. Please try again."}
-              </m.div>
-            )}
-
-            {loading ? (
-              <div className="flex justify-center py-6">
-                <Loader2 className="w-6 h-6 animate-spin text-text-dim" />
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <Button
-                  id="workos-primary-auth-btn"
-                  onClick={() =>
-                    mode === "signup" ? signup("/console") : login("/console")
-                  }
-                  className="w-full py-6 text-base font-semibold bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-3 rounded-xl transition-all cursor-pointer"
-                >
-                  {mode === "signup" ? "Create Account" : "Continue to Console"}
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    mode === "signup" ? login("/console") : signup("/console")
-                  }
-                  className="w-full py-6 text-base font-semibold rounded-xl border-white/10 bg-white/3 text-white hover:bg-white/10 cursor-pointer"
-                >
-                  {mode === "signup"
-                    ? "I already have an account"
-                    : "Create a new account"}
-                </Button>
-              </div>
-            )}
-
-            <p className="text-center text-[10px] font-mono tracking-wide text-text-dim/80 pt-4">
-              Supports Google, GitHub, Microsoft, email magic-link & SSO.
-            </p>
+          <div className="space-y-4 py-6">
+            {errorCopy && <m.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} role="alert" className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm leading-relaxed text-amber-200">{errorCopy}</m.div>}
+            {loading ? <div className="flex justify-center py-6"><Loader2 className="h-6 w-6 animate-spin text-text-dim" /></div> : <div className="space-y-3">
+              {requesting ? <Button onClick={openInquiry} className="w-full py-6 text-base font-semibold">Start access request <ArrowRight className="h-5 w-5" /></Button> : <Button id="workos-primary-auth-btn" onClick={() => login("/console")} className="w-full py-6 text-base font-semibold">Continue with AuthKit <ArrowRight className="h-5 w-5" /></Button>}
+              <Button asChild variant="outline" className="w-full py-6 text-base font-semibold"><Link to={requesting ? "/login" : "/login?mode=request-access"}>{requesting ? "I already have an invitation" : "Request beta access"}</Link></Button>
+            </div>}
+            <p className="pt-3 text-center font-mono text-[10px] tracking-wide text-text-dim/70">No public account creation. Membership is managed in WorkOS.</p>
           </div>
 
-          <div className="flex justify-center pt-6 border-t border-white/5">
-            <p className="text-xs text-text-dim">
-              By continuing you agree to our{" "}
-              <Link
-                to="/terms"
-                className="text-primary hover:text-white transition-colors"
-              >
-                Terms of Service
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        {/* WorkOS branding */}
-        <p className="text-center text-[11px] text-text-dim/40 mt-4 lg:col-span-2">
-          Secured by{" "}
-          <a
-            href="https://workos.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-text-dim transition-colors"
-          >
-            WorkOS AuthKit
-          </a>
-        </p>
+          <div className="flex justify-center border-t border-white/5 pt-6"><p className="text-xs text-text-dim">By continuing you agree to our <Link to="/terms" className="text-primary hover:text-white">Terms of Service</Link>.</p></div>
+        </section>
       </m.div>
     </div>
   );

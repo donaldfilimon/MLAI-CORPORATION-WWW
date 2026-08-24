@@ -46,9 +46,8 @@ export function rateLimit(
     store = new Map();
     stores.set(name, store);
   }
-  // Key on the leftmost X-Forwarded-For entry (the original client), mirroring
-  // session.ts — otherwise an attacker appends junk hops ("ip, junk1",
-  // "ip, junk2", …) to mint a fresh bucket per request and bypass the limit.
+  // session.ts prefers Cloudflare's overwritten connecting-IP header in
+  // production and rejects attacker-shaped forwarding values.
   const key = clientIpOf(req);
   const now = Date.now();
   sweepExpired(store, now);

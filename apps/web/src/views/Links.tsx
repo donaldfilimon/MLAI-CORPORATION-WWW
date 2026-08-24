@@ -109,7 +109,7 @@ const LINK_SECTIONS: LinkSection[] = [
       },
       {
         title: "Live demo",
-        body: "Run the WDBX miniature in your browser — cosine search, shard routing, and a hash-chained query log.",
+        body: "Run an illustrative browser query model — cosine search, local partition labels, and a hash-chained query log.",
         href: "/demo",
         label: "/demo",
       },

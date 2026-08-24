@@ -11,20 +11,12 @@ import {
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 
 /**
- * The AuthKit entry redirect, shared by `/api/auth/login` and
- * `/api/auth/signup`.
- *
- * Those two route files were byte-identical apart from `screenHint`, which
- * meant every property that actually matters — the rate-limit window, the
- * unconfigured-WorkOS fallback, the `getReturnTo` open-redirect guard, and now
- * the login-CSRF state nonce, all pinned by workos-admin.test.ts — existed in
- * two places and could drift silently. `screenHint` is the only real
- * difference, so it is the only parameter.
+ * The single AuthKit sign-in entry. Quesar is invite-only, so `/api/auth/signup`
+ * redirects to the request-access funnel and must never call this helper.
  */
-export function authKitEntry(screenHint: "sign-in" | "sign-up") {
+export function authKitEntry() {
   return async function GET(req: Request) {
-    // Both entry points share one bucket on purpose: they are the same
-    // credential-stuffing surface, so the budget should be shared too.
+    // Keep the hosted credential entry behind its own stuffing budget.
     if (!rateLimit("auth", req, { windowMs: 15 * 60 * 1000, max: 100 })) return tooMany();
     const auth = requireWorkOS();
     if (!auth || !CLIENT_ID) redirect("/login?error=auth_not_configured");
@@ -34,13 +26,21 @@ export function authKitEntry(screenHint: "sign-in" | "sign-up") {
     // was started by this browser: it goes out inside `state` and, below, into
     // a cookie only this browser will hold. See workos.ts for the attack.
     const nonce = createAuthStateNonce();
-    const redirectUrl = auth.userManagement.getAuthorizationUrl({
+    const redirectUrl = new URL(auth.userManagement.getAuthorizationUrl({
       provider: "authkit",
       redirectUri: REDIRECT_URI,
       clientId: CLIENT_ID,
       state: encodeAuthState(nonce, getReturnTo(url.searchParams.get("returnTo"))),
-      screenHint,
-    });
+      screenHint: "sign-in",
+    }));
+
+    // WorkOS step-up authentication uses max_age together with the access
+    // token's auth_time claim. The installed SDK version does not yet expose
+    // maxAge in its option type or serializer, so put the standard parameter
+    // on the WorkOS authorization URL directly. This makes every sign-in
+    // callback carry proof of authentication no more than ten minutes old;
+    // sensitive admin endpoints independently enforce the same window.
+    redirectUrl.searchParams.set("max_age", "600");
 
     // A constructed Response rather than next/navigation's redirect() for this
     // one hop: the nonce cookie has to ride on this exact response, and
@@ -55,7 +55,7 @@ export function authKitEntry(screenHint: "sign-in" | "sign-up") {
     return new Response(null, {
       status: 307,
       headers: {
-        Location: redirectUrl,
+        Location: redirectUrl.toString(),
         "Set-Cookie": authStateCookie(nonce),
         "Cache-Control": "no-store",
       },

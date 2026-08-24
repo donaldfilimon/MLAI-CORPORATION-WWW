@@ -71,7 +71,7 @@ Aviva's substance, Abbey's delivery.
 ## Claims discipline (non-negotiable)
 
 External copy must not overstate capability. This mirrors the `abi` repo's
-`docs/contracts/external-claims-audit.md` and the rule in [CLAUDE.md](../CLAUDE.md).
+`docs/contracts/external-claims-audit.mdx` and the rule in [CLAUDE.md](../CLAUDE.md).
 
 **Never state without a linked repo artifact proving it:**
 - Specific QPS / latency / accuracy / energy / model-benchmark numbers
@@ -81,10 +81,9 @@ External copy must not overstate capability. This mirrors the `abi` repo's
 - Stacks/features that don't exist in the code
 
 **Instead:**
-- Frame numbers as **targets / goals**, with the workload attached. (As
-  [stats.ts](../src/data/categories/stats.ts) already does: *"295× GPU Speedup **Target** —
-  matrix workload benchmark track"*, *"0.8 ms Search Latency **Goal** — 1M-vector local
-  retrieval target"*.)
+- Omit performance numbers until a reproducible repository harness, workload,
+  hardware description, raw output, and methodology exist. A target label does
+  not substitute for that evidence.
 - Keep provenance tags distinct and never conflated: **● measured / ○ target / ◆ reported**.
 - Ground claims in verifiable architecture: the real `abi` CLI, the MCP tools, WDBX stores,
   and Abbey/Aviva/Abi persona routing.
@@ -93,8 +92,9 @@ External copy must not overstate capability. This mirrors the `abi` repo's
 
 ### Before → after
 > ❌ *"WDBX delivers 16,500 QPS with AES-256 encryption at rest."*
-> ✅ *"WDBX targets 16.5k QPS in our stress-test track (○ target); the durable log is
-> hash-chained for tamper-evident history (verifiable in the store)."*
+> ✅ *"WDBX implements layered HNSW retrieval, durable recovery, MVCC history,
+> and a chained local audit trail; performance remains unpublished pending a
+> reproducible benchmark artifact."*
 
 ## Quick do / don't
 

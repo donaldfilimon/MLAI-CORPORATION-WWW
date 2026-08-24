@@ -8,6 +8,7 @@ import type { SessionData } from "./session";
 
 export const WORKOS_API_KEY = process.env.WORKOS_API_KEY;
 export const CLIENT_ID = process.env.WORKOS_CLIENT_ID;
+export const WORKOS_ORGANIZATION_ID = process.env.WORKOS_ORGANIZATION_ID?.trim();
 export const APP_URL = process.env.APP_URL ?? "http://localhost:3000";
 export const FRONTEND_URL = process.env.FRONTEND_URL ?? APP_URL;
 export const REDIRECT_URI = `${APP_URL}/api/auth/callback`;
@@ -218,10 +219,48 @@ export function checkAdminIdentity(
 }
 
 // ── MFA for administrative access ────────────────────────────────────────────
-// Policy lives in the WorkOS Dashboard (docs/mfa-workos-runbook.md). When
-// ADMIN_REQUIRE_MFA=true, admin reads require ≥1 enrolled factor; fails closed.
+// Policy lives in WorkOS or, for SSO, the organization's IdP. See the runbook;
+// every production path fails closed until its provider-side policy is attested.
 
 export const ADMIN_REQUIRE_MFA = process.env.ADMIN_REQUIRE_MFA === "true";
+const ADMIN_MFA_POLICY_VERIFIED = process.env.WORKOS_MFA_POLICY_VERIFIED === "true";
+const ADMIN_SSO_MFA_POLICY_VERIFIED =
+  process.env.WORKOS_SSO_MFA_POLICY_VERIFIED === "true";
+const ADMIN_FRESH_AUTH_MS = 10 * 60 * 1000;
+const ADMIN_FUTURE_AUTH_SKEW_MS = 60 * 1000;
+
+/**
+ * Extract WorkOS's signed `auth_time` claim from an access token.
+ *
+ * The token reaches this function only as the result of the server-to-server
+ * authorization-code exchange with WorkOS, then lives inside our sealed
+ * session. We still parse defensively because a missing/malformed claim must
+ * deny administrative access rather than silently becoming "fresh now".
+ */
+export function accessTokenAuthTime(accessToken: string): number | null {
+  const parts = accessToken.split(".");
+  if (parts.length !== 3 || !parts[1]) return null;
+  try {
+    const payload: unknown = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+    if (!payload || typeof payload !== "object") return null;
+    const authTime = (payload as Record<string, unknown>).auth_time;
+    if (!Number.isSafeInteger(authTime) || (authTime as number) <= 0) return null;
+    return (authTime as number) * 1000;
+  } catch {
+    return null;
+  }
+}
+
+function freshAuthentication(user: SessionData): { ok: true } | { ok: false; error: string } {
+  if (!user.authenticatedAt) {
+    return { ok: false, error: "Verified WorkOS authentication time is required" };
+  }
+  const age = Date.now() - user.authenticatedAt;
+  if (age < -ADMIN_FUTURE_AUTH_SKEW_MS || age > ADMIN_FRESH_AUTH_MS) {
+    return { ok: false, error: "Fresh WorkOS authentication is required for administrative access" };
+  }
+  return { ok: true };
+}
 
 // The SDK ships listUserAuthFactors at runtime but the bundled types lag
 // behind; this narrow structural type covers exactly what we call.
@@ -254,6 +293,29 @@ export async function checkAdminMfa(
   user: SessionData,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   if (!ADMIN_REQUIRE_MFA) return { ok: true };
+
+  const fresh = freshAuthentication(user);
+  if (!fresh.ok) return fresh;
+
+  // WorkOS's AuthKit MFA policy explicitly does not apply to SSO users. Their
+  // step-up sends them back through the IdP, so production must carry a
+  // separate operator attestation that the organization's IdP requires MFA.
+  if (user.authenticationMethod === "SSO") {
+    if (!ADMIN_SSO_MFA_POLICY_VERIFIED) {
+      return { ok: false, error: "Verified SSO identity-provider MFA is required" };
+    }
+    return { ok: true };
+  }
+
+  // An impersonated target user's enrolled factor says nothing about the
+  // dashboard actor controlling the session, so it can never authorize an
+  // administrative read.
+  if (!user.authenticationMethod || user.authenticationMethod === "Impersonation") {
+    return { ok: false, error: "Supported authentication method is required for admin access" };
+  }
+  if (!ADMIN_MFA_POLICY_VERIFIED) {
+    return { ok: false, error: "Verified WorkOS MFA policy is required for administrative access" };
+  }
   const enrolled = await userHasMfaFactor(user.userId);
   if (enrolled === null) {
     return { ok: false, error: "MFA verification unavailable" };
@@ -270,4 +332,50 @@ export async function checkAdminAccess(
   const identity = checkAdminIdentity(user);
   if (!identity.ok) return identity;
   return checkAdminMfa(user);
+}
+
+// Invite-only beta authorization. Session organization claims are useful
+// context but are not revocation proof, so protected generation rechecks the
+// active WorkOS membership with a short cache and fails closed on API errors.
+const membershipCache = new Map<string, { organizationId: string; expires: number }>();
+const MEMBERSHIP_CACHE_TTL_MS = 60 * 1000;
+
+export async function checkOrganizationAccess(
+  user: Pick<SessionData, "userId">,
+): Promise<
+  | { ok: true; organizationId: string }
+  | { ok: false; error: string; status: 403 | 503 }
+> {
+  if (!WORKOS_ORGANIZATION_ID) {
+    return { ok: false, error: "Quesar beta organization is not configured", status: 503 };
+  }
+  const cached = membershipCache.get(user.userId);
+  if (cached && cached.expires > Date.now() && cached.organizationId === WORKOS_ORGANIZATION_ID) {
+    return { ok: true, organizationId: cached.organizationId };
+  }
+  const auth = requireWorkOS();
+  if (!auth) return { ok: false, error: "WorkOS is not configured", status: 503 };
+  try {
+    const memberships = await auth.userManagement.listOrganizationMemberships({
+      userId: user.userId,
+      organizationId: WORKOS_ORGANIZATION_ID,
+      statuses: ["active"],
+      limit: 10,
+    });
+    const active = memberships.data.find(
+      (membership) =>
+        membership.organizationId === WORKOS_ORGANIZATION_ID && membership.status === "active",
+    );
+    if (!active) {
+      return { ok: false, error: "An active Quesar beta invitation is required", status: 403 };
+    }
+    membershipCache.set(user.userId, {
+      organizationId: active.organizationId,
+      expires: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+    });
+    return { ok: true, organizationId: active.organizationId };
+  } catch (error) {
+    console.error("WorkOS organization membership check failed:", error);
+    return { ok: false, error: "Organization membership verification unavailable", status: 503 };
+  }
 }

@@ -1,10 +1,10 @@
 /**
  * wdbx-demo.ts — an in-browser simulation of the WDBX query path.
  *
- * This is NOT the Zig engine; it is a faithful miniature of its concepts:
+ * This is NOT the active Rust engine; it is an illustrative browser model:
  *   • real cosine similarity over deterministic embeddings
  *     (signed feature-hashing of words, bigrams, and char trigrams → ℝ^256)
- *   • vector-aware shard routing (4 shards, hash-partitioned)
+ *   • deterministic local partition labels (not a WDBX sharding claim)
  *   • MVCC snapshot counter (monotonic, acquired per read)
  *   • block-chained query log (FNV-1a, each block hashes its parent)
  *
@@ -13,7 +13,7 @@
  */
 
 export const DIM = 256;
-export const SHARDS = 4;
+export const PARTITIONS = 4;
 
 export interface Doc {
   id: string;
@@ -25,13 +25,13 @@ export interface Doc {
 export interface Hit {
   doc: Doc;
   score: number;
-  shard: number;
+  partition: number;
 }
 
 export interface QueryStats {
   ms: number;
   scanned: number;
-  shardsHit: number;
+  partitionsHit: number;
   snapshot: number;
   dim: number;
 }
@@ -105,7 +105,7 @@ export function cosine(a: Float32Array, b: Float32Array): number {
 interface StoredVec {
   doc: Doc;
   vec: Float32Array;
-  shard: number;
+  partition: number;
 }
 
 export class WdbxEngine {
@@ -118,7 +118,7 @@ export class WdbxEngine {
       this.store.push({
         doc,
         vec: embed(doc.title + " " + doc.text),
-        shard: fnv1a(doc.id) % SHARDS,
+        partition: fnv1a(doc.id) % PARTITIONS,
       });
     }
     // genesis block
@@ -144,11 +144,11 @@ export class WdbxEngine {
     const snapshot = ++this.snapshot; // MVCC: readers acquire a monotonic snapshot
     const q = embed(query);
 
-    const shardsTouched = new Set<number>();
+    const partitionsTouched = new Set<number>();
     const hits: Hit[] = [];
     for (const s of this.store) {
-      shardsTouched.add(s.shard);
-      hits.push({ doc: s.doc, score: cosine(q, s.vec), shard: s.shard });
+      partitionsTouched.add(s.partition);
+      hits.push({ doc: s.doc, score: cosine(q, s.vec), partition: s.partition });
     }
     hits.sort((a, b) => b.score - a.score);
     const top = hits.slice(0, k);
@@ -168,7 +168,7 @@ export class WdbxEngine {
 
     return {
       hits: top,
-      stats: { ms, scanned: this.store.length, shardsHit: shardsTouched.size, snapshot, dim: DIM },
+      stats: { ms, scanned: this.store.length, partitionsHit: partitionsTouched.size, snapshot, dim: DIM },
     };
   }
 }

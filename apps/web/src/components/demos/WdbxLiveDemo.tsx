@@ -103,7 +103,7 @@ export function WdbxLiveDemo() {
                   />
                 </div>
                 <div className="mt-2 flex gap-4 font-mono text-[10px] uppercase tracking-widest text-text-dim/50">
-                  <span>shard {h.shard}</span>
+                  <span>modeled partition {h.partition}</span>
                   <span>{h.doc.tag}</span>
                   <span>cosine</span>
                 </div>
@@ -115,7 +115,7 @@ export function WdbxLiveDemo() {
             {[
               { v: stats ? stats.ms.toFixed(2) + "ms" : "—", k: "scan latency · measured" },
               { v: String(stats?.scanned ?? "—"), k: "vectors scanned" },
-              { v: `${stats?.shardsHit ?? "—"}/4`, k: "shards hit" },
+              { v: `${stats?.partitionsHit ?? "—"}/4`, k: "modeled partitions" },
               { v: `#${stats?.snapshot ?? "—"}`, k: "mvcc snapshot" },
             ].map((s) => (
               <div key={s.k} className="rounded-xl border border-white/5 bg-white/2 p-3.5">

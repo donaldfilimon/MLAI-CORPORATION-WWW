@@ -67,7 +67,7 @@ Polyglot systems engineer across Zig, Rust, Swift, TypeScript, Python, and GPU r
 | Project | What it is | Lang |
 |---|---|---|
 | **abi** | AI agent runtime + WDBX vector DB; local AI/ML orchestration in Zig, GPU capability reporting, MCP server | Zig |
-| **WDBX** | Durable vector/block memory store for traceable retrieval & agent memory | Zig · Rust · Py · TS |
+| **WDBX** | Durable vector/block memory store for traceable retrieval & agent memory | Rust · Py · TS |
 | **gama** | Swift + MLX on-device LM inference on Apple Silicon; self-learning agent | Swift |
 | **Nyon** | Voxel 3D world experiment; novel hexa-gravity system | Zig |
 
@@ -79,7 +79,7 @@ Links: github.com/donaldfilimon · x.com/donaldfilimonx · donaldfilimon.com
 
 | Layer | Product | Role | Accent (family) |
 |---|---|---|---|
-| **Storage** | WDBX | Zig vector store — HNSW, MVCC, Metal/CUDA/Vulkan | cyan |
+| **Storage** | WDBX | Rust vector store — layered HNSW, MVCC, inspectable history | cyan |
 | **Compute** | ABI Framework | ML + GPU acceleration, tensor ops, zero-copy unified-memory pipelines | violet |
 | **Application** | Abbey (+ Aviva, Abi) | Empathic on-device assistant with local memory | emerald |
 
@@ -91,115 +91,75 @@ Links: github.com/donaldfilimon · x.com/donaldfilimonx · donaldfilimon.com
 
 ## 4 · WDBX — vector database
 
-Zig-built vector storage with HNSW indexing, MVCC transactions, and Metal / CUDA /
-Vulkan backends. Runs where the data lives.
+The active implementation is the sibling Rust substrate at
+`~/dev/active/wdbx/crates/`. Its `abi-wdbx` crate implements layered HNSW
+retrieval and MVCC. The Zig documents mirrored under `public/docs/wdbx/` are a
+frozen historical snapshot, not the current architecture register.
 
 > **Naming note:** the corporate materials expand WDBX as **"Weighted Directed
 > Backtrace eXecution"**; earlier analyses used **"Wide Distributed Block Exchange."**
 > Both appear in source materials — worth settling on one before external launch.
 
-**Hero metrics**
+**Performance evidence**
 
-| Metric | Value | Provenance |
-|---|---|---|
-| p50 search latency | 2.3 ms | ● measured |
-| Recall@10 | 98.2% | ● measured |
-| QPS (stress-test objective) | 16.5K | ○ target |
-| p50 @ 1M vectors | 0.8 ms | ○ target |
+No search-latency, recall, throughput, memory-footprint, or exclusivity figure is
+currently publishable from repository evidence. A provenance label does not
+replace a reproducible harness and methodology; source-backed architecture facts
+are the public surface until those artifacts exist.
 
-**Core features**
+**Source-grounded architecture facts**
 
-> ⚠️ **This bullet list is UNTAGGED and is not publishable copy.** Unlike the
-> table above it, nothing here carries ● / ○ / ◆, and at least three entries do
-> not survive checking:
->
-> - "95% recall @ 8.2 ms" **contradicts the tagged table two lines up**, which
->   records Recall@10 **98.2% ● measured** and p50 **2.3 ms ● measured**.
-> - **HNSW** — the nine WDBX docs mirrored from the source repo
->   (`public/docs/wdbx/*.md`) never mention HNSW, `efConstruction`, or any index
->   structure; `architecture.md` describes `src/database/*` only as "vector
->   store, block-chain memory, sharding, snapshots". So `M=16,
->   efConstruction=200` has no artifact behind it here.
-> - **AES-256 + RBAC** is on the external-claims forbidden list outright.
->
-> This block caused a real incident: it was used to source home-page copy on
-> 2026-08-09, which then had to be retracted the same day. Treat it as
-> unverified working notes. **Anything moved from here into public copy must be
-> re-sourced to the mirrored WDBX docs or to a tagged row — not to this list.**
+> The sibling Rust substrate outranks both this document and the frozen public
+> mirror for architectural facts. Tagged rows still outrank untagged prose for
+> metrics. Re-check the implementation before carrying any of these facts into
+> collateral.
 
-- **HNSW index** — Hierarchical Navigable Small World graphs; O(log n) search;
-  95% recall @ 8.2 ms on 1M vectors. Defaults M=16, efConstruction=200.
-- **Memory-mapped persistence** — Swift 6.2 `Span` zero-copy I/O, WAL journaling,
-  instant cold starts.
-- **Product / scalar quantization** — 8× memory reduction; "10B vectors in 2GB RAM."
-- **Metal GPU acceleration** — distance calcs on Apple GPU; positioned as the first
-  App Store-ready vector DB with native Swift/Metal integration.
-- **MVCC transactions**, **AES-256 + RBAC**, **hash-chained WAL**.
+- **Layered HNSW** — `crates/abi-wdbx/src/hnsw.rs` defines `M = 16`,
+  `EF_CONSTRUCTION = 40`, and `EF_SEARCH = 32`, validates graph structure, and
+  rebuilds the graph against stored vectors in tests.
+- **MVCC** — `crates/abi-wdbx/src/mvcc.rs` implements multi-version concurrency
+  control; it is not inferred from the older documentation mirror.
+- **Cluster boundary** — `cluster_rpc.rs` explicitly says the current transport
+  is not TLS, production multi-host Raft, or sharding. Distributed-sharding copy
+  therefore remains forbidden.
+- **Not established by these facts** — encryption/RBAC, certifications,
+  competitor performance, GPU speedups, and scale figures still require their
+  own source artifact and provenance.
 
-**Competitive posture**
+**Public positioning**
 
-| Claim | Provenance |
-|---|---|
-| 6–12× faster search vs cloud (zero network latency) | ● measured |
-| 8× lower memory footprint with PQ | ● measured |
-| Only App Store-ready vector DB w/ native Swift/Metal | ● measured |
-
-**SIMD core:** `@Vector(N, f32)` maps to hardware SIMD (AVX-512 on x86, NEON on
-Apple Silicon); `@reduce(.Add, …)` for horizontal sums. One source compiles distance
-kernels to the exact target ISA.
+The active repository proves local vector-store behavior, graph structure,
+durable recovery, MVCC history, codecs, and bounded accelerator parity. It does
+not establish comparative search speed, memory superiority, App Store
+exclusivity, hosted scale, or other competitor-facing performance claims.
 
 ---
 
 ## 5 · ABI Framework — compute / orchestration
 
-Zig 0.17-dev framework for AI services, semantic vector storage, GPU acceleration,
-and a distributed runtime. Powers WDBX's GPU-accelerated distance calculations and
-embedding generation.
+The active implementation is the sibling Rust nightly workspace at
+`~/dev/active/abi`. It owns typed orchestration and accelerator contracts, while
+WDBX is the sibling persistence/retrieval substrate.
 
-**Repo facts (verified against the `abi` repo)**
+**Repo facts (verified against the active checkout)**
 
-- License **Apache-2.0** · Zig `0.17.0-dev.304+9787df942` · 670+ commits · 16★ / 4 forks
-- Docs: donaldfilimon.github.io/abi · bootstrap: `./build.sh --bootstrap` then `./build.sh check`
-- In-repo **MCP server**; OpenAI-compatible streaming endpoint
-  (`src/features/ai/streaming/server/openai.zig`)
-- Generated CLI registry: `zig build refresh-cli-registry`
+- Apache-2.0 Rust workspace; the repository gate is `./tools/check.sh`.
+- `abi-compute` provides object-safe accelerator contracts and deterministic CPU
+  SIMD with stable top-k behavior.
+- `abi-gpu` contains optional macOS Metal vector kernels. Compiled, available,
+  initialized, executed, and runtime-verified are distinct evidence states.
+- Metal execution is called runtime-verified only after matching the deterministic
+  CPU oracle; initialization alone is not execution evidence.
+- `docs/contracts/external-claims-audit.mdx` is the current external-claims
+  contract shared by this collateral.
 
-**GPU benchmarks**
+**Published performance position**
 
-> ⚠️ **UNRESOLVED CONFLICT — these four are the ONLY performance figures the
-> public site still publishes, and the `abi` repo does not corroborate them.**
-> Checked 2026-08-09 against `~/abi` @ `ac69027`:
->
-> - **No MatMul artifact exists anywhere in that repo** — no benchmark output,
->   no harness, no recorded result. Zero hits.
-> - Its **CHANGELOG appends the same disclaimer to every GPU entry**: *"still
->   not a general GPU speedup / CUDA / ANE claim."* Its `tasks/goals.md:208`
->   likewise says the work does "not establish … accelerator speedups."
-> - `docs/contracts/external-claims-audit.md` — the contract this repo's
->   CLAUDE.md cites as the SOURCE of the whole external-claims rule — **does
->   not exist** in `abi` either.
->
-> This is not proof the figures are invented: **● measured** means "reproduced
-> on MLAI hardware," and a measurement taken on a machine need not be committed.
-> But it does mean **nothing in any repo backs them**, while the project they
-> are attributed to explicitly disclaims this class of claim. Left in place
-> rather than deleted, because unlike the fabricated competitor charts removed
-> on 2026-08-09 this is a genuine conflict only Donald can settle.
->
-> **Before publishing these anywhere new — or leaving them up — resolve it:**
-> produce the benchmark artifact and commit it, or retag/remove the rows. If
-> the measurement is real, the fix is to land the harness in `abi` so the next
-> audit does not re-raise this.
-
-| Workload | Speedup | Provenance |
-|---|---|---|
-| MatMul 128×128 | 5× | ● measured |
-| MatMul 1024×1024 | 84× | ● measured |
-| MatMul 4096×4096 (benchmark track) | 295× | ○ target |
-| 10-layer neural net | 13× | ● measured |
-
-**Apple Silicon advantage** (hardware spec, not a claim about MLAI): 546 GB/s unified
-memory bandwidth · 38 TOPS Neural Engine (M4) · 200 GFLOPS/W power efficiency.
+No ABI speedup figure is currently backed by a reproducible repository benchmark
+artifact. The former MatMul/neural-network rows were removed from the web and
+mobile surfaces on 2026-08-24. They may return only with a committed harness,
+hardware/workload description, raw output, and reproducible methodology. An
+engineering target tag is not a substitute for that evidence.
 
 ---
 
@@ -213,7 +173,7 @@ shipped `PersonaLegend` + hero galaxy (Abbey emerald, Aviva violet, Abi cyan):
 |---|---|---|---|
 | **Abbey** | Empathetic Polymath | Creative problem-solving, emotional awareness | emerald |
 | **Aviva** | Unfiltered Expert | Direct technical answers, deep research | violet |
-| **Abi** | Adaptive Moderator | Dynamic persona blending / routing by context | cyan |
+| **Abi** | Adaptive Moderator | Deterministic profile routing with optional EMA smoothing | cyan |
 
 **Core capabilities**
 

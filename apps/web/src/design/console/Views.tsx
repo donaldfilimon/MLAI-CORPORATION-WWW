@@ -59,14 +59,10 @@ export function Overview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }} className="cn-stat-grid">
-        {/* Deliberately unitless, unnamed placeholders. The previous tiles read
-            "142.9k Memory blocks", "0.8ms p99 search" and "12 Shards healthy":
-            0.8 ms is a published MLAI figure that master-reference.md §4 defines
-            as a p50 ○ target, so relabeling it p99 stated a strictly stronger
-            claim. Substituting a different latency would just be an invented
-            figure with a hedge in 11px type, so the unit and the metric name go
-            with it — a layout board needs a number-shaped string, not a
-            measurement. */}
+        {/* Deliberately unitless, unnamed placeholders. The previous tiles used
+            performance and scale figures without a reproducible harness.
+            Substituting different numbers would preserve the same problem: a
+            layout board needs number-shaped sample strings, not measurements. */}
         <StatCard value="1,234" label="Sample metric" tint="#22d3ee" sub="sample data" />
         <StatCard value="56%" label="Sample ratio" tint="#60a5fa" sub="sample data" />
         <StatCard value="78" label="Sample count" tint="#34d399" sub="sample data" />

@@ -1,5 +1,5 @@
 import { readJsonLimited } from "@/lib/server/body-limit";
-import { getDb } from "@/lib/server/db";
+import { ensureDatabase } from "@/lib/server/db";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 import { normalizeTelemetryPath } from "@/lib/server/telemetry-path";
 
@@ -33,7 +33,8 @@ export async function POST(req: Request) {
   const path = normalizeTelemetryPath(body.path);
 
   try {
-    getDb().prepare("INSERT INTO telemetry_events (event, path) VALUES (?, ?)").run(event, path);
+    const sql = await ensureDatabase();
+    await sql`INSERT INTO telemetry_events (event, path) VALUES (${event}, ${path})`;
   } catch (err) {
     console.error("Database error saving telemetry event:", err);
   }

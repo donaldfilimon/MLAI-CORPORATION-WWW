@@ -1,9 +1,6 @@
 import type { Stats } from '../schemas';
 
 export const stats: Stats = ([
-  { value: "295x", label: "GPU Speedup Target", detail: "Matrix workload benchmark track" },
-  { value: "0.8ms", label: "Search Latency Goal", detail: "1M-vector local retrieval target" },
-  { value: "16.5k", label: "Throughput Target", detail: "WDBX stress-test objective" },
   { value: "3", label: "Agent Control Roles", detail: "Planning, review, and execution" },
   { value: "90d", label: "Pilot Window", detail: "Audit-to-production roadmap" },
   // Was `value: "SOC 2"`, which `Stats.tsx` renders at text-4xl/5xl — a

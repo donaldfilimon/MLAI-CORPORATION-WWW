@@ -120,13 +120,13 @@ export const Stats = () => {
     >
       <div className="container-custom">
         <div className="text-center mb-16">
-          <div className="label-chip mx-auto mb-6 w-fit">ENGINEERING TARGETS</div>
+          <div className="label-chip mx-auto mb-6 w-fit">OPERATING MODEL</div>
           <h2 id="stats-heading" className="section-title">
-            What we engineer toward
+            What the pilot makes explicit
           </h2>
           <p className="section-subtitle mx-auto">
-            Performance and readiness targets that shape the MLAI architecture —
-            objectives we build and benchmark against, not guaranteed results.
+            Control roles, the pilot horizon, and the evidence posture behind the
+            work — operating constraints, not performance claims or certifications.
           </p>
         </div>
 
