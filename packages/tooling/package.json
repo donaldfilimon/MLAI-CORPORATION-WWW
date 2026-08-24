@@ -1,0 +1,9 @@
+{
+  "name": "@mlai/tooling",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "bun src/check-topology.ts"
+  }
+}

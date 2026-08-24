@@ -1,11 +1,15 @@
+.DS_Store
+.env
+.env.*
+!.env.example
 node_modules/
 build/
 dist/
 coverage/
-.DS_Store
+.expo/
+.next/
+*.tsbuildinfo
 *.log
-.env*
-!.env.example
 inquiries.db
 target/
 .codex/
@@ -18,23 +22,22 @@ __pycache__/
 .playwright-cli/
 output/playwright/
 .retired/
-inquiries.db
-.playwright-cli/
-.next/
-tsconfig.tsbuildinfo
 nohup.out
 
 # auto-improve loop run-state
 .claude/auto-improve.active
 .claude/auto-improve-ledger.jsonl
+
+# design-sync generated and staging artifacts
 .ds-sync/
 ds-bundle/
 .design-sync/.cache/
 .design-sync/learnings/
-.design-sync/node_modules
+.design-sync/node_modules/
 .design-sync/lab-compiled.css
 .cache/
-# OpenTofu local working/state artifacts. The provider lock file is tracked.
+
+# OpenTofu local working/state artifacts. Provider lock files are tracked.
 **/.terraform/
 *.tfstate
 *.tfstate.*

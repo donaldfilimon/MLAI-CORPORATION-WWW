@@ -1,6 +1,6 @@
 name: Deploy static landing page to GitHub Pages
 
-# Publishes the self-contained static page in ./site to GitHub Pages.
+# Publishes the self-contained static page in apps/web/site to GitHub Pages.
 # This is a lightweight landing page only — the full Next.js app (pages +
 # /api/* route handlers) is deployed separately to Cloud Run (see
 # deploy-cloudrun.yml). The Next app is NOT statically exported here.
@@ -80,7 +80,7 @@ jobs:
     #     head_branch == "main" and passes the `branches: [main]` filter above.
     #     This job then runs in the BASE repo's context with `pages: write` and
     #     id-token, checks out the fork's head_sha, and hands attacker-authored
-    #     site/ content to actions/deploy-pages — publishing it on the real
+    #     apps/web/site/ content to actions/deploy-pages — publishing it on the real
     #     Pages origin. Branch NAMES are attacker-controlled; repository
     #     IDENTITY is not. Never substitute a branch-name filter for this.
     #
@@ -111,7 +111,7 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       # Gate the publish on the landing-page drift guard
-      # (src/__tests__/landing-page.test.ts): canonical URL, complete social
+      # (apps/web/src/__tests__/landing-page.test.ts): canonical URL, complete social
       # card, brand assets physically present in site/, no /_next/ or
       # /public/ paths Pages can't serve. Kept even though CI is now an
       # upstream gate — CI runs the whole suite against the Next app, while
@@ -121,11 +121,13 @@ jobs:
         with:
           bun-version: "1.4"
       - run: bun install --frozen-lockfile
+        working-directory: apps/web
       - run: bunx vitest run src/__tests__/landing-page.test.ts
+        working-directory: apps/web
 
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: site
+          path: apps/web/site
       - id: deployment
         uses: actions/deploy-pages@v5

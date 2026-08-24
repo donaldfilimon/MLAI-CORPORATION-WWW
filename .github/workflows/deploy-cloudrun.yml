@@ -2,7 +2,7 @@ name: Deploy to Cloud Run
 
 # The full Next.js app is built into an immutable Artifact Registry image and
 # deployed only after CI validates a push from this repository's main branch.
-# OpenTofu in infra/ owns the load balancer, Cloud Armor origin ACL, Cloud SQL,
+# OpenTofu in apps/web/infra/ owns the load balancer, Cloud Armor origin ACL, Cloud SQL,
 # KMS, Secret Manager containers, service accounts, and GitHub OIDC provider.
 on:
   workflow_run:
@@ -132,6 +132,7 @@ jobs:
           IMAGE="${REGISTRY}/${GCP_PROJECT_ID}/${ARTIFACT_REPOSITORY}/${CLOUD_RUN_SERVICE}:${VALIDATED_SHA}"
           gcloud auth configure-docker "${REGISTRY}" --quiet
           docker build --pull \
+            --file apps/web/Dockerfile \
             --build-arg "NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}" \
             --label "org.opencontainers.image.revision=${VALIDATED_SHA}" \
             --tag "${IMAGE}" .
