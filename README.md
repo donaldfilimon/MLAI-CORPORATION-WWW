@@ -2,9 +2,9 @@
 <img width="1200" height="475" alt="MLAI Corporation banner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# MLAI Corporation WWW
+# Quesar by MLAI
 
-Production-grade marketing and private-console website for MLAI Corporation. The active stack is **Next.js 15 App Router + React 19 + TailwindCSS v4**, served as one Bun-managed application with `/api/*` route handlers in the same process.
+Production website and invite-only private AI operations console for **Quesar by MLAI** at `quesar.cloud`. The active stack is **Next.js 15 App Router + React 19 + TailwindCSS v4**, served as one Bun-managed application with `/api/*` route handlers in the same process.
 
 The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. Do not extend or restore them; active work belongs in the TypeScript/TSX Next.js surface.
 
@@ -13,8 +13,11 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - **Frontend:** Next.js 15 App Router, React 19, TailwindCSS v4, Framer Motion, Lucide React.
 - **Backend:** Next route handlers in `app/api/*`, shared server utilities in `src/lib/server/*`.
 - **Runtime and package manager:** Bun 1.4+ with the checked-in `bun.lock`.
-- **Auth:** WorkOS AuthKit with encrypted `mlai_session` cookies.
-- **Storage:** SQLite via `node:sqlite` for inquiries and privacy-respecting telemetry.
+- **Auth:** WorkOS AuthKit with active membership in one invited organization and encrypted `mlai_session` cookies.
+- **Generation:** Gemini 3.7 Flash through an authenticated Cloudflare AI Gateway with payload logging and caching disabled.
+- **Storage:** PostgreSQL on regional-HA Cloud SQL for inquiries, allowlisted telemetry, consent, encrypted conversation audits, and access events.
+- **Audit encryption:** Per-record AES-256-GCM data keys wrapped by Google Cloud KMS; user IDs are HMAC-pseudonymized and email is excluded from model/audit persistence.
+- **Edge:** Cloudflare DNS/CDN/WAF/Turnstile in front of Google HTTPS Load Balancing, a Cloud Armor Cloudflare-only origin ACL, and load-balancer-only Cloud Run ingress.
 - **Content:** Structured TypeScript data in `src/data/categories/*`.
 
 ## Project Structure
@@ -28,15 +31,16 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - `src/design/` - the `/showcase/design` design lab, lazy-loaded one board at a time.
 - `public/` - static assets, sitemap, mirrored WDBX docs, and research PDFs.
 - `docs/` - operator runbooks and project specifications.
+- `infra/` - OpenTofu for Cloud SQL, KMS, secrets, least-privilege identities, GitHub OIDC, load balancing, Cloud Armor, and retention scheduling.
 
 ## Setup
 
 ```bash
-bun install
+bun install --frozen-lockfile
 cp .env.example .env
 ```
 
-Fill `.env` with WorkOS credentials and a `SESSION_SECRET` of at least 32 characters. Optional server-only values include `GEMINI_API_KEY`, `STRIPE_PAYMENT_LINK`, `ADMIN_EMAILS`, and `ADMIN_REQUIRE_MFA`.
+For a full local console, supply WorkOS test credentials/organization, local PostgreSQL, Google ADC with KMS access, a Cloudflare AI Gateway, and a 32+ character session secret and audit pepper. The checked-in Turnstile values are Cloudflare's official development-only keys; production rejects local hostnames and uses a separately created widget.
 
 ## Development Commands
 
@@ -69,10 +73,12 @@ External collateral must not cite unsupported benchmark, security, compliance, d
 
 ## Administrative Access
 
-Admin reads such as `GET /api/inquiries` and `GET /api/telemetry/summary` require a valid session and `ADMIN_EMAILS` allowlist membership. When `ADMIN_REQUIRE_MFA=true`, they also require at least one enrolled WorkOS MFA factor and fail closed if factor verification is unavailable. See `docs/mfa-workos-runbook.md`.
+Admin reads such as `GET /api/inquiries`, `GET /api/telemetry/summary`, and conversation-audit access require a valid invited-organization session and `ADMIN_EMAILS` allowlist membership. Production sets `ADMIN_REQUIRE_MFA=true`; code also requires a verified production MFA-policy attestation, an enrolled factor, and authentication less than ten minutes old. Audit inventory and reads are POST-only, organization-scoped, require a reason of at least eight characters, and retain requested/succeeded/failed access events without decrypted content. See `docs/mfa-workos-runbook.md`.
 
-Write endpoints are protected on two independent axes. In-memory fixed-window rate limits cap how *many* requests a client IP can make, and `src/lib/server/body-limit.ts` caps how *large* each body may be — Next 15 route handlers ship no default body cap, so every POST reads through it and returns `413` past its per-route limit (4 KB telemetry and checkout, 16 KB profile, 32 KB inquiries, 64 KB CSP reports, 128 KB LLM chat). Give any new POST route a cap sized to its real payload.
+Write endpoints are protected on independent axes. In-memory fixed-window limits cap request count, `src/lib/server/body-limit.ts` caps body size, and the public inquiry/access-request funnel additionally requires a one-time Turnstile token validated server-side for the exact `inquiry` action and allowlisted hostname. Next route handlers have no default body cap, so give every new body-consuming route an explicit cap sized to its payload.
 
 ## Deployment
 
-The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET` (≥32 characters). `APP_URL` is required — it is the OAuth redirect base, and the deploy fails fast without it. Leave `FRONTEND_URL` **unset** unless it genuinely differs; when set it must share `APP_URL`'s host, or the OAuth state cookie never comes back and every login fails with `invalid_state`. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main`, and the Cloud Run deploy is gated on it — `deploy-cloudrun.yml` triggers on CI's `workflow_run` and deploys the exact SHA CI validated, only for a successful push from this repository.
+The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. [`infra/`](infra/) provisions the durable/security foundation with OpenTofu. The deploy workflow authenticates through GitHub OIDC—there is no long-lived GCP key—builds an immutable SHA-tagged Artifact Registry image, mounts the Cloud SQL connector, injects Secret Manager values, restricts ingress to the external load balancer, and disables the default `run.app` URL.
+
+`APP_URL=https://quesar.cloud` is required as the OAuth redirect base. Leave `FRONTEND_URL` unset unless a proxy preserves the state-cookie topology. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main`; deployment then checks out the exact successful push SHA and retains the event/repository trust checks that keep fork PRs outside production context. See [`docs/deploy-cloud-run.md`](docs/deploy-cloud-run.md) for bootstrap, secrets, provider configuration, DNS cutover, and acceptance gates.

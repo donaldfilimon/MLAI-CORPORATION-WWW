@@ -229,7 +229,10 @@
     document.querySelectorAll('[data-neural="galaxy"]').forEach(function (el) { if (!el.firstElementChild) mountGalaxy(el); });
     document.querySelectorAll('[data-neural="net"]').forEach(function (el) { if (!el.firstElementChild) mountNet(el); });
   }
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', mount); } else { mount(); }
-
   window.MLAINeural = { updateAll: updateAll, mount: mount, unmount: unmount, DEFAULTS: DEFAULTS };
+  // React owns every data-neural host. Auto-mounting from DOMContentLoaded can
+  // append a canvas between server render and hydration, which makes React
+  // discard the tree. Components mount after commit and listen for this event
+  // when the afterInteractive script finishes after their first effect.
+  window.dispatchEvent(new Event('mlai-neural-ready'));
 })();

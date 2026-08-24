@@ -1,8 +1,9 @@
 import { readJsonLimited } from "@/lib/server/body-limit";
-import { getDb } from "@/lib/server/db";
+import { ensureDatabase } from "@/lib/server/db";
 import { getSession } from "@/lib/server/session";
-import { checkAdminAccess } from "@/lib/server/workos";
+import { checkAdminAccess, checkOrganizationAccess } from "@/lib/server/workos";
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
+import { verifyTurnstile } from "@/lib/server/turnstile";
 
 export async function POST(req: Request) {
   if (!rateLimit("inquiries", req, { windowMs: 5 * 60 * 1000, max: 5 })) return tooMany();
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
     company?: unknown;
     projectType?: unknown;
     message?: unknown;
+    turnstileToken?: unknown;
   }>(req, 32 * 1024);
   if (body instanceof Response) return body;
 
@@ -23,6 +25,7 @@ export async function POST(req: Request) {
   const projectType =
     typeof body.projectType === "string" ? body.projectType.trim() : "research";
   const message = typeof body.message === "string" ? body.message.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
 
   if (name.length < 2) {
     return Response.json({ error: "Name must be at least 2 characters" }, { status: 400 });
@@ -36,13 +39,14 @@ export async function POST(req: Request) {
   if (message.length < 10) {
     return Response.json({ error: "Message must be at least 10 characters" }, { status: 400 });
   }
+  if (!(await verifyTurnstile(req, turnstileToken, "inquiry"))) {
+    return Response.json({ error: "Human verification failed" }, { status: 403 });
+  }
 
   try {
-    getDb()
-      .prepare(
-        "INSERT INTO inquiries (name, email, company, project_type, message) VALUES (?, ?, ?, ?, ?)",
-      )
-      .run(name, email, company, projectType, message);
+    const sql = await ensureDatabase();
+    await sql`INSERT INTO inquiries (name, email, company, project_type, message)
+      VALUES (${name}, ${email}, ${company}, ${projectType}, ${message})`;
     return Response.json({ ok: true, message: "Inquiry submitted successfully." });
   } catch (err) {
     console.error("Database error saving inquiry:", err);
@@ -55,11 +59,12 @@ export async function GET(req: Request) {
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const admin = await checkAdminAccess(user);
   if (!admin.ok) return Response.json({ error: admin.error }, { status: 403 });
+  const access = await checkOrganizationAccess(user);
+  if (!access.ok) return Response.json({ error: access.error }, { status: access.status });
 
   try {
-    const inquiries = getDb()
-      .prepare("SELECT * FROM inquiries ORDER BY created_at DESC")
-      .all();
+    const sql = await ensureDatabase();
+    const inquiries = await sql`SELECT * FROM inquiries ORDER BY created_at DESC`;
     return Response.json({ ok: true, inquiries });
   } catch (err) {
     console.error("Database error loading inquiries:", err);

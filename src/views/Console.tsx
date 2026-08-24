@@ -1,173 +1,207 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { m } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   Bot,
+  CalendarClock,
+  Check,
+  Copy,
+  Download,
+  Eye,
+  KeyRound,
   Loader2,
   LockKeyhole,
   Send,
   ShieldCheck,
-  Terminal,
-  Copy,
-  Check,
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import {
-  getInquiries,
+  acceptChatConsent,
+  deleteConversationAudit,
+  getAdminConversationAudit,
+  getAdminConversationAudits,
+  getChatConsent,
+  getConversationAudit,
+  getConversationAudits,
   getLlmStatus,
-  getTelemetrySummary,
   sendLlmMessage,
+  withdrawChatConsent,
+  type ChatConsent,
   type ChatMessage,
-  type Inquiry,
+  type ConversationAudit,
+  type ConversationAuditSummary,
   type LlmStatus,
-  type TelemetrySummary,
 } from "@/lib/api";
 
-function isChatMessage(value: unknown): value is ChatMessage {
-  if (!value || typeof value !== "object") return false;
+const LEGACY_HISTORY_KEYS = ["quesar_console_history", "mlai_console_history"];
 
-  const candidate = value as Partial<ChatMessage>;
-  return (
-    (candidate.role === "system" ||
-      candidate.role === "user" ||
-      candidate.role === "assistant") &&
-    typeof candidate.content === "string"
-  );
-}
-
-function loadStoredHistory(): ChatMessage[] {
-  try {
-    const saved = localStorage.getItem("mlai_console_history");
-    const parsed: unknown = saved ? JSON.parse(saved) : [];
-    return Array.isArray(parsed) ? parsed.filter(isChatMessage) : [];
-  } catch {
-    return [];
-  }
+function downloadJson(audit: ConversationAudit) {
+  const blob = new Blob([JSON.stringify(audit, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `quesar-audit-${audit.id}.json`;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 export function Console() {
   const { user, loading, login } = useAuth();
   const navigate = useNavigate();
   const [status, setStatus] = useState<LlmStatus | null>(null);
+  const [consent, setConsent] = useState<ChatConsent | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [prompt, setPrompt] = useState(
-    "Draft a safe rollout plan for a private retrieval agent that can summarize internal research notes.",
+    "Draft a safe rollout plan for a private retrieval agent that summarizes internal research notes.",
   );
-  const [messages, setMessages] = useState<ChatMessage[]>(loadStoredHistory);
   const [reply, setReply] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState("");
+  const [audits, setAudits] = useState<ConversationAuditSummary[]>([]);
+  const [selectedAudit, setSelectedAudit] = useState<ConversationAudit | null>(null);
+  const [adminAudits, setAdminAudits] = useState<ConversationAuditSummary[]>([]);
+  const [adminReason, setAdminReason] = useState("");
+  const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [loadingInquiries, setLoadingInquiries] = useState(false);
-  const [telemetry, setTelemetry] = useState<TelemetrySummary | null>(null);
-  const [telemetryError, setTelemetryError] = useState("");
+  const [error, setError] = useState("");
 
-  const fetchTelemetry = useCallback(async () => {
-    const result = await getTelemetrySummary();
-    if (result.ok) {
-      setTelemetry(result.data);
-      setTelemetryError("");
-    } else {
-      setTelemetry(null);
-      // 403 = the ADMIN_REQUIRE_MFA gate — a state worth showing, not hiding.
-      setTelemetryError(
-        result.status === 403 ? result.error : "Could not load telemetry summary.",
-      );
-    }
-  }, []);
-
-  const fetchInquiries = useCallback(async () => {
-    setLoadingInquiries(true);
-    try {
-      const data = await getInquiries();
-      if (data.ok) {
-        setInquiries(data.inquiries);
-      }
-    } catch (err) {
-      console.error("Failed to fetch inquiries:", err);
-    } finally {
-      setLoadingInquiries(false);
-    }
+  const refreshAudits = useCallback(async () => {
+    const result = await getConversationAudits();
+    setAudits(result.audits);
   }, []);
 
   useEffect(() => {
-    if (user) {
-      fetchInquiries();
-      fetchTelemetry();
-    }
-  }, [user, fetchInquiries, fetchTelemetry]);
-
-  useEffect(() => {
-    localStorage.setItem("mlai_console_history", JSON.stringify(messages));
-    const lastMessage = messages.at(-1);
-    if (lastMessage?.role === "assistant") {
-      setReply(lastMessage.content);
-    }
-  }, [messages]);
-
-  const copyToClipboard = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const clearHistory = () => {
-    setMessages([]);
-    setReply("");
-    localStorage.removeItem("mlai_console_history");
-  };
-
-  useEffect(() => {
-    if (!loading && !user) navigate("/login?mode=signup");
+    if (!loading && !user) navigate("/login");
   }, [loading, navigate, user]);
 
   useEffect(() => {
     if (!user) return;
-    getLlmStatus()
-      .then(setStatus)
-      .catch(() => setError("Could not load protected API status."));
+    // Conversation content is session-memory only. Remove keys written by
+    // earlier builds so a shared browser cannot disclose one user's prompts
+    // to the next account that signs in.
+    for (const key of LEGACY_HISTORY_KEYS) localStorage.removeItem(key);
+    Promise.all([getLlmStatus(), getChatConsent(), getConversationAudits()])
+      .then(([nextStatus, nextConsent, nextAudits]) => {
+        setStatus(nextStatus);
+        setConsent(nextConsent.consent);
+        setAudits(nextAudits.audits);
+      })
+      .catch((cause) => {
+        const message = cause instanceof Error ? cause.message : "Protected console unavailable";
+        setError(message);
+      });
   }, [user]);
+
+  useEffect(() => {
+    const last = messages.at(-1);
+    if (last?.role === "assistant") setReply(last.content);
+  }, [messages]);
+
+  async function acceptPolicy() {
+    if (!consent) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await acceptChatConsent(consent.policyVersion);
+      setConsent({
+        policyVersion: result.consent.policyVersion,
+        accepted: true,
+        consentedAt: result.consent.consentedAt,
+        withdrawnAt: null,
+      });
+    } catch {
+      setError("The conversation audit policy could not be recorded.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function withdrawPolicy() {
+    setBusy(true);
+    try {
+      await withdrawChatConsent();
+      const next = await getChatConsent();
+      setConsent(next.consent);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const trimmed = prompt.trim();
-    if (!trimmed) return;
-
-    const nextMessages: ChatMessage[] = [
-      ...messages,
-      { role: "user" as const, content: trimmed },
-    ].slice(-8);
-
-    setIsSending(true);
+    const content = prompt.trim();
+    if (!content || !consent?.accepted) return;
+    const nextMessages = [...messages, { role: "user" as const, content }].slice(-12);
+    setBusy(true);
     setError("");
-
     try {
       const result = await sendLlmMessage(nextMessages);
-      setMessages([
-        ...nextMessages,
-        { role: "assistant", content: result.text },
-      ]);
+      setMessages([...nextMessages, { role: "assistant", content: result.text }]);
       setReply(result.text);
+      await refreshAudits();
     } catch {
-      setError(
-        "The protected LLM API request failed. Check server logs and provider configuration.",
-      );
+      setError("Protected generation failed before a durable audit could be returned.");
     } finally {
-      setIsSending(false);
+      setBusy(false);
+    }
+  }
+
+  async function viewAudit(id: string, admin = false) {
+    setBusy(true);
+    setError("");
+    try {
+      const result = admin
+        ? await getAdminConversationAudit(id, adminReason.trim())
+        : await getConversationAudit(id);
+      setSelectedAudit(result.audit);
+    } catch {
+      setError(admin ? "Admin audit access requires MFA and a reason of at least 8 characters." : "Audit unavailable.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadAdminAudits() {
+    if (adminReason.trim().length < 8) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await getAdminConversationAudits(adminReason.trim());
+      setAdminAudits(result.audits);
+    } catch {
+      setAdminAudits([]);
+      setError("Administrator inventory requires active organization membership, verified MFA policy, fresh authentication, and a recorded reason.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function exportAudit(id: string) {
+    const result = await getConversationAudit(id, true);
+    downloadJson(result.audit);
+  }
+
+  async function removeAudit(id: string) {
+    if (!window.confirm("Delete this live encrypted audit now? Encrypted backups age out under the one-year retention policy.")) return;
+    setBusy(true);
+    try {
+      await deleteConversationAudit(id);
+      if (selectedAudit?.id === id) setSelectedAudit(null);
+      setMessages([]);
+      setReply("");
+      await refreshAudits();
+    } finally {
+      setBusy(false);
     }
   }
 
   if (loading || (!user && !error)) {
     return (
       <div className="flex min-h-screen items-center justify-center pt-24 text-text-dim">
-        <Loader2 className="mr-3 h-5 w-5 animate-spin" /> Loading secure
-        console...
+        <Loader2 className="mr-3 h-5 w-5 animate-spin" /> Opening Quesar…
       </div>
     );
   }
@@ -175,302 +209,76 @@ export function Console() {
   if (!user) {
     return (
       <div className="container-custom flex min-h-screen items-center justify-center pt-24">
-        <Card variant="glass" className="max-w-md w-full text-center">
+        <Card variant="glass" className="w-full max-w-md text-center">
           <CardHeader>
-            <CardTitle>Sign in required</CardTitle>
-            <CardDescription>
-              Use WorkOS AuthKit to access the MLAI console.
-            </CardDescription>
+            <CardTitle>Invitation required</CardTitle>
+            <CardDescription>Quesar is available to active members of the MLAI beta organization.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button onClick={() => login("/console")} className="w-full">
-              Continue with AuthKit
-            </Button>
-          </CardContent>
+          <CardContent><Button onClick={() => login("/console")} className="w-full">Continue with AuthKit</Button></CardContent>
         </Card>
       </div>
     );
   }
 
   return (
-    <div className="container-custom min-h-screen pt-32 pb-20 font-sans">
-      <m.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+    <main className="container-custom min-h-screen pb-24 pt-32 font-sans">
+      <m.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+        <header className="mb-10 grid gap-6 border-b border-white/10 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-3xl">
-            <div className="label-chip mb-6">
-              <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" />
-              PRIVATE CONSOLE
-            </div>
-            <h1 className="section-title">Protected MLAI LLM API workspace.</h1>
-            <p className="section-subtitle">
-              This page proves the full flow: WorkOS-authenticated users can
-              call server-side LLM endpoints without exposing provider keys to
-              the browser.
-            </p>
+            <div className="label-chip mb-5"><LockKeyhole className="h-3.5 w-3.5" /> INVITE-ONLY BETA</div>
+            <h1 className="section-title">Quesar private operations console.</h1>
+            <p className="section-subtitle">Gemini generation through a metadata-only Cloudflare gateway, with WorkOS organization access and a KMS-encrypted audit trail you control.</p>
           </div>
-          <Button
-            asChild
-            variant="outline"
-            className="rounded-full border-white/10 bg-white/3 text-white hover:bg-white/10 cursor-pointer"
-          >
-            <Link to="/docs">
-              Read API Docs <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
+          <Button asChild variant="outline"><Link to="/security">Review the trust boundary <ArrowRight className="h-4 w-4" /></Link></Button>
+        </header>
 
-        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-          <div className="grid gap-4">
-            <Card variant="glass" className="flex flex-col justify-between">
-              <CardHeader>
-                <ShieldCheck className="mb-4 h-8 w-8 text-cyan-400" />
-                <CardTitle>Session</CardTitle>
-                <CardDescription>Signed in via WorkOS AuthKit.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-text-dim">
-                <div className="break-all rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                  {user.email}
-                </div>
-                <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                  Method: {user.authenticationMethod ?? "AuthKit"}
-                </div>
+        {error && <div role="alert" className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">{error}</div>}
+
+        <div className="grid gap-6 xl:grid-cols-[0.72fr_1.28fr]">
+          <aside className="grid content-start gap-4">
+            <Card variant="glass">
+              <CardHeader><ShieldCheck className="mb-3 h-7 w-7 text-emerald-400" /><CardTitle>Authorized session</CardTitle><CardDescription>Active WorkOS organization membership is revalidated before generation.</CardDescription></CardHeader>
+              <CardContent className="space-y-2 font-mono text-xs text-text-dim"><div className="break-all rounded-lg bg-black/30 p-3">{user.email}</div><div className="rounded-lg bg-black/30 p-3">org: {status?.user.organizationId ?? "verifying"}</div></CardContent>
+            </Card>
+
+            <Card variant="glass">
+              <CardHeader><KeyRound className="mb-3 h-7 w-7 text-cyan-400" /><CardTitle>Generation boundary</CardTitle><CardDescription>No user email is sent to the model provider.</CardDescription></CardHeader>
+              <CardContent className="space-y-2 font-mono text-xs text-text-dim"><div className="rounded-lg bg-black/30 p-3">{status?.llm.model ?? "loading"}</div><div className="rounded-lg bg-black/30 p-3">{status?.llm.gateway ?? "cloudflare-ai-gateway"}</div><div className="rounded-lg bg-black/30 p-3">payload logs: disabled</div></CardContent>
+            </Card>
+
+            <Card variant="glass" className={consent?.accepted ? "border-emerald-400/20" : "border-amber-400/30"}>
+              <CardHeader><CalendarClock className="mb-3 h-7 w-7 text-amber-300" /><CardTitle>One-year audit policy</CardTitle><CardDescription>Prompts and responses are encrypted with per-record keys, retained for 365 days, and available to you and MFA-gated administrators. Every admin read is reason-logged.</CardDescription></CardHeader>
+              <CardContent className="space-y-3">
+                <div className="font-mono text-xs text-text-dim">policy {consent?.policyVersion ?? "loading"}</div>
+                {consent?.accepted ? <Button variant="outline" onClick={withdrawPolicy} disabled={busy} className="w-full">Withdraw consent</Button> : <Button onClick={acceptPolicy} disabled={busy || !consent} className="w-full"><Check className="h-4 w-4" /> Accept before first chat</Button>}
+              </CardContent>
+            </Card>
+          </aside>
+
+          <section className="grid content-start gap-6" aria-label="Quesar generation workspace">
+            <Card variant="glass" className="shadow-2xl">
+              <CardHeader className="flex-row items-start justify-between"><div><Bot className="mb-3 h-8 w-8 text-cyan-400" /><CardTitle>Private generation</CardTitle><CardDescription>A response is returned only after its encrypted audit record is durable. Browser chat stays only in this tab's memory.</CardDescription></div>{messages.length > 0 && <Button variant="ghost" size="icon" aria-label="Clear local conversation" onClick={() => { setMessages([]); setReply(""); }}><Trash2 className="h-4 w-4" /></Button>}</CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} rows={6} maxLength={16000} aria-label="Prompt" className="min-h-40 resize-y rounded-2xl border-white/10 bg-black/40 text-white" />
+                  <Button type="submit" disabled={busy || !consent?.accepted} className="w-full py-6">{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Generate with audit</Button>
+                </form>
+                {reply && <div className="group relative mt-6 rounded-2xl border border-white/5 bg-bg/50 p-5"><div className="mb-3 flex items-center justify-between"><span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400">Quesar response</span><Button variant="ghost" size="icon" aria-label="Copy response" onClick={async () => { await navigator.clipboard.writeText(reply); setCopied(true); setTimeout(() => setCopied(false), 1600); }}>{copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}</Button></div><p className="whitespace-pre-wrap text-sm leading-relaxed text-text-dim">{reply}</p></div>}
               </CardContent>
             </Card>
 
-            <Card variant="glass" className="flex flex-col justify-between">
-              <CardHeader>
-                <Terminal className="mb-4 h-8 w-8 text-cyan-400" />
-                <CardTitle>LLM API</CardTitle>
-                <CardDescription>Server-side provider status.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-text-dim">
-                <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                  Provider: {status?.llm.provider ?? "loading"}
-                </div>
-                <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                  Model: {status?.llm.model ?? "loading"}
-                </div>
-                <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                  Configured: {status?.llm.configured ? "yes" : "fallback mode"}
-                </div>
+            <Card variant="glass">
+              <CardHeader><CardTitle>Your encrypted audits</CardTitle><CardDescription>Read, export, or delete your live conversation records. Backup copies age out under the retention policy.</CardDescription></CardHeader>
+              <CardContent className="space-y-3">
+                {audits.length === 0 ? <p className="text-sm text-text-dim">No durable conversations yet.</p> : audits.map((audit) => <div key={audit.id} className="grid gap-3 rounded-xl border border-white/8 bg-black/20 p-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><div className="font-mono text-xs text-white">{audit.model}</div><div className="mt-1 text-xs text-text-dim">{new Date(audit.createdAt).toLocaleString()} · expires {new Date(audit.expiresAt).toLocaleDateString()}</div></div><div className="flex gap-1"><Button variant="ghost" size="icon" aria-label="View audit" onClick={() => viewAudit(audit.id)}><Eye className="h-4 w-4" /></Button><Button variant="ghost" size="icon" aria-label="Export audit" onClick={() => exportAudit(audit.id)}><Download className="h-4 w-4" /></Button><Button variant="ghost" size="icon" aria-label="Delete audit" onClick={() => removeAudit(audit.id)}><Trash2 className="h-4 w-4 text-red-300" /></Button></div></div>)}
+                {selectedAudit && <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4"><div className="mb-3 flex items-center justify-between"><span className="font-mono text-xs text-cyan-300">audit {selectedAudit.id}</span><Button variant="ghost" size="sm" onClick={() => setSelectedAudit(null)}>Close</Button></div><pre className="max-h-80 overflow-auto whitespace-pre-wrap text-xs leading-relaxed text-text-dim">{JSON.stringify(selectedAudit.content, null, 2)}</pre></div>}
               </CardContent>
             </Card>
 
-            <Card variant="glass" className="flex flex-col justify-between">
-              <CardHeader>
-                <BarChart3 className="mb-4 h-8 w-8 text-cyan-400" />
-                <CardTitle>Inquiry Conversion</CardTitle>
-                <CardDescription>
-                  Privacy-respecting telemetry — event counts only, no
-                  identifiers stored.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-text-dim">
-                {telemetryError ? (
-                  <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5 text-xs leading-relaxed text-amber-200/80">
-                    {telemetryError}
-                  </div>
-                ) : telemetry ? (
-                  <>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        ["Opens", telemetry.conversion.opens],
-                        ["Submits", telemetry.events["inquiry_submit"] ?? 0],
-                        ["Successes", telemetry.conversion.successes],
-                      ].map(([label, value]) => (
-                        <div
-                          key={label}
-                          className="rounded-xl border border-white/5 bg-bg/50 p-3.5 text-center"
-                        >
-                          <div className="text-xl font-bold text-white">{value}</div>
-                          <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-text-dim">
-                            {label}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                      Conversion (open → success):{" "}
-                      {telemetry.conversion.rate === null
-                        ? "no opens yet"
-                        : `${(telemetry.conversion.rate * 100).toFixed(1)}%`}
-                    </div>
-                  </>
-                ) : (
-                  <div className="rounded-xl border border-white/5 bg-bg/50 p-3.5 font-mono text-xs">
-                    loading
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card
-            variant="glass"
-            className="flex flex-col justify-between shadow-2xl"
-          >
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10">
-                  <Bot className="h-6 w-6 text-cyan-400" />
-                </div>
-                <CardTitle className="text-xl">MLAI API Test</CardTitle>
-                <CardDescription>
-                  Send a prompt through `/api/llm/chat`. Provider keys stay on
-                  the Bun server.
-                </CardDescription>
-              </div>
-              {messages.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={clearHistory}
-                  className="text-text-dim hover:text-red-400"
-                  aria-label="Clear History"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <Textarea
-                  value={prompt}
-                  onChange={(event) => setPrompt(event.target.value)}
-                  rows={6}
-                  className="min-h-40 resize-y rounded-2xl border-white/10 bg-black/40 text-white"
-                />
-                {error && (
-                  <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-                    {error}
-                  </div>
-                )}
-                <Button
-                  disabled={isSending}
-                  type="submit"
-                  className="w-full rounded-xl py-6 font-bold cursor-pointer"
-                >
-                  {isSending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                  Send Protected Request
-                </Button>
-              </form>
-
-              {reply && (
-                <div className="mt-6 rounded-2xl border border-white/5 bg-bg/50 p-5 relative group">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-400">
-                      Response
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => copyToClipboard(reply)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      aria-label="Copy response"
-                    >
-                      {copied ? (
-                        <Check className="h-3 w-3 text-cyan-400" />
-                      ) : (
-                        <Copy className="h-3 w-3" />
-                      )}
-                    </Button>
-                  </div>
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-text-dim">
-                    {reply}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card variant="glass" className="lg:col-span-2 shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-xl font-display">
-                  Inquiries Database
-                </CardTitle>
-                <CardDescription>
-                  Submitted partnership and system integration inquiries stored
-                  securely in SQLite.
-                </CardDescription>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fetchInquiries}
-                disabled={loadingInquiries}
-              >
-                {loadingInquiries ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Refresh"
-                )}
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {inquiries.length === 0 ? (
-                <div className="text-center py-8 text-text-dim text-sm">
-                  No inquiries submitted yet. Open the "Start Inquiry" form on
-                  the home page or blog to submit one.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-white/10 text-xs font-bold text-text-dim uppercase tracking-wider">
-                        <th className="py-3 px-4">Name</th>
-                        <th className="py-3 px-4">Company</th>
-                        <th className="py-3 px-4">Focus</th>
-                        <th className="py-3 px-4">Message</th>
-                        <th className="py-3 px-4">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {inquiries.map((inq) => (
-                        <tr
-                          key={inq.id}
-                          className="border-b border-white/5 hover:bg-white/2"
-                        >
-                          <td className="py-3.5 px-4 font-semibold text-white">
-                            {inq.name}
-                            <span className="block text-xs text-text-dim font-normal font-sans">
-                              {inq.email}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-text-dim">
-                            {inq.company}
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <span className="inline-block px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono uppercase">
-                              {inq.project_type}
-                            </span>
-                          </td>
-                          <td
-                            className="py-3.5 px-4 text-text-dim max-w-xs truncate"
-                            title={inq.message}
-                          >
-                            {inq.message}
-                          </td>
-                          <td className="py-3.5 px-4 text-text-dim text-xs font-mono">
-                            {new Date(inq.created_at).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            <Card variant="glass" className="border-violet-400/20"><CardHeader><CardTitle>Administrator audit access</CardTitle><CardDescription>Inventory and decrypted reads are organization-scoped, MFA-gated, fresh-auth gated, and reason-logged.</CardDescription></CardHeader><CardContent className="space-y-3"><Textarea value={adminReason} onChange={(event) => setAdminReason(event.target.value)} rows={2} maxLength={200} placeholder="Reason for this audit access (minimum 8 characters)" /><Button variant="outline" disabled={busy || adminReason.trim().length < 8} onClick={loadAdminAudits}>Load reason-logged inventory</Button>{adminAudits.slice(0, 20).map((audit) => <div key={audit.id} className="flex items-center justify-between gap-3 rounded-lg bg-black/25 p-3"><div className="min-w-0"><div className="truncate font-mono text-xs">{audit.subjectHash}</div><div className="text-xs text-text-dim">{new Date(audit.createdAt).toLocaleString()}</div></div><Button variant="outline" size="sm" disabled={adminReason.trim().length < 8} onClick={() => viewAudit(audit.id, true)}>Read</Button></div>)}</CardContent></Card>
+          </section>
         </div>
       </m.div>
-    </div>
+    </main>
   );
 }

@@ -1,20 +1,23 @@
-import { getDb } from "@/lib/server/db";
+import { ensureDatabase } from "@/lib/server/db";
 import { getSession } from "@/lib/server/session";
-import { checkAdminAccess } from "@/lib/server/workos";
+import { checkAdminAccess, checkOrganizationAccess } from "@/lib/server/workos";
 
 export async function GET(req: Request) {
   const user = await getSession(req);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const admin = await checkAdminAccess(user);
   if (!admin.ok) return Response.json({ error: admin.error }, { status: 403 });
+  const access = await checkOrganizationAccess(user);
+  if (!access.ok) return Response.json({ error: access.error }, { status: access.status });
 
   try {
-    const rows = getDb()
-      .prepare(
-        "SELECT event, COUNT(*) as count FROM telemetry_events GROUP BY event ORDER BY count DESC",
-      )
-      .all() as unknown as Array<{ event: string; count: number }>;
-    const byEvent = Object.fromEntries(rows.map((r) => [r.event, r.count]));
+    const sql = await ensureDatabase();
+    const rows = await sql<{ event: string; count: string }[]>`
+      SELECT event, COUNT(*)::text AS count
+      FROM telemetry_events
+      GROUP BY event
+      ORDER BY COUNT(*) DESC`;
+    const byEvent = Object.fromEntries(rows.map((r) => [r.event, Number(r.count)]));
     const opens = byEvent["inquiry_open"] ?? 0;
     const successes = byEvent["inquiry_success"] ?? 0;
     return Response.json({

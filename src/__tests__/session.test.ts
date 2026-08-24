@@ -36,6 +36,26 @@ afterEach(() => {
 });
 
 describe("clientIpOf", () => {
+  it("prefers Cloudflare's overwritten connecting IP over a spoofed forwarding chain", () => {
+    expect(clientIpOf(reqWith({
+      "cf-connecting-ip": "203.0.113.55",
+      "x-forwarded-for": "198.51.100.77, 203.0.113.55, 10.0.0.1",
+    }))).toBe("203.0.113.55");
+  });
+
+  it("fails closed on forwarding headers without Cloudflare in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    expect(clientIpOf(reqWith({ "x-forwarded-for": "198.51.100.77, 10.0.0.1" }))).toBe(
+      "unknown",
+    );
+  });
+
+  it("rejects arbitrary non-IP header values", () => {
+    expect(clientIpOf(reqWith({ "cf-connecting-ip": "attacker", "x-real-ip": "also-not-ip" }))).toBe(
+      "unknown",
+    );
+  });
+
   it("takes the leftmost X-Forwarded-For hop, not the last", () => {
     // The leftmost entry is the original client. Using any other position lets a
     // caller append junk hops to manufacture a fresh identity per request, which

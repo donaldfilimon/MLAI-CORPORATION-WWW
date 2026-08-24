@@ -1,220 +1,201 @@
-# Deploying to Google Cloud Run
+# Quesar production deployment
 
-This app is a **single Next.js 15 process** that serves the marketing pages **and**
-the `/api/*` route handlers (WorkOS AuthKit, the protected console, LLM, billing,
-inquiries, telemetry). It needs a running server, so it is deployed to **Cloud Run**,
-not a static host.
+Quesar uses a hybrid edge rather than exposing Cloud Run directly:
 
-> GitHub Pages / static export is **not** a supported target: it would drop every
-> `/api/*` route and break auth, the console, billing, inquiries, and telemetry.
-
-## What's in the repo
-
-- [`Dockerfile`](../Dockerfile) — multi-stage `oven/bun` build; the runner executes
-  `next start` on Cloud Run's injected `$PORT`.
-- [`.dockerignore`](../.dockerignore) — keeps secrets (`.env`), the local SQLite DB
-  (`inquiries.db`), `.git`, and `node_modules` out of the image.
-- [`.github/workflows/deploy-cloudrun.yml`](../.github/workflows/deploy-cloudrun.yml) —
-  deploys **after a successful CI run for a push to `main` in this repository**
-  (and via **Run workflow**). It runs `gcloud run deploy --source .`, which builds
-  the Dockerfile with Cloud Build.
-
-  The job's `if:` requires all three of `conclusion == 'success'`,
-  `event == 'push'`, and `head_repository.full_name == github.repository`. That
-  last clause is the trust boundary: the repo is public, and for a pull request
-  opened from a fork's own `main` the `workflow_run` payload reports
-  `head_branch == "main"`, so a branch-name filter alone would let a fork's
-  commit be checked out and handed to Cloud Build **with the production secrets
-  attached**. Do not relax any of the three.
-
-## One-time setup
-
-### 1. GCP project + APIs
-
-```bash
-gcloud config set project YOUR_PROJECT_ID
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com \
-  artifactregistry.googleapis.com secretmanager.googleapis.com
+```text
+visitor
+  -> Cloudflare DNS/CDN/WAF/rate limits/Turnstile
+  -> Google external HTTPS load balancer
+  -> Cloud Armor allowlist of Cloudflare proxy ranges
+  -> Cloud Run (internal + load-balancer ingress; run.app disabled)
+  -> Cloud SQL PostgreSQL + Cloud KMS + Secret Manager
 ```
 
-### 2. Runtime secrets in Secret Manager
+The full Next.js process serves pages and `app/api/*`; GitHub Pages publishes
+only the static `site/` companion. Cloud Run is the application runtime.
 
-The workflow wires these in with `--set-secrets`. Required:
+## Ownership boundaries
 
-```bash
-printf '%s' "sk_live_..."                 | gcloud secrets create WORKOS_API_KEY   --data-file=-
-printf '%s' "client_..."                  | gcloud secrets create WORKOS_CLIENT_ID --data-file=-
-printf '%s' "$(openssl rand -base64 32)"  | gcloud secrets create SESSION_SECRET   --data-file=-
-```
+- [`infra/`](../infra/) OpenTofu owns Google APIs, Artifact Registry, Cloud SQL,
+  KMS, secret containers, runtime/deployer/scheduler identities, GitHub OIDC,
+  Google-managed TLS, the HTTPS load balancer, and the Cloud Armor origin ACL.
+- [`.github/workflows/deploy-cloudrun.yml`](../.github/workflows/deploy-cloudrun.yml)
+  owns revision-specific state: immutable image SHA, Cloud SQL mount, runtime
+  service account, environment, secrets, scaling, ingress, and disabled default URL.
+- Cloudflare owns public DNS, proxy TLS, WAF/rate-limit rules, Turnstile, and AI
+  Gateway. Hostinger remains the registrar until nameserver cutover.
+- WorkOS owns hosted authentication, the invited beta organization, redirects,
+  and the production MFA policy.
 
-Optional (add them to the `--set-secrets` list in the workflow once created):
-`GEMINI_API_KEY`, `STRIPE_PAYMENT_LINK`, `ADMIN_EMAILS`, `ADMIN_REQUIRE_MFA`.
-See [`.env.example`](../.env.example) for what each one does.
+Do not hand-edit Cloud Run environment in the console: the deploy workflow uses
+`--set-env-vars` and `--set-secrets`, which replace revision configuration.
 
-> **`APP_URL` is not in that list, and is not a secret.** It is a public origin and a
-> **required repo variable** (next section). It used to be filed here as an optional
-> secret, and that misclassification is why it was never set: `workos.ts` builds the
-> OAuth redirect URI as `${APP_URL}/api/auth/callback` and defaults to
-> `http://localhost:3000`, which WorkOS does not have registered — so **every deployed
-> revision had login and signup broken for every visitor**, while the pages themselves
-> still returned 200 and both verification `curl`s below still passed.
->
-> Setting it by hand in the Cloud Run console does not stick either: the workflow's
-> `--set-env-vars` **replaces the entire env set** on each deploy. The workflow now
-> fails fast with an `::error::` if the `APP_URL` variable is unset, rather than
-> shipping a site nobody can sign in to. Allowlist the same origin in the WorkOS
-> dashboard. Chicken-and-egg on a brand-new service: run the "Manual deploy without CI"
-> command below once to mint the `*.run.app` URL, then set the variable.
+## 1. Google bootstrap and OpenTofu
 
-### 3. Deployer service account
+Install OpenTofu, authenticate with short-lived administrator ADC, create a
+versioned uniform-access GCS state bucket, and follow [`infra/README.md`](../infra/README.md).
+The first apply must be local because it creates the GitHub OIDC provider used by
+later deployments.
 
-Grant a service account the roles to build + deploy, then give the GitHub workflow
-its key (or, preferred, use Workload Identity Federation — no long-lived key):
+The Cloud SQL instance is PostgreSQL 16, `REGIONAL`, deletion-protected at both
+OpenTofu and API levels, with automated backups and seven days of PITR logs. The
+30 retained automated backups remain well inside the one-year conversation audit
+retention boundary. User-requested deletion removes live ciphertext immediately;
+physical backup aging follows the documented backup schedule.
 
-```bash
-gcloud iam service-accounts create gh-deployer
-PROJECT=YOUR_PROJECT_ID; SA=gh-deployer@$PROJECT.iam.gserviceaccount.com
-for role in run.admin cloudbuild.builds.editor iam.serviceAccountUser \
-            artifactregistry.writer secretmanager.secretAccessor; do
-  gcloud projects add-iam-policy-binding $PROJECT \
-    --member="serviceAccount:$SA" --role="roles/$role"
-done
-gcloud iam service-accounts keys create key.json --iam-account=$SA   # then delete locally after upload
-```
+Before an apply, refresh Cloudflare's authoritative IP lists and update
+`var.cloudflare_ip_ranges` add-first/remove-second. Cloud Armor denies every
+source outside those ranges, so a stale list can cut off the public origin.
 
-### 4. GitHub repo configuration
+## 2. Populate Google Secret Manager
 
-`Settings → Secrets and variables → Actions`:
+OpenTofu creates these containers and populates only `DATABASE_PASSWORD`:
 
-| Kind     | Name                 | Required | Value                                          |
-|----------|----------------------|----------|------------------------------------------------|
-| Variable | `GCP_PROJECT_ID`     | yes      | your project id                                |
-| Variable | `GCP_REGION`         | yes      | e.g. `us-central1`                             |
-| Variable | `CLOUD_RUN_SERVICE`  | yes      | e.g. `mlai-www`                                |
-| Variable | `APP_URL`            | **yes**  | deployed origin, e.g. `https://mlai-corp.com` — OAuth redirect base; **the deploy fails without it** |
-| Variable | `FRONTEND_URL`       | no       | only if the frontend is served somewhere other than `APP_URL`. Leave the variable **absent**, not blank — the workflow omits the key when it is empty, because `workos.ts`'s `?? APP_URL` fallback does not catch `""` |
-| Variable | `RUNTIME_SA`         | no (recommended) | minimal runtime service account; unset means the revision runs as the default Compute SA (project Editor) |
-| Secret   | `GCP_SA_KEY`         | yes      | contents of `key.json` (or use WIF)            |
-
-## Deploy
-
-- **Automatic:** a successful **CI** run for a **push to `main`** in this repository.
-  Pull requests never deploy, and pull requests from forks never deploy — see the
-  `if:` note above.
-- **Manual:** Actions → *Deploy to Cloud Run* → **Run workflow**.
-
-### Manual deploy without CI (local `gcloud`)
-
-This mirrors the workflow; keep the two in sync. Omitting `APP_URL` or `DATABASE_URL`
-here reproduces the exact defects the workflow now guards against.
-
-```bash
-gcloud run deploy mlai-www \
-  --source . \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --max-instances=1 \
-  --set-env-vars "NODE_ENV=production,DATABASE_URL=/app/data/inquiries.db,APP_URL=https://your-origin.example" \
-  --set-secrets "WORKOS_API_KEY=WORKOS_API_KEY:latest,WORKOS_CLIENT_ID=WORKOS_CLIENT_ID:latest,SESSION_SECRET=SESSION_SECRET:latest"
-```
-
-## Persisting the SQLite database
-
-**Read this before treating inquiries or telemetry as durable.** The app writes
-`inquiries.db` (inquiries + `telemetry_events`) with `node:sqlite`. `DATABASE_URL`
-points at `/app/data/inquiries.db`, a directory the `Dockerfile` prepares and chowns —
-but **the deploy mounts no volume there**. On Cloud Run that path is the container's
-writable layer, which is *in-memory tmpfs counted against the memory limit*.
-
-What the workflow does today (`--max-instances=1`) is a **stopgap**. It fixes one of
-the three problems and leaves the others:
-
-| Problem | With `--max-instances=1` |
+| Secret | Requirement |
 |---|---|
-| Sharding — at the default `max-instances=100`, instance #2 answering `GET /api/inquiries` reads an empty DB while instance #1 holds the rows, and `db.ts` recreates the tables on open, so the admin view shows a plausible-looking subset rather than an error | **fixed** |
-| Data lost on scale-to-zero / container recycle | **still broken** |
-| Data lost on every redeploy (new revision = new container = empty tmpfs) | **still broken** |
-| DB growth consumes container RAM until OOM | **still broken**, just bounded to one instance |
+| `WORKOS_API_KEY` | production WorkOS environment |
+| `WORKOS_CLIENT_ID` | matching production AuthKit client |
+| `SESSION_SECRET` | at least 32 random characters |
+| `DATABASE_PASSWORD` | generated by OpenTofu |
+| `CLOUDFLARE_AI_GATEWAY_TOKEN` | authenticated gateway token; server-only |
+| `AUDIT_SUBJECT_PEPPER` | at least 32 random characters |
+| `TURNSTILE_SECRET` | production widget secret; never in client code |
+| `ADMIN_EMAILS` | comma-separated, deliberately small allowlist |
 
-Pick one of the following. **Option A is the current state; it is not sufficient for
-real sales leads.**
-
-### Option A — single instance (current, stopgap)
-
-Already in the workflow. It is a **trade, not free**: one instance at Cloud Run's
-default per-instance concurrency of 80 is now the ceiling for the *entire site*, so a
-launch, a link-aggregator front page, or a crawler burst will queue and then start
-returning 429s. You are buying data coherence with availability. If that ceiling
-matters more than the admin view being coherent, go to Option B or C rather than
-raising `--max-instances` — see the warning below.
-
-> ⚠ `--max-instances=1` is passed on every deploy, so raising it in the Cloud Run
-> console is **stomped back to 1 by the next deploy**, with nothing in the logs
-> explaining why throttling returned. Change it in the workflow, not the console.
-> `--min-instances` is deliberately *not* passed, so that one **does** persist.
-
-Optionally narrow the loss window to redeploys only by keeping one instance warm —
-this incurs **always-on billing**, so it is left as a deliberate operator action
-rather than a workflow default:
+Add versions over stdin so values do not land in a tracked file:
 
 ```bash
-gcloud run services update mlai-www --region us-central1 --min-instances=1
+gcloud secrets versions add SECRET_NAME --project YOUR_PROJECT_ID --data-file=-
 ```
 
-Note this survives *idling*, not deploys: the next revision still starts empty.
+The least-privilege runtime service account receives accessor permission only on
+these containers, Cloud SQL Client, and encrypt/decrypt on the audit CryptoKey.
 
-### Option B — Cloud Storage FUSE volume mount
+## 3. GitHub Actions variables
 
-Gives the file a home outside the container, and is the smallest change that survives
-a redeploy — **but read the caveat.** Requires a bucket you create first; there is
-deliberately no bucket name baked into the workflow.
+Copy the `runtime_configuration` OpenTofu output, then add these product/provider
+values under **Settings -> Secrets and variables -> Actions -> Variables**:
+
+| Variable | Value |
+|---|---|
+| `GCP_PROJECT_ID` | OpenTofu project |
+| `GCP_REGION` | `us-east1` |
+| `CLOUD_RUN_SERVICE` | `quesar-web` |
+| `ARTIFACT_REPOSITORY` | `quesar` |
+| `WIF_PROVIDER` | full provider resource from output |
+| `DEPLOYER_SA` | OIDC deployer email from output |
+| `RUNTIME_SA` | runtime email from output |
+| `APP_URL` | `https://quesar.cloud` |
+| `CLOUD_SQL_CONNECTION_NAME` | OpenTofu output |
+| `DATABASE_NAME` / `DATABASE_USER` | OpenTofu outputs |
+| `WORKOS_ORGANIZATION_ID` | one invited production organization |
+| `WORKOS_MFA_POLICY_VERIFIED` | `true` only after manually verifying Required MFA in production WorkOS |
+| `CLOUDFLARE_AI_GATEWAY_URL` | authenticated Cloudflare AI REST `/ai/v1/chat/completions` URL |
+| `CLOUDFLARE_AI_GATEWAY_ID` | dedicated gateway ID, for example `quesar` |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | production widget sitekey |
+| `TURNSTILE_HOSTNAMES` | `quesar.cloud,www.quesar.cloud` |
+| `AUDIT_KMS_KEY_NAME` | full CryptoKey output |
+| `AUDIT_SCHEDULER_SERVICE_ACCOUNT` | scheduler output |
+| `AUDIT_SCHEDULER_AUDIENCE` | `https://quesar.cloud/api/internal/audits/expire` |
+
+There is no `GCP_SA_KEY` secret. The OIDC provider accepts only the exact GitHub
+repository on `refs/heads/main`; the deployment job additionally requires a
+successful push CI run from the same repository and checks out the validated SHA.
+
+## 4. WorkOS
+
+In the production WorkOS environment:
+
+1. Create or select the single Quesar beta organization and use its `org_...` ID.
+2. Register `https://quesar.cloud/api/auth/callback` as a redirect URI.
+3. Register `https://quesar.cloud` as the application/home origin.
+4. Invite the initial members. `/signup` does not self-provision; it redirects to
+   the request-access funnel.
+5. Follow [`mfa-workos-runbook.md`](mfa-workos-runbook.md), enroll every admin,
+   then require MFA in the production environment.
+
+Every protected LLM/status/consent request revalidates active membership. User
+email is used for the session/admin allowlist but is not sent to Gemini and is not
+stored in conversation audits.
+
+## 5. Cloudflare
+
+Use the selected Cloudflare account for the `quesar.cloud` zone. Before changing
+nameservers, reproduce every existing Hostinger mail record, including MX, SPF,
+DMARC, DKIM, verification, and any private records. Mail records remain DNS-only.
+
+Configure:
+
+- proxied `A` records for `@` and `www` to OpenTofu's `load_balancer_ip`;
+- SSL/TLS mode **Full (strict)**, Always Use HTTPS, TLS 1.2 minimum, and automatic
+  HTTPS rewrites where compatible;
+- Cloudflare Managed and OWASP managed rules when the chosen plan supports them;
+- a managed challenge rate limit for public inquiry POSTs, and a narrowly scoped
+  skip for `POST /api/internal/audits/expire` so Cloud Scheduler's OIDC request is
+  not interactively challenged—the application still verifies its exact audience
+  and scheduler service-account email;
+- a Turnstile managed widget restricted to `quesar.cloud` and `www.quesar.cloud`;
+- an authenticated AI Gateway for `google/gemini-3.7-flash` through Cloudflare's
+  AI REST API and Unified Billing. Use a narrowly scoped Cloudflare API token;
+  creating the gateway and accepting billing terms require an authorized operator.
+  Application requests send `cf-aig-collect-log-payload: false` and
+  `cf-aig-skip-cache: true`; verify the gateway dashboard records metadata without
+  prompt/response bodies.
+
+Turnstile production widget creation returns a secret once. Store it directly in
+Google Secret Manager and place only the public sitekey in GitHub variables.
+
+## 6. Deploy
+
+Push the reviewed commit to `main` and wait for **CI**. A successful push run wakes
+**Deploy to Cloud Run**, which:
+
+1. authenticates with GitHub OIDC;
+2. verifies every required variable and Secret Manager version;
+3. builds and pushes a SHA-tagged image with the public Turnstile sitekey;
+4. deploys with the dedicated runtime identity and Cloud SQL socket;
+5. sets load-balancer-only ingress, disables `run.app`, and verifies both controls.
+
+Manual `workflow_dispatch` is the deliberate maintainer-only redeploy exception.
+Fork pull requests never receive production deployment context.
+
+## 7. DNS cutover
+
+Cutover is a separate, destructive provider action. Do it only after the Cloud Run
+revision, load balancer IP, Google certificate resource, WorkOS redirect, Cloudflare
+zone records, Turnstile, gateway, and preserved mail records are ready.
+
+At Hostinger, replace the parked nameservers with the two nameservers Cloudflare
+assigns. Do not delete the domain, transfer the registrar, or alter mail service.
+Expect the Google-managed certificate to remain provisioning until public DNS
+reaches the load balancer; Cloudflare proxy certificates may activate on a separate
+timeline.
+
+## 8. Live acceptance
+
+Record each layer separately:
 
 ```bash
-gcloud storage buckets create gs://YOUR_BUCKET --location=us-central1
-# grant the RUNTIME service account roles/storage.objectAdmin on the bucket, then:
-gcloud run deploy mlai-www \
-  --source . \
-  --region us-central1 \
-  --add-volume=name=data,type=cloud-storage,bucket=YOUR_BUCKET \
-  --add-volume-mount=volume=data,mount-path=/app/data \
-  ... # same --set-env-vars / --set-secrets as above
+curl -fsSI https://quesar.cloud/
+curl -fsS https://quesar.cloud/api/llm/status
+BASE_URL=https://quesar.cloud bun run crawl
 ```
 
-> ⚠ **Cloud Storage FUSE is not a POSIX filesystem and provides no file locking.**
-> Google's own limitation text: *"Cloud Storage FUSE does not provide concurrency
-> control for multiple writes (file locking) to the same file. When multiple writes
-> try to replace a file, the last write wins and all previous writes are lost."*
-> SQLite depends on locking and on partial in-place writes for its journal/WAL, so
-> this mount can **corrupt the database** if more than one writer ever exists. It is
-> only defensible in combination with `--max-instances=1`, and even then it is a
-> known-risky pattern, not a clean fix.
+Then verify in a real browser:
 
-### Option C — a real database (the actually-correct fix)
+1. public pages, mobile navigation, static assets, CSP, and no hydration errors;
+2. inquiry validation, Turnstile success/reset, Postgres persistence, and admin read;
+3. uninvited WorkOS user denied; invited member callback succeeds;
+4. consent required before first chat;
+5. Gemini response reports `gemini-3.7-flash` and a durable audit ID;
+6. user read/export/delete controls work and deletion is final in the live table;
+7. MFA admin reads require a reason and create access events;
+8. AI Gateway payload bodies are absent;
+9. direct load-balancer requests from non-Cloudflare sources receive Cloud Armor 403,
+   and the default `run.app` URL is disabled;
+10. Cloud Scheduler produces a successful retention invocation;
+11. existing inbound/outbound domain mail remains operational.
 
-Move inquiries + telemetry off SQLite onto Cloud SQL (Postgres) — or any managed
-store — and connect over the Cloud SQL connector. This is the only option with real
-durability, concurrent-writer safety, and backups. It is a code change in
-`src/lib/server/db.ts` and its callers, not a deploy-flag change, so it is out of
-scope for the deploy configuration and is recorded here as the intended destination.
-
-## Verify after deploy
-
-```bash
-URL=$(gcloud run services describe mlai-www --region us-central1 --format='value(status.url)')
-curl -fsS "$URL/api/llm/status"       # 200 JSON — confirms route handlers run
-curl -fsS "$URL/financial-model"      # 200 HTML — the static page renders
-
-# Confirm APP_URL actually landed on the revision. --set-env-vars replaces the
-# whole env set, so this is the only reliable check that it survived the deploy.
-gcloud run services describe mlai-www --region us-central1 \
-  --format='value(spec.template.spec.containers[0].env)'
-```
-
-Auth degrades gracefully if WorkOS/session secrets are missing (redirects with
-`?error=auth_not_configured`), so a 200 on the pages doesn't by itself prove auth is
-wired — **sign in once** to confirm the WorkOS callback + `APP_URL` round-trip. A wrong
-or missing `APP_URL` shows up only here: every other probe passes.
-
-Also confirm the fork-PR guard held the first time a pull request lands: the
-*Deploy to Cloud Run* job should appear as **skipped**, not run, for a PR's CI
-completion.
+Do not call the deployment complete from local gates alone. OpenTofu validation,
+successful CI/deploy runs, provider state, DNS propagation, and these live checks
+are distinct evidence layers.

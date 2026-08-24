@@ -7,7 +7,7 @@ export const CORPUS: Doc[] = [
   // ---- WDBX internals ----
   { id: "hnsw", tag: "wdbx", title: "ANN indexing", text: "Approximate nearest-neighbor indexes are the intended production path for scaling beyond the browser demo corpus." },
   { id: "mvcc", tag: "wdbx", title: "MVCC snapshots", text: "Multiversion concurrency control lets readers acquire snapshots without locks; writes create new versions so inference never blocks on ingestion." },
-  { id: "shard", tag: "wdbx", title: "Query routing", text: "The demo routes queries deterministically across local shards; production routing claims should point back to source evidence." },
+  { id: "partition", tag: "wdbx", title: "Illustrative partitioning", text: "The browser demo assigns deterministic local partitions to visualize a general routing model; the active WDBX cluster transport explicitly does not implement sharding." },
   { id: "chain", tag: "wdbx", title: "Block chaining", text: "Each block header carries a cryptographic hash of the previous block, making conversation history tamper-evident and strictly ordered." },
   { id: "backtrack", tag: "wdbx", title: "Neural backtracking", text: "Traverse the chain backwards to find the exact divergence point where a model began to hallucinate or drift from ground truth." },
   { id: "retention", tag: "wdbx", title: "Retention boundaries", text: "Privacy-first memory needs explicit retention and deletion semantics before hosted deployments make customer-facing promises." },

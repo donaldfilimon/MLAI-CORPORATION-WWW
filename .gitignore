@@ -34,3 +34,9 @@ ds-bundle/
 .design-sync/node_modules
 .design-sync/lab-compiled.css
 .cache/
+# OpenTofu local working/state artifacts. The provider lock file is tracked.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log

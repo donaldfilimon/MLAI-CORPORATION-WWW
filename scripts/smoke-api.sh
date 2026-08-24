@@ -18,7 +18,8 @@
 #   /api/auth/me          — returns 200 {"user":null} when logged out (by design)
 #   /api/auth/login       — 3xx redirect into WorkOS AuthKit (or config error page)
 #
-# Inquiry happy-path POST writes to inquiries.db, so it only runs with SMOKE_WRITE=1.
+# Inquiry happy-path writes to Postgres and spends a one-time Turnstile token, so
+# it runs only with SMOKE_WRITE=1 and SMOKE_TURNSTILE_TOKEN from a live widget.
 
 set -u
 BASE_URL="${BASE_URL:-http://localhost:3000}"
@@ -74,7 +75,7 @@ CSP_IP="203.0.113.$((RANDOM % 200 + 1))"
 
 check "csp-report: report-uri shape → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
   -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/csp-report' \
-  -d '{"csp-report":{"document-uri":"https://mlai-corp.com/","violated-directive":"script-src","blocked-uri":"https://evil.test/x.js"}}')"
+  -d '{"csp-report":{"document-uri":"https://quesar.cloud/","violated-directive":"script-src","blocked-uri":"https://evil.test/x.js"}}')"
 
 check "csp-report: Reporting API batch → 204" 204 "$(code -X POST "$BASE_URL/api/csp-report" \
   -H "x-forwarded-for: $CSP_IP" -H 'content-type: application/reports+json' \
@@ -157,9 +158,13 @@ check "inquiries: null body → 400" 400 "$(code -X POST "$BASE_URL/api/inquirie
 
 # ── opt-in write + session paths ─────────────────────────────────────────────
 if [ "${SMOKE_WRITE:-0}" = "1" ]; then
+  if [ -z "${SMOKE_TURNSTILE_TOKEN:-}" ]; then
+    echo "  FAIL inquiries write: SMOKE_TURNSTILE_TOKEN is required"
+    exit 1
+  fi
   check "inquiries: valid submit → 200" 200 "$(code -X POST "$BASE_URL/api/inquiries" \
     -H 'content-type: application/json' \
-    -d '{"name":"Smoke Test","email":"smoke@test.local","company":"Smoke Co","projectType":"research","message":"Automated smoke-test inquiry; safe to delete."}')"
+    -d "{\"name\":\"Smoke Test\",\"email\":\"smoke@test.local\",\"company\":\"Smoke Co\",\"projectType\":\"research\",\"message\":\"Automated smoke-test inquiry; safe to delete.\",\"turnstileToken\":\"${SMOKE_TURNSTILE_TOKEN}\"}")"
 fi
 
 if [ -n "${SESSION_COOKIE:-}" ]; then

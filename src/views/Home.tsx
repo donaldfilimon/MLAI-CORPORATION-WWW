@@ -1,121 +1,48 @@
-import React from 'react';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Hero } from '../components/Hero';
-import { Reveal } from '../components/Reveal';
-import { Stats } from '../components/Stats';
-import { FAQ } from '../components/FAQ';
-import { PersonaLegend } from '../components/PersonaLegend';
-import { PersonaVoices } from '../components/PersonaVoices';
-import { Button } from '@/components/ui/button';
-import {
-  AccentGlow,
-  Callout,
-  DeepDive,
-  Eyebrow,
-  FeatureCard,
-  NextUp,
-  Section,
-  SpecList,
-  type Accent,
-  type NextUpItem,
-} from '@/components/site';
-import { industries } from '@/data/categories/industries';
-import { platform, runtime } from '@/data/categories/platform';
-import { products } from '@/data/categories/products';
-import { research } from '@/data/categories/research';
-import { services } from '@/data/categories/services';
-import { useUI } from '@/lib/ui-context';
+import { ArrowRight, CheckCircle2, LockKeyhole, Network, ShieldCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Hero } from "@/components/Hero";
+import { Reveal } from "@/components/Reveal";
+import { Button } from "@/components/ui/button";
+import { AccentGlow, Eyebrow, FeatureCard, Section, SpecList } from "@/components/site";
+import { research } from "@/data/categories/research";
+import { useUI } from "@/lib/ui-context";
 
-const Technology = React.lazy(() => import('../components/Technology').then(module => ({ default: module.Technology })));
-
-/**
- * Accents here are the PRODUCT axis (`site/accent.ts`), assigned from what each
- * capability is about — persona orchestration → abbey, retrieval → wdbx,
- * runtime policy enforcement → abi. Not the persona color axis.
- */
-const capabilities: { title: string; description: string; accent: Accent }[] = [
+const controls = [
   {
-    title: 'Agentic orchestration',
-    description: 'Coordinate Abbey, Aviva, and Abi personas with auditable task handoffs, bounded autonomy, and clear operator control.',
-    accent: 'abbey',
+    title: "Identity before inference",
+    desc: "Production is designed to check WorkOS organization membership at sign-in and before each protected generation. Revocation fails closed once provider configuration is live.",
+    accent: "abi" as const,
   },
   {
-    title: 'WDBX retrieval core',
-    description: 'Weighted backtrace graphs preserve context, reduce hallucination surfaces, and keep high-throughput retrieval explainable.',
-    accent: 'wdbx',
+    title: "A minimized provider boundary",
+    desc: "Quesar's production boundary excludes user email from Gemini requests and is configured for operational metadata without request/response payload logging.",
+    accent: "abbey" as const,
   },
   {
-    title: 'Policy-locked execution',
-    description: 'Constraint enforcement, audit trails, and human approval gates are designed into the runtime instead of bolted on later.',
-    accent: 'abi',
+    title: "A record the user controls",
+    desc: "The production contract returns a response only after a KMS-wrapped per-record audit is durable, with explicit consent, export, live deletion, and one-year expiry.",
+    accent: "wdbx" as const,
   },
 ];
 
-const workflow = [
-  'Map high-risk workflows, latency budgets, data residency, and approval boundaries.',
-  'Prototype retrieval, orchestration, and safety layers against production-like traffic.',
-  'Deploy with monitoring, benchmark baselines, and continuous reliability reviews.',
-];
+const requestPath = [
+  ["01", "Authenticate", "WorkOS establishes the session and active MLAI beta membership."],
+  ["02", "Consent", "The current audit policy must be accepted before content leaves the application."],
+  ["03", "Generate", "Gemini 3.7 Flash runs through an authenticated, no-payload-log Cloudflare gateway."],
+  ["04", "Encrypt", "The response and its prompt history are sealed with a fresh AES-256-GCM data key."],
+  ["05", "Commit", "Cloud KMS wraps the data key and Postgres commits the audit before the response returns."],
+] as const;
 
-const operatingContract = [
-  'Trace every retrieval path back to durable context.',
-  'Route requests through the persona best suited to the job.',
-  'Keep operator approval close to actions that can change state.',
-];
+const wdbxFacts = [
+  { k: "Active implementation", v: "Rust · abi-wdbx" },
+  { k: "Index", v: "Layered HNSW" },
+  { k: "Graph degree", v: "M = 16" },
+  { k: "Construction breadth", v: "EF_CONSTRUCTION = 40" },
+  { k: "Search breadth", v: "EF_SEARCH = 32" },
+  { k: "Transactions", v: "MVCC" },
+] as const;
 
 const featuredResearch = research.publications.slice(0, 3);
-const featuredServices = services.slice(0, 4);
-
-/** The four platform layers, mapped onto the DeepDive card shape. */
-const platformLayers = platform.map((item) => ({
-  title: item.title,
-  body: item.description,
-  meta: item.detail,
-}));
-
-/**
- * The six runtime layers (L6 interface → L1 audit), mapped onto the DeepDive
- * card shape with the tier label as the mono footnote. Accented `abi` — the
- * product/runtime axis, not the persona axis.
- */
-const runtimeLayerCards = runtime.layers.map((layer) => ({
-  title: layer.title,
-  body: layer.description,
-  meta: layer.tier,
-}));
-
-/**
- * Closing wayfinding. Descriptions are trimmed from the destinations' own
- * `route-meta.ts` copy so nothing new is claimed here, and every href is a real
- * route directory under `app/`.
- */
-const nextUp: NextUpItem[] = [
-  {
-    label: 'Live demo',
-    href: '/demo',
-    desc: 'Run a faithful in-browser miniature of the WDBX query path — real cosine search over deterministic embeddings, shard routing, MVCC snapshots, and a hash-chained query log.',
-    accent: 'wdbx',
-  },
-  {
-    label: 'Docs',
-    href: '/docs',
-    desc: 'Platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.',
-    accent: 'abi',
-  },
-  {
-    label: 'Research',
-    href: '/research',
-    desc: 'Notes on WDBX retrieval, graph provenance, policy-gated agents, offline workflows, and production AI safety.',
-    accent: 'abbey',
-  },
-  {
-    label: 'Link hub',
-    href: '/links',
-    desc: "One screen for MLAI's important doors — source repositories, reference docs, product pages, research, and the founder's profile.",
-    accent: 'wdbx',
-  },
-];
 
 export function Home() {
   const { openInquiry } = useUI();
@@ -126,255 +53,76 @@ export function Home() {
 
       <Reveal width="100%">
         <Section
-          id="home-capabilities-heading"
+          id="control-plane"
           className="relative w-full"
-          eyebrow="PRODUCTION AI FOUNDATIONS"
-          title="One architecture from memory to action."
-          lead="WDBX keeps context traceable, Abbey · Aviva · Abi choose the right operating voice, and policy gates keep agent work inside reviewable boundaries."
-        >
-          {/* `.container-custom` is not positioned, so this still resolves
-              against the <section> and stays full-bleed. */}
-          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-400/30 to-transparent" aria-hidden="true" />
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {capabilities.map((item) => (
-              <FeatureCard key={item.title} title={item.title} desc={item.description} accent={item.accent} />
-            ))}
-          </div>
-
-          <Callout label="Operating contract" className="mt-10">
-            <ol role="list" className="grid gap-3">
-              {operatingContract.map((item, index) => (
-                <li key={item} className="flex gap-3">
-                  <span
-                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10 font-mono text-[10px] text-cyan-200"
-                    aria-hidden="true"
-                  >
-                    {index + 1}
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ol>
-          </Callout>
-
-          {/* Persona legend — keyed to the hero galaxy's three clusters. */}
-          <div className="mt-12 flex flex-col items-center">
-            <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-text-dim/60">
-              Three minds, one router
-            </p>
-            <PersonaLegend />
-            {/* Hear each mind — neural TTS, opt-in + lazy (client-only). */}
-            <PersonaVoices className="mt-6" />
-          </div>
-        </Section>
-      </Reveal>
-
-      <section className="relative w-full section-y bg-surface/20 noise-overlay" aria-labelledby="home-workflow-heading">
-        <Reveal width="100%">
-          <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            <div>
-              <Eyebrow className="mb-6">DELIVERY MODEL</Eyebrow>
-              <h2 id="home-workflow-heading" className="section-title">A practical path to reliable autonomy.</h2>
-              <p className="text-lg leading-relaxed text-text-dim">
-                We start with the operational risk profile, then build only the layers needed to make your system observable, governable, and fast enough for real users.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild className="rounded-full bg-white px-5 font-bold text-black hover:bg-cyan-50">
-                  <Link to="/services">See Services <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
-                </Button>
-                <Button variant="outline" onClick={openInquiry} className="rounded-full border-white/10 bg-white/3 px-5 text-white hover:bg-white/10 hover:text-white">
-                  Start Inquiry
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative rounded-[2rem] border border-white/10 bg-bg/70 p-4 shadow-2xl shadow-cyan-950/20 backdrop-blur">
-              <div className="absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-sky-200/40 to-transparent" aria-hidden="true" />
-              <ol className="grid gap-3" aria-label="MLAI delivery workflow">
-                {workflow.map((step, index) => (
-                  <li key={step} className="flex gap-4 rounded-3xl border border-white/8 bg-white/3 p-5 transition-colors hover:border-cyan-300/20 hover:bg-white/[0.045]">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 font-mono text-sm font-bold text-cyan-300 ring-1 ring-cyan-400/20">
-                      0{index + 1}
-                    </span>
-                    <p className="pt-1 text-sm leading-relaxed text-text-dim">{step}</p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      <React.Suspense fallback={<div className="h-96 w-full bg-surface/20" aria-hidden="true" />}>
-        <Technology />
-      </React.Suspense>
-
-      <Reveal width="100%">
-        <Section
-          id="home-platform-heading"
-          className="w-full bg-surface/20"
-          eyebrow="PLATFORM LAYERS"
-          title="The stack behind reliable AI workflows."
-          lead="MLAI separates traceability, control, evaluation, and deployment so teams can improve one layer without breaking the rest of the system."
-        >
-          <DeepDive items={platformLayers} cols={2} />
-
-          {/* The L6→L1 runtime stack the capabilities above are built on.
-              Copy + corroboration notes live in `data/categories/platform.ts`. */}
-          <div className="mt-16">
-            <Eyebrow accent="abi" className="mb-4">{runtime.section.eyebrow}</Eyebrow>
-            <h3 className="font-display text-2xl font-bold tracking-tight text-white">{runtime.section.title}</h3>
-            <p className="mt-3 max-w-3xl text-base leading-relaxed text-text-dim">{runtime.section.lead}</p>
-            <DeepDive items={runtimeLayerCards} cols={3} accent="abi" className="mt-8" />
-          </div>
-
-          {/* Memory-model spec — configuration facts from the mirrored WDBX docs. */}
-          <div className="mt-16 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div>
-              <Eyebrow accent="wdbx" className="mb-4">{runtime.memorySection.eyebrow}</Eyebrow>
-              <h3 className="font-display text-2xl font-bold tracking-tight text-white">{runtime.memorySection.title}</h3>
-              <p className="mt-3 text-base leading-relaxed text-text-dim">{runtime.memorySection.lead}</p>
-            </div>
-            <SpecList rows={runtime.memoryModel} />
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <span className="text-sm text-text-dim">Deep dives:</span>
-            {products.map((p) => (
-              <Link
-                key={p.slug}
-                to={`/products/${p.slug}`}
-                className="glass-card group inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white"
-              >
-                {p.name}
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-              </Link>
-            ))}
-            <Link
-              to="/showcase"
-              className="glass-card group inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white"
-            >
-              Films &amp; Design Lab
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-            </Link>
-          </div>
-        </Section>
-      </Reveal>
-
-      <section className="w-full section-y" aria-labelledby="home-industries-heading">
-        <Reveal width="100%">
-          <div className="container-custom grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-            <div>
-              <Eyebrow className="mb-6">WHERE IT FITS</Eyebrow>
-              <h2 id="home-industries-heading" className="section-title">Built for teams with real constraints.</h2>
-              <p className="text-lg leading-relaxed text-text-dim">The site, console, and API are organized around private deployments, measurable controls, and AI features that can survive production review.</p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {industries.map((industry) => (
-                <div key={industry} className="rounded-3xl border border-white/10 bg-white/3 p-5 text-sm leading-relaxed text-text-dim">
-                  <CheckCircle2 className="mb-4 h-5 w-5 text-cyan-300" aria-hidden="true" />
-                  {industry}
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      <Reveal width="100%">
-        <Section
-          id="home-research-heading"
-          className="w-full"
-          eyebrow="RESEARCH TO RUNTIME"
-          title="Selected architecture notes."
-          lead="A focused preview of the research themes behind MLAI systems."
+          eyebrow="THE CONTROL PLANE"
+          title="The useful unit is not a chat. It is a governed event."
+          lead="Quesar treats identity, consent, inference, encryption, and retention as one request contract—not five dashboard settings operators must remember to align."
         >
           <div className="grid gap-6 lg:grid-cols-3">
-            {featuredResearch.map((item) => (
-              <Link
-                key={item.title}
-                to={`/research/${item.slug}`}
-                className="glass-card group flex h-full flex-col transition-colors hover:border-cyan-500/20"
-              >
-                <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-300">
-                  <span>{item.tag}</span>
-                  <span className="h-1 w-1 rounded-full bg-white/30" aria-hidden="true" />
-                  <span className="text-text-dim/70">{item.date}</span>
-                </div>
-                <h3 className="text-xl font-display font-bold leading-tight text-white mb-3 group-hover:text-cyan-300 transition-colors">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-text-dim mb-4">{item.abstract}</p>
-                <span className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
-                  Read paper <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-10">
-            <Button asChild variant="outline" className="rounded-full border-white/10 bg-white/3 px-5 text-white hover:bg-white/10 hover:text-white">
-              <Link to="/research">View research archive <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
-            </Button>
+            {controls.map((control) => <FeatureCard key={control.title} {...control} />)}
           </div>
         </Section>
       </Reveal>
 
-      <Reveal width="100%">
-        <Section
-          id="home-services-heading"
-          className="w-full bg-surface/20"
-          eyebrow="ENGINEERING SERVICES"
-          title="Focused help where reliability matters most."
-          lead="Architecture, integration, auditing, and deployment support for high-stakes AI programs."
-        >
-          <div className="grid gap-6 md:grid-cols-2">
-            {featuredServices.map((service) => (
-              <FeatureCard key={service.title} title={service.title} desc={service.description} />
-            ))}
-          </div>
-
-          <div className="mt-10">
-            <Button asChild variant="outline" className="rounded-full border-white/10 bg-white/3 px-5 text-white hover:bg-white/10 hover:text-white">
-              <Link to="/services">Explore all services <ArrowRight className="w-4 h-4" aria-hidden="true" /></Link>
-            </Button>
-          </div>
-        </Section>
-      </Reveal>
-
-      <Stats />
-
-      <FAQ />
-
-      <section className="w-full px-6 section-y" aria-labelledby="home-cta-heading">
+      <section className="relative w-full border-y border-white/6 bg-surface/20 section-y noise-overlay" aria-labelledby="request-path-heading">
         <Reveal width="100%">
-          <div className="container-custom">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-linear-to-br from-cyan-600/20 via-bg to-sky-500/10 p-8 md:p-14">
-              <AccentGlow accent="wdbx" />
-              <div className="relative z-10 max-w-3xl">
-                <Eyebrow className="mb-6">READY FOR REVIEW</Eyebrow>
-                <h2 id="home-cta-heading" className="text-3xl md:text-5xl font-display font-bold tracking-tight text-white">Bring MLAI into your next critical AI system.</h2>
-                <p className="mt-6 text-lg leading-relaxed text-text-dim">
-                  Share the workflow you want to automate, the failure modes you cannot accept, and the infrastructure constraints we need to respect.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Button onClick={openInquiry} className="h-11 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50">Start Inquiry</Button>
-                  <Button asChild variant="ghost" className="h-11 rounded-full border border-white/10 px-6 text-white hover:bg-white/10 hover:text-white">
-                    <Link to="/benchmarks">Review Benchmarks</Link>
-                  </Button>
-                </div>
-              </div>
+          <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+            <div className="lg:sticky lg:top-32">
+              <Eyebrow className="mb-5">ONE REQUEST</Eyebrow>
+              <h2 id="request-path-heading" className="section-title">Five control points. One return condition.</h2>
+              <p className="mt-5 text-base leading-relaxed text-text-dim">If organization access, consent, provider routing, encryption, or durable storage fails, Quesar does not return an unaudited model response.</p>
+              <Button asChild variant="outline" className="mt-7 rounded-full"><Link to="/security">Inspect the security model <ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
+            <ol className="grid gap-3">
+              {requestPath.map(([number, title, body]) => <li key={number} className="grid gap-4 rounded-3xl border border-white/8 bg-bg/70 p-5 sm:grid-cols-[3rem_1fr]"><span className="font-mono text-sm font-semibold text-cyan-300">{number}</span><div><h3 className="font-display text-xl font-semibold text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-text-dim">{body}</p></div></li>)}
+            </ol>
           </div>
         </Reveal>
       </section>
 
       <Reveal width="100%">
-        {/* `.section-y` sets padding-top at three breakpoints via @apply, so a
-            bare `pt-0` would only take effect below `md`. */}
-        <Section className="w-full pt-0 md:pt-0 lg:pt-0" eyebrow="KEEP EXPLORING">
-          <NextUp items={nextUp} />
+        <Section
+          id="wdbx-substrate"
+          className="w-full"
+          eyebrow="ACTIVE RUST SUBSTRATE"
+          title="Retrieval facts, sourced from the implementation."
+          lead="Quesar is backed by MLAI's WDBX work. The active Rust crate—not the frozen Zig-era documentation mirror—is authoritative for architecture. These are configuration facts, not benchmark claims."
+        >
+          <div className="grid gap-8 lg:grid-cols-[1fr_0.82fr]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_15%_10%,rgba(34,211,238,0.13),transparent_55%),rgba(4,8,18,0.82)] p-7 md:p-9">
+              <Network className="mb-7 h-8 w-8 text-cyan-300" />
+              <h3 className="font-display text-2xl font-semibold text-white">Inspectable nearest-neighbor retrieval.</h3>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-dim">The substrate implements a real layered HNSW graph, validates graph structure, rebuilds against real vectors in tests, and pairs retrieval with MVCC. It does not claim production multi-host sharding.</p>
+              <div className="mt-7 flex flex-wrap gap-3"><Button asChild><Link to="/benchmarks">Review evidence</Link></Button><Button asChild variant="outline"><Link to="/docs">Read architecture</Link></Button></div>
+            </div>
+            <SpecList rows={wdbxFacts} />
+          </div>
         </Section>
       </Reveal>
+
+      <Reveal width="100%">
+        <Section id="research-preview" className="w-full bg-surface/20" eyebrow="RESEARCH NOTES" title="Architecture before adjectives." lead="Selected work on traceable retrieval, governed agents, and operational AI safety.">
+          <div className="grid gap-5 lg:grid-cols-3">
+            {featuredResearch.map((item) => <Link key={item.slug} to={`/research/${item.slug}`} className="glass-card group flex min-h-64 flex-col"><div className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300">{item.tag} · {item.date}</div><h3 className="mt-5 font-display text-xl font-semibold leading-tight text-white transition-colors group-hover:text-cyan-200">{item.title}</h3><p className="mt-4 line-clamp-4 text-sm leading-relaxed text-text-dim">{item.abstract}</p><span className="mt-auto pt-6 text-sm font-semibold text-cyan-300">Read note →</span></Link>)}
+          </div>
+          <Button asChild variant="outline" className="mt-8 rounded-full"><Link to="/research">Open the research archive</Link></Button>
+        </Section>
+      </Reveal>
+
+      <section className="w-full px-5 section-y" aria-labelledby="quesar-cta-heading">
+        <Reveal width="100%">
+          <div className="container-custom">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-linear-to-br from-cyan-600/20 via-bg to-violet-500/10 p-8 md:p-14">
+              <AccentGlow accent="wdbx" />
+              <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="max-w-3xl"><Eyebrow className="mb-6">INVITE-ONLY BETA</Eyebrow><h2 id="quesar-cta-heading" className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">Put one governed workflow through Quesar.</h2><p className="mt-5 text-lg leading-relaxed text-text-dim">Invited teams can enter the console. New teams can request a scoped evaluation with the workflow, failure modes, and data boundary made explicit.</p><div className="mt-6 flex flex-wrap gap-3 text-xs text-text-dim"><span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-300" /> Org-gated</span><span className="inline-flex items-center gap-2"><LockKeyhole className="h-4 w-4 text-cyan-300" /> Encrypted audits</span><span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-violet-300" /> Explicit consent</span></div></div>
+                <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><Button asChild size="lg" className="rounded-full bg-white px-7 text-black hover:bg-cyan-50"><Link to="/login">Enter Quesar <ArrowRight className="h-4 w-4" /></Link></Button><Button onClick={openInquiry} size="lg" variant="outline" className="rounded-full">Request access</Button></div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
     </div>
   );
 }

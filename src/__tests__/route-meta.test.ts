@@ -135,11 +135,11 @@ describe("route-meta — site-level social/feed defaults survive Next's wholesal
   });
 
   it("openGraph.siteName survives on every route shape", () => {
-    expect(staticMeta.openGraph.siteName).toBe("MLAI Corporation");
+    expect(staticMeta.openGraph.siteName).toBe("Quesar by MLAI");
     expect(
       toNextMetadata(blogMeta(firstSlug(content.blog)), "/blog/x").openGraph.siteName,
-    ).toBe("MLAI Corporation");
-    expect(toNextMetadata(NOT_FOUND_META, "/x").openGraph.siteName).toBe("MLAI Corporation");
+    ).toBe("Quesar by MLAI");
+    expect(toNextMetadata(NOT_FOUND_META, "/x").openGraph.siteName).toBe("Quesar by MLAI");
   });
 
   it("every route advertises the RSS feed via alternates.types", () => {

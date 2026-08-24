@@ -67,7 +67,7 @@ Polyglot systems engineer across Zig, Rust, Swift, TypeScript, Python, and GPU r
 | Project | What it is | Lang |
 |---|---|---|
 | **abi** | AI agent runtime + WDBX vector DB; local AI/ML orchestration in Zig, GPU capability reporting, MCP server | Zig |
-| **WDBX** | Durable vector/block memory store for traceable retrieval & agent memory | Zig · Rust · Py · TS |
+| **WDBX** | Durable vector/block memory store for traceable retrieval & agent memory | Rust · Py · TS |
 | **gama** | Swift + MLX on-device LM inference on Apple Silicon; self-learning agent | Swift |
 | **Nyon** | Voxel 3D world experiment; novel hexa-gravity system | Zig |
 
@@ -79,7 +79,7 @@ Links: github.com/donaldfilimon · x.com/donaldfilimonx · donaldfilimon.com
 
 | Layer | Product | Role | Accent (family) |
 |---|---|---|---|
-| **Storage** | WDBX | Zig vector store — HNSW, MVCC, Metal/CUDA/Vulkan | cyan |
+| **Storage** | WDBX | Rust vector store — layered HNSW, MVCC, inspectable history | cyan |
 | **Compute** | ABI Framework | ML + GPU acceleration, tensor ops, zero-copy unified-memory pipelines | violet |
 | **Application** | Abbey (+ Aviva, Abi) | Empathic on-device assistant with local memory | emerald |
 
@@ -91,8 +91,10 @@ Links: github.com/donaldfilimon · x.com/donaldfilimonx · donaldfilimon.com
 
 ## 4 · WDBX — vector database
 
-Zig-built vector storage with HNSW indexing, MVCC transactions, and Metal / CUDA /
-Vulkan backends. Runs where the data lives.
+The active implementation is the sibling Rust substrate at
+`~/dev/active/wdbx/crates/`. Its `abi-wdbx` crate implements layered HNSW
+retrieval and MVCC. The Zig documents mirrored under `public/docs/wdbx/` are a
+frozen historical snapshot, not the current architecture register.
 
 > **Naming note:** the corporate materials expand WDBX as **"Weighted Directed
 > Backtrace eXecution"**; earlier analyses used **"Wide Distributed Block Exchange."**
@@ -107,34 +109,24 @@ Vulkan backends. Runs where the data lives.
 | QPS (stress-test objective) | 16.5K | ○ target |
 | p50 @ 1M vectors | 0.8 ms | ○ target |
 
-**Core features**
+**Source-grounded architecture facts**
 
-> ⚠️ **This bullet list is UNTAGGED and is not publishable copy.** Unlike the
-> table above it, nothing here carries ● / ○ / ◆, and at least three entries do
-> not survive checking:
->
-> - "95% recall @ 8.2 ms" **contradicts the tagged table two lines up**, which
->   records Recall@10 **98.2% ● measured** and p50 **2.3 ms ● measured**.
-> - **HNSW** — the nine WDBX docs mirrored from the source repo
->   (`public/docs/wdbx/*.md`) never mention HNSW, `efConstruction`, or any index
->   structure; `architecture.md` describes `src/database/*` only as "vector
->   store, block-chain memory, sharding, snapshots". So `M=16,
->   efConstruction=200` has no artifact behind it here.
-> - **AES-256 + RBAC** is on the external-claims forbidden list outright.
->
-> This block caused a real incident: it was used to source home-page copy on
-> 2026-08-09, which then had to be retracted the same day. Treat it as
-> unverified working notes. **Anything moved from here into public copy must be
-> re-sourced to the mirrored WDBX docs or to a tagged row — not to this list.**
+> The sibling Rust substrate outranks both this document and the frozen public
+> mirror for architectural facts. Tagged rows still outrank untagged prose for
+> metrics. Re-check the implementation before carrying any of these facts into
+> collateral.
 
-- **HNSW index** — Hierarchical Navigable Small World graphs; O(log n) search;
-  95% recall @ 8.2 ms on 1M vectors. Defaults M=16, efConstruction=200.
-- **Memory-mapped persistence** — Swift 6.2 `Span` zero-copy I/O, WAL journaling,
-  instant cold starts.
-- **Product / scalar quantization** — 8× memory reduction; "10B vectors in 2GB RAM."
-- **Metal GPU acceleration** — distance calcs on Apple GPU; positioned as the first
-  App Store-ready vector DB with native Swift/Metal integration.
-- **MVCC transactions**, **AES-256 + RBAC**, **hash-chained WAL**.
+- **Layered HNSW** — `crates/abi-wdbx/src/hnsw.rs` defines `M = 16`,
+  `EF_CONSTRUCTION = 40`, and `EF_SEARCH = 32`, validates graph structure, and
+  rebuilds the graph against stored vectors in tests.
+- **MVCC** — `crates/abi-wdbx/src/mvcc.rs` implements multi-version concurrency
+  control; it is not inferred from the older documentation mirror.
+- **Cluster boundary** — `cluster_rpc.rs` explicitly says the current transport
+  is not TLS, production multi-host Raft, or sharding. Distributed-sharding copy
+  therefore remains forbidden.
+- **Not established by these facts** — encryption/RBAC, certifications,
+  competitor performance, GPU speedups, and scale figures still require their
+  own source artifact and provenance.
 
 **Competitive posture**
 

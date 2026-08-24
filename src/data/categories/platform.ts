@@ -26,9 +26,8 @@ export const platform: Platform = ([
 /**
  * The six-layer runtime model (L6 interface down to L1 audit), ported from the
  * design-handoff Architecture page and re-grounded, layer by layer, in the
- * mirrored WDBX docs at `public/docs/wdbx/` (architecture.md "Main Modules" +
- * "Pipeline Shape", acceleration.md, persistence.md, protocols.md,
- * limitations.md). Architecture facts only — no figures, so no provenance tags.
+ * active sibling Rust substrate under `~/dev/active/wdbx/crates/`, which
+ * outranks the frozen Zig-era documentation mirror. Architecture facts only.
  *
  * Relationship to the untiered `platform` capabilities above: the two lists are
  * complementary views of the same system, not duplicates. `platform` is the
@@ -39,9 +38,7 @@ export const platform: Platform = ([
  * L1–L6 stack. Change a fact in one place, check the counterpart.
  *
  * Wording constraints (repo policy — do not "restore" from the handoff file):
- * no index-structure claims (a documented removed decision), no encryption/RBAC
- * claims, no performance numbers. Facts the handoff asserted that the mirrored
- * docs do NOT support are omitted here — see the layer notes below.
+ * no distributed-sharding, encryption/RBAC, or unsupported performance claims.
  *
  * Shape is pinned by `RuntimeSchema` and validated through `ContentSchema`
  * with the rest of the copy (content.test.ts).
@@ -87,10 +84,8 @@ export const runtime: Runtime = ({
   {
     tier: "L2",
     title: "Storage",
-    // architecture.md src/database/*: "vector store, block-chain memory,
-    // sharding, snapshots"; persistence.md: snapshots save and restore
-    // vector records plus block-chain memory.
-    description: "The WDBX store: vector records beside block-chain memory, shard routing, and snapshots that save and restore both together.",
+    // abi-wdbx/src/hnsw.rs and mvcc.rs are the active implementation.
+    description: "The WDBX store: layered HNSW retrieval, MVCC transactions, and inspectable history. The cluster RPC transport explicitly does not implement sharding.",
   },
   {
     tier: "L1",
@@ -104,7 +99,7 @@ export const runtime: Runtime = ({
   memorySection: {
     eyebrow: "Memory model",
     title: "Memory that keeps receipts.",
-    lead: "Every pipeline turn ends with a memory write. The store keeps vector records beside chained block memory, snapshots both together, and exposes the same search to external tools.",
+    lead: "The active Rust store pairs HNSW vector retrieval with MVCC and inspectable history. Configuration facts below come directly from the implementation.",
   },
 
   // Memory-model spec rows for `site/SpecList` (configuration facts, no
@@ -115,15 +110,10 @@ export const runtime: Runtime = ({
   // and never mention weighted provenance paths, per-record point-in-time
   // rollback, or on-open chain verification.
   memoryModel: [
-    // protocols.md: teach/note writes append-only WDBX memory.
-    { k: "Journal", v: "Append-only block memory" },
-    // architecture.md: vector store + block-chain memory in src/database/*.
-    { k: "Structure", v: "Chained blocks + vector records" },
-    // persistence.md: snapshots save and restore both together.
-    { k: "Snapshots", v: "Save / restore vectors + blocks" },
-    // architecture.md: sharding in src/database/*; api.md: /api/shards.
-    { k: "Sharding", v: "Shard-routed store" },
-    // protocols.md: wdbx.memory.search advertised over MCP.
-    { k: "Tool access", v: "Memory search over MCP" },
+    { k: "Index", v: "Layered HNSW" },
+    { k: "Graph degree", v: "M = 16" },
+    { k: "Construction breadth", v: "EF_CONSTRUCTION = 40" },
+    { k: "Search breadth", v: "EF_SEARCH = 32" },
+    { k: "Transactions", v: "MVCC" },
   ],
 });

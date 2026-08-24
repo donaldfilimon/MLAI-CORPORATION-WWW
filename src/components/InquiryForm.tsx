@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Callout } from "@/components/site";
+import { TurnstileWidget, type TurnstileWidgetHandle } from "@/components/TurnstileWidget";
 import {
   Select,
   SelectContent,
@@ -71,6 +72,7 @@ async function submitInquiry(
         email: data.email,
         company: data.company,
         projectType: data.projectType,
+        turnstileToken: data.turnstileToken,
         // The API accepts exactly name/email/company/projectType/message and
         // silently drops unknown fields, so the optional data-locality chip is
         // folded into the message as a prefix line rather than sent separately.
@@ -106,12 +108,12 @@ async function submitInquiry(
   }
 }
 
-function SubmitButton() {
+function SubmitButton({ verified }: { verified: boolean }) {
   const { pending } = useFormStatus();
 
   return (
     <Button
-      disabled={pending}
+      disabled={pending || !verified}
       type="submit"
       className="w-full py-6 flex items-center justify-center gap-3 text-md"
     >
@@ -125,10 +127,18 @@ const DATA_LOCALITY_OPTIONS = ["On-device only", "Hybrid", "Not sure yet"];
 
 export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
   // Optional chip selection; carried into the FormData via a hidden input and
   // folded into the message payload (the API has no dataLocality field).
   const [dataLocality, setDataLocality] = useState("");
-  const [state, formAction] = useActionState(submitInquiry, {
+  const [state, formAction] = useActionState(async (previousState: InquiryFormState, formData: FormData) => {
+    try {
+      return await submitInquiry(previousState, formData);
+    } finally {
+      turnstileRef.current?.reset();
+    }
+  }, {
     success: false,
     errors: {} as Record<string, string[]>,
     message: "",
@@ -384,7 +394,9 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               </span>
             </Callout>
 
-            <SubmitButton />
+            <input type="hidden" name="turnstileToken" value={turnstileToken} />
+            <TurnstileWidget ref={turnstileRef} action="inquiry" onTokenChange={setTurnstileToken} />
+            <SubmitButton verified={Boolean(turnstileToken)} />
             <p className="text-xs text-text-dim text-center">
               Prefer direct contact? Email{" "}
               <a

@@ -14,7 +14,7 @@ import { content } from "../src/data";
 import { toSitemapDate } from "../src/lib/dates";
 import { routeMetadata, DEFAULT_ROUTE_META } from "../src/lib/route-meta";
 
-const SITE = "https://mlai-corp.com";
+const SITE = "https://quesar.cloud";
 
 /**
  * `lastmod` is per-entry and OMITTED where the content layer has no real date

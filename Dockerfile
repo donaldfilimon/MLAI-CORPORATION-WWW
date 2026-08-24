@@ -2,6 +2,8 @@
 # Cloud Run injects PORT; next start binds it via -p ${PORT}.
 FROM oven/bun:1.4-slim AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 COPY . .
@@ -14,27 +16,15 @@ ENV NODE_ENV=production
 # Run as a dedicated, non-root user (defense in depth — nothing in this
 # image needs root at runtime).
 RUN groupadd --system app && useradd --system --gid app --home-dir /app app \
-    # /app/data is a convenience mount point for a persistent volume: set
-    # DATABASE_URL=/app/data/inquiries.db (see .env.example) so SQLite
-    # inquiries/telemetry survive container restarts on platforms that
-    # support mounted volumes (e.g. Cloud Run gen2 + Cloud Storage FUSE, or
-    # a Compute Engine persistent disk). Without a mount it's just local
-    # ephemeral storage, same as the previous unconfigurable default.
+    # Keep a writable scratch directory for runtime tooling. Persistent
+    # application state belongs in Cloud SQL; this directory is never a
+    # database fallback.
     && mkdir -p /app/data && chown -R app:app /app/data \
     # /app itself must belong to `app` too. WORKDIR creates it root:root, and
     # `COPY --chown` only sets ownership on the entries it copies — not on the
-    # pre-existing parent. Without this, SQLite cannot create its database or
-    # the -journal/-wal siblings next to it, and the failure is silent in the
-    # worst way: POST /api/inquiries returns 500 for every visitor while `/`
-    # still returns 200, so the healthcheck and both documented curl probes
-    # all pass.
+    # pre-existing parent. Runtime diagnostics may need a writable CWD even
+    # though persistent application data is remote.
     && chown app:app /app
-
-# Default the database into the writable, chowned mount point rather than
-# leaving it to resolveDbPath()'s relative "inquiries.db" fallback, which
-# resolves against CWD (/app). The deploy workflow sets this explicitly as
-# well; this keeps a bare `docker run` correct on its own.
-ENV DATABASE_URL=/app/data/inquiries.db
 
 COPY --from=builder --chown=app:app /app/.next ./.next
 COPY --from=builder --chown=app:app /app/public ./public

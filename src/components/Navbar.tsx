@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, GitBranch, LogOut, User } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -25,14 +25,10 @@ export const Navbar = () => {
 
   const navItems = [
     { to: "/research", label: "Research" },
-    { to: "/services", label: "Services" },
-    { to: "/about", label: "About" },
-    { to: "/team", label: "Team" },
-    { to: "/blog", label: "Blog" },
-    { to: "/showcase", label: "Showcase" },
-    { to: "/benchmarks", label: "Benchmarks" },
-    { to: "/docs", label: "Docs" },
-    { to: "/console", label: "Console" },
+    { to: "/docs", label: "Architecture" },
+    { to: "/benchmarks", label: "Evidence" },
+    { to: "/security", label: "Security" },
+    { to: "/showcase", label: "Lab" },
   ];
 
   useEffect(() => {
@@ -74,18 +70,6 @@ export const Navbar = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
-            <a
-              href="https://github.com/mlai-corp"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-text-dim hover:text-white transition-colors"
-              aria-label="GitHub"
-            >
-              <GitBranch className="w-5 h-5" />
-            </a>
-
-            <div className="h-4 w-px bg-white/10 mx-2" />
-
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -129,17 +113,17 @@ export const Navbar = () => {
                   size="sm"
                   className="text-text-dim hover:text-white"
                 >
-                  Sign In
+                  Invited? Sign in
                 </Button>
               </Link>
             )}
 
             <Magnetic>
               <Button
-                onClick={openInquiry}
+                asChild
                 className="bg-white text-black hover:bg-cyan-50 transition-colors font-bold px-6"
               >
-                Start Inquiry
+                <Link to={user ? "/console" : "/login"}>{user ? "Open Console" : "Enter Quesar"}</Link>
               </Button>
             </Magnetic>
           </div>
@@ -208,7 +192,7 @@ export const Navbar = () => {
                 ) : (
                   <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="outline" className="w-full h-12">
-                      Sign In
+                      Invited? Sign in
                     </Button>
                   </Link>
                 )}
@@ -219,7 +203,7 @@ export const Navbar = () => {
                   }}
                   className="w-full bg-white text-black font-bold h-12"
                 >
-                  Start Inquiry
+                  Request Access
                 </Button>
               </div>
             </div>

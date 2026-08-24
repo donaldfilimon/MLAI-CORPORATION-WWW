@@ -3,19 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MLAI Corporation — Private, Traceable AI Infrastructure</title>
+    <title>Quesar by MLAI — Private AI Operations</title>
     <meta
       name="description"
-      content="MLAI Corporation builds private, traceable AI infrastructure: WDBX weighted-backtrace memory, Abbey · Aviva · Abi persona routing, and operator controls for agents that explain their decisions."
+      content="Quesar is the invite-only MLAI operations console for private Gemini generation with organization access, explicit consent, and user-controlled encrypted audits."
     />
-    <link rel="canonical" href="https://mlai-corp.com/" />
+    <link rel="canonical" href="https://quesar.cloud/" />
     <!-- Static landing page served from GitHub Pages. The full application
          (console, auth, APIs) runs as a Next.js server on Cloud Run.
          Brand assets (favicon.svg, og-image.png, apple-touch-icon.png) are
          copies of the canonical ones in public/ — the Pages workflow uploads
          ONLY this directory, so it cannot reference public/. Refresh them
          alongside `bun run og` after any re-skin. og:/twitter: image URLs
-         point at the canonical mlai-corp.com host (matching rel=canonical)
+         point at the canonical quesar.cloud host (matching rel=canonical)
          so social crawlers attribute the card to the real site. -->
     <meta name="theme-color" content="#05070d" />
     <!-- Relative, not root-absolute: Pages serves this repo under the
@@ -26,32 +26,32 @@
     <link
       rel="alternate"
       type="application/rss+xml"
-      title="MLAI Corporation — Lab Notes &amp; Research"
-      href="https://mlai-corp.com/feed.xml"
+      title="Quesar by MLAI — Research"
+      href="https://quesar.cloud/feed.xml"
     />
-    <meta property="og:site_name" content="MLAI Corporation" />
+    <meta property="og:site_name" content="Quesar by MLAI" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:title" content="MLAI Corporation" />
+    <meta property="og:title" content="Quesar by MLAI" />
     <meta
       property="og:description"
-      content="Private, traceable AI infrastructure — WDBX memory, Abbey · Aviva · Abi routing, operator controls."
+      content="Private AI operations with invite-only access and a user-controlled encrypted audit trail."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mlai-corp.com/" />
-    <meta property="og:image" content="https://mlai-corp.com/og-image.png" />
+    <meta property="og:url" content="https://quesar.cloud/" />
+    <meta property="og:image" content="https://quesar.cloud/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="MLAI Corporation — private, traceable AI infrastructure"
+      content="Quesar by MLAI — private AI operations"
     />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="MLAI Corporation" />
+    <meta name="twitter:title" content="Quesar by MLAI" />
     <meta
       name="twitter:description"
-      content="Private, traceable AI infrastructure — WDBX memory, Abbey · Aviva · Abi routing, operator controls."
+      content="Private AI operations with invite-only access and a user-controlled encrypted audit trail."
     />
-    <meta name="twitter:image" content="https://mlai-corp.com/og-image.png" />
+    <meta name="twitter:image" content="https://quesar.cloud/og-image.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -61,14 +61,16 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "MLAI Corporation",
-        "legalName": "Machine Learning Advanced Innovations, Inc.",
-        "url": "https://mlai-corp.com",
-        "logo": "https://mlai-corp.com/icon-512.png",
-        "image": "https://mlai-corp.com/og-image.png",
-        "description": "Private, traceable AI infrastructure for production teams.",
-        "sameAs": ["https://github.com/donaldfilimon"]
+        "@type": "WebSite",
+        "name": "Quesar by MLAI",
+        "url": "https://quesar.cloud",
+        "image": "https://quesar.cloud/og-image.png",
+        "description": "Private AI operations with organization access, explicit consent, and encrypted audits.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "MLAI Corporation",
+          "legalName": "Machine Learning Advanced Innovations, Inc."
+        }
       }
     </script><style>
       :root {
@@ -182,78 +184,74 @@
             <circle cx="16" cy="22" r="3" fill="url(#g)" />
             <path d="M8 8 L24 9 L16 22 Z" fill="none" stroke="url(#g)" stroke-width="1.4" opacity="0.7" />
           </svg>
-          <span>MLAI <span class="corp">CORP</span></span>
+          <span>QUESAR <span class="corp">BY MLAI</span></span>
         </div>
         <nav>
-          <a href="https://mlai-corp.com/">App</a>
-          <a href="https://mlai-corp.com/research">Research</a>
-          <a href="https://mlai-corp.com/docs">Docs</a>
-          <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">GitHub</a>
+          <a href="https://quesar.cloud/research">Research</a>
+          <a href="https://quesar.cloud/architecture">Architecture</a>
+          <a href="https://quesar.cloud/security">Security</a>
+          <a href="https://quesar.cloud/login">Enter Quesar</a>
         </nav>
       </header>
 
       <main>
         <section class="hero">
-          <span class="tag">Private AI Infrastructure</span>
-          <h1>Traceable AI systems for <span class="grad">real production constraints.</span></h1>
+          <span class="tag">Invite-only private AI operations</span>
+          <h1>Private generation with <span class="grad">an audit trail you control.</span></h1>
           <p class="lead">
-            MLAI connects WDBX weighted-backtrace memory, Abbey · Aviva · Abi persona routing, and
-            operator controls into infrastructure for agents that need to explain decisions, respect
-            boundaries, and stay observable.
+            Quesar's production design combines WorkOS organization access, Gemini 3.7 Flash through a metadata-only
+            Cloudflare gateway, and KMS-wrapped conversation records retained under explicit consent.
           </p>
           <div class="cta">
-            <a class="btn btn-primary" href="https://mlai-corp.com/">Open the application →</a>
-            <a class="btn btn-ghost" href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">View the source</a>
+            <a class="btn btn-primary" href="https://quesar.cloud/login">Enter Quesar →</a>
+            <a class="btn btn-ghost" href="https://quesar.cloud/security">Review the trust boundary</a>
           </div>
         </section>
 
-        <section aria-label="Personas">
+        <section aria-label="Trust controls">
           <div class="personas">
             <div class="card" style="--accent: var(--abbey)">
-              <span class="role"><span class="dot"></span>Empathetic polymath</span>
-              <h3>Abbey</h3>
-              <p>A patient, broad interface that meets people where they are.</p>
+              <span class="role"><span class="dot"></span>Identity boundary</span>
+              <h3>Organization access</h3>
+              <p>Only active members of the invited WorkOS organization can reach generation.</p>
             </div>
             <div class="card" style="--accent: var(--aviva)">
-              <span class="role"><span class="dot"></span>Direct expert</span>
-              <h3>Aviva</h3>
-              <p>Unfiltered technical depth for precise, fast execution.</p>
+              <span class="role"><span class="dot"></span>Provider boundary</span>
+              <h3>Metadata-only gateway</h3>
+              <p>The rollout configures the Cloudflare AI Gateway with payload logging and caching disabled.</p>
             </div>
             <div class="card" style="--accent: var(--abi)">
-              <span class="role"><span class="dot"></span>Adaptive router</span>
-              <h3>Abi</h3>
-              <p>Blends the two by request, keeping moderation in the loop.</p>
+              <span class="role"><span class="dot"></span>Audit boundary</span>
+              <h3>User-controlled records</h3>
+              <p>Consent comes first. Users can inspect, export, or delete live audits; backup copies age out under retention.</p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 class="section-title">One architecture, from memory to action.</h2>
+          <h2 class="section-title">A narrow, inspectable request path.</h2>
           <p class="muted">
-            The platform separates traceability, control, and deployment so each layer can improve
-            without breaking the rest. Capabilities are framed as design intent, grounded in the
-            real <code>abi</code> runtime, MCP tools, and WDBX stores.
+            Once production providers are live, each protected request revalidates membership, verifies consent, generates through a
+            fixed provider boundary, and returns only after its encrypted audit is durable.
           </p>
           <div class="pillars">
-            <div class="pillar"><strong>WDBX retrieval</strong><span>Weighted backtrace memory for evidence-aware context.</span></div>
-            <div class="pillar"><strong>Persona routing</strong><span>Empathy, expertise, and adaptive moderation in one router.</span></div>
-            <div class="pillar"><strong>Operator layer</strong><span>Approval gates, audit trails, and deployment controls.</span></div>
+            <div class="pillar"><strong>Access</strong><span>Invite-only WorkOS organization membership.</span></div>
+            <div class="pillar"><strong>Generation</strong><span>Gemini 3.7 Flash without sending user email to the provider.</span></div>
+            <div class="pillar"><strong>Audit</strong><span>Per-record encryption, one-year retention, and reason-logged admin reads.</span></div>
           </div>
         </section>
 
         <div class="note">
-          This is a lightweight static landing page hosted on GitHub Pages. The full MLAI experience —
-          the private console, authentication, and APIs — runs as a server application at
-          <a href="https://mlai-corp.com/">mlai-corp.com</a>. Explore the interactive
-          <a href="https://mlai-corp.com/financial-model">3-statement model</a> and
-          <a href="https://mlai-corp.com/demo">WDBX demo</a> there.
+          This is a lightweight static companion hosted on GitHub Pages. The canonical Quesar
+          application, authentication, APIs, research, and security documentation live at
+          <a href="https://quesar.cloud/">quesar.cloud</a>.
         </div>
       </main>
 
       <footer>
-        © MLAI Corporation · Founder-led ·
+        © MLAI Corporation · Quesar by MLAI ·
         <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">GitHub</a> ·
-        <a href="https://mlai-corp.com/">mlai-corp.com</a>
+        <a href="https://quesar.cloud/">quesar.cloud</a>
       </footer>
     </div>
   </body>

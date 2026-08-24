@@ -6,12 +6,8 @@ import { useState } from "react";
 //
 // The "model, not product" framing must stay VISIBLE, not just live in this
 // comment. On /benchmarks this renders roughly 200px below an architecture
-// table whose Scaling model row reads "Single-node, memory-mapped" — so the
-// earlier wording ("8 active shards", "More shards parallelize retrieval")
-// had the page contradicting itself within one screenful, and distributed
-// sharding is on the forbidden-claims list besides. A reader cannot see a
-// source comment. Keep the on-screen copy saying that WDBX is single-node
-// today and this is a general scaling curve.
+// Distributed sharding is forbidden as a WDBX claim: cluster_rpc.rs explicitly
+// says its transport is not sharding. This remains a general partition model.
 export function ShardingLatencyDemo() {
   const [n, setN] = useState(8);
   const alpha = 12;
@@ -59,8 +55,8 @@ export function ShardingLatencyDemo() {
         overhead α — the shape of that curve is the point, and the constants are
         illustrative rather than benchmark results.{" "}
         <strong className="text-text-dim/90">
-          WDBX is single-node today, as the table above says; this models how
-          partitioned retrieval scales in general, not a WDBX feature.
+          This models how partitioned retrieval scales in general, not a WDBX
+          feature; the active cluster RPC source explicitly disclaims sharding.
         </strong>
       </p>
     </div>

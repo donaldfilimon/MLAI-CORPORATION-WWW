@@ -17,26 +17,18 @@ interface Feature {
 }
 
 // Claims discipline (CLAUDE.md · docs/voice-guidelines.md): every line below
-// describes a design property of the WDBX *software* store that
-// docs/master-reference.md §4/§6 documents. MLAI ships no silicon, so nothing
+// describes a design property verified in the active sibling Rust substrate.
+// That crate outranks the frozen Zig-era mirror and master-reference prose.
+// MLAI ships no silicon, so nothing
 // here may reference hardware isolation, circuit-level logic, or a physical
 // layer; and nothing may promise an absolute outcome ("eliminates", "ensures",
 // "cannot be overridden") for a probabilistic system.
 const features: Feature[] = [
   {
     icon: <Activity className="w-6 h-6 text-cyan-400" />,
-    // Sourced to what the MIRRORED WDBX docs actually document
-    // (`public/docs/wdbx/architecture.md`: "vector store, block-chain memory,
-    // sharding, snapshots"), NOT to the internal fact sheet. An earlier draft
-    // of this card named HNSW with "M=16, efConstruction=200" — those appear
-    // ONLY in an untagged prose bullet in docs/master-reference.md, and the
-    // nine mirrored WDBX docs never mention HNSW, efConstruction, or any index
-    // structure at all. Publishing specific tuning parameters for an index the
-    // product's own documentation does not describe is the same class of claim
-    // the /benchmarks charts were removed for, so it is deliberately absent.
-    // Restore it only against the wdbx source, not against master-reference.
-    title: "Vector Retrieval",
-    description: "Queries resolve by similarity over stored vectors rather than by keyword match, so retrieval reflects meaning instead of surface form. Distance kernels compile to the target ISA through Zig's SIMD vectors.",
+    // crates/abi-wdbx/src/hnsw.rs defines and exercises the layered graph.
+    title: "HNSW Vector Retrieval",
+    description: "The active Rust store implements a layered HNSW graph with M = 16, EF_CONSTRUCTION = 40, and EF_SEARCH = 32. Those are configuration facts from source, not benchmark results.",
     glossary: "Each stored item carries an embedding; a query is embedded the same way, and the store returns the nearest vectors by cosine similarity."
   },
   {
@@ -79,7 +71,7 @@ export const Technology = () => {
             </div>
             <h2 id="tech-heading" className="section-title">The WDBX Engine.</h2>
             <p className="text-xl text-text-dim mb-10 leading-relaxed">
-              At the heart of MLAI's infrastructure sits WDBX — the Weighted Directed Backtrace eXecution store. It is software: a Zig vector and block store that keeps retrieval as weighted, inspectable paths. Confidence signals along those paths are designed to reduce hallucination surfaces, not to remove them.
+              At the heart of MLAI's infrastructure sits WDBX — the Weighted Directed Backtrace eXecution store. Its active Rust substrate combines HNSW retrieval, MVCC, and inspectable history. Confidence signals along those paths are designed to reduce hallucination surfaces, not to remove them.
             </p>
             
             <div className="space-y-8">

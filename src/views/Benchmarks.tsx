@@ -5,17 +5,13 @@ import { CardPanel, DataTable, Eyebrow } from "@/components/site";
 
 // Architectural comparison — properties, not performance numbers. Each cell
 // describes a design choice verifiable from the WDBX sources.
-const ARCH_COLS = ["Property", "WDBX", "SQL", "NoSQL"] as const;
-const ARCH_ROWS: [string, string, string, string][] = [
-  ["Primary type", "Vectors (ℝᵈ)", "Rows / columns", "Documents"],
-  // Was "Vector-aware sharding" — distributed sharding is on the forbidden
-  // list in CLAUDE.md and master-reference.md §4 describes no sharding layer.
-  // Memory-mapped single-node persistence is what §4 actually documents.
-  ["Scaling model", "Single-node, memory-mapped", "Manual / replicas", "Hash auto-shard"],
-  // "Lock-free" was an adjective §4 does not carry; it says MVCC transactions.
-  ["Concurrency", "MVCC transactions", "ACID locking", "Eventual (BASE)"],
-  ["Integrity", "Hash-chained blocks", "WAL logs", "Replication logs"],
-  ["Runtime", "Zig (no GC)", "C++ / Java (GC)", "Java / Go (GC)"],
+const ARCH_COLS = ["Source-backed property", "WDBX implementation"] as const;
+const ARCH_ROWS: [string, string][] = [
+  ["Primary type", "Vectors (ℝᵈ)"],
+  ["Index", "Layered HNSW; M=16, ef_construction=40, ef_search=32"],
+  ["Concurrency", "MVCC transactions"],
+  ["Integrity", "Hash-chained blocks"],
+  ["Active runtime", "Rust"],
 ];
 
 // How the benchmark surfaces are framed. Prose, not figures — no provenance
@@ -42,10 +38,9 @@ export function Benchmarks() {
         <Eyebrow className="mb-6">PERFORMANCE LAB</Eyebrow>
         <h1 className="section-title">Benchmarks with operating context.</h1>
         <p className="section-subtitle max-w-3xl">
-          How WDBX retrieval and agent orchestration are built, and what we can
-          currently show for it — architectural properties first, then the one
-          GPU benchmark set we can attribute, each figure tagged measured or
-          target. We do not publish head-to-head numbers against other products.
+          How WDBX retrieval and agent orchestration are built, followed by the
+          GPU benchmark set with explicit provenance. We publish source-backed
+          properties and reproducible methodology, without competitor tables.
         </p>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {/* `CardPanel` rather than `FeatureCard` because these keep their
@@ -66,7 +61,7 @@ export function Benchmarks() {
         <div className="mt-14">
           <Eyebrow className="mb-4">ARCHITECTURE, NOT ADJECTIVES</Eyebrow>
           <h2 className="mb-3 font-display text-2xl font-bold text-white">
-            How WDBX differs by construction
+            What the active WDBX substrate implements
           </h2>
           {/* The framing line is the table's <caption> rather than a paragraph
               above it — same words, now bound to the table it qualifies. */}
@@ -74,21 +69,13 @@ export function Benchmarks() {
             cols={ARCH_COLS}
             rows={ARCH_ROWS}
             highlightCol={1}
-            caption="A comparison of design properties — each one a structural choice, not a performance claim."
+            caption="Properties verified against the active sibling Rust substrate; these are structural facts, not performance figures."
           />
         </div>
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
           <div>
             <Eyebrow className="mb-4">INTERACTIVE</Eyebrow>
-            {/* Was "Sharding latency model". As a heading that asserted a WDBX
-                sharding layer master-reference.md §4 does not document, sitting
-                directly under the architecture table that says single-node.
-                The demo's own labels said "shards" too and have since been
-                reworded to "partitions (modeled)" with a visible note that WDBX
-                is single-node today — a browser screenshot of this section used
-                to show the contradiction in a single frame. Keep heading and
-                demo copy agreeing with that table. */}
             <h2 className="mb-3 font-display text-xl font-bold text-white">
               Parallel retrieval model
             </h2>

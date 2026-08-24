@@ -13,6 +13,7 @@ export type LlmStatus = {
     provider: string;
     configured: boolean;
     model: string;
+    gateway: string;
   };
 };
 
@@ -53,10 +54,84 @@ export function getLlmStatus() {
 }
 
 export function sendLlmMessage(messages: ChatMessage[]) {
-  return apiJson<{ ok: boolean; provider: string; model: string; text: string }>("/api/llm/chat", {
+  return apiJson<{
+    ok: boolean;
+    provider: string;
+    model: string;
+    text: string;
+    audit: { id: string; createdAt: string; expiresAt: string };
+  }>("/api/llm/chat", {
     method: "POST",
     body: JSON.stringify({ messages }),
   });
+}
+
+export type ChatConsent = {
+  policyVersion: string;
+  accepted: boolean;
+  consentedAt: string | null;
+  withdrawnAt: string | null;
+};
+
+export function getChatConsent() {
+  return apiJson<{ ok: true; consent: ChatConsent }>("/api/consent");
+}
+
+export function acceptChatConsent(policyVersion: string) {
+  return apiJson<{ ok: true; consent: { policyVersion: string; consentedAt: string } }>(
+    "/api/consent",
+    { method: "POST", body: JSON.stringify({ accepted: true, policyVersion }) },
+  );
+}
+
+export function withdrawChatConsent() {
+  return apiJson<{ ok: true }>("/api/consent", { method: "DELETE" });
+}
+
+export type ConversationAuditSummary = {
+  id: string;
+  provider: string;
+  model: string;
+  policyVersion: string;
+  createdAt: string;
+  expiresAt: string;
+  subjectHash?: string;
+  organizationId?: string;
+};
+
+export type ConversationAudit = ConversationAuditSummary & {
+  content: {
+    messages: ChatMessage[];
+    response: { provider: string; model: string; text: string };
+  };
+};
+
+export function getConversationAudits() {
+  return apiJson<{ ok: true; audits: ConversationAuditSummary[] }>("/api/audits");
+}
+
+export function getConversationAudit(id: string, download = false) {
+  return apiJson<{ ok: true; audit: ConversationAudit }>(
+    `/api/audits/${encodeURIComponent(id)}${download ? "?download=1" : ""}`,
+  );
+}
+
+export function deleteConversationAudit(id: string) {
+  return apiJson<{ ok: true }>(`/api/audits/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+export function getAdminConversationAudits(reason: string) {
+  return apiJson<{ ok: true; audits: ConversationAuditSummary[] }>("/api/admin/audits", {
+    method: "POST",
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export function getAdminConversationAudit(id: string, reason: string) {
+  return apiJson<{ ok: true; audit: ConversationAudit }>(
+    `/api/admin/audits/${encodeURIComponent(id)}`,
+    { method: "POST", body: JSON.stringify({ reason }) },
+  );
 }
 
 export function getInquiries() {

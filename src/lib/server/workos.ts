@@ -8,6 +8,7 @@ import type { SessionData } from "./session";
 
 export const WORKOS_API_KEY = process.env.WORKOS_API_KEY;
 export const CLIENT_ID = process.env.WORKOS_CLIENT_ID;
+export const WORKOS_ORGANIZATION_ID = process.env.WORKOS_ORGANIZATION_ID?.trim();
 export const APP_URL = process.env.APP_URL ?? "http://localhost:3000";
 export const FRONTEND_URL = process.env.FRONTEND_URL ?? APP_URL;
 export const REDIRECT_URI = `${APP_URL}/api/auth/callback`;
@@ -222,6 +223,8 @@ export function checkAdminIdentity(
 // ADMIN_REQUIRE_MFA=true, admin reads require ≥1 enrolled factor; fails closed.
 
 export const ADMIN_REQUIRE_MFA = process.env.ADMIN_REQUIRE_MFA === "true";
+const ADMIN_MFA_POLICY_VERIFIED = process.env.WORKOS_MFA_POLICY_VERIFIED === "true";
+const ADMIN_FRESH_AUTH_MS = 10 * 60 * 1000;
 
 // The SDK ships listUserAuthFactors at runtime but the bundled types lag
 // behind; this narrow structural type covers exactly what we call.
@@ -254,12 +257,18 @@ export async function checkAdminMfa(
   user: SessionData,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   if (!ADMIN_REQUIRE_MFA) return { ok: true };
+  if (!ADMIN_MFA_POLICY_VERIFIED) {
+    return { ok: false, error: "Verified WorkOS MFA policy is required for administrative access" };
+  }
   const enrolled = await userHasMfaFactor(user.userId);
   if (enrolled === null) {
     return { ok: false, error: "MFA verification unavailable" };
   }
   if (!enrolled) {
     return { ok: false, error: "MFA enrollment required for administrative access" };
+  }
+  if (!user.authenticatedAt || Date.now() - user.authenticatedAt > ADMIN_FRESH_AUTH_MS) {
+    return { ok: false, error: "Fresh WorkOS authentication is required for administrative access" };
   }
   return { ok: true };
 }
@@ -270,4 +279,50 @@ export async function checkAdminAccess(
   const identity = checkAdminIdentity(user);
   if (!identity.ok) return identity;
   return checkAdminMfa(user);
+}
+
+// Invite-only beta authorization. Session organization claims are useful
+// context but are not revocation proof, so protected generation rechecks the
+// active WorkOS membership with a short cache and fails closed on API errors.
+const membershipCache = new Map<string, { organizationId: string; expires: number }>();
+const MEMBERSHIP_CACHE_TTL_MS = 60 * 1000;
+
+export async function checkOrganizationAccess(
+  user: Pick<SessionData, "userId">,
+): Promise<
+  | { ok: true; organizationId: string }
+  | { ok: false; error: string; status: 403 | 503 }
+> {
+  if (!WORKOS_ORGANIZATION_ID) {
+    return { ok: false, error: "Quesar beta organization is not configured", status: 503 };
+  }
+  const cached = membershipCache.get(user.userId);
+  if (cached && cached.expires > Date.now() && cached.organizationId === WORKOS_ORGANIZATION_ID) {
+    return { ok: true, organizationId: cached.organizationId };
+  }
+  const auth = requireWorkOS();
+  if (!auth) return { ok: false, error: "WorkOS is not configured", status: 503 };
+  try {
+    const memberships = await auth.userManagement.listOrganizationMemberships({
+      userId: user.userId,
+      organizationId: WORKOS_ORGANIZATION_ID,
+      statuses: ["active"],
+      limit: 10,
+    });
+    const active = memberships.data.find(
+      (membership) =>
+        membership.organizationId === WORKOS_ORGANIZATION_ID && membership.status === "active",
+    );
+    if (!active) {
+      return { ok: false, error: "An active Quesar beta invitation is required", status: 403 };
+    }
+    membershipCache.set(user.userId, {
+      organizationId: active.organizationId,
+      expires: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+    });
+    return { ok: true, organizationId: active.organizationId };
+  } catch (error) {
+    console.error("WorkOS organization membership check failed:", error);
+    return { ok: false, error: "Organization membership verification unavailable", status: 503 };
+  }
 }
