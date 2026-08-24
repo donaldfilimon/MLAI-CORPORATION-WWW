@@ -49,6 +49,7 @@ bun run start     # Serve the production build on port 3000
 bun run smoke     # API smoke script
 bun run crawl     # Link crawl script
 bun run og        # Regenerate raster brand assets (og-image.png + PNG icons)
+bun run design-sync:css  # Compile src/index.css for the design-sync converter
 ```
 
 Run `bun run lint`, `bun run test`, and `bun run build` before production-impacting changes.
@@ -74,4 +75,4 @@ Write endpoints are protected on two independent axes. In-memory fixed-window ra
 
 ## Deployment
 
-The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET`; set `APP_URL` and `FRONTEND_URL` to the deployed origin. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main` as the merge gate, separate from the deploy workflows.
+The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. Required production secrets are `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, and `SESSION_SECRET` (≥32 characters). `APP_URL` is required — it is the OAuth redirect base, and the deploy fails fast without it. Leave `FRONTEND_URL` **unset** unless it genuinely differs; when set it must share `APP_URL`'s host, or the OAuth state cookie never comes back and every login fails with `invalid_state`. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main`, and the Cloud Run deploy is gated on it — `deploy-cloudrun.yml` triggers on CI's `workflow_run` and deploys the exact SHA CI validated, only for a successful push from this repository.

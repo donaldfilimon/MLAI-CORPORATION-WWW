@@ -18,6 +18,7 @@
 - `bun run crawl` needs `bun run dev` in another shell or `BASE_URL=<origin>`. It is the real-browser check for dead compat-shim links, asset failures, soft 404s, and console errors. Playwright is deliberately not a root dependency; the script also resolves it from `.ds-sync/node_modules` and prints setup instructions if absent.
 - `bun run design-sync:css` compiles `src/index.css` into the gitignored `.design-sync/lab-compiled.css` that `.design-sync/config.json` hands the claude.ai/design converter; rerun it every sync, never commit the output. `design-sync.test.ts` pins that config against the real files.
 - `bun run smoke` also needs a running app. Its default API matrix includes body-limit checks; `SMOKE_WRITE=1` adds an inquiry DB write, `SMOKE_RATELIMIT=1` adds the 61-request CSP limiter burst, and `SESSION_COOKIE=...` exercises authenticated admin behavior. Neither crawl nor smoke runs in CI.
+- `bun run og` regenerates the static raster brand assets in `public/`; it needs python3 with `pillow fonttools brotli` and is distinct from the per-slug Satori OG images Next builds at build time.
 
 ## Routes, Metadata, And Generated Surfaces
 
@@ -40,8 +41,10 @@
 
 - Blog and research bodies are structured data, not JSX. Slugs, bodies, metadata, feeds, JSON-LD, OG images, sitemap entries, and `llms.txt` all derive from the content layer; `content.test.ts` enforces slug/body contracts.
 - Public copy must not invent or overstate benchmark, security, compliance, distributed-sharding, scaling, partnership, or certification claims. Unverified metrics are targets. Preserve provenance from `docs/master-reference.md`: measured, target, and reported are not interchangeable.
-- For WDBX architecture, mirrored source docs in `public/docs/wdbx/` outrank untagged prose in `docs/master-reference.md`; tagged tables outrank untagged bullets. Apple wording is limited to "built on Apple's public frameworks", never partnership or endorsement.
+- For WDBX architecture the **sibling Rust substrate `~/dev/active/wdbx/crates/` outranks everything here**; a tagged table outranks an untagged bullet always. The mirrored docs in `public/docs/wdbx/` are a frozen Zig-era snapshot with no live upstream, so their silence is missing documentation, not a missing feature — do not cite it as proof a claim is invented. That inference was drawn once, on 2026-08-24, and the substrate refuted it: `crates/abi-wdbx/src/hnsw.rs` is a real layered HNSW graph and `mvcc.rs` is real. What the substrate does contradict: `EF_CONSTRUCTION = 40` and `EF_SEARCH = 32` (not the `200` the site publishes; `M = 16` is correct), and `cluster_rpc.rs` states it is "not ... sharding", so distributed-sharding copy stays forbidden. Apple wording is limited to "built on Apple's public frameworks", never partnership or endorsement.
 - `/benchmarks` may not contain competitor comparisons or untagged figures. New numbers require a reproducible repository harness and published methodology; otherwise omit them.
+- Telemetry persists only allowlisted event + pathname + timestamp; both fields pass through the allowlists in `src/lib/server/telemetry-path.ts`. Never add free-text or identifying fields.
+- Multi-team bylines join on a middle dot; split them with `bylineNames` from `src/lib/byline.ts`, never a local comma-split (that bug shipped twice).
 
 ## Server And Deployment Traps
 
@@ -50,6 +53,7 @@
 - The CSP is a specific-origin allowlist in `next.config.ts`; add origins to the narrow directive, never a bare `https:` wildcard. Keep both `report-to` and `report-uri`. In `app/api/csp-report/route.ts`, the rate-limit check must remain the first statement, and reports stay in stdout rather than privacy-limited telemetry storage.
 - OAuth state is nonce-bound to the `mlai_auth_state` cookie. `APP_URL` is required in deployments. Normally `FRONTEND_URL`, when set, must use the same host so the state cookie returns; a mismatch is valid only behind a proxy that preserves that cookie topology. Leave `FRONTEND_URL` unset rather than empty because an empty string defeats the fallback.
 - Production sessions require `SESSION_SECRET` with at least 32 characters; missing or short values fail closed.
+- A set `LLM_PROVIDER` is authoritative: without that provider's key, `/api/llm/*` serves the scaffold fallback even if the other provider's key is present. Leave it blank for key-based auto-detection.
 - Production admin reads fail closed without `ADMIN_EMAILS`; `ADMIN_REQUIRE_MFA=true` additionally requires a WorkOS factor.
 - Cloud Run's `/app/data/inquiries.db` has no mounted volume. `--max-instances=1` prevents cross-instance SQLite divergence but does not provide persistence: inquiries and telemetry disappear on recycle or redeploy. Also note that deploy `--set-env-vars` replaces console-set environment variables.
 - Automatic Cloud Run deployment is gated on successful push CI and checks out the validated SHA; `workflow_dispatch` is the deliberate manual exception. Preserve the workflow's `workflow_run.event == 'push'` and `head_repository.full_name == github.repository` trust checks so fork PRs never receive production deployment context.
