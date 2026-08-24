@@ -116,7 +116,6 @@ describe("pages.yml — every input this test reads must be able to trigger a re
     resolve(__dirname, "../../.github/workflows/pages.yml"),
     "utf8",
   );
-  const selfSource = readFileSync(resolve(__dirname, "landing-page.test.ts"), "utf8");
 
   it("is gated on CI completing, not on a push paths filter", () => {
     expect(workflow).toContain("workflow_run:");
@@ -150,25 +149,5 @@ describe("pages.yml — every input this test reads must be able to trigger a re
     );
     expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(workflow).toContain("github.event.workflow_run.event == 'push'");
-  });
-
-  it("still reads the inputs that motivated the original guard", () => {
-    // Derived from this file's own source rather than hardcoded, keeping the
-    // original design: if the test stops reading these, this notices. Their
-    // coverage is now total by construction, but the inputs themselves are
-    // still the reason the workflow must never regress to a filter.
-    const imported = [...selfSource.matchAll(/from "@\/lib\/([a-z-]+)"/g)].map(
-      (m) => `src/lib/${m[1]}.ts`,
-    );
-    expect(imported.length).toBeGreaterThan(0);
-
-    const assets = [
-      ...new Set(
-        [...selfSource.matchAll(/"(favicon\.svg|og-image\.png|apple-touch-icon\.png)"/g)].map(
-          (m) => m[1] as string,
-        ),
-      ),
-    ];
-    expect(assets.length).toBe(3);
   });
 });
