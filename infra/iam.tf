@@ -57,9 +57,10 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "attribute.repository_owner" = "assertion.repository_owner"
     "attribute.ref"              = "assertion.ref"
     "attribute.workflow"         = "assertion.workflow"
-    "attribute.job_workflow_ref" = "assertion.job_workflow_ref"
+    "attribute.workflow_ref"     = "assertion.workflow_ref"
+    "attribute.environment"      = "assertion.environment"
   }
-  attribute_condition = "assertion.repository == '${var.github_repository}' && assertion.repository_owner == '${split("/", var.github_repository)[0]}' && assertion.ref == 'refs/heads/main' && assertion.job_workflow_ref == '${var.github_repository}/.github/workflows/deploy-cloudrun.yml@refs/heads/main'"
+  attribute_condition = "assertion.repository == '${var.github_repository}' && assertion.repository_owner == '${split("/", var.github_repository)[0]}' && assertion.ref == 'refs/heads/main' && assertion.workflow_ref == '${var.github_repository}/.github/workflows/deploy-cloudrun.yml@refs/heads/main' && assertion.environment == 'production'"
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com/"

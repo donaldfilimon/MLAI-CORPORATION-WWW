@@ -90,6 +90,7 @@ values under **Settings -> Secrets and variables -> Actions -> Variables**:
 | `DATABASE_NAME` / `DATABASE_USER` | OpenTofu outputs |
 | `WORKOS_ORGANIZATION_ID` | one invited production organization |
 | `WORKOS_MFA_POLICY_VERIFIED` | `true` only after manually verifying Required MFA in production WorkOS |
+| `WORKOS_SSO_MFA_POLICY_VERIFIED` | `true` only after verifying that the organization's SSO IdP requires MFA; otherwise explicitly `false` and SSO admin reads stay denied |
 | `CLOUDFLARE_AI_GATEWAY_URL` | authenticated Cloudflare AI REST `/ai/v1/chat/completions` URL |
 | `CLOUDFLARE_AI_GATEWAY_ID` | dedicated gateway ID, for example `quesar` |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | production widget sitekey |

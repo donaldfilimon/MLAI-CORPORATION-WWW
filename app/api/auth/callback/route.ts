@@ -7,6 +7,7 @@ import {
   readAuthStateNonce,
   timingSafeEqualString,
   checkOrganizationAccess,
+  accessTokenAuthTime,
 } from "@/lib/server/workos";
 import { setSessionCookie } from "@/lib/server/session";
 
@@ -70,7 +71,10 @@ export async function GET(req: Request) {
       useCase: user.metadata?.use_case ?? null,
       organizationId: organizationId ?? null,
       authenticationMethod: authenticationMethod ?? null,
-      authenticatedAt: Date.now(),
+      // `auth_time` advances only after active authentication. Callback time
+      // does not: AuthKit can complete a code exchange from an existing SSO
+      // session, so stamping Date.now() here would manufacture freshness.
+      authenticatedAt: accessTokenAuthTime(accessToken) ?? undefined,
       accessToken,
       refreshToken,
     };

@@ -51,6 +51,74 @@ describe("admin access policy", () => {
   });
 });
 
+describe("admin MFA authentication evidence", () => {
+  it("reads WorkOS auth_time from a well-formed JWT and rejects malformed claims", async () => {
+    const { accessTokenAuthTime } = await loadWorkos();
+    const jwt = (payload: unknown) =>
+      `${b64url('{"alg":"RS256"}')}.${b64url(JSON.stringify(payload))}.signature`;
+
+    expect(accessTokenAuthTime(jwt({ auth_time: 1_735_680_000 }))).toBe(1_735_680_000_000);
+    expect(accessTokenAuthTime(jwt({ auth_time: "1735680000" }))).toBeNull();
+    expect(accessTokenAuthTime(jwt({ auth_time: -1 }))).toBeNull();
+    expect(accessTokenAuthTime(jwt({}))).toBeNull();
+    expect(accessTokenAuthTime("opaque-token")).toBeNull();
+    expect(accessTokenAuthTime("a.not-json.c")).toBeNull();
+  });
+
+  it("requires an explicit IdP-MFA attestation for SSO admins", async () => {
+    vi.stubEnv("ADMIN_REQUIRE_MFA", "true");
+    vi.stubEnv("WORKOS_SSO_MFA_POLICY_VERIFIED", "false");
+    const { checkAdminMfa } = await loadWorkos();
+
+    await expect(
+      checkAdminMfa({
+        ...session,
+        authenticationMethod: "SSO",
+        authenticatedAt: Date.now(),
+      }),
+    ).resolves.toEqual({ ok: false, error: "Verified SSO identity-provider MFA is required" });
+  });
+
+  it("accepts a fresh SSO step-up only after IdP MFA is attested", async () => {
+    vi.stubEnv("ADMIN_REQUIRE_MFA", "true");
+    vi.stubEnv("WORKOS_SSO_MFA_POLICY_VERIFIED", "true");
+    const { checkAdminMfa } = await loadWorkos();
+
+    await expect(
+      checkAdminMfa({
+        ...session,
+        authenticationMethod: "SSO",
+        authenticatedAt: Date.now(),
+      }),
+    ).resolves.toEqual({ ok: true });
+  });
+
+  it("rejects stale, implausibly future, missing, and impersonated auth evidence", async () => {
+    vi.stubEnv("ADMIN_REQUIRE_MFA", "true");
+    vi.stubEnv("WORKOS_SSO_MFA_POLICY_VERIFIED", "true");
+    const { checkAdminMfa } = await loadWorkos();
+
+    for (const authenticatedAt of [undefined, Date.now() - 11 * 60_000, Date.now() + 61_000]) {
+      const result = await checkAdminMfa({
+        ...session,
+        authenticationMethod: "SSO",
+        authenticatedAt,
+      });
+      expect(result.ok).toBe(false);
+    }
+    await expect(
+      checkAdminMfa({
+        ...session,
+        authenticationMethod: "Impersonation",
+        authenticatedAt: Date.now(),
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      error: "Supported authentication method is required for admin access",
+    });
+  });
+});
+
 // Single-slash-prefixed inputs that the WHATWG URL parser nonetheless resolves
 // to https://evil.com/ when used as a relative URL: it reads a backslash as a
 // path separator (so `/\` is really `//`) and strips tab/CR/LF from anywhere in
@@ -286,5 +354,23 @@ describe("state nonce cookie", () => {
     expect(timingSafeEqualString(state?.nonce ?? "", createAuthStateNonce())).toBe(false);
     // …and a browser holding no nonce at all has nothing to compare
     expect(timingSafeEqualString(state?.nonce ?? "", "")).toBe(false);
+  });
+});
+
+describe("AuthKit authorization freshness", () => {
+  it("adds max_age to the invite-only sign-in authorization request", async () => {
+    vi.stubEnv("WORKOS_API_KEY", "sk_test_quesar");
+    vi.stubEnv("WORKOS_CLIENT_ID", "client_test_quesar");
+    vi.stubEnv("APP_URL", "https://quesar.cloud");
+    vi.stubEnv("FRONTEND_URL", "https://quesar.cloud");
+    vi.resetModules();
+    const { authKitEntry } = await import("../lib/server/authkit-entry");
+
+    const request = new Request("https://quesar.cloud/api/auth/login?returnTo=%2Fconsole", {
+      headers: { "cf-connecting-ip": "203.0.113.10" },
+    });
+    const signIn = await authKitEntry()(request);
+
+    expect(new URL(signIn.headers.get("location")!).searchParams.get("max_age")).toBe("600");
   });
 });

@@ -6,7 +6,8 @@ This OpenTofu root provisions the Google half of Quesar's hybrid edge:
   seven days of PITR logs, deletion protection, and a stable maintenance window;
 - KMS envelope-key wrapping and Secret Manager containers for every runtime secret;
 - least-privilege runtime, scheduler, and GitHub deployer service accounts;
-- GitHub OIDC restricted to this repository's `deploy-cloudrun.yml` on `main`;
+- GitHub OIDC restricted through the standard `workflow_ref` claim to this
+  repository's `deploy-cloudrun.yml` on `main` and the `production` environment;
 - Artifact Registry, a serverless NEG, Google-managed TLS, an external HTTPS load
   balancer, and a Cloud Armor origin ACL containing only current Cloudflare proxy
   ranges;
@@ -16,6 +17,8 @@ The Cloud Run service itself is deployed by GitHub Actions. That workflow keeps
 revision-specific settings together: image SHA, secrets, Cloud SQL mount, ingress,
 and disabled `run.app` URL. Its deployer may inspect Secret Manager version
 metadata for fail-fast preflight, but cannot read secret payloads.
+GitHub emits `job_workflow_ref` only for reusable workflows; using that claim
+here would reject the normal deployment workflow before Google authentication.
 
 ## Bootstrap
 
@@ -50,7 +53,9 @@ of shell history; use `gcloud secrets versions add NAME --data-file=-`.
 
 Use `tofu -chdir=infra output -json runtime_configuration` to populate the
 matching GitHub Actions variables. Also set `APP_URL=https://quesar.cloud`,
-`WORKOS_ORGANIZATION_ID`, `WORKOS_MFA_POLICY_VERIFIED`, `CLOUDFLARE_AI_GATEWAY_URL`,
+`WORKOS_ORGANIZATION_ID`, `WORKOS_MFA_POLICY_VERIFIED`,
+`WORKOS_SSO_MFA_POLICY_VERIFIED=false` (until the IdP MFA policy is verified),
+`CLOUDFLARE_AI_GATEWAY_URL`,
 `CLOUDFLARE_AI_GATEWAY_ID`,
 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, and `TURNSTILE_HOSTNAMES=quesar.cloud,www.quesar.cloud`.
 
