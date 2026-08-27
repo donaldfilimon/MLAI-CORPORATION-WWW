@@ -1,6 +1,10 @@
 # Repository Guide
 
-This application lives at `apps/web/` in the MLAI integration repository. Run app-local commands from this directory or use `bun run check:web` at the repository root; web-specific OpenTofu also lives here under `infra/`.\n\n## Runtime And Boundaries
+This application lives at `apps/web/` in the MLAI integration repository. Run
+app-local commands from this directory or use `bun run check:web` at the
+repository root; web-specific OpenTofu also lives here under `infra/`.
+
+## Runtime And Boundaries
 
 - The active application is Bun 1.4 + Next.js 15 App Router + React 19 + TailwindCSS v4. Next serves pages and `app/api/*` route handlers in one process. Vite, Hono, Rust/Axum, `server.ts`, and `src/pages/` are retired; do not restore them.
 - Route `page.tsx` files are thin server components. Standard pages expose `src/views/*` through a per-route `client.tsx` (`"use client"` re-export). Browser-only views use `next/dynamic(..., { ssr: false })`; copy that form from `/showcase/*` or `/tf-pose-demo` only when the view needs browser APIs.
