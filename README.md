@@ -58,6 +58,9 @@ colors are also different axes: the ABI product is violet, while the Abi
 persona is cyan. Platform-neutral names live in `packages/contracts`; each app
 owns its own rendering and detailed content source.
 
-No hosted repository has been renamed or replaced by this local integration
-branch. Publication, remote migration, and archival of superseded checkouts are
-separate operator decisions after review.
+The integration lineage was reconciled with the production repository and
+published on `main` through
+[PR #31](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/pull/31) on
+2026-08-24. The web, mobile, and Quasar verification boundaries above remain
+independent inside that published tree. Archiving any superseded local
+checkouts is still a separate operator decision.

@@ -4,7 +4,14 @@
 
 # Quesar by MLAI
 
-This application lives at `apps/web/` in the MLAI integration repository. Run app-local commands from this directory or use `bun run check:web` at the repository root; web-specific OpenTofu also lives here under `infra/`.\n\nProduction website and invite-only private AI operations console for **Quesar by MLAI** at `quesar.cloud`. The active stack is **Next.js 15 App Router + React 19 + TailwindCSS v4**, served as one Bun-managed application with `/api/*` route handlers in the same process.
+This application lives at `apps/web/` in the MLAI integration repository. Run
+app-local commands from this directory or use `bun run check:web` at the
+repository root; web-specific OpenTofu also lives here under `infra/`.
+
+Production website and invite-only private AI operations console for **Quesar
+by MLAI** at `quesar.cloud`. The active stack is **Next.js 15 App Router + React
+19 + TailwindCSS v4**, served as one Bun-managed application with `/api/*`
+route handlers in the same process.
 
 The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. Do not extend or restore them; active work belongs in the TypeScript/TSX Next.js surface.
 

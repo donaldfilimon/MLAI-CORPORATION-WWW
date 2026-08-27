@@ -2,7 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-This application lives at `apps/web/` in the MLAI integration repository. Run app-local commands from this directory or use `bun run check:web` at the repository root; web-specific OpenTofu also lives here under `infra/`.\n\n## Project Context
+This application lives at `apps/web/` in the MLAI integration repository. Run
+app-local commands from this directory or use `bun run check:web` at the
+repository root; web-specific OpenTofu also lives here under `infra/`.
+
+## Project Context
 Production website + invite-only private AI operations console for **Quesar by MLAI** at `quesar.cloud`. **Next.js 15 (App Router) + React 19, run on Bun** — one process serves pages and `/api/*` route handlers (WorkOS organization access, Gemini through Cloudflare AI Gateway, Postgres consent/audits, inquiry storage, telemetry). The previous Vite SPA, Bun/Hono server, and Rust/Axum migration plan are abandoned. Do not extend or restore those stacks; active work belongs in the TypeScript/TSX Next.js surface.
 
 ## Essential Commands
