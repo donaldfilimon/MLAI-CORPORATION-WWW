@@ -6,6 +6,7 @@ import {
   LockKeyhole,
   Network,
   ServerCog,
+  Shield,
   Terminal,
   ArrowRight,
 } from "lucide-react";
@@ -289,24 +290,31 @@ const deploymentSteps = [
 // and each group name is reused as that section's Eyebrow kicker.
 const docNav = [
   {
-    group: "Getting Started",
+    group: "Start",
     items: [
       { id: "intro", label: "Introduction" },
       { id: "runtime", label: "ABI Runtime" },
-      { id: "deployment", label: "Deployment" },
     ],
   },
   {
-    group: "Platform",
+    group: "Security & trust",
+    items: [{ id: "trust", label: "Security & trust" }],
+  },
+  {
+    group: "Architecture",
     items: [
-      { id: "mcp", label: "MCP Server" },
+      { id: "personas", label: "Persona Routing" },
       { id: "wdbx", label: "WDBX Retrieval" },
       { id: "wdbx-v2", label: "WDBX V2 Docs" },
-      { id: "personas", label: "Persona Routing" },
+      { id: "mcp", label: "MCP Server" },
     ],
   },
   {
-    group: "Console",
+    group: "Operations",
+    items: [{ id: "deployment", label: "Deployment" }],
+  },
+  {
+    group: "Reference",
     items: [{ id: "api", label: "Protected API" }],
   },
 ];
@@ -382,7 +390,7 @@ export function Docs() {
             {/* ABI Runtime */}
             <DocSection
               id="runtime"
-              group="Getting Started"
+              group="Start"
               icon={<Terminal className="h-5 w-5 text-cyan-400" />}
               title="ABI Runtime"
               lead={
@@ -431,95 +439,41 @@ export function Docs() {
               </div>
             </DocSection>
 
-            {/* MCP Server */}
+            {/* Security & trust */}
             <DocSection
-              id="mcp"
-              group="Platform"
-              icon={<Network className="h-5 w-5 text-sky-400" />}
-              title="MCP Server"
+              id="trust"
+              group="Security & trust"
+              icon={<Shield className="h-5 w-5 text-cyan-400" />}
+              title="Security & trust"
               lead={
                 <>
-                  The <code className="text-cyan-300">abi-mcp</code> server speaks JSON-RPC 2.0
-                  over stdio, with an optional local HTTP transport.
+                  Trust on this surface is a boundary and a claims discipline: what is
+                  authenticated, what is rate-limited, and what fails closed. Session
+                  access uses WorkOS AuthKit; public inquiry submission is rate-limited;
+                  evaluation gates sit in front of autonomous write or external tool
+                  paths; WDBX builds that are disabled fail closed with explicit errors.
+                  Product-facing security detail lives on the dedicated page.
                 </>
               }
             >
-              <SpecList rows={mcpSpec} />
-              <div className="mt-8">
-                <DocSubhead>Tools</DocSubhead>
-                <Glossary className="mt-5" items={mcpTools} />
-              </div>
-            </DocSection>
-
-            {/* WDBX */}
-            <DocSection
-              id="wdbx"
-              group="Platform"
-              icon={<Boxes className="h-5 w-5 text-cyan-400" />}
-              title="WDBX Retrieval"
-              lead={
-                <>
-                  WDBX is the Weighted Directed Backtrace eXecution store. It keeps context as
-                  weighted paths so retrieval can be inspected, not just ranked. The store exposes
-                  key-value, vector (cosine search with a SIMD path), and block/spatial surfaces,
-                  with JSONL snapshot persistence guarded by SHA-256 integrity checks.
-                </>
-              }
-            >
-              <div className="grid gap-5 sm:grid-cols-2">
-                {wdbxCapabilities.map((c) => (
-                  <FeatureCard key={c.title} title={c.title} desc={c.desc} accent="wdbx" />
-                ))}
-              </div>
-              <Callout className="mt-6" label="Fail closed">
-                Disabled builds fail closed with explicit errors rather than degrading silently.
+              <Callout label="Boundary">
+                Prefer the security page for org gate, gateway, consent, and retention
+                wording — this hub only points at the same boundary without restating
+                marketing claims.
               </Callout>
-              <PaperLink to="/research/wdbx-weighted-backtrace-memory-store">
-                Read the paper: WDBX weighted-backtrace store
-              </PaperLink>
-            </DocSection>
-
-            {/* WDBX V2 documentation set */}
-            <DocSection
-              id="wdbx-v2"
-              group="Platform"
-              icon={<Boxes className="h-5 w-5 text-sky-400" />}
-              title="WDBX V2 Documentation"
-              lead="The V2 release of the Abbey/WDBX runtime ships an observable pipeline: block-chain memory with temporal queries, multimodal input fusion, an async neural path, and research-alignment telemetry scored on every turn. The complete Markdown documentation set is mirrored here from the wdbx repository — including its limitations page, which states plainly what is scaffolding versus shipped."
-            >
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {wdbxV2Docs.map((doc) => (
-                  <a
-                    key={doc.file}
-                    href={`/docs/wdbx/${doc.file}`}
-                    download
-                    className="glass-card group p-4"
-                  >
-                    <div className="mb-1 flex items-center justify-between">
-                      <span className="text-sm font-bold text-white">{doc.label}</span>
-                      <span className="font-mono text-[10px] text-text-dim/60 group-hover:text-sky-400">.md ↓</span>
-                    </div>
-                    <p className="text-xs leading-relaxed text-text-dim">{doc.text}</p>
-                  </a>
-                ))}
-              </div>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <a href="/research/wdbx-weighted-backtrace-memory-store.pdf" download className="glass-card inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white">
-                  WDBX store paper (PDF) <span className="font-mono text-[10px] text-text-dim/60">↓</span>
-                </a>
-                <a href="/research/multi-persona-routing-policy-weights.pdf" download className="glass-card inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white">
-                  Persona routing paper (PDF) <span className="font-mono text-[10px] text-text-dim/60">↓</span>
-                </a>
-              </div>
-              <PaperLink to="/blog/wdbx-v2-release">
-                Read the release note: WDBX V2
-              </PaperLink>
+              <Link
+                to="/security"
+                className="mt-8 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                Review the trust boundary
+                <ArrowRight className="h-3 w-3" />
+              </Link>
             </DocSection>
 
             {/* Personas */}
             <DocSection
               id="personas"
-              group="Platform"
+              group="Architecture"
               icon={<Boxes className="h-5 w-5 text-sky-400" />}
               title="Persona Routing"
               lead="The Abbey–Aviva–Abi framework answers one question: how do you get advanced capability without giving up governance? Instead of one agent that plans, reviews, and executes, it separates those roles across three persona profiles. Routing between them is deterministic and weight-based — an inspectable trace event, not a hidden model call."
@@ -578,10 +532,105 @@ export function Docs() {
               </PaperLink>
             </DocSection>
 
+            {/* WDBX */}
+            <DocSection
+              id="wdbx"
+              group="Architecture"
+              icon={<Boxes className="h-5 w-5 text-cyan-400" />}
+              title="WDBX Retrieval"
+              lead={
+                <>
+                  WDBX is the Weighted Directed Backtrace eXecution store. It keeps context as
+                  weighted paths so retrieval can be inspected, not just ranked. The store exposes
+                  key-value, vector (cosine search with a SIMD path), and block/spatial surfaces,
+                  with JSONL snapshot persistence guarded by SHA-256 integrity checks.
+                </>
+              }
+            >
+              <div className="grid gap-5 sm:grid-cols-2">
+                {wdbxCapabilities.map((c) => (
+                  <FeatureCard key={c.title} title={c.title} desc={c.desc} accent="wdbx" />
+                ))}
+              </div>
+              <Callout className="mt-6" label="Fail closed">
+                Disabled builds fail closed with explicit errors rather than degrading silently.
+              </Callout>
+              <PaperLink to="/research/wdbx-weighted-backtrace-memory-store">
+                Read the paper: WDBX weighted-backtrace store
+              </PaperLink>
+            </DocSection>
+
+            {/* WDBX V2 documentation set */}
+            <DocSection
+              id="wdbx-v2"
+              group="Architecture"
+              icon={<Boxes className="h-5 w-5 text-sky-400" />}
+              title="WDBX V2 Documentation"
+              lead="The V2 release of the Abbey/WDBX runtime ships an observable pipeline: block-chain memory with temporal queries, multimodal input fusion, an async neural path, and research-alignment telemetry scored on every turn. The complete Markdown documentation set is mirrored here from the wdbx repository — including its limitations page, which states plainly what is scaffolding versus shipped."
+            >
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {wdbxV2Docs.map((doc) => (
+                  <a
+                    key={doc.file}
+                    href={`/docs/wdbx/${doc.file}`}
+                    download
+                    className="glass-card group p-4"
+                  >
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-sm font-bold text-white">{doc.label}</span>
+                      <span className="font-mono text-[10px] text-text-dim/60 group-hover:text-sky-400">.md ↓</span>
+                    </div>
+                    <p className="text-xs leading-relaxed text-text-dim">{doc.text}</p>
+                  </a>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a href="/research/wdbx-weighted-backtrace-memory-store.pdf" download className="glass-card inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white">
+                  WDBX store paper (PDF) <span className="font-mono text-[10px] text-text-dim/60">↓</span>
+                </a>
+                <a href="/research/multi-persona-routing-policy-weights.pdf" download className="glass-card inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white">
+                  Persona routing paper (PDF) <span className="font-mono text-[10px] text-text-dim/60">↓</span>
+                </a>
+              </div>
+              <PaperLink to="/blog/wdbx-v2-release">
+                Read the release note: WDBX V2
+              </PaperLink>
+            </DocSection>
+
+            {/* MCP Server */}
+            <DocSection
+              id="mcp"
+              group="Architecture"
+              icon={<Network className="h-5 w-5 text-sky-400" />}
+              title="MCP Server"
+              lead={
+                <>
+                  The <code className="text-cyan-300">abi-mcp</code> server speaks JSON-RPC 2.0
+                  over stdio, with an optional local HTTP transport.
+                </>
+              }
+            >
+              <SpecList rows={mcpSpec} />
+              <div className="mt-8">
+                <DocSubhead>Tools</DocSubhead>
+                <Glossary className="mt-5" items={mcpTools} />
+              </div>
+            </DocSection>
+
+            {/* Deployment */}
+            <DocSection
+              id="deployment"
+              group="Operations"
+              icon={<ServerCog className="h-5 w-5 text-sky-400" />}
+              title="Deployment Checklist"
+            >
+              <StepList steps={deploymentSteps} />
+            </DocSection>
+
             {/* Protected API */}
             <DocSection
               id="api"
-              group="Console"
+              group="Reference"
               icon={<LockKeyhole className="h-5 w-5 text-cyan-400" />}
               title="Protected Console API"
               lead={
@@ -595,15 +644,6 @@ export function Docs() {
               <Glossary items={apiRoutes} />
             </DocSection>
 
-            {/* Deployment */}
-            <DocSection
-              id="deployment"
-              group="Getting Started"
-              icon={<ServerCog className="h-5 w-5 text-sky-400" />}
-              title="Deployment Checklist"
-            >
-              <StepList steps={deploymentSteps} />
-            </DocSection>
           </m.div>
         </div>
         </main>
