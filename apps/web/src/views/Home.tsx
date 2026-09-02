@@ -55,7 +55,7 @@ export function Home() {
         <Section
           id="control-plane"
           className="relative w-full"
-          eyebrow="THE CONTROL PLANE"
+          eyebrow="TRUST BOUNDARY"
           title="The useful unit is not a chat. It is a governed event."
           lead="Quesar treats identity, consent, inference, encryption, and retention as one request contract—not five dashboard settings operators must remember to align."
         >
@@ -65,7 +65,7 @@ export function Home() {
         </Section>
       </Reveal>
 
-      <section className="relative w-full border-y border-white/6 bg-surface/20 section-y noise-overlay" aria-labelledby="request-path-heading">
+      <section className="relative w-full border-y border-white/6 bg-surface/20 section-y noise-overlay" id="request-path" aria-labelledby="request-path-heading">
         <Reveal width="100%">
           <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
             <div className="lg:sticky lg:top-32">
@@ -97,6 +97,51 @@ export function Home() {
               <div className="mt-7 flex flex-wrap gap-3"><Button asChild><Link to="/benchmarks">Review evidence</Link></Button><Button asChild variant="outline"><Link to="/docs">Read architecture</Link></Button></div>
             </div>
             <SpecList rows={wdbxFacts} />
+          </div>
+        </Section>
+      </Reveal>
+
+      <Reveal width="100%">
+        <Section
+          id="product-boundary"
+          className="w-full"
+          eyebrow="PRODUCT BOUNDARY"
+          title="An invite-only operations console. Not a public chatbot."
+          lead="Quesar is for teams that need organization access, explicit consent, and encrypted conversation records on one request path. It is not a free-for-all chat UI and it does not invent compliance certifications."
+        >
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/8 bg-bg/70 p-6">
+              <h3 className="font-display text-xl font-semibold text-white">What it is</h3>
+              <p className="mt-3 text-sm leading-relaxed text-text-dim">A governed generation path with WorkOS membership, consent gates, a metadata-only provider gateway, and user-controlled KMS-wrapped audits.</p>
+            </div>
+            <div className="rounded-3xl border border-white/8 bg-bg/70 p-6">
+              <h3 className="font-display text-xl font-semibold text-white">What it is not</h3>
+              <p className="mt-3 text-sm leading-relaxed text-text-dim">A consumer chatbot, a benchmark scoreboard, or a place for unaudited model output. Lab demos and evidence stay linked—not in the primary marketing nav.</p>
+            </div>
+          </div>
+        </Section>
+      </Reveal>
+
+      <Reveal width="100%">
+        <Section
+          id="docs-strip"
+          className="w-full bg-surface/20"
+          eyebrow="DOCS"
+          title="Start with the trust boundary."
+          lead="Deep docs live on the app host. These three doors cover getting in, how audits work, and the runtime underneath."
+        >
+          <div className="grid gap-5 lg:grid-cols-3">
+            {[
+              { to: "/docs", title: "Getting started", body: "Invite path, console entry, and what a scoped evaluation requires." },
+              { to: "/security", title: "Security & trust", body: "Org gate, gateway boundary, consent, encryption, retention." },
+              { to: "/docs", title: "Architecture", body: "Control plane framing and the inspectable WDBX substrate—facts, not scoreboard." },
+            ].map((card) => (
+              <Link key={card.title} to={card.to} className="glass-card group flex min-h-48 flex-col">
+                <h3 className="font-display text-xl font-semibold text-white transition-colors group-hover:text-cyan-200">{card.title}</h3>
+                <p className="mt-4 text-sm leading-relaxed text-text-dim">{card.body}</p>
+                <span className="mt-auto pt-6 text-sm font-semibold text-cyan-300">Open →</span>
+              </Link>
+            ))}
           </div>
         </Section>
       </Reveal>
