@@ -24,11 +24,11 @@ export const Navbar = () => {
   const { openInquiry } = useUI();
 
   const navItems = [
+    { to: "/#control-plane", label: "Product" },
+    { to: "/#request-path", label: "How it works" },
+    { to: "/docs", label: "Docs" },
     { to: "/research", label: "Research" },
-    { to: "/docs", label: "Architecture" },
-    { to: "/benchmarks", label: "Evidence" },
-    { to: "/security", label: "Security" },
-    { to: "/showcase", label: "Lab" },
+    { to: "/about", label: "Company" },
   ];
 
   useEffect(() => {
