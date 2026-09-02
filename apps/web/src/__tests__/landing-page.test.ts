@@ -23,6 +23,10 @@ describe("site/index.html — GitHub Pages landing page", () => {
     expect(html).toContain(`<link rel="canonical" href="${SITE_URL}/" />`);
   });
 
+  it("noindexes the Pages companion so it cannot compete with the canonical host", () => {
+    expect(html).toContain('name="robots" content="noindex, follow"');
+  });
+
   it("ships a complete social card pointing at the canonical host", () => {
     for (const tag of [
       'property="og:title"',

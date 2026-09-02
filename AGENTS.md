@@ -50,3 +50,7 @@ must be merged back into this checkout's default branch, the worktree
 removed, and the branch deleted, before pushing and before the task is
 called done. Full policy: `~/.claude/CLAUDE.md` (*Git discipline*).
 <!-- /machine-git-policy -->
+
+## GitHub Pages
+
+- **GitHub Pages** publishes the static companion in `apps/web/site/` via `.github/workflows/pages.yml` (Actions only). The legacy `gh-pages` branch is retired; do not recreate it for deploys.
