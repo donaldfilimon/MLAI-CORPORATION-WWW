@@ -166,6 +166,12 @@
         nav { display: none; }
       }
       @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+    
+      .grid-2 { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin-top:1.5rem; }
+      .grid-3 { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); margin-top:1.5rem; }
+      .card { display:block; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); border-radius:1.25rem; padding:1.25rem; color:inherit; text-decoration:none; }
+      .card h3 { margin:0 0 0.5rem; font-family:"Spectral",Georgia,serif; }
+      .card p { margin:0; color:var(--dim); font-size:0.95rem; }
     </style>
   </head>
   <body>
@@ -198,7 +204,7 @@
       <main>
         <section class="hero">
           <span class="tag">Invite-only private AI operations</span>
-          <h1>Private generation with <span class="grad">an audit trail you control.</span></h1>
+          <h1>Private AI operations with <span class="grad">an audit trail you control.</span></h1>
           <p class="lead">
             Quesar's production design combines WorkOS organization access, Gemini 3.7 Flash through a metadata-only
             Cloudflare gateway, and KMS-wrapped conversation records retained under explicit consent.
@@ -248,6 +254,28 @@
           <a href="https://quesar.cloud/">quesar.cloud</a>.
         </div>
       </main>
+
+      
+        <section id="product-boundary" class="section">
+          <p class="eyebrow">PRODUCT BOUNDARY</p>
+          <h2 class="section-title">Invite-only operations. Not a public chatbot.</h2>
+          <p class="lead">Organization access, explicit consent, and encrypted records on one request path—not a free-for-all chat UI.</p>
+          <div class="grid-2">
+            <div class="card"><h3>What it is</h3><p>A governed generation path with WorkOS membership, consent gates, a metadata-only gateway, and user-controlled KMS-wrapped audits.</p></div>
+            <div class="card"><h3>What it is not</h3><p>A consumer chatbot or a compliance certificate wall. Lab evidence stays linked from the app host.</p></div>
+          </div>
+        </section>
+
+        <section id="docs-strip" class="section">
+          <p class="eyebrow">DOCS</p>
+          <h2 class="section-title">Read the trust boundary on quesar.cloud</h2>
+          <p class="lead">This Pages companion is a teaser. Deep docs stay on the app host.</p>
+          <div class="grid-3">
+            <a class="card" href="https://quesar.cloud/docs"><h3>Getting started</h3><p>Invite path and scoped evaluations.</p></a>
+            <a class="card" href="https://quesar.cloud/security"><h3>Security &amp; trust</h3><p>Org gate, gateway, consent, retention.</p></a>
+            <a class="card" href="https://quesar.cloud/docs"><h3>Architecture</h3><p>Control plane and inspectable substrate.</p></a>
+          </div>
+        </section>
 
       <footer>
         © MLAI Corporation · Quesar by MLAI ·
