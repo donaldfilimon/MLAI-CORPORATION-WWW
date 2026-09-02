@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Magnetic } from "./Magnetic";
 import { Logo } from "./Logo";
 import { useAuth } from "@/lib/auth";
@@ -128,88 +134,84 @@ export const Navbar = () => {
             </Magnetic>
           </div>
 
-          <button
-            className="lg:hidden p-2 text-white"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle navigation menu"
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-navigation"
-          >
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <m.div
-            id="mobile-navigation"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 p-4 lg:hidden"
-          >
-            <div className="bg-surface border border-white/10 rounded-2xl p-6 shadow-2xl space-y-6">
-              <div className="flex flex-col gap-2">
-                {navItems.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className={({ isActive }) =>
-                      `text-lg font-medium py-3 transition-colors ${isActive ? "text-cyan-400" : "text-white"}`
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                ))}
-              </div>
-              <div className="pt-6 border-t border-white/10 flex flex-col gap-4">
-                {user ? (
-                  <>
-                    <div className="text-sm text-text-dim py-2">
-                      {user.email}
-                    </div>
-                    <Link
-                      to="/profile"
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger
+              className="lg:hidden p-2 text-white"
+              aria-label="Toggle navigation menu"
+              aria-controls="mobile-navigation"
+            >
+              {isMobileMenuOpen ? <X /> : <Menu />}
+            </SheetTrigger>
+            <SheetContent
+              id="mobile-navigation"
+              side="right"
+              className="bg-surface border-white/10 w-full sm:max-w-sm gap-0 p-0"
+            >
+              <SheetHeader className="border-b border-white/10 px-6 py-4">
+                <SheetTitle className="text-white">Menu</SheetTitle>
+              </SheetHeader>
+              <div className="flex flex-col gap-6 p-6">
+                <div className="flex flex-col gap-2">
+                  {navItems.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
                       onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `text-lg font-medium py-3 transition-colors ${isActive ? "text-cyan-400" : "text-white"}`
+                      }
                     >
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </div>
+                <div className="pt-6 border-t border-white/10 flex flex-col gap-4">
+                  {user ? (
+                    <>
+                      <div className="text-sm text-text-dim py-2">
+                        {user.email}
+                      </div>
+                      <Link
+                        to="/profile"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Button variant="outline" className="w-full h-12">
+                          Profile
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={() => {
+                          logout();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        variant="outline"
+                        className="w-full h-12"
+                      >
+                        Sign Out
+                      </Button>
+                    </>
+                  ) : (
+                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                       <Button variant="outline" className="w-full h-12">
-                        Profile
+                        Invited? Sign in
                       </Button>
                     </Link>
-                    <Button
-                      onClick={() => {
-                        logout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      variant="outline"
-                      className="w-full h-12"
-                    >
-                      Sign Out
-                    </Button>
-                  </>
-                ) : (
-                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="outline" className="w-full h-12">
-                      Invited? Sign in
-                    </Button>
-                  </Link>
-                )}
-                <Button
-                  onClick={() => {
-                    openInquiry();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="w-full bg-white text-black font-bold h-12"
-                >
-                  Request Access
-                </Button>
+                  )}
+                  <Button
+                    onClick={() => {
+                      openInquiry();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full bg-white text-black font-bold h-12"
+                  >
+                    Request Access
+                  </Button>
+                </div>
               </div>
-            </div>
-          </m.div>
-        )}
-      </AnimatePresence>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
     </nav>
   );
 };
