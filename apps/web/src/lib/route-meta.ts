@@ -24,7 +24,7 @@ const DEFAULT_OG_IMAGES = [
     url: OG_IMAGE_URL,
     width: 1200,
     height: 630,
-    alt: "Quesar by MLAI — private AI operations with an audit trail",
+    alt: "Quesar by MLAI — private generation with an audit trail you control",
   },
 ];
 const FEED_ALTERNATE_TYPES = {
@@ -77,9 +77,9 @@ export type RouteMeta = {
 };
 
 export const DEFAULT_ROUTE_META: RouteMeta = {
-  title: "Quesar by MLAI | Private AI Operations with an Audit Trail",
+  title: "Quesar by MLAI | Private generation with an audit trail you control",
   description:
-    "Quesar is MLAI's invite-only AI operations console with organization-gated access, minimized provider data, and encrypted user-controlled conversation audits.",
+    "Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed.",
 };
 
 export const routeMetadata: Record<string, RouteMeta> = {

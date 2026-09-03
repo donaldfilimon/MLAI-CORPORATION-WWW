@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "Quesar by MLAI | Private AI Operations",
     description:
       "Invite-only AI operations with organization-gated access and encrypted, user-controlled conversation audits.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Quesar by MLAI — private AI operations with an audit trail" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Quesar by MLAI — private generation with an audit trail you control" }],
     url: SITE_URL,
   },
   twitter: {
