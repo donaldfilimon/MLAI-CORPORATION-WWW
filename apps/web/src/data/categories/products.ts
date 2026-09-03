@@ -10,7 +10,7 @@ export const products: Products = ([
     kicker: "Multi-Persona AI Framework",
     name: "ABI Framework",
     intro:
-      "The executive function of the system. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — steering a shared neural core via persona-token injection at the attention layer.",
+      "Local AI orchestration with inspectable memory. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — and says what the ledger can prove.",
     accent: "aviva",
     sections: [
       {
@@ -108,10 +108,10 @@ export const products: Products = ([
   },
   {
     slug: "abbey",
-    kicker: "Empathic Polymath",
+    kicker: "Intelligence Without Limits",
     name: "Abbey",
     intro:
-      "Engineered as a genuine intellectual partner, not a utility — positioned at the confluence of technical expertise and humanistic insight. Its mission: a force for cognitive transformation that turns apprehension into fascination.",
+      "Intelligence Without Limits — with a claims ledger. Abbey is your companion for routing, memory, and calm ops help: personas that say what they know and what they don't. No AGI claims, no unverified benchmarks, no Quesar features dressed up as the bot.",
     accent: "abbey",
     sections: [
       {

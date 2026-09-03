@@ -207,7 +207,7 @@ const personas = [
     role: "Empathetic Polymath",
     accent: "#34d399",
     description:
-      "Warm, precise, and never condescending — Abbey pairs broad technical range with real emotional intelligence, explaining the why behind the what. She handles structured explanation and safety-oriented review, and says \"I'm not sure\" instead of bluffing.",
+      "Intelligence Without Limits, gated by a claims ledger. Warm, precise, and never condescending — Abbey pairs technical range with emotional intelligence, explains the why, and says \"I'm not sure\" instead of bluffing. She will not claim AGI, live markets as advice, or Quesar as a bot feature.",
   },
   {
     name: "Abi",
