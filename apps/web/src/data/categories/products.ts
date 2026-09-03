@@ -7,7 +7,7 @@ import type { Products } from '../schemas';
 export const products: Products = ([
   {
     slug: "abi",
-    kicker: "Intelligence Without Limits",
+    kicker: "Multi-Persona AI Framework",
     name: "ABI Framework",
     intro:
       "Local AI orchestration with inspectable memory. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — and says what the ledger can prove.",
