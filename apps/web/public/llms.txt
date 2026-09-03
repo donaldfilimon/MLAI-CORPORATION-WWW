@@ -1,6 +1,6 @@
 # MLAI Corporation
 
-> Quesar is MLAI's invite-only AI operations console with organization-gated access, minimized provider data, and encrypted user-controlled conversation audits.
+> Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed.
 
 MLAI Corporation builds WDBX (a weighted-backtrace, hash-chained retrieval and
 memory store) and the ABI runtime's Abbey/Aviva/Abi persona orchestration.
@@ -12,7 +12,7 @@ the linked repositories for implementation detail.
 
 ## Platform
 
-- [Quesar by MLAI](https://quesar.cloud/): Quesar is MLAI's invite-only AI operations console with organization-gated access, minimized provider data, and encrypted user-controlled conversation audits.
+- [Quesar by MLAI](https://quesar.cloud/): Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed.
 - [About MLAI Corporation](https://quesar.cloud/about): Learn how MLAI Corporation designs resilient AI systems for private deployment, retrieval provenance, safety evaluation, and operational control.
 - [MLAI Engineering Services](https://quesar.cloud/services): Audit, design, build, and harden AI systems that need traceability, private deployment paths, evaluation gates, and operational reliability.
 - [Quesar Architecture](https://quesar.cloud/docs): Review MLAI platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.

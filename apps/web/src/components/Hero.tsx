@@ -23,20 +23,20 @@ const TRUSTED_LOGOS = [
 const PRODUCT_SIGNALS = [
   {
     label: "Identity",
-    title: "Invite-only access",
-    detail: "Active organization membership is rechecked before generation.",
+    title: "Invite-only organization access",
+    detail: "Membership checked at sign-in and before each protected request; revocation fails closed.",
     icon: ShieldCheck,
   },
   {
-    label: "Audit",
-    title: "User-controlled records",
-    detail: "Per-record encryption, one-year expiry, export, and deletion.",
+    label: "Provider",
+    title: "Metadata-only gateway",
+    detail: "Operational metadata only; payload logging off; no user email to the provider.",
     icon: GitBranch,
   },
   {
-    label: "WDBX",
-    title: "Inspectable retrieval",
-    detail: "HNSW and MVCC paths grounded in the active Rust substrate.",
+    label: "Audit",
+    title: "Records you control",
+    detail: "Consent first; KMS-wrapped audit before response; inspect, export, or delete.",
     icon: DatabaseZap,
   },
 ];
@@ -114,7 +114,7 @@ export const Hero = () => {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
               </span>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              QUESAR BY MLAI
+              Invite-only private AI operations
             </m.div>
 
             <m.h1
@@ -122,9 +122,9 @@ export const Hero = () => {
               id="hero-heading"
               className="mb-5 max-w-4xl font-display text-4xl font-bold leading-[1.03] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
             >
-              Private AI operations with{" "}
+              Private generation with{" "}
               <span className="bg-linear-to-r from-cyan-300 via-sky-200 to-cyan-500 bg-clip-text text-transparent">
-                an audit trail.
+                an audit trail you control.
               </span>
             </m.h1>
 
@@ -132,9 +132,10 @@ export const Hero = () => {
               variants={fadeUp}
               className="mb-6 max-w-3xl text-base leading-relaxed text-text-dim md:text-lg"
             >
-              Quesar is the governed access layer for teams that need private
-              generation, explicit consent, revocable identity, and records
-              that can be inspected without sending user identity to the model.
+              Only invited WorkOS members can generate. Traffic crosses a
+              metadata-only Cloudflare AI Gateway—no payload logging, no user
+              email to the provider—and becomes a KMS-wrapped audit you can
+              consent to, export, or delete. If any step fails, nothing returns.
             </m.p>
 
             <m.div variants={fadeUp} className="mb-7 flex flex-wrap gap-3 sm:gap-4">

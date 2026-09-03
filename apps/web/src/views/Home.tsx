@@ -9,28 +9,28 @@ import { useUI } from "@/lib/ui-context";
 
 const controls = [
   {
-    title: "Identity before inference",
-    desc: "Production is designed to check WorkOS organization membership at sign-in and before each protected generation. Revocation fails closed once provider configuration is live.",
+    title: "Invite-only organization access",
+    desc: "Only active members of the invited WorkOS organization can reach generation. Membership is checked at sign-in and again before each protected request. Revocation fails closed.",
     accent: "abi" as const,
   },
   {
-    title: "A minimized provider boundary",
-    desc: "Quesar's production boundary excludes user email from Gemini requests and is configured for operational metadata without request/response payload logging.",
+    title: "Metadata-only gateway",
+    desc: "Generation runs through Cloudflare AI Gateway configured for operational metadata only. Payload logging is off. User email is never sent to the provider.",
     accent: "abbey" as const,
   },
   {
-    title: "A record the user controls",
-    desc: "The production contract returns a response only after a KMS-wrapped per-record audit is durable, with explicit consent, export, live deletion, and one-year expiry.",
+    title: "Records you control",
+    desc: "Consent comes first. A response returns only after its KMS-wrapped audit is durable. Inspect, export, or delete live records; copies age out on one-year retention.",
     accent: "wdbx" as const,
   },
 ];
 
 const requestPath = [
-  ["01", "Authenticate", "WorkOS establishes the session and active MLAI beta membership."],
+  ["01", "Authenticate", "WorkOS establishes the session and verifies active organization membership."],
   ["02", "Consent", "The current audit policy must be accepted before content leaves the application."],
-  ["03", "Generate", "Gemini 3.7 Flash runs through an authenticated, no-payload-log Cloudflare gateway."],
-  ["04", "Encrypt", "The response and its prompt history are sealed with a fresh AES-256-GCM data key."],
-  ["05", "Commit", "Cloud KMS wraps the data key and Postgres commits the audit before the response returns."],
+  ["03", "Generate", "Inference runs through an authenticated, metadata-only Cloudflare AI Gateway. User email is not sent to the provider."],
+  ["04", "Encrypt", "Prompt and response are sealed; Cloud KMS wraps the data key."],
+  ["05", "Commit", "The encrypted audit is written before the response returns. Fail closed."],
 ] as const;
 
 const wdbxFacts = [
@@ -56,8 +56,8 @@ export function Home() {
           id="control-plane"
           className="relative w-full"
           eyebrow="TRUST BOUNDARY"
-          title="The useful unit is not a chat. It is a governed event."
-          lead="Quesar treats identity, consent, inference, encryption, and retention as one request contract—not five dashboard settings operators must remember to align."
+          title="Three boundaries. One control plane."
+          lead="Identity, provider, and audit are the same request—not settings an operator has to remember to align. A generation either completes as a governed event or it does not complete at all."
         >
           <div className="grid gap-6 lg:grid-cols-3">
             {controls.map((control) => <FeatureCard key={control.title} {...control} />)}
@@ -71,7 +71,7 @@ export function Home() {
             <div className="lg:sticky lg:top-32">
               <Eyebrow className="mb-5">ONE REQUEST</Eyebrow>
               <h2 id="request-path-heading" className="section-title">Five control points. One return condition.</h2>
-              <p className="mt-5 text-base leading-relaxed text-text-dim">If organization access, consent, provider routing, encryption, or durable storage fails, Quesar does not return an unaudited model response.</p>
+              <p className="mt-5 text-base leading-relaxed text-text-dim">Authenticate → Consent → Generate → Encrypt → Commit. If any control point fails, Quesar does not return an unaudited response.</p>
               <Button asChild variant="outline" className="mt-7 rounded-full"><Link to="/security">Inspect the security model <ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
             <ol className="grid gap-3">
@@ -161,7 +161,7 @@ export function Home() {
             <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-linear-to-br from-cyan-600/20 via-bg to-violet-500/10 p-8 md:p-14">
               <AccentGlow accent="wdbx" />
               <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-                <div className="max-w-3xl"><Eyebrow className="mb-6">INVITE-ONLY BETA</Eyebrow><h2 id="quesar-cta-heading" className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">Put one governed workflow through Quesar.</h2><p className="mt-5 text-lg leading-relaxed text-text-dim">Invited teams can enter the console. New teams can request a scoped evaluation with the workflow, failure modes, and data boundary made explicit.</p><div className="mt-6 flex flex-wrap gap-3 text-xs text-text-dim"><span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-300" /> Org-gated</span><span className="inline-flex items-center gap-2"><LockKeyhole className="h-4 w-4 text-cyan-300" /> Encrypted audits</span><span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-violet-300" /> Explicit consent</span></div></div>
+                <div className="max-w-3xl"><Eyebrow className="mb-6">INVITE-ONLY</Eyebrow><h2 id="quesar-cta-heading" className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">Put one governed workflow through Quesar.</h2><p className="mt-5 text-lg leading-relaxed text-text-dim">Invited organization members can enter the console. Others can request a scoped evaluation with the workflow, failure modes, and data boundary made explicit.</p><div className="mt-6 flex flex-wrap gap-3 text-xs text-text-dim"><span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-300" /> WorkOS org access</span><span className="inline-flex items-center gap-2"><LockKeyhole className="h-4 w-4 text-cyan-300" /> Metadata-only gateway</span><span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-violet-300" /> Audits you control</span></div></div>
                 <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><Button asChild size="lg" className="rounded-full bg-white px-7 text-black hover:bg-cyan-50"><Link to="/login">Enter Quesar <ArrowRight className="h-4 w-4" /></Link></Button><Button onClick={openInquiry} size="lg" variant="outline" className="rounded-full">Request access</Button></div>
               </div>
             </div>

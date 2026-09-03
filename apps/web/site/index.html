@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quesar by MLAI — Private AI Operations</title>
+    <title>Quesar by MLAI — Private generation with an audit trail you control</title>
     <meta
       name="description"
-      content="Quesar is the invite-only MLAI operations console for private Gemini generation with organization access, explicit consent, and user-controlled encrypted audits."
+      content="Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed."
     />
     <link rel="canonical" href="https://quesar.cloud/" />
     <meta name="robots" content="noindex, follow" />
@@ -35,7 +35,7 @@
     <meta property="og:title" content="Quesar by MLAI" />
     <meta
       property="og:description"
-      content="Private AI operations with invite-only access and a user-controlled encrypted audit trail."
+      content="Private generation with an audit trail you control. Invite-only WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://quesar.cloud/" />
@@ -44,13 +44,13 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Quesar by MLAI — private AI operations"
+      content="Quesar by MLAI — private generation with an audit trail you control"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Quesar by MLAI" />
     <meta
       name="twitter:description"
-      content="Private AI operations with invite-only access and a user-controlled encrypted audit trail."
+      content="Private generation with an audit trail you control. Invite-only WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits."
     />
     <meta name="twitter:image" content="https://quesar.cloud/og-image.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -66,7 +66,7 @@
         "name": "Quesar by MLAI",
         "url": "https://quesar.cloud",
         "image": "https://quesar.cloud/og-image.png",
-        "description": "Private AI operations with organization access, explicit consent, and encrypted audits.",
+        "description": "Private generation with an audit trail you control. Invite-only WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits.",
         "publisher": {
           "@type": "Organization",
           "name": "MLAI Corporation",
@@ -204,10 +204,11 @@
       <main>
         <section class="hero">
           <span class="tag">Invite-only private AI operations</span>
-          <h1>Private AI operations with <span class="grad">an audit trail you control.</span></h1>
+          <h1>Private generation with <span class="grad">an audit trail you control.</span></h1>
           <p class="lead">
-            Quesar's production design combines WorkOS organization access, Gemini 3.7 Flash through a metadata-only
-            Cloudflare gateway, and KMS-wrapped conversation records retained under explicit consent.
+            Only invited WorkOS members can generate. Traffic crosses a metadata-only Cloudflare AI Gateway—no payload
+            logging, no user email to the provider—and becomes a KMS-wrapped audit you can consent to, export, or delete.
+            If any step fails, nothing returns.
           </p>
           <div class="cta">
             <a class="btn btn-primary" href="https://quesar.cloud/login">Enter Quesar →</a>
@@ -218,33 +219,33 @@
         <section aria-label="Trust controls">
           <div class="personas">
             <div class="card" style="--accent: var(--abbey)">
-              <span class="role"><span class="dot"></span>Identity boundary</span>
-              <h3>Organization access</h3>
-              <p>Only active members of the invited WorkOS organization can reach generation.</p>
+              <span class="role"><span class="dot"></span>Identity</span>
+              <h3>Invite-only organization access</h3>
+              <p>Membership is checked at sign-in and again before each protected request. Revocation fails closed.</p>
             </div>
             <div class="card" style="--accent: var(--aviva)">
-              <span class="role"><span class="dot"></span>Provider boundary</span>
+              <span class="role"><span class="dot"></span>Provider</span>
               <h3>Metadata-only gateway</h3>
-              <p>The rollout configures the Cloudflare AI Gateway with payload logging and caching disabled.</p>
+              <p>Operational metadata only. Payload logging is off. User email is never sent to the provider.</p>
             </div>
             <div class="card" style="--accent: var(--abi)">
-              <span class="role"><span class="dot"></span>Audit boundary</span>
-              <h3>User-controlled records</h3>
-              <p>Consent comes first. Users can inspect, export, or delete live audits; backup copies age out under retention.</p>
+              <span class="role"><span class="dot"></span>Audit</span>
+              <h3>Records you control</h3>
+              <p>Consent first. KMS-wrapped audit before response; inspect, export, or delete; one-year retention.</p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 class="section-title">A narrow, inspectable request path.</h2>
+          <h2 class="section-title">Three boundaries. One control plane.</h2>
           <p class="muted">
-            Once production providers are live, each protected request revalidates membership, verifies consent, generates through a
-            fixed provider boundary, and returns only after its encrypted audit is durable.
+            Identity, provider, and audit are the same request—not settings an operator has to remember to align.
+            Authenticate → Consent → Generate → Encrypt → Commit. Fail closed.
           </p>
           <div class="pillars">
-            <div class="pillar"><strong>Access</strong><span>Invite-only WorkOS organization membership.</span></div>
-            <div class="pillar"><strong>Generation</strong><span>Gemini 3.7 Flash without sending user email to the provider.</span></div>
-            <div class="pillar"><strong>Audit</strong><span>Per-record encryption, one-year retention, and reason-logged admin reads.</span></div>
+            <div class="pillar"><strong>Identity</strong><span>Invite-only WorkOS organization membership; revocation fails closed.</span></div>
+            <div class="pillar"><strong>Provider</strong><span>Metadata-only Cloudflare AI Gateway; no user email to the provider.</span></div>
+            <div class="pillar"><strong>Audit</strong><span>KMS-wrapped records you can consent to, export, or delete.</span></div>
           </div>
         </section>
 
@@ -268,8 +269,8 @@
 
         <section id="docs-strip" class="section">
           <p class="eyebrow">DOCS</p>
-          <h2 class="section-title">Read the trust boundary on quesar.cloud</h2>
-          <p class="lead">This Pages companion is a teaser. Deep docs stay on the app host.</p>
+          <h2 class="section-title">Start with the trust boundary.</h2>
+          <p class="lead">This Pages companion is a teaser. Deep docs stay on the app host—getting in, audits, and the runtime underneath.</p>
           <div class="grid-3">
             <a class="card" href="https://quesar.cloud/docs"><h3>Start</h3><p>Invite path and scoped evaluations.</p></a>
             <a class="card" href="https://quesar.cloud/security"><h3>Security &amp; trust</h3><p>Org gate, gateway, consent, retention.</p></a>
