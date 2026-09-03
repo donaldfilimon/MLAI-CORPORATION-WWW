@@ -21,8 +21,8 @@ the linked repositories for implementation detail.
 
 ## Products
 
-- [ABI Framework](https://quesar.cloud/products/abi): The executive function of the system. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — steering a shared neural core via persona-token injection at the attention layer.
-- [Abbey](https://quesar.cloud/products/abbey): Engineered as a genuine intellectual partner, not a utility — positioned at the confluence of technical expertise and humanistic insight. Its mission: a force for cognitive transformation that turns apprehension into fascination.
+- [ABI Framework](https://quesar.cloud/products/abi): Local AI orchestration with inspectable memory. abi is the runtime and WDBX; Abbey is the companion that will not claim what the ledger cannot prove. Cloud backends are optional. Browser autonomy is not Current.
+- [Abbey](https://quesar.cloud/products/abbey): Intelligence Without Limits — with a claims ledger. Abbey is the companion that will not claim what the ledger cannot prove. Current means shipped and evidenced; Proposed stays Proposed. Not unlimited, not AGI, and not Quesar.
 
 ## Research
 
