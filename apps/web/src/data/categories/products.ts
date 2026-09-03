@@ -10,7 +10,7 @@ export const products: Products = ([
     kicker: "Intelligence Without Limits",
     name: "ABI Framework",
     intro:
-      "Local AI orchestration with inspectable memory. abi is the runtime and WDBX; Abbey is the companion that will not claim what the ledger cannot prove. Cloud backends are optional. Browser autonomy is not Current.",
+      "Local AI orchestration with inspectable memory. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — and says what the ledger can prove.",
     accent: "aviva",
     sections: [
       {
@@ -111,7 +111,7 @@ export const products: Products = ([
     kicker: "Intelligence Without Limits",
     name: "Abbey",
     intro:
-      "Intelligence Without Limits — with a claims ledger. Abbey is the companion that will not claim what the ledger cannot prove. Current means shipped and evidenced; Proposed stays Proposed. Not unlimited, not AGI, and not Quesar.",
+      "Intelligence Without Limits — with a claims ledger. Abbey is your companion for routing, memory, and calm ops help: personas that say what they know and what they don't. No AGI claims, no unverified benchmarks, no Quesar features dressed up as the bot.",
     accent: "abbey",
     sections: [
       {

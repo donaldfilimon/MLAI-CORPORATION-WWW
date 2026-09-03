@@ -25,9 +25,15 @@ const LINK_SECTIONS: LinkSection[] = [
     items: [
       {
         title: "abi — runtime + WDBX",
-        body: "The Zig runtime and weighted-backtrace store this site documents. CLI, MCP server, and CI gates live here.",
+        body: "The Zig runtime and weighted-backtrace store this site documents — local AI orchestration with inspectable memory. CLI, MCP server, and CI gates live here.",
         href: "https://github.com/donaldfilimon/abi",
         label: "github.com/donaldfilimon/abi",
+      },
+      {
+        title: "Abbey Bot",
+        body: "Intelligence Without Limits — Discord companion with a claims ledger: routing, memory, and calm ops help.",
+        href: "https://github.com/donaldfilimon/abbey-bot",
+        label: "github.com/donaldfilimon/abbey-bot",
       },
       {
         title: "This site's source",
