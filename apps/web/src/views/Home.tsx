@@ -10,17 +10,17 @@ import { useUI } from "@/lib/ui-context";
 const controls = [
   {
     title: "Invite-only organization access",
-    desc: "Only active members of the invited WorkOS organization can reach generation. Membership is checked at sign-in and again before each protected request. Revocation fails closed.",
+    desc: "Membership checked at sign-in and before each protected request; revocation fails closed.",
     accent: "abi" as const,
   },
   {
     title: "Metadata-only gateway",
-    desc: "Generation runs through Cloudflare AI Gateway configured for operational metadata only. Payload logging is off. User email is never sent to the provider.",
+    desc: "Operational metadata only; payload logging off; no user email to the provider.",
     accent: "abbey" as const,
   },
   {
-    title: "Records you control",
-    desc: "Consent comes first. A response returns only after its KMS-wrapped audit is durable. Inspect, export, or delete live records; copies age out on one-year retention.",
+    title: "User-controlled records",
+    desc: "Per-record encryption, one-year expiry, export, and deletion.",
     accent: "wdbx" as const,
   },
 ];
@@ -57,7 +57,7 @@ export function Home() {
           className="relative w-full"
           eyebrow="TRUST BOUNDARY"
           title="Three boundaries. One control plane."
-          lead="Identity, provider, and audit are the same request—not settings an operator has to remember to align. A generation either completes as a governed event or it does not complete at all."
+          lead="Identity, provider, and audit are the same request—not settings an operator has to remember to align."
         >
           <div className="grid gap-6 lg:grid-cols-3">
             {controls.map((control) => <FeatureCard key={control.title} {...control} />)}
@@ -71,7 +71,7 @@ export function Home() {
             <div className="lg:sticky lg:top-32">
               <Eyebrow className="mb-5">ONE REQUEST</Eyebrow>
               <h2 id="request-path-heading" className="section-title">Five control points. One return condition.</h2>
-              <p className="mt-5 text-base leading-relaxed text-text-dim">Authenticate → Consent → Generate → Encrypt → Commit. If any control point fails, Quesar does not return an unaudited response.</p>
+              <p className="mt-5 text-base leading-relaxed text-text-dim">Authenticate → Consent → Generate → Encrypt → Commit. Fail closed.</p>
               <Button asChild variant="outline" className="mt-7 rounded-full"><Link to="/security">Inspect the security model <ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
             <ol className="grid gap-3">

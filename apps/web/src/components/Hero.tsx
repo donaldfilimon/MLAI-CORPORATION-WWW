@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
-  DatabaseZap,
   GitBranch,
+  Network,
   Play,
   ShieldCheck,
 } from "lucide-react";
@@ -31,13 +31,13 @@ const PRODUCT_SIGNALS = [
     label: "Provider",
     title: "Metadata-only gateway",
     detail: "Operational metadata only; payload logging off; no user email to the provider.",
-    icon: GitBranch,
+    icon: Network,
   },
   {
     label: "Audit",
-    title: "Records you control",
-    detail: "Consent first; KMS-wrapped audit before response; inspect, export, or delete.",
-    icon: DatabaseZap,
+    title: "User-controlled records",
+    detail: "Per-record encryption, one-year expiry, export, and deletion.",
+    icon: GitBranch,
   },
 ];
 
@@ -114,7 +114,7 @@ export const Hero = () => {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
               </span>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              Invite-only private AI operations
+              QUESAR BY MLAI
             </m.div>
 
             <m.h1
