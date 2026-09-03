@@ -17,6 +17,7 @@
     "Label": "src/components/ui/label.tsx",
     "Select": "src/components/ui/select.tsx",
     "Separator": "src/components/ui/separator.tsx",
+    "Sheet": "src/components/ui/sheet.tsx",
     "Skeleton": "src/components/ui/skeleton.tsx",
     "Tabs": "src/components/ui/tabs.tsx",
     "Textarea": "src/components/ui/textarea.tsx",
