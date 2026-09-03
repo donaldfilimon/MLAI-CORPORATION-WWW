@@ -10,7 +10,7 @@ export const products: Products = ([
     kicker: "Multi-Persona AI Framework",
     name: "ABI Framework",
     intro:
-      "The executive function of the system. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — steering a shared neural core via persona-token injection at the attention layer.",
+      "Local AI orchestration with inspectable memory. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — and says what the ledger can prove.",
     accent: "aviva",
     sections: [
       {
@@ -108,10 +108,10 @@ export const products: Products = ([
   },
   {
     slug: "abbey",
-    kicker: "Empathic Polymath",
+    kicker: "Intelligence Without Limits",
     name: "Abbey",
     intro:
-      "Engineered as a genuine intellectual partner, not a utility — positioned at the confluence of technical expertise and humanistic insight. Its mission: a force for cognitive transformation that turns apprehension into fascination.",
+      "Intelligence Without Limits — with a claims ledger. Abbey is your companion for routing, memory, and calm ops help: personas that say what they know and what they don't. No AGI claims, no unverified benchmarks, no Quesar features dressed up as the bot.",
     accent: "abbey",
     sections: [
       {
@@ -120,18 +120,18 @@ export const products: Products = ([
         paragraphs: [],
         pillars: [
           {
-            title: "EQ — The Empathic Processor",
-            description: "Perceives the user's emotional and cognitive state, addresses prior knowledge, eases frustration, and engineers a supportive tone instead of a dry lecture.",
+            title: "Persona routing",
+            description: "Routes each turn through Abbey, Aviva, or Abi with an inspectable reason — so the voice matches the job and the handoff is a trace event, not a guess.",
             accent: "abbey",
           },
           {
-            title: "Ethics — The Moral Compass",
-            description: "Weighs the societal implications of technical solutions, integrating responsible commentary as a counterweight to pure capability.",
+            title: "Durable memory",
+            description: "Remembers facts and channel context with permission, on namespace-scoped stores you can inspect — rapport without opaque black-box recall.",
             accent: "abbey",
           },
           {
-            title: "Creativity — The Novel Synthesizer",
-            description: "Generates original analogies and metaphors, conceptualizes visual aids, and builds models that make abstract ideas tangible.",
+            title: "Ops with guardrails",
+            description: "Calm ops help that names uncertainty, defers when policy says so, and never claims unlimited capability, AGI, unverified benchmarks, or NYX/Quesar as bot features.",
             accent: "abbey",
           },
         ],
