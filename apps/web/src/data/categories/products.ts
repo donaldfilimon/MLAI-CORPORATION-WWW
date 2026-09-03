@@ -120,18 +120,18 @@ export const products: Products = ([
         paragraphs: [],
         pillars: [
           {
-            title: "EQ — The Empathic Processor",
-            description: "Perceives the user's emotional and cognitive state, addresses prior knowledge, eases frustration, and engineers a supportive tone instead of a dry lecture.",
+            title: "Persona routing",
+            description: "Routes each turn through Abbey, Aviva, or Abi with an inspectable reason — so the voice matches the job and the handoff is a trace event, not a guess.",
             accent: "abbey",
           },
           {
-            title: "Ethics — The Moral Compass",
-            description: "Weighs the societal implications of technical solutions, integrating responsible commentary as a counterweight to pure capability.",
+            title: "Durable memory",
+            description: "Remembers facts and channel context with permission, on namespace-scoped stores you can inspect — rapport without opaque black-box recall.",
             accent: "abbey",
           },
           {
-            title: "Creativity — The Novel Synthesizer",
-            description: "Generates original analogies and metaphors, conceptualizes visual aids, and builds models that make abstract ideas tangible.",
+            title: "Ops with guardrails",
+            description: "Calm ops help that names uncertainty, defers when policy says so, and never claims unlimited capability, AGI, unverified benchmarks, or NYX/Quesar as bot features.",
             accent: "abbey",
           },
         ],

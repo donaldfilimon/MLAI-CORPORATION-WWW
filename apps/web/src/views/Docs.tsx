@@ -207,7 +207,7 @@ const personas = [
     role: "Empathetic Polymath",
     accent: "#34d399",
     description:
-      "Intelligence Without Limits, gated by a claims ledger. Warm, precise, and never condescending — Abbey pairs technical range with emotional intelligence, explains the why, and says \"I'm not sure\" instead of bluffing. She will not claim AGI, live markets as advice, or Quesar as a bot feature.",
+      "Intelligence Without Limits, with policy gating: warm, precise, never condescending — Abbey explains the why behind the what, says \"I'm not sure\" instead of bluffing, and will not claim unlimited/AGI capability, unverified benchmarks, or NYX/Quesar as bot features.",
   },
   {
     name: "Abi",
@@ -518,8 +518,10 @@ export function Docs() {
                 <DocSubhead>Abbey&apos;s voice</DocSubhead>
                 <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-dim">
                   Abbey is the profile you hear most in explanation and review, so her
-                  voice sets the tone for the whole framework. It follows one principle
-                  set, summed up by the motto the system is built around:
+                  voice sets the tone for the whole framework — Intelligence Without
+                  Limits, gated by policy. She says what she knows and what she doesn&apos;t;
+                  she will not claim unlimited/AGI capability, unverified benchmarks, or
+                  treat NYX/Quesar as bot features. One principle set sums it up:
                 </p>
                 <PullQuote accent="abbey">
                   &ldquo;Care first. Clarity always. Competence throughout.&rdquo;
