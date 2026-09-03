@@ -25,15 +25,9 @@ const LINK_SECTIONS: LinkSection[] = [
     items: [
       {
         title: "abi — runtime + WDBX",
-        body: "The Zig runtime and weighted-backtrace store this site documents — local AI orchestration with inspectable memory. CLI, MCP server, and CI gates live here.",
+        body: "The Zig runtime and weighted-backtrace store this site documents. CLI, MCP server, and CI gates live here.",
         href: "https://github.com/donaldfilimon/abi",
         label: "github.com/donaldfilimon/abi",
-      },
-      {
-        title: "Abbey Bot",
-        body: "Intelligence Without Limits — Discord companion with a claims ledger: routing, memory, and calm ops help.",
-        href: "https://github.com/donaldfilimon/abbey-bot",
-        label: "github.com/donaldfilimon/abbey-bot",
       },
       {
         title: "This site's source",
@@ -103,13 +97,13 @@ const LINK_SECTIONS: LinkSection[] = [
     items: [
       {
         title: "ABI Framework",
-        body: "The deep-dive product page — orchestration, retrieval provenance, and the runtime surface.",
+        body: "Local AI orchestration with inspectable memory — runtime and WDBX on the Abbey/ABI surface.",
         href: "/products/abi",
         label: "/products/abi",
       },
       {
         title: "Abbey",
-        body: "The persona system as a product: empathetic-polymath interface over governed execution.",
+        body: "Intelligence Without Limits — with a claims ledger. Companion that will not claim what the ledger cannot prove.",
         href: "/products/abbey",
         label: "/products/abbey",
       },
