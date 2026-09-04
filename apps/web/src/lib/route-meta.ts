@@ -79,7 +79,7 @@ export type RouteMeta = {
 export const DEFAULT_ROUTE_META: RouteMeta = {
   title: "Quesar by MLAI | Private AI Operations with an Audit Trail",
   description:
-    "Only invited WorkOS members can generate. Traffic crosses a metadata-only Cloudflare AI Gateway—no payload logging, no user email to the provider—and becomes a KMS-wrapped audit you can consent to, export, or delete.",
+    "Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed.",
 };
 
 export const routeMetadata: Record<string, RouteMeta> = {
