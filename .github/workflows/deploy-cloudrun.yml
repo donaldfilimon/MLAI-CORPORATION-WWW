@@ -20,19 +20,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Soft-skip while GCP project_id / OpenTofu / WIF are unset. Avoids red
+  # google-github-actions/auth failures on every main CI without applying tofu
+  # or changing Hostinger/Cloudflare. Once vars.WIF_PROVIDER and
+  # vars.GCP_PROJECT_ID are set after Donald confirms project_id, deploy runs.
+  readiness:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        name: Check production WIF / project vars
+        env:
+          WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WIF_PROVIDER}" ] || [ -z "${GCP_PROJECT_ID}" ]; then
+            echo "ready=false" >> "${GITHUB_OUTPUT}"
+            echo "::notice::Cloud Run deploy skipped: WIF_PROVIDER or GCP_PROJECT_ID unset. Awaiting confirmed GCP project_id + tofu apply; no Hostinger NS or Cloudflare changes."
+          else
+            echo "ready=true" >> "${GITHUB_OUTPUT}"
+            echo "Production WIF/project vars present; deploy job will proceed."
+          fi
+
   deploy:
+    needs: readiness
     runs-on: ubuntu-latest
     environment: production
     # Keep all three workflow_run checks. The repository-identity check is the
     # boundary that prevents a fork's attacker-controlled branch name and SHA
     # from receiving production deployment context. Manual dispatch remains a
-    # deliberate maintainer-only exception.
+    # deliberate maintainer-only exception. readiness.ready gates pre-cutover.
     if: >-
+      needs.readiness.outputs.ready == 'true'
+      && (
       github.event_name == 'workflow_dispatch'
       || (
       github.event.workflow_run.conclusion == 'success'
       && github.event.workflow_run.event == 'push'
       && github.event.workflow_run.head_repository.full_name == github.repository
+      )
       )
     steps:
       - uses: actions/checkout@v7

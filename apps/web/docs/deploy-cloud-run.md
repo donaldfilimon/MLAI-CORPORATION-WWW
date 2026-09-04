@@ -40,6 +40,14 @@ own explicit design, GitHub Pages setting, DNS record, and acceptance check.
 Do not hand-edit Cloud Run environment in the console: the deploy workflow uses
 `--set-env-vars` and `--set-secrets`, which replace revision configuration.
 
+## Pre-cutover soft-skip
+
+Until Donald confirms a GCP `project_id` and OpenTofu has written
+`vars.WIF_PROVIDER` / `vars.GCP_PROJECT_ID` (and the other production vars),
+`deploy-cloudrun.yml` runs a `readiness` job that **skips** the deploy job
+with a notice instead of failing `google-github-actions/auth`. This does **not**
+apply tofu, change Hostinger nameservers, or touch Cloudflare.
+
 ## 1. Google bootstrap and OpenTofu
 
 Install OpenTofu, authenticate with short-lived administrator ADC, create a
