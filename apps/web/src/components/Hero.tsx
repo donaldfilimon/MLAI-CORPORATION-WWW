@@ -24,19 +24,19 @@ const PRODUCT_SIGNALS = [
   {
     label: "Identity",
     title: "Invite-only organization access",
-    detail: "Membership checked at sign-in and before each protected request; revocation fails closed.",
+    detail: "Only active members of the invited WorkOS organization can reach generation. Membership is checked at sign-in and again before each protected request. Revocation fails closed.",
     icon: ShieldCheck,
   },
   {
     label: "Provider",
     title: "Metadata-only gateway",
-    detail: "Operational metadata only; payload logging off; no user email to the provider.",
+    detail: "Generation runs through Cloudflare AI Gateway configured for operational metadata only. Payload logging is off. User email is never sent to the provider.",
     icon: Network,
   },
   {
     label: "Audit",
-    title: "User-controlled records",
-    detail: "Per-record encryption, one-year expiry, export, and deletion.",
+    title: "Records you control",
+    detail: "Consent comes first. A response returns only after its KMS-wrapped audit is durable. Inspect, export, or delete live records; copies age out on one-year retention.",
     icon: GitBranch,
   },
 ];
@@ -114,7 +114,7 @@ export const Hero = () => {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
               </span>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              QUESAR BY MLAI
+              Invite-only private AI operations
             </m.div>
 
             <m.h1
