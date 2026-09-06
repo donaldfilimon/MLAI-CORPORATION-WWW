@@ -1,7 +1,7 @@
 # AGENTS.md
 
-This is the MLAI integration repository. Read the home operating charter first,
-then this file, then the `AGENTS.md` inside the app you are changing.
+This is the canonical MLAI integration guide; `CLAUDE.md` points here. Read the
+app-local `AGENTS.md` for web/mobile and `apps/quasar/README.md` for Quasar.
 
 ## Boundaries
 
@@ -22,7 +22,7 @@ then this file, then the `AGENTS.md` inside the app you are changing.
 
 ## Commands
 
-Use Bun, not npm, pnpm, or yarn.
+Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn.
 
 ```bash
 bun run install:all
@@ -40,6 +40,26 @@ bun run dev:quasar       # cd apps/quasar/apps/quasar && bun run start
 For focused work, change into the affected app and follow its local docs. Never
 claim CloudKit, Cloud Run, GitHub Pages, or a live Anthropic generation from a
 local build alone.
+
+## Gate boundaries
+
+- `install:all` uses non-frozen installs; CI uses `bun install --frozen-lockfile`
+  separately in web, mobile, and Quasar. Root workspaces contain only `packages/*`.
+- `check:topology` only checks required paths exist; it does not compile contracts
+  or validate content, lockfile drift, or app behavior.
+- `check:web`: `lint` is `tsc --noEmit`, then Node-only Vitest, then sitemap/llms
+  generation and Next build. From `apps/web`, focus with
+  `bun run test src/__tests__/landing-page.test.ts`; do not substitute `bun test`.
+- `check:mobile`: TypeScript, Jest in-band, Expo lint, Expo **web** export.
+  From `apps/mobile`: `bun run test __tests__/cloud.test.ts --runInBand`.
+- `check:quasar`: workspace typechecks, `bun test packages`, then Expo **web**
+  export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
+  `bun test packages/service/src/paths.test.ts` (Bun's runner, unlike web/mobile).
+- Quasar workspace globs are `packages/*` and `apps/*`; `templates/next-site`
+  has its own lockfile and is not built by that aggregate gate.
+- `dev:quasar` starts only the Expo app. Start the service separately from
+  `apps/quasar` with `bun run --filter '@quasar/service' start`; see its README
+  for the unauthenticated LAN listener and provider-dependent acceptance flow.
 
 ## Documentation
 
