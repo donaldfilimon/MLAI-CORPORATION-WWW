@@ -6,4 +6,5 @@ package-lock.json
 .grok/
 .pi/
 .playwright-mcp/
+.mcp.json
 skills-lock.json

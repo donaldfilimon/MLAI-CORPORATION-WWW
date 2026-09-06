@@ -23,9 +23,13 @@ Canonical guidance for this generated review artifact, not the MLAI source app.
   not validate research content or deploy. Never keep unique work in `out/`.
 - `.openai/hosting.json` configures static hosting from `out/`; `.gitignore`
   excludes that directory. Changing hosting configuration is not a content edit.
-- Package manager is bun (`bun.lock`). Do not add `package-lock.json`. `bun test`
-  covers publication-filter logic; `bun run check` runs tests then a browser IIFE
-  compile. There is no CI workflow.
+- Package manager is bun, and this artifact has **zero dependencies**: there is no
+  `bun.lock` and no `node_modules`, because `bun install` deletes an empty lockfile.
+  `bun test` and `bun build` are bun builtins and need no install step. Do not add
+  `package-lock.json`, and do not reintroduce a dependency without a use for it —
+  the previous `shadcn` devDependency pulled 81 MB of Babel for nothing and was
+  removed. `bun test` covers publication-filter logic; `bun run check` runs tests
+  then a browser IIFE compile. There is no CI workflow.
 - For documentation-only work, review the diff and use `git diff --check`.
 
 ## Static behavior

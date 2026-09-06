@@ -31,8 +31,11 @@ git diff --check  # whitespace check for documentation edits
 ```
 
 `build` is `scripts/build.ts` under bun. `out/` is gitignored and disposable; never leave
-unique work there. Package manager is bun only (`bun.lock`); do not reintroduce
-`package-lock.json`.
+unique work there. Package manager is bun only, and the artifact has **zero
+dependencies** — no `bun.lock`, no `node_modules`, no install step, because `bun test`
+and `bun build` are builtins and `bun install` deletes an empty lockfile. A missing
+`bun.lock` here is the correct state, not a lost file. Do not reintroduce
+`package-lock.json`, and do not add a dependency the static pages do not use.
 
 ## The real gate: manifest verification
 

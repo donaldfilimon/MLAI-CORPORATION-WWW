@@ -7,8 +7,5 @@
     "build": "bun run scripts/build.ts",
     "check": "bun test && bun run build",
     "test": "bun test"
-  },
-  "devDependencies": {
-    "shadcn": "^4.21.0"
   }
 }

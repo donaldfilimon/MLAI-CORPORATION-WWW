@@ -1,5 +1,25 @@
 # Bun TypeScript Publication Filter Implementation Plan
 
+## STATUS: COMPLETE — all four tasks landed 2026-09-06
+
+Commits, in order: `de01140` (Task 1), `8733b91` (Task 2), `82e0b9f` (Task 3),
+`622e8b0` + `1cc6827` + `737bd4f` (Task 4 and its follow-ups). Verified 2026-09-06 19:5x
+with `bun run check` (exit 0, 10 tests across 3 files) and the manifest gate
+(`files 99 bad [] unlisted []`, `content True publications bad [] attachments bad []`).
+
+Two deliberate deviations from the text below, both applied after the plan landed:
+
+- **The `package.json` snippet in Task 4 Step 3 is superseded.** Its
+  `devDependencies: { "shadcn": "^4.21.0" }` was unused — no `components.json`, no React,
+  no import anywhere — while pulling 81 MB of Babel into `node_modules`. Removed, which
+  leaves the artifact with zero dependencies and no `bun.lock` at all (`bun install`
+  deletes an empty lockfile). The gate is still green without it. Do not restore that
+  block when reading the snippet below.
+- **`.mcp.json` is now gitignored** rather than merely left uncommitted. Task 4's closing
+  note said not to add it without Donald's word; with the `shadcn` dependency gone its
+  only server is unused here, so it joins `.agents/`, `.claude/`, `.grok/`, `.pi/` and
+  `.playwright-mcp/` as local CLI state that cannot drift into the review export.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Finish the bun TypeScript publication-filter pipeline so filter logic is unit-tested, `bun run build` emits the browser IIFE and updates the provenance hash, and local CLI droppings stay out of git.
@@ -51,7 +71,7 @@ Work on the canonical checkout's `main` branch. Do not create a worktree. Do not
 - Create: `src/apply-filter.ts`
 - Create: `src/apply-filter.test.ts`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `src/apply-filter.test.ts`:
 
@@ -123,7 +143,7 @@ describe("applyFilter", () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run:
 
@@ -133,7 +153,7 @@ bun test src/apply-filter.test.ts
 
 Expected: FAIL with resolve error `Could not resolve: "./apply-filter.ts"` (or `applyFilter` is not exported).
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 Create `src/apply-filter.ts`:
 
@@ -179,7 +199,7 @@ export function applyFilter(
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run:
 
@@ -189,7 +209,7 @@ bun test src/apply-filter.test.ts src/publication-filter.test.ts
 
 Expected: PASS, 7 tests (3 new + 4 existing).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/apply-filter.ts src/apply-filter.test.ts
@@ -209,7 +229,7 @@ EOF
 **Files:**
 - Modify: `src/filter.ts`
 
-- [ ] **Step 1: Write a failing smoke test that init is not required for applyFilter**
+- [x] **Step 1: Write a failing smoke test that init is not required for applyFilter**
 
 This task does not add a new test file. Confirm Task 1 tests still import `applyFilter` from `./apply-filter.ts`, then replace the inlined function in `src/filter.ts`. If `src/filter.ts` still contains `function applyFilter(`, the wiring is incomplete.
 
@@ -221,7 +241,7 @@ rg -n "function applyFilter" src/filter.ts
 
 Expected before the edit: a match at the inlined function. After the edit: no matches.
 
-- [ ] **Step 2: Confirm the pre-edit grep finds the inline function**
+- [x] **Step 2: Confirm the pre-edit grep finds the inline function**
 
 Run:
 
@@ -231,7 +251,7 @@ rg -n "function applyFilter" src/filter.ts
 
 Expected: a hit (for example `src/filter.ts:10:function applyFilter(`).
 
-- [ ] **Step 3: Replace `src/filter.ts` with DOM init only**
+- [x] **Step 3: Replace `src/filter.ts` with DOM init only**
 
 Write `src/filter.ts` as:
 
@@ -263,7 +283,7 @@ if (typeof document !== "undefined") {
 }
 ```
 
-- [ ] **Step 4: Re-run unit tests and compile the IIFE**
+- [x] **Step 4: Re-run unit tests and compile the IIFE**
 
 Run:
 
@@ -274,7 +294,7 @@ bun build src/filter.ts --outfile public/assets/filter.js --target=browser --for
 
 Expected: all tests PASS. Compile prints `Bundled 3 modules` (filter.ts + apply-filter.ts + publication-filter.ts) and writes `public/assets/filter.js`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/filter.ts public/assets/filter.js
@@ -298,7 +318,7 @@ Do not `git add` `public/research-manifest.json` yet; Task 3 updates that hash f
 - Create: `scripts/replace-file-hash.test.ts`
 - Modify: `scripts/build.ts`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `scripts/replace-file-hash.test.ts`:
 
@@ -333,7 +353,7 @@ describe("replaceFileHash", () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run:
 
@@ -343,7 +363,7 @@ bun test scripts/replace-file-hash.test.ts
 
 Expected: FAIL, cannot resolve `./replace-file-hash.ts`.
 
-- [ ] **Step 3: Write the helper**
+- [x] **Step 3: Write the helper**
 
 Create `scripts/replace-file-hash.ts`:
 
@@ -369,7 +389,7 @@ export function replaceFileHash(
 }
 ```
 
-- [ ] **Step 4: Run helper tests**
+- [x] **Step 4: Run helper tests**
 
 Run:
 
@@ -379,7 +399,7 @@ bun test scripts/replace-file-hash.test.ts
 
 Expected: PASS, 2 tests.
 
-- [ ] **Step 5: Update `scripts/build.ts`**
+- [x] **Step 5: Update `scripts/build.ts`**
 
 Write `scripts/build.ts`:
 
@@ -415,7 +435,7 @@ await rm(outDir, { recursive: true, force: true });
 await cp(publicDir, outDir, { recursive: true });
 ```
 
-- [ ] **Step 6: Run build and the provenance gate**
+- [x] **Step 6: Run build and the provenance gate**
 
 Run:
 
@@ -452,7 +472,7 @@ content True publications bad [] attachments bad []
 
 `git diff --stat public/research-manifest.json` must be a one-line hash change for `assets/filter.js` only (or empty if the hash was already current).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add scripts/replace-file-hash.ts scripts/replace-file-hash.test.ts scripts/build.ts public/assets/filter.js public/research-manifest.json
@@ -475,7 +495,7 @@ EOF
 - Modify: `README.md`
 - Modify: `CLAUDE.md` (commands block only, keep in sync with `package.json`)
 
-- [ ] **Step 1: Write a failing assertion on the check script**
+- [x] **Step 1: Write a failing assertion on the check script**
 
 Run:
 
@@ -493,11 +513,11 @@ PY
 
 Expected before the edit: AssertionError because `check` contains `/tmp/mlai-filter-check.js`.
 
-- [ ] **Step 2: Confirm the assertion fails**
+- [x] **Step 2: Confirm the assertion fails**
 
 Same command as Step 1. Expected: `AssertionError` mentioning `/tmp/`.
 
-- [ ] **Step 3: Apply the three file edits**
+- [x] **Step 3: Apply the three file edits**
 
 `package.json` scripts:
 
@@ -553,7 +573,7 @@ bun run check     # bun test && bun run build
 git diff --check  # whitespace check for documentation edits
 ```
 
-- [ ] **Step 4: Re-run the assertion, tests, and check**
+- [x] **Step 4: Re-run the assertion, tests, and check**
 
 Run:
 
@@ -572,7 +592,7 @@ git diff --check
 
 Expected: `check ok bun test && bun run build`. Tests PASS. Build succeeds. `git diff --check` silent.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add package.json .gitignore README.md CLAUDE.md
