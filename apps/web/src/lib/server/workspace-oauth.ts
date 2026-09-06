@@ -299,6 +299,39 @@ export async function exchangeAuthorizationCode(
   return postToken(provider, params, fetchImpl);
 }
 
+/**
+ * Ask the provider to revoke the grant itself, so disconnecting actually ends
+ * access rather than only dropping our copy of the token.
+ *
+ * Google has a revocation endpoint. Microsoft has no delegated equivalent — a
+ * user revokes through My Apps or an admin through Entra — so this returns
+ * false for it rather than pretending. Best-effort by contract: the caller
+ * deletes the local record either way, because a user who pressed Disconnect
+ * must not stay connected just because the provider was unreachable.
+ */
+export async function revokeGrant(
+  provider: WorkspaceProvider,
+  credentials: ProviderCredentials,
+  refreshToken: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<boolean> {
+  if (provider !== "google") return false;
+  try {
+    const response = await fetchImpl("https://oauth2.googleapis.com/revoke", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        token: refreshToken,
+        client_id: credentials.clientId,
+        client_secret: credentials.clientSecret,
+      }).toString(),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function refreshAccessToken(
   provider: WorkspaceProvider,
   credentials: ProviderCredentials,

@@ -1068,7 +1068,7 @@ function ConnectPanel({
           color: "rgba(232,237,246,0.35)",
         }}
       >
-        READ-ONLY ACCESS &middot; REVOKE ANY TIME
+        READ-ONLY ACCESS &middot; DISCONNECT ANY TIME
       </div>
     </div>
   );

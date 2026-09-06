@@ -1,12 +1,15 @@
 /**
- * Drop a stored connection. Consumes no request body, so no body limit
- * applies; POST rather than GET because it mutates and must not be
- * prefetchable.
+ * Drop a stored connection, revoking the grant at the provider first where that
+ * is possible.
+ *
+ * Consumes no request body, so no body limit applies. POST rather than GET
+ * because it mutates and must not be prefetchable; cross-site POSTs cannot
+ * carry the session cookie, which is SameSite=Lax.
  */
 import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 import { gateWorkspaceRequest, PRIVATE_NO_STORE } from "@/lib/server/workspace-route";
 import { isWorkspaceProvider } from "@/lib/server/workspace-oauth";
-import { deleteWorkspaceConnection } from "@/lib/server/workspace-tokens";
+import { revokeAndDeleteWorkspaceConnection } from "@/lib/server/workspace-tokens";
 
 export async function POST(req: Request, context: { params: Promise<{ provider: string }> }) {
   const gate = await gateWorkspaceRequest(req);
@@ -20,8 +23,8 @@ export async function POST(req: Request, context: { params: Promise<{ provider: 
   }
 
   try {
-    const removed = await deleteWorkspaceConnection(gate.user.userId, provider);
-    return Response.json({ ok: true, removed }, { headers: PRIVATE_NO_STORE });
+    const result = await revokeAndDeleteWorkspaceConnection(gate.user.userId, provider);
+    return Response.json({ ok: true, ...result }, { headers: PRIVATE_NO_STORE });
   } catch (error) {
     console.error("[Workspace] Disconnect failed:", error);
     return Response.json(

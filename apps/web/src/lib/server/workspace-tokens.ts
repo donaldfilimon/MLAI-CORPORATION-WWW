@@ -24,6 +24,7 @@ import { ensureDatabase } from "./db";
 import {
   providerCredentials,
   refreshAccessToken,
+  revokeGrant,
   type WorkspaceProvider,
 } from "./workspace-oauth";
 
@@ -143,6 +144,39 @@ export async function deleteWorkspaceConnection(
     RETURNING provider`;
   accessTokenCache().delete(cacheKey(userId, provider));
   return rows.length > 0;
+}
+
+/**
+ * Disconnect properly: revoke the grant at the provider where that is
+ * possible, then drop the local record.
+ *
+ * The delete happens whether or not the revoke succeeds. A user who pressed
+ * Disconnect must end up disconnected — leaving the row behind because Google
+ * was briefly unreachable would be the worse failure. `revoked` is reported
+ * back so the console can tell them when the grant still needs clearing on the
+ * provider's side.
+ */
+export async function revokeAndDeleteWorkspaceConnection(
+  userId: string,
+  provider: WorkspaceProvider,
+): Promise<{ removed: boolean; revoked: boolean }> {
+  let revoked = false;
+  try {
+    const credentials = providerCredentials(provider);
+    const refreshToken = credentials ? await readRefreshToken(userId, provider) : null;
+    if (credentials && refreshToken) {
+      revoked = await revokeGrant(provider, credentials, refreshToken);
+    }
+  } catch (error) {
+    // A token we cannot read is a token we cannot revoke; deleting it is still
+    // correct, and is what actually stops this service using it.
+    console.warn(
+      `[Workspace] Could not revoke ${provider} grant before disconnect:`,
+      error instanceof Error ? error.message : error,
+    );
+  }
+  const removed = await deleteWorkspaceConnection(userId, provider);
+  return { removed, revoked };
 }
 
 async function readRefreshToken(

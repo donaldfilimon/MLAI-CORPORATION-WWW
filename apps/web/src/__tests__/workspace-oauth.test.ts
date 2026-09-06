@@ -20,6 +20,7 @@ import {
   providerCredentials,
   readPendingFlow,
   refreshAccessToken,
+  revokeGrant,
   timingSafeEqualString,
   workspaceRedirectUri,
   workspaceStateCookie,
@@ -189,6 +190,49 @@ describe("authorize URL", () => {
     );
     expect(url.searchParams.get("access_type")).toBe("offline");
     expect(url.searchParams.get("prompt")).toBe("consent");
+  });
+});
+
+describe("revokeGrant", () => {
+  const credentials = { clientId: "id-1", clientSecret: "secret-1" };
+
+  it("posts the refresh token to Google's revocation endpoint", async () => {
+    let url = "";
+    let body = "";
+    const fetchImpl = (async (target: string, init: RequestInit) => {
+      url = target;
+      body = String(init.body);
+      return { ok: true, status: 200 };
+    }) as unknown as typeof fetch;
+
+    await expect(revokeGrant("google", credentials, "rt-1", fetchImpl)).resolves.toBe(true);
+    expect(url).toBe("https://oauth2.googleapis.com/revoke");
+    expect(new URLSearchParams(body).get("token")).toBe("rt-1");
+  });
+
+  /* Microsoft has no delegated revocation endpoint — a user clears the grant
+     through My Apps. Reporting false is the honest answer; inventing a call
+     would make Disconnect claim something it did not do. */
+  it("reports false for Microsoft rather than pretending to revoke", async () => {
+    let called = false;
+    const fetchImpl = (async () => {
+      called = true;
+      return { ok: true, status: 200 };
+    }) as unknown as typeof fetch;
+    await expect(revokeGrant("microsoft", credentials, "rt-1", fetchImpl)).resolves.toBe(false);
+    expect(called).toBe(false);
+  });
+
+  it("reports false, never throws, when the provider is unreachable", async () => {
+    const rejecting = (async () => {
+      throw new Error("network down");
+    }) as unknown as typeof fetch;
+    // The caller deletes the local record regardless; a thrown error here would
+    // leave the user still connected after pressing Disconnect.
+    await expect(revokeGrant("google", credentials, "rt-1", rejecting)).resolves.toBe(false);
+
+    const refusing = (async () => ({ ok: false, status: 400 })) as unknown as typeof fetch;
+    await expect(revokeGrant("google", credentials, "rt-1", refusing)).resolves.toBe(false);
   });
 });
 

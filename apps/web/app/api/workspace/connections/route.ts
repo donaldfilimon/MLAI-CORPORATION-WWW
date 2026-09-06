@@ -5,6 +5,7 @@
  * The console needs both: an unconfigured provider offers no Connect button,
  * while a configured-but-unconnected one does.
  */
+import { rateLimit, tooMany } from "@/lib/server/rate-limit";
 import { gateWorkspaceRequest, PRIVATE_NO_STORE } from "@/lib/server/workspace-route";
 import {
   WORKSPACE_PROVIDERS,
@@ -16,6 +17,8 @@ import { listWorkspaceConnections } from "@/lib/server/workspace-tokens";
 export async function GET(req: Request) {
   const gate = await gateWorkspaceRequest(req);
   if (!gate.ok) return gate.response;
+
+  if (!rateLimit("workspace-connections", req, { windowMs: 60 * 1000, max: 60 })) return tooMany();
 
   try {
     const connections = await listWorkspaceConnections(gate.user.userId);
