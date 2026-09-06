@@ -17,7 +17,8 @@
     "smoke": "bash scripts/smoke-api.sh",
     "og": "python3 scripts/generate-og.py",
     "audit:expire": "bun scripts/expire-audits.ts",
-    "design-sync:css": "bun scripts/design-sync-css.mjs"
+    "design-sync:css": "bun scripts/design-sync-css.mjs",
+    "research:export": "bun scripts/export-research.tsx"
   },
   "dependencies": {
     "@mlai/contracts": "file:../../packages/contracts",

@@ -1,27 +1,13 @@
 import { research } from '@/data/categories/research';
 import { PageHeader } from "@/components/PageHeader";
-import { CardGrid } from "@/components/CardGrid";
-import { FeatureCard, PublicationIndex, type Accent } from "@/components/site";
+import { ResearchAreaGrid } from "@/components/research";
+import { PublicationIndex } from "@/components/site";
 
-/**
- * Tracks read onto the PRODUCT accent axis (see `site/accent.ts`): WDBX Core →
- * wdbx (cyan), Agent Safety → abbey (the agent/persona layer, emerald),
- * Runtime Performance → abi (the runtime/GPU layer, violet). Positional, so it
- * stays in step with the order the content layer declares them in.
- */
-const TRACK_ACCENTS: readonly Accent[] = ["wdbx", "abbey", "abi"];
-
-/**
- * Hoisted to module scope so the mapped array keeps a stable identity across
- * renders — `PublicationIndex` memoizes its tag set on `items`.
- * `date` carries the publication date and the read time together because the
- * index has one metadata slot; both strings come from the content layer verbatim.
- */
 const PUBLICATIONS = research.publications.map((item) => ({
   slug: item.slug,
   title: item.title,
-  summary: item.abstract,
-  date: `${item.date} · ${item.readTime}`,
+  summary: item.practicalSummary,
+  date: `${item.documentType.replaceAll("-", " ")} · ${item.status} · ${item.date} · ${item.readTime}`,
   tags: [item.tag],
 }));
 
@@ -36,21 +22,13 @@ export const Research = () => {
       <div className="container-custom">
         <PageHeader
           id="research-heading"
-          tag="DYNAMIC RESEARCH ARCHIVE"
-          title="Applied research for accountable autonomy."
-          subtitle="Architecture notes, safety memos, and engineering studies behind traceable retrieval, controlled agent workflows, and private deployment paths."
+          tag="MLAI RESEARCH"
+          title="Understand the systems behind intelligent assistance."
+          subtitle="Explore six research areas, from AI assistance and durable memory to evidence selection and integration. Start with practical applications, then inspect the sources, implementation status, and limitations."
         />
 
-        <CardGrid cols={3} className="mb-16">
-          {research.tracks.map((track, index) => (
-            <FeatureCard
-              key={track.name}
-              title={track.name}
-              desc={track.description}
-              accent={TRACK_ACCENTS[index] ?? "wdbx"}
-            />
-          ))}
-        </CardGrid>
+        <ResearchAreaGrid tracks={research.tracks} />
+        <h2 className="text-3xl font-display text-white mb-6">Research collection</h2>
 
         {/* basePath defaults to "/research", so each entry links to
             /research/<slug> — the same URLs the cards linked to. */}
@@ -60,7 +38,7 @@ export const Research = () => {
             caps. */}
         <PublicationIndex
           items={PUBLICATIONS}
-          className="max-w-5xl [&_button]:font-mono [&_button]:tracking-[0.14em]"
+          className="max-w-5xl [&_button]:text-sm [&_a>span:first-child>span:first-child]:text-lg [&_a>span:first-child>span:last-child]:text-sm [&_a>span:last-child]:text-base"
         />
       </div>
     </section>

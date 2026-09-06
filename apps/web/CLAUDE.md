@@ -136,3 +136,11 @@ These govern the *content* of the benchmark visualizations, which mirror sibling
 
 ## AI Tooling Sync
 This repo follows the global `ai-tooling-sync` skill. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, and the README's guidance sections are kept in sync (GEMINI.md additionally `@`-imports local skills from `./skills/`). They are **content**-synced, not byte-identical — AGENTS.md is restructured under "Repository Guidelines" and GEMINI.md is a condensed cut, so port a change into each file's own voice rather than pasting. When you change durable instructions here, update the others to match.
+
+## MLAI Research Review Export
+
+The approved corpus is structured under `src/data/categories/research.ts` and `research-records.ts`; `docs/research-inventory.md` records source revisions and dispositions. Keep summaries, capability labels, evidence references, limitations and attachment hashes in this content layer. The frozen Zig-era WDBX mirror is historical.
+
+Run `bun run research:export --output /absolute/generated-site --generated-at <ISO-8601>` to produce the static review companion from the shared renderer. Export destinations must be empty (or contain only the initial Sites `.openai` scaffold) or be an existing generated research artifact. The manifest records canonical revision, export time, complete content and file hashes. Regenerate from a validated source revision; never maintain independent research prose in the generated project. Run `bun run test src/__tests__/research-artifact.test.ts` for export equivalence and destination safeguards.
+
+The research review release stops at a validated canonical change set and owner-only Sites publication. Pushing the canonical deployment branch requires a later explicit public-rollout instruction.

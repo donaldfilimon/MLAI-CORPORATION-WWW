@@ -63,7 +63,7 @@ const dynamicEntries: Entry[] = [
     path: `/research/${p.slug}`,
     changefreq: "yearly",
     priority: "0.6",
-    lastmod: toSitemapDate(p.date),
+    lastmod: toSitemapDate(p.reviewedAt),
   })),
   ...content.blog.map((p) => ({
     path: `/blog/${p.slug}`,

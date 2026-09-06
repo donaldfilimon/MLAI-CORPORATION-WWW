@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { research } from "@/data/categories/research";
 import { m } from "framer-motion";
 import {
   Book,
@@ -105,60 +106,45 @@ const capabilities = [
 
 /** Build-time configuration facts for the runtime — no measurements here. */
 const runtimeSpec = [
-  {
-    k: "Top-level commands",
-    v: "help, complete, train, agent, backends, plugin, auth, twilio, tui, dashboard",
-  },
-  { k: "Build-time feature selection", v: "-Dfeat-*" },
-  {
-    k: "Enabled by default",
-    v: "ai, wdbx, gpu, accelerator, shader, mlir, os-control, tui, hash",
-  },
+  { k: "Runtime", v: "Rust workspace with linked AI, WDBX, GPU, MCP, and terminal surfaces" },
+  { k: "Configuration", v: "Crate-specific Cargo features; no legacy -Dfeat-* switches" },
+  { k: "Capability inspection", v: "abi backends; abi wdbx gpu info" },
 ];
-
 const moduleMap = [
-  { term: "database/", def: "WDBX vector/block memory, indexes, persistence, and query-path primitives" },
-  { term: "mcp/", def: "Tool-facing ABI surfaces for agent workflows" },
-  { term: "ai/agents/", def: "Abbey · Aviva · Abi persona vocabulary and routing contracts" },
-  { term: "ai/llm/", def: "Provider adapters and local inference integration points" },
-  { term: "runtime/", def: "Schedulers, allocators, telemetry, and execution primitives" },
-  { term: "shared/", def: "Shared contracts, types, and cross-module utilities" },
+  { term: "abi-ai", def: "Profile routing, completion, and governance helpers" },
+  { term: "abi-sea", def: "Evidence selection, scoring, and learning loop" },
+  { term: "abi-wdbx", def: "Durable memory and retrieval from the sibling Rust substrate" },
+  { term: "abi-gpu", def: "Backend reporting, optional Metal DOT kernels, and CPU fallback" },
+  { term: "abi-mcp", def: "JSON-RPC tool handlers and stdio server" },
+  { term: "abi-cli", def: "Commands, agent REPL, and diagnostics dashboard" },
 ];
-
 const designDecisions = [
-  {
-    title: "SIMD-native vector math",
-    body: "@Vector builtins compile distance kernels to the target ISA (AVX-512 on x86, NEON on Apple Silicon) from one source.",
-  },
-  {
-    title: "One build, every platform",
-    body: "zig build cross-compiles static binaries for macOS arm64/x86_64, Linux, and Windows. No container, no runtime, no GC pauses.",
-  },
-  {
-    title: "TLS at the edge",
-    body: "Zig's std TLS server is still pending upstream (ziglang #14171), so deployments terminate TLS at a reverse proxy by design rather than shipping an unvetted stack.",
-  },
+  { title: "Inspectable capabilities", body: "Report the selected backend and whether acceleration is active. Capability detection alone is not evidence of accelerated execution." },
+  { title: "Bounded evidence", body: "SEA selects evidence within record, token, cluster, and prompt-byte budgets. Retrieval is distinct from model training." },
+  { title: "Explicit runtime boundaries", body: "Local completion is deterministic persona-template generation. Live HTTP completion requires an explicitly configured provider." },
 ];
 
 /** Transport configuration for `abi-mcp`. */
 const mcpSpec = [
   { k: "Transport", v: "JSON-RPC 2.0 over stdio" },
   { k: "Request cap", v: "64 KB" },
-  { k: "Optional HTTP transport", v: "127.0.0.1:8080" },
+  { k: "Custom loopback HTTP listener", v: "127.0.0.1:8080" },
   { k: "Port override", v: "ABI_MCP_HTTP_PORT" },
-  { k: "SSE stream", v: "GET /sse" },
+  { k: "Discovery only", v: "GET /sse emits one event and closes" },
   { k: "Message endpoint", v: "POST /message" },
 ];
 
 const mcpTools = [
+  { term: "ai_learn", def: "Evidence-augmented completion with bounded evidence selection." },
+  { term: "scheduler_info", def: "Compatibility alias for scheduler statistics." },
   { term: "ai_complete", def: "Run a single completion through the selected persona profile." },
-  { term: "ai_run", def: "Execute an agent workflow with routing, retrieval, and tool calls." },
-  { term: "ai_train", def: "Update routing weights for a persona profile or all profiles." },
+  { term: "ai_run", def: "Run completion with local profile routing." },
+  { term: "ai_train", def: "Train the selected local profile against WDBX." },
   { term: "wdbx_query", def: "Vector / block retrieval against the WDBX store with ordered results." },
   { term: "wdbx_stats", def: "Report store size, index health, and snapshot metadata." },
   { term: "gpu_status", def: "Report GPU capability and backend, with deterministic CPU fallback." },
-  { term: "scheduler_stats", def: "Surface scheduler throughput and queue depth." },
-  { term: "connector_test", def: "Validate a connector's credentials and payload shape before live dispatch." },
+  { term: "scheduler_stats", def: "Report scheduler task counts." },
+  { term: "connector_test", def: "Run local connector validation; does not prove live credentials work." },
   { term: "plugin_list", def: "Enumerate registered plugins and their target features." },
   { term: "plugin_run", def: "Invoke a registered plugin entry point." },
 ];
@@ -219,18 +205,9 @@ const personas = [
 ];
 
 const routingSignals = [
-  {
-    title: "Technical execution",
-    body: "Cues like debug, fix, error, build, compile, code, and test steer toward Aviva.",
-  },
-  {
-    title: "Directness",
-    body: "Cues like urgent, quick, concise, direct, or fast raise her weight further.",
-  },
-  {
-    title: "Policy overrides win",
-    body: "When the control plane flags risk, weight shifts hard toward Abi, and a disallowed action routes to Abi outright regardless of the keyword signals.",
-  },
+  { title: "Explicit address", body: "A leading Abbey, Aviva, or Abi name selects that profile; mentioning a name later in prose does not." },
+  { title: "Token-prefix signals", body: "Without an explicit address, keyword stems at the start of whitespace-separated tokens adjust an Abbey-favoring prior." },
+  { title: "Normalized selection", body: "The largest normalized weight selects the primary profile. A routing share is not a calibrated confidence in correctness." },
 ];
 
 const abbeyPrinciples = [
@@ -395,10 +372,11 @@ export function Docs() {
               title="ABI Runtime"
               lead={
                 <>
-                  ABI is a Zig 0.17 framework for local AI orchestration, semantic vector
-                  storage, and GPU capability reporting. Build the CLI and MCP server from a
-                  pinned toolchain; on macOS use the{" "}
-                  <code className="text-cyan-300">./build.sh</code> wrapper.
+                  ABI is a Rust framework for local AI orchestration, semantic vector
+                  storage, and GPU capability reporting. Build the CLI and MCP server
+                  with the repository&apos;s pinned toolchain and{" "}
+                  <code className="text-cyan-300">./tools/cargo.sh</code> wrapper.
+
                 </>
               }
             >
@@ -408,16 +386,15 @@ export function Docs() {
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
-                <code className="text-gray-500"># Primary validation gate (build, tests, lint, mod/stub parity)</code><br />
-                <code className="text-cyan-400">./build.sh</code> <code className="text-white">check</code><br />
-                <code className="text-gray-500"># Build the CLI and MCP server binaries</code><br />
-                <code className="text-cyan-400">./build.sh</code> <code className="text-white">cli</code>{"   "}<code className="text-gray-500"># → zig-out/bin/abi</code><br />
-                <code className="text-cyan-400">./build.sh</code> <code className="text-white">mcp</code>{"   "}<code className="text-gray-500"># → zig-out/bin/abi-mcp</code><br />
+                <code className="text-gray-500"># Validate the Rust workspace</code><br />
+                <code className="text-cyan-400">./tools/check.sh</code><br />
+                <code className="text-gray-500"># Build the CLI and MCP server</code><br />
+                <code className="text-cyan-400">./tools/cargo.sh</code> <code className="text-white">build -p abi-cli -p abi-mcp</code><br />
                 <br />
-                <code className="text-gray-500"># Run a completion, plan an agent, open the dashboard TUI</code><br />
-                <code className="text-cyan-400">abi</code> <code className="text-white">complete "summarize the incident trace"</code><br />
-                <code className="text-cyan-400">abi</code> <code className="text-white">agent plan</code><br />
-                <code className="text-cyan-400">abi</code> <code className="text-white">agent os execute --confirm</code>
+                <code className="text-gray-500"># Inspect capabilities and terminal surfaces</code><br />
+                <code className="text-cyan-400">./target/debug/abi</code> <code className="text-white">backends</code><br />
+                <code className="text-cyan-400">./target/debug/abi</code> <code className="text-white">dashboard --pane system --once --json</code><br />
+                <code className="text-cyan-400">./target/debug/abi</code> <code className="text-white">agent tui</code>
               </div>
 
               {/* Stacked, not a 2-up grid: `Glossary`'s term track is capped at
@@ -451,7 +428,7 @@ export function Docs() {
                   authenticated, what is rate-limited, and what fails closed. Session
                   access uses WorkOS AuthKit; public inquiry submission is rate-limited;
                   evaluation gates sit in front of autonomous write or external tool
-                  paths; WDBX builds that are disabled fail closed with explicit errors.
+                  paths; persistence and admission errors must remain explicit.
                   Product-facing security detail lives on the dedicated page.
                 </>
               }
@@ -476,7 +453,7 @@ export function Docs() {
               group="Architecture"
               icon={<Boxes className="h-5 w-5 text-sky-400" />}
               title="Persona Routing"
-              lead="The Abbey–Aviva–Abi framework answers one question: how do you get advanced capability without giving up governance? Instead of one agent that plans, reviews, and executes, it separates those roles across three persona profiles. Routing between them is deterministic and weight-based — an inspectable trace event, not a hidden model call."
+              lead="The Abbey–Aviva–Abi framework answers one question: how do you get advanced capability without giving up governance? Instead of one agent that plans, reviews, and executes, it separates those roles across three persona profiles. Routing between them is deterministic and weight-based. Profile selection does not itself grant execution authority."
             >
               {/* Persona dot colors are the fixed *persona* axis (Abbey emerald,
                   Aviva violet, Abi cyan) — deliberately not the product accent
@@ -497,20 +474,17 @@ export function Docs() {
               <div className="mt-10">
                 <DocSubhead>How a profile is selected</DocSubhead>
                 <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-dim">
-                  Routing starts from a baseline weight per profile, then adjusts
-                  it from inspectable input signals. The adjusted weights are
-                  normalized to a distribution; the largest becomes primary and
-                  its share is the routing confidence (which in turn picks a
-                  single, parallel, or consensus strategy). Take{" "}
-                  <span className="text-violet-300">Aviva</span>, the direct
-                  expert — she gains weight when the request reads as hands-on or
-                  time-pressed:
+                  An explicit leading persona address takes precedence. Otherwise,
+                  token-prefix signals adjust a prior and the runtime normalizes the
+                  resulting weights before selecting the largest. The distribution
+                  describes routing preference, not model quality, authorization,
+                  or a parallel-execution strategy.
                 </p>
                 <DeepDive className="mt-6" cols={3} items={routingSignals} />
                 <Callout className="mt-6" label="Authority boundary">
-                  Aviva plans and proposes; she holds no autonomous write or
-                  execute authority — that boundary belongs to Abi, and only on
-                  plans that have cleared review.
+                  A persona name is not an authorization mechanism. Execution and
+                  admission controls enforce their own policy checks independently
+                  of the selected profile.
                 </Callout>
               </div>
 
@@ -555,7 +529,7 @@ export function Docs() {
                 ))}
               </div>
               <Callout className="mt-6" label="Fail closed">
-                Disabled builds fail closed with explicit errors rather than degrading silently.
+                The Rust workspace links WDBX directly. Storage, authentication, and admission failures must be explicit; legacy disabled-feature flags are not the current runtime boundary.
               </Callout>
               <PaperLink to="/research/wdbx-weighted-backtrace-memory-store">
                 Read the paper: WDBX weighted-backtrace store
@@ -567,8 +541,8 @@ export function Docs() {
               id="wdbx-v2"
               group="Architecture"
               icon={<Boxes className="h-5 w-5 text-sky-400" />}
-              title="WDBX V2 Documentation"
-              lead="The V2 release of the Abbey/WDBX runtime ships an observable pipeline: block-chain memory with temporal queries, multimodal input fusion, an async neural path, and research-alignment telemetry scored on every turn. The complete Markdown documentation set is mirrored here from the wdbx repository — including its limitations page, which states plainly what is scaffolding versus shipped."
+              title="Historical WDBX V2 Documentation"
+              lead="This frozen Zig-era documentation mirror is retained for historical reference. It is not the current Rust implementation guide. Use the source-backed WDBX research overview for current availability and limitations; claims in the historical snapshot require revalidation against the Rust substrate."
             >
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {wdbxV2Docs.map((doc) => (
@@ -587,12 +561,12 @@ export function Docs() {
                 ))}
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
-                <a href="/research/wdbx-weighted-backtrace-memory-store.pdf" download className="glass-card inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white">
-                  WDBX store paper (PDF) <span className="font-mono text-[10px] text-text-dim/60">↓</span>
-                </a>
-                <a href="/research/multi-persona-routing-policy-weights.pdf" download className="glass-card inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white">
-                  Persona routing paper (PDF) <span className="font-mono text-[10px] text-text-dim/60">↓</span>
-                </a>
+                {research.publications.flatMap(publication => publication.attachments).map(attachment => (
+                  <a key={attachment.url} href={attachment.url} download className="glass-card inline-flex flex-col gap-1 px-4 py-3 text-base text-white">
+                    <span>{attachment.title} (PDF)</span>
+                    <span className="text-sm text-text-dim">{attachment.edition === "historical" ? "Historical edition" : "Current edition"} · {attachment.date}</span>
+                  </a>
+                ))}
               </div>
               <PaperLink to="/blog/wdbx-v2-release">
                 Read the release note: WDBX V2
@@ -608,7 +582,7 @@ export function Docs() {
               lead={
                 <>
                   The <code className="text-cyan-300">abi-mcp</code> server speaks JSON-RPC 2.0
-                  over stdio, with an optional local HTTP transport.
+                  over stdio. Its custom loopback HTTP compatibility listener is not a persistent conforming MCP HTTP+SSE transport.
                 </>
               }
             >

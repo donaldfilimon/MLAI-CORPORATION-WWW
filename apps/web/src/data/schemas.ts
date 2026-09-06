@@ -81,10 +81,17 @@ export const ServicesSchema = z.array(z.object({
   outcomes: z.array(z.string()),
 }));
 
+export const ResearchTopicSchema = z.enum(["ai", "wdbx", "sea", "gpu", "mcp", "tui"]);
+
 export const ResearchSchema = z.object({
   tracks: z.array(z.object({
+    id: ResearchTopicSchema,
     name: z.string(),
     description: z.string(),
+    application: z.string(),
+    availability: z.string(),
+    limitations: z.array(z.string()),
+    overviewSlug: z.string(),
   })),
   publications: z.array(z.object({
     slug: z.string(),
@@ -94,6 +101,22 @@ export const ResearchSchema = z.object({
     abstract: z.string(),
     readTime: z.string(),
     authors: z.string().optional(),
+    topic: ResearchTopicSchema,
+    documentType: z.enum(["overview", "research-note", "implementation-guide"]),
+    practicalSummary: z.string(),
+    status: z.enum(["Implemented", "Experimental", "Proposed"]),
+    statusNote: z.string(),
+    reviewedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    sources: z.array(z.object({
+      title: z.string(), url: z.string().url(), revision: z.string().regex(/^[a-f0-9]{40}$/),
+      kind: z.enum(["source", "specification", "test"]),
+    })).min(1),
+    limitations: z.array(z.string()).min(1),
+    attachments: z.array(z.object({
+      title: z.string(), url: z.string(), edition: z.enum(["current", "historical"]),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), sha256: z.string().regex(/^[a-f0-9]{64}$/),
+      pages: z.number().int().positive(),
+    })),
     body: z.array(BlogSectionSchema).default([]),
   })),
 });

@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { research } from '@/data/categories/research';
 import { useUI } from "@/lib/ui-context";
 import { ArticleLayout, ArticleNotFound } from "@/components/article";
+import { ResearchArticleBody, ResearchArticleEvidence } from "@/components/research";
 import { tagColor } from "@/lib/tag-colors";
 
 export function ResearchPaper() {
@@ -32,7 +33,7 @@ export function ResearchPaper() {
       headingId="paper-heading"
       tag={
         <span
-          className={`text-[10px] font-mono font-bold tracking-[0.2em] px-2 py-0.5 rounded-sm uppercase border ${tagColor(paper.tag)}`}
+          className={`text-sm font-mono font-bold tracking-[0.2em] px-2 py-0.5 rounded-sm uppercase border ${tagColor(paper.tag)}`}
         >
           {paper.tag}
         </span>
@@ -40,14 +41,16 @@ export function ResearchPaper() {
       date={paper.date}
       readTime={paper.readTime}
       title={paper.title}
-      lede={paper.abstract}
+      lede={paper.practicalSummary}
       meta={paper.authors}
       body={paper.body}
+      beforeBody={<ResearchArticleEvidence publication={paper} />}
+      renderedBody={<ResearchArticleBody body={paper.body} />}
       inquiryLabel="Work with our research team"
       onInquiry={openInquiry}
       next={
         next && next.slug !== paper.slug
-          ? { to: `/research/${next.slug}`, label: "Next paper", title: next.title }
+          ? { to: `/research/${next.slug}`, label: "Next article", title: next.title }
           : undefined
       }
     />

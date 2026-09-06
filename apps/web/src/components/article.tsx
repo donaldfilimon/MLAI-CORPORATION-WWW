@@ -131,6 +131,8 @@ type ArticleLayoutProps = {
   lede: string;
   meta?: ReactNode;
   body: ArticleSection[];
+  beforeBody?: ReactNode;
+  renderedBody?: ReactNode;
   inquiryLabel: string;
   onInquiry: () => void;
   next?: { to: string; label: string; title: string };
@@ -149,6 +151,8 @@ export function ArticleLayout({
   lede,
   meta,
   body,
+  beforeBody,
+  renderedBody,
   inquiryLabel,
   onInquiry,
   next,
@@ -162,7 +166,7 @@ export function ArticleLayout({
       <div className="mx-auto max-w-3xl">
         <Link
           to={backTo}
-          className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-text-dim hover:text-white transition-colors mb-10"
+          className="inline-flex items-center gap-2 text-sm font-mono uppercase tracking-widest text-text-dim hover:text-white transition-colors mb-10"
         >
           <ArrowLeft className="w-3 h-3" /> {backLabel}
         </Link>
@@ -173,14 +177,14 @@ export function ArticleLayout({
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 mb-6">
             {tag}
             <Separator orientation="vertical" className="h-3 bg-white/20" />
-            <span className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest">
+            <span className="text-sm font-mono text-text-dim/60 uppercase tracking-widest">
               {date}
             </span>
             <Separator orientation="vertical" className="h-3 bg-white/20" />
-            <span className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest">
+            <span className="text-sm font-mono text-text-dim/60 uppercase tracking-widest">
               {readTime}
             </span>
           </div>
@@ -192,25 +196,26 @@ export function ArticleLayout({
           </h1>
           <p className="text-lg md:text-xl text-text-dim leading-relaxed">{lede}</p>
           {meta && (
-            <p className="mt-6 text-xs font-mono uppercase tracking-widest text-text-dim/50">
+            <p className="mt-6 text-sm font-mono uppercase tracking-widest text-text-dim/50">
               {meta}
             </p>
           )}
         </m.header>
 
-        <ArticleSections body={body} />
+        {beforeBody}
+        {renderedBody ?? <ArticleSections body={body} />}
 
         <Separator className="my-14 bg-white/10" />
 
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest text-text-dim/50 mb-2">
+            <p className="text-sm font-mono uppercase tracking-widest text-text-dim/50 mb-2">
               {inquiryLabel}
             </p>
             <Button
               type="button"
               onClick={onInquiry}
-              className="font-bold uppercase tracking-widest text-xs"
+              className="font-bold uppercase tracking-widest text-sm"
             >
               Start an inquiry
             </Button>
@@ -218,7 +223,7 @@ export function ArticleLayout({
 
           {next && (
             <Link to={next.to} className="group max-w-sm text-right">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/50">
+              <span className="text-sm font-mono uppercase tracking-widest text-text-dim/50">
                 {next.label}
               </span>
               <span className="mt-2 flex items-center justify-end gap-2 text-sm font-bold text-white group-hover:text-cyan-400 transition-colors leading-snug">

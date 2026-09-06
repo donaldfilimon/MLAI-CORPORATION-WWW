@@ -22,18 +22,27 @@
   <url><loc>https://quesar.cloud/security</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
   <url><loc>https://quesar.cloud/products/abi</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://quesar.cloud/products/abbey</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://quesar.cloud/research/wdbx-weighted-backtrace-memory-store</loc><lastmod>2026-06-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/sparse-evidence-attention-context-assembly</loc><lastmod>2026-06-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/wdbx-graph-weights-traceable-retrieval</loc><lastmod>2026-05-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/policy-locked-tool-use-multi-agent</loc><lastmod>2026-04-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/latency-budgets-real-time-orchestration</loc><lastmod>2026-03-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/backtrace-confidence-signals-hallucination</loc><lastmod>2026-02-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/vector-index-maintenance-continuous-ingestion</loc><lastmod>2026-01-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/human-approval-gates-operators-use</loc><lastmod>2025-12-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/chunk-provenance-long-context-retrieval</loc><lastmod>2025-11-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/offline-first-ai-sensitive-data</loc><lastmod>2025-10-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/prompt-injection-drills-agentic-systems</loc><lastmod>2025-09-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://quesar.cloud/research/multi-persona-routing-policy-weights</loc><lastmod>2026-06-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/ai-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/wdbx-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/sea-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/gpu-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/mcp-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/tui-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/wdbx-weighted-backtrace-memory-store</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/sparse-evidence-attention-context-assembly</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/wdbx-graph-weights-traceable-retrieval</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/policy-locked-tool-use-multi-agent</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/latency-budgets-real-time-orchestration</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/backtrace-confidence-signals-hallucination</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/vector-index-maintenance-continuous-ingestion</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/human-approval-gates-operators-use</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/chunk-provenance-long-context-retrieval</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/offline-first-ai-sensitive-data</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/prompt-injection-drills-agentic-systems</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/multi-persona-routing-policy-weights</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/gpu-implementation-guide</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/mcp-implementation-guide</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/research/tui-implementation-guide</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/blog/wdbx-v2-release</loc><lastmod>2026-06-09</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/blog/on-saying-im-not-sure</loc><lastmod>2026-06-08</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/blog/inside-wdbx-hybrid-ranker</loc><lastmod>2026-06-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>

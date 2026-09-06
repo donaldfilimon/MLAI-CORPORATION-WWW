@@ -86,14 +86,16 @@ export function researchArticleLd(paper: ResearchPub) {
   const iso = toIsoDate(paper.date);
   return {
     "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
+    "@type": paper.documentType === "research-note" ? "ScholarlyArticle" : "TechArticle",
     "@id": url,
     mainEntityOfPage: url,
     headline: paper.title,
     abstract: paper.abstract,
     description: paper.abstract,
     url,
-    ...(iso ? { datePublished: iso, dateModified: iso } : {}),
+    ...(iso ? { datePublished: iso } : {}),
+    dateModified: toIsoDate(paper.reviewedAt),
+    citation: paper.sources.map(source => source.url),
     author: bylineOrganizations(paper.authors) ?? ORG_REF,
     publisher: ORG_REF,
     keywords: paper.tag,

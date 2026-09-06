@@ -89,3 +89,11 @@ Write endpoints are protected on independent axes. In-memory fixed-window limits
 The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. [`infra/`](infra/) provisions the durable/security foundation with OpenTofu. The deploy workflow authenticates through GitHub OIDC—there is no long-lived GCP key—builds an immutable SHA-tagged Artifact Registry image, mounts the Cloud SQL connector, injects Secret Manager values, restricts ingress to the external load balancer, and disables the default `run.app` URL.
 
 `APP_URL=https://quesar.cloud` is required as the OAuth redirect base. Leave `FRONTEND_URL` unset unless a proxy preserves the state-cookie topology. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main`; deployment then checks out the exact successful push SHA and retains the event/repository trust checks that keep fork PRs outside production context. See [`docs/deploy-cloud-run.md`](docs/deploy-cloud-run.md) for bootstrap, secrets, provider configuration, DNS cutover, and acceptance gates.
+
+## MLAI Research Review Export
+
+The approved corpus is structured under `src/data/categories/research.ts` and `research-records.ts`; `docs/research-inventory.md` records source revisions and dispositions. Keep summaries, capability labels, evidence references, limitations and attachment hashes in this content layer. The frozen Zig-era WDBX mirror is historical.
+
+Run `bun run research:export --output /absolute/generated-site --generated-at <ISO-8601>` to produce the static review companion from the shared renderer. Export destinations must be empty (or contain only the initial Sites `.openai` scaffold) or be an existing generated research artifact. The manifest records canonical revision, export time, complete content and file hashes. Regenerate from a validated source revision; never maintain independent research prose in the generated project. Run `bun run test src/__tests__/research-artifact.test.ts` for export equivalence and destination safeguards.
+
+The research review release stops at a validated canonical change set and owner-only Sites publication. Pushing the canonical deployment branch requires a later explicit public-rollout instruction.
