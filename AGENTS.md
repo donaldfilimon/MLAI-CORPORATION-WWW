@@ -1,5 +1,7 @@
 # Repository Guidelines
 
+Canonical project guidance; `CLAUDE.md` adds source-level detail and commands.
+
 This is the independent MLAI website and local application. The existing `mlai`, `abi`, `abbey`, and `wdbx` repositories are references and external services, not editable dependencies.
 
 ## Architecture
@@ -9,6 +11,27 @@ Next.js App Router and TypeScript run on Node.js. Bun manages packages and scrip
 ## Commands
 
 Run `bun install --frozen-lockfile`, `bun run setup`, then `bun run dev`. Development builds the private shared UI package before starting the web process and persistent worker on loopback. `bun run check` covers shared UI ESM/declarations, types, unit tests, parser tests, and production build; `bun run test:e2e` covers browser workflows. Use `bun run format:check` for read-only formatting validation. Keep generated UI dist, Next output, and next-env.d.ts out of Git.
+
+## Runtime traps
+
+- `package.json` pins Bun 1.4.0 for package management; runtime scripts use
+  `node --import tsx`. Use `bun run <script>`, not `bun scripts/<file>.ts`.
+  Keep native `better-sqlite3` on Node and preserve `serverExternalPackages`.
+- Run from this repository root: migrations, Python entry points, and the gRPC
+  protobuf resolve against cwd. `APP_URL` selects the launch port (default 3100).
+- Importing `config.ts` creates private directories and an auth secret;
+  importing `db.ts` opens SQLite and applies migrations. Set an isolated
+  `MLAI_DATA_DIR` before dynamic server imports in tests or probes.
+- `setup` performs downloads, Python installation, and database migration;
+  it is not a read-only diagnostic. Python is constrained to >=3.11,<3.14 in
+  `worker/pyproject.toml` and locked by `worker/uv.lock`.
+- Application tables use numbered SQL migrations plus `drizzle/meta/_journal.json`;
+  `schema.ts` only models Better Auth. Do not implement app schema changes there alone.
+- `packages/ui/build.mjs` compiles files separately to preserve `use client`,
+  copies styles, and emits declarations. App TypeScript excludes `packages/`.
+- `check` excludes formatting, Playwright, and live integration/recovery acceptance.
+  Playwright uses `tests/e2e`, one worker, port 3101, `.data-e2e`, and `.next-e2e`;
+  it may reuse an existing server outside CI. Do not aim it at private live data.
 
 ## Required invariants
 

@@ -10,13 +10,13 @@ setup and the full command table; do not duplicate it here.
 
 ## Runtime split
 
-Bun is the package manager and script runner only. Every script runs on Node through
-`node --import tsx` because `better-sqlite3` and `@grpc/grpc-js` are native Node addons. Never
+Bun is the package manager and script runner only. Runtime TypeScript scripts run on Node through
+`node --import tsx`; `better-sqlite3` is a native Node addon and gRPC uses Node packages. Never
 execute a script with the Bun runtime (`bun scripts/dev.ts`); use `bun run dev`.
 
 Ports are fixed by convention: 3100 development, 3101 Playwright, 3102 the optional
-`bun run model` MLX server. `scripts/env.ts` loads `.env.local`/`.env` through `@next/env` at the
-top of every entry point.
+`bun run model` MLX server, 3104/3105 the optional `bun run gateway` WDBX playground.
+`scripts/env.ts` loads `.env.local`/`.env` through `@next/env` at the top of every entry point.
 
 Several server modules resolve paths relative to the process cwd (`resolve("drizzle")`,
 `resolve("worker/.venv/bin/python")`, `resolve("src/lib/server/gateway.proto")`). Everything must
@@ -36,21 +36,26 @@ embedding model, and writes `.data/capabilities.json`.
   `bunx playwright install chromium`. Playwright starts its own `bun run dev` against `.data-e2e`,
   `.next-e2e` and port 3101, and reuses an already running server outside CI.
   `tests/e2e/live-chat.spec.ts` needs `MLAI_E2E_MODEL_URL` and `MLAI_E2E_MODEL_ID`.
+- Agent runs have their own suites: `tests/agent.test.ts` covers dispatch authority, proposal and
+  confirmation, stale revisions, budgets, and lease fencing; `tests/worker-agent.test.ts` covers
+  publication guards and restoring an interrupted run. The live gate is `bun run verify:agent`,
+  which requires `MLAI_MODEL_URL` and `MLAI_MODEL_ID` and refuses a non-loopback host; it backs up
+  mid-run, restores into an isolated directory, and finishes the run there through
+  `scripts/verify-agent-restored.ts`.
 
 `AGENTS.md` requires keeping `docs/IMPLEMENTATION.md` current with evidence. Separate the historical baseline from combined-release receipts; do not tick a gate without results tied to the source under review.
 
 ## Request path
 
-There is exactly one API route file, `src/app/api/v1/[...path]/route.ts`, which forwards every
+The v1 API entry point is `src/app/api/v1/[...path]/route.ts`, which forwards every
 method to `dispatch()` in `src/lib/server/api.ts`. Adding an endpoint means editing a route module,
 never adding a Next route file.
 
-`dispatch` derives the required scope from method and path (`GET` is `read`, `chat`, `documents`,
-`playground`/`connections` are `console`, everything else is `write`), then calls `context()` in
-`http.ts`, which resolves either a Better Auth session or a `Bearer` API key whose stored scopes
-must contain that scope. It then walks `workspaceRoutes`, `documentRoutes`, `portalRoutes`,
-`consoleRoutes` in order; each returns `Response | undefined`. `chat` and the WDBX
-`connections/:id/events` stream are handled before that loop because they return SSE.
+`dispatch` derives required scope from method and path, then calls `context()` in
+`http.ts` to resolve a Better Auth session or scoped Bearer API key. Keep the scope mapping,
+session-only exceptions, and ordered route-module list in `api.ts` authoritative rather than
+duplicating them in new Next route files. `chat` and the WDBX `connections/:id/events` stream
+are handled before that loop because they return SSE.
 
 Authorization helpers live in `http.ts` and are the only correct way to check access:
 `resource(table, id, ctx)` scopes a row to the workspace, `owner(ctx)` additionally rejects API
@@ -81,10 +86,10 @@ writing to `chunks` is enough.
 ## Worker and document pipeline
 
 `scripts/dev.ts` spawns Next plus `scripts/worker.ts` and forwards signals to both. The worker
-polls the `jobs` table every second, takes a 30 second lease, refreshes it on a 5 second
-heartbeat, and requeues expired leases on the next acquire, so a crashed worker recovers without
-manual intervention. Job kinds are `extract` (default) and `interpret`, the latter carrying a JSON
-`payload`.
+leases document jobs and agent runs; `scripts/worker.ts` and `src/lib/server/agent-runtime.ts`
+own scheduling and lease rules. Document jobs include extraction and interpretation. Preserve
+attempt/lease ownership checks around publication and cleanup so stale workers cannot overwrite
+or delete a newer attempt's output. Expired leases are recovered during acquisition.
 
 Extraction spawns `worker/.venv/bin/python worker/extract.py`, wrapped on macOS in
 `sandbox-exec -p "(version 1)(allow default)(deny network*)"`. `extract.py` writes exactly one
@@ -116,6 +121,42 @@ Chat streams SSE events `start`, `delta`, `provider`, `done`, `error`. `checkedC
 any `[n]` outside the supplied source range to `[unsupported citation]`. A partial unique index
 (`one_stream_per_conversation`) enforces one active stream per conversation, checked again inside
 the insert transaction. Cancelling preserves the partial message with a `cancelled` status.
+
+## Agent runs
+
+Six modules under `src/lib/server` own autonomous runs and split by responsibility:
+`agent-routes.ts` (HTTP), `agent-runtime.ts` (worker loop), `agent-store.ts` (rows, leases,
+authorization, invalidation), `agent-tools.ts` (read tools), `agent-actions.ts` (write proposals),
+and `agent-jobs.ts` (interpretation jobs a run queued). Limits, tool schemas, and the run and action
+status enums are shared with the browser in `src/lib/agent-contracts.ts` (`agentLimits`,
+`agentDecisionSchema`); change them there rather than in a server module.
+
+Agent endpoints are session-only. `dispatch` rejects any `agent` request carrying an
+`Authorization` header with 403 `session_required` before `context()` runs, and `agentRoutes`
+repeats the check for API keys. Unlike chat and WDBX events, the agent SSE stream is served from
+inside `agentRoutes` (`agentEvents`), not from a pre-loop branch. A partial unique index,
+`agent_active_conversation`, allows one non-terminal run per conversation, mirroring
+`one_stream_per_conversation`.
+
+Read tools execute inline and record an `agent_steps` row plus the chunks they touched in
+`agent_sources`. Write tools never apply directly: `proposeAction` records an `agent_actions` row
+capturing every affected resource with the `revision` it saw, the run moves to `awaiting_approval`,
+and only the requester confirming through `agent/actions/:id/confirm` lets the worker call
+`applyAction`. `applyAction` re-runs `validateAction` under the lease inside an immediate
+transaction, and a changed `revision` fails 409 `source_changed` instead of writing. That is why
+migration 0003 adds `revision` columns and update triggers to `projects` and `documents`.
+
+Deleting or reprocessing a document calls `invalidateAgentSources`, from `documents.ts` and from
+`scripts/worker.ts`. It fails any non-terminal run that touched the document, marks its pending and
+approved actions `stale`, drops the pinned sources, and flags historic citations `removed` instead
+of deleting them, which is the deletion-cascade invariant applied to runs.
+
+The worker acquires a run with a `lease_token` and heartbeats it; every publication path checks
+`ownsAgentLease` or `requireAgentLease`, so a resumed or duplicate worker cannot overwrite a newer
+attempt. The heartbeat re-validates limits, sources, and model selection, so a run stops when the
+workspace changes provider mid-flight. Interpretation a run queues is an ordinary `jobs` row
+bridged by `agent_jobs`: migration 0004's trigger bumps the run revision when that job's status
+changes, and 0005 cancels its queued or running jobs when the run is deleted.
 
 ## Console services
 
