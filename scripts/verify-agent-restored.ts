@@ -88,15 +88,13 @@ try {
       .status,
     200,
   );
-  const request = z
-    .object({ id: z.string() })
-    .parse(
-      await fixtureJson(requester, "engagements", "POST", {
-        title: "Restored agent verification",
-        description:
-          "Verify customer operations remain available after restoring pending agent work.",
-      }),
-    );
+  const request = z.object({ id: z.string() }).parse(
+    await fixtureJson(requester, "engagements", "POST", {
+      title: "Restored agent verification",
+      description:
+        "Verify customer operations remain available after restoring pending agent work.",
+    }),
+  );
   await fixtureJson(requester, `engagements/${request.id}/comments`, "POST", {
     content: "Restored review confirmed.",
   });

@@ -7,7 +7,8 @@ export const embeddingSpace =
 /** Only use with children spawned detached, which own their process group. */
 export function stopOwnedProcess(child: ChildProcess) {
   try {
-    if (process.platform !== "win32" && child.pid) process.kill(-child.pid, "SIGKILL");
+    if (process.platform !== "win32" && child.pid)
+      process.kill(-child.pid, "SIGKILL");
     else child.kill("SIGKILL");
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code !== "ESRCH") child.kill("SIGKILL");
@@ -32,12 +33,17 @@ export async function embed(
         },
       },
     );
-    let output = "", failure: unknown;
+    let output = "",
+      failure: unknown;
     const stop = (reason: unknown) => {
       failure ||= reason;
       stopOwnedProcess(child);
     };
-    const abort = () => stop(signal?.reason || new DOMException("Embedding cancelled.", "AbortError"));
+    const abort = () =>
+      stop(
+        signal?.reason ||
+          new DOMException("Embedding cancelled.", "AbortError"),
+      );
     signal?.addEventListener("abort", abort, { once: true });
     const timer = setTimeout(() => {
       stop(new Error("Local embedding timed out."));

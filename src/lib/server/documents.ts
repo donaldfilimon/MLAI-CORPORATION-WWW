@@ -7,7 +7,13 @@ import { spawn } from "node:child_process";
 import { all, one, run, sqlite } from "./db";
 import { Context, body, fail, id, json, now, resource, trace } from "./http";
 import { maxUpload, uploadsDir } from "./config";
-import { generate, selectedModel, modelSelection, validateModelSelection, type ModelSelection } from "./models";
+import {
+  generate,
+  selectedModel,
+  modelSelection,
+  validateModelSelection,
+  type ModelSelection,
+} from "./models";
 import { invalidateAgentSources } from "./agent-store";
 import { checkedCitations } from "./chat";
 import { retrieve, Source } from "./search";
@@ -300,30 +306,66 @@ export async function documentRoutes(
     validateInterpretation(ctx, did, data);
     const selection = modelSelection(await selectedModel(ctx.workspaceId));
     const jobId = id();
-    sqlite.transaction(() => queueInterpretation(ctx, did, data, jobId, selection))();
+    sqlite.transaction(() =>
+      queueInterpretation(ctx, did, data, jobId, selection),
+    )();
     return json({ jobId, status: "queued" }, 202);
   }
 }
 
 type InterpretationInput = { kind: string; compare_with?: string[] };
-export function validateInterpretation(ctx: Context, did: string, data: InterpretationInput): void {
+export function validateInterpretation(
+  ctx: Context,
+  did: string,
+  data: InterpretationInput,
+): void {
   const parsed = interpretationSchema.safeParse(data);
-  if (!parsed.success) fail(400, "invalid_input", "Choose a supported interpretation.");
-  const member = one<{role: Context["role"]}>("SELECT role FROM memberships WHERE workspace_id=? AND user_id=?", ctx.workspaceId, ctx.userId);
-  if (!member) fail(403, "workspace_forbidden", "The requester no longer belongs to this workspace.");
-  if (member.role === "viewer") fail(403, "read_only", "Membership no longer permits interpretation.");
+  if (!parsed.success)
+    fail(400, "invalid_input", "Choose a supported interpretation.");
+  const member = one<{ role: Context["role"] }>(
+    "SELECT role FROM memberships WHERE workspace_id=? AND user_id=?",
+    ctx.workspaceId,
+    ctx.userId,
+  );
+  if (!member)
+    fail(
+      403,
+      "workspace_forbidden",
+      "The requester no longer belongs to this workspace.",
+    );
+  if (member.role === "viewer")
+    fail(403, "read_only", "Membership no longer permits interpretation.");
   for (const key of [did, ...(data.compare_with || [])]) {
     const doc = resource("documents", key, ctx);
     if (!["ready", "partial"].includes(String(doc.status)))
       fail(409, "not_ready", "Wait for extraction before interpreting.");
   }
-  if (data.kind === "comparison" && !data.compare_with?.some(key => key !== did))
+  if (
+    data.kind === "comparison" &&
+    !data.compare_with?.some((key) => key !== did)
+  )
     fail(400, "comparison_required", "Select another document to compare.");
 }
-export function queueInterpretation(ctx: Context, did: string, data: InterpretationInput, jobId: string, selection?: ModelSelection): void {
+export function queueInterpretation(
+  ctx: Context,
+  did: string,
+  data: InterpretationInput,
+  jobId: string,
+  selection?: ModelSelection,
+): void {
   validateInterpretation(ctx, did, data);
   if (selection) validateModelSelection(ctx.workspaceId, selection);
-  run("INSERT INTO jobs(id,document_id,kind,payload,created_at) VALUES(?,?,'interpret',?,?)", jobId, did, JSON.stringify({...data, userId:ctx.userId, ...(selection ? {selection} : {})}), now());
+  run(
+    "INSERT INTO jobs(id,document_id,kind,payload,created_at) VALUES(?,?,'interpret',?,?)",
+    jobId,
+    did,
+    JSON.stringify({
+      ...data,
+      userId: ctx.userId,
+      ...(selection ? { selection } : {}),
+    }),
+    now(),
+  );
 }
 export async function runInterpretation(
   ctx: Context,
@@ -336,8 +378,12 @@ export async function runInterpretation(
   signal.throwIfAborted();
   validateInterpretation(ctx, did, data);
   const ids = [did, ...(data.compare_with || [])];
-  const revisions = ids.map(key => ({id:key, revision:resource("documents", key, ctx).revision}));
-  const selection = expected || modelSelection(await selectedModel(ctx.workspaceId, signal));
+  const revisions = ids.map((key) => ({
+    id: key,
+    revision: resource("documents", key, ctx).revision,
+  }));
+  const selection =
+    expected || modelSelection(await selectedModel(ctx.workspaceId, signal));
   const rows = all<{
     id: string;
     document_id: string;
@@ -395,13 +441,34 @@ export async function runInterpretation(
       validateModelSelection(ctx.workspaceId, selection);
       for (const saved of revisions)
         if (resource("documents", saved.id, ctx).revision !== saved.revision)
-          fail(409, "source_changed", "An interpretation source changed. Start a new interpretation.");
+          fail(
+            409,
+            "source_changed",
+            "An interpretation source changed. Start a new interpretation.",
+          );
       for (const source of sources)
-        if (!one("SELECT id FROM chunks WHERE id=? AND document_id=? AND workspace_id=?", source.id, source.documentId, ctx.workspaceId))
-          fail(409, "source_changed", "An interpretation source changed. Start a new interpretation.");
+        if (
+          !one(
+            "SELECT id FROM chunks WHERE id=? AND document_id=? AND workspace_id=?",
+            source.id,
+            source.documentId,
+            ctx.workspaceId,
+          )
+        )
+          fail(
+            409,
+            "source_changed",
+            "An interpretation source changed. Start a new interpretation.",
+          );
       run(
         "INSERT INTO insights(id,document_id,kind,content,citations,provider,created_at) VALUES(?,?,?,?,?,?,?)",
-        insightId, did, data.kind, checked.content, JSON.stringify(checked.citations), provider, now(),
+        insightId,
+        did,
+        data.kind,
+        checked.content,
+        JSON.stringify(checked.citations),
+        provider,
+        now(),
       );
     })();
     trace(ctx, "document.interpret", provider, "complete", start);

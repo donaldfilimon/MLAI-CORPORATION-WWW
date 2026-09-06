@@ -24,11 +24,7 @@
     "browser": {
       "exitCode": 0,
       "chromiumWorkflows": 5,
-      "viewports": [
-        390,
-        768,
-        1440
-      ],
+      "viewports": [390, 768, 1440],
       "keyboardAndReducedMotion": true,
       "http5xxFailWorkflow": true
     },
