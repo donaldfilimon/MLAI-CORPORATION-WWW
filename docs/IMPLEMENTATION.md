@@ -79,3 +79,7 @@ Current change evidence, separate from the historical combined release above:
 - `bun run check`: **blocked at TypeScript** by the pre-existing untracked `tests/agent.test.ts:21`, which imports the absent `src/lib/server/agent-runtime` owned by the separate agent task. `bun run build` compiled successfully and then stopped at the same TypeScript error. The unfinished agent test was not excluded or stubbed to make the gate pass.
 
 The existing local production release was not replaced. Integrated production build acceptance remains pending the agent task's implementation and a fresh complete gate. No hosted-provider, clean-install, or live-service verification is claimed for this search change.
+
+## Agent source checkpoint (2026-09-06)
+
+At the user's explicit request to commit all remaining work into `main`, the agent lifecycle migration/journal, typed contracts, regression scenarios, and development-agent scenario receipt were reviewed and included as an unfinished source checkpoint. There are no other local branches or linked worktrees to merge. A fresh `bun run check` still fails at `tests/agent.test.ts:21` because `src/lib/server/agent-runtime` has not been implemented. Committing this work does not establish agent runtime, endpoint, UI, or release acceptance. The scenario receipt records account-session-limit blocks, not successful behavioral verification.
