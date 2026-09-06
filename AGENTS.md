@@ -18,21 +18,23 @@ Canonical guidance for this generated review artifact, not the MLAI source app.
 
 ## Local command boundary
 
-- `bun run build` executes a Node one-liner: recursively remove `out/`, then
-  recursively copy `public/` to `out/`. It does not compile, validate content,
-  run tests, or deploy. Never keep unique work in `out/`.
+- `bun run build` compiles `src/filter.ts` to `public/assets/filter.js` (browser
+  IIFE), then recursively removes `out/` and copies `public/` to `out/`. It does
+  not validate research content or deploy. Never keep unique work in `out/`.
 - `.openai/hosting.json` configures static hosting from `out/`; `.gitignore`
   excludes that directory. Changing hosting configuration is not a content edit.
-- There are no dependencies, lockfile, dev server, test/lint/typecheck scripts,
-  or CI workflows in this artifact. Do not install an application toolchain here.
+- Package manager is bun (`bun.lock`). Do not add `package-lock.json`. `bun test`
+  covers publication-filter logic; `bun run check` runs tests then a browser IIFE
+  compile. There is no CI workflow.
 - For documentation-only work, review the diff and use `git diff --check`.
-  `node --check public/assets/filter.js` checks JavaScript syntax only.
 
 ## Static behavior
 
 - `public/index.html` and `public/research/` contain the review pages;
   `research-data.json` is the structured collection and `assets/` is bundled locally.
-- `assets/filter.js` progressively filters publication cards through
-  `data-filter` and `data-publication-tag`; article links work without JavaScript.
+- `src/filter.ts` is the filter source. `bun run build` emits
+  `public/assets/filter.js`, which pages load with `defer`. It filters cards
+  through `data-filter` and `data-publication-tag`; article links work without
+  JavaScript.
 - `public/robots.txt` disallows crawling. This is not authentication or a privacy
   boundary; hosting access control must be verified independently before sharing.
