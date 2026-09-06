@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-09-06T10:40:58.910252+00:00",
+  "source": "application Git index, excluding concurrent UI package extraction",
+  "frozenInstall": true,
+  "typecheck": true,
+  "vitest": 14,
+  "productionBuild": true,
+  "productionArtifact": ".data/releases/verified-app"
+}

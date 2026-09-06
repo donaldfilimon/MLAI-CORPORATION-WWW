@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-06T10:33:56.282Z",
+  "freshSourceCopy": true,
+  "frozenBunInstall": true,
+  "frozenPythonInstall": true,
+  "setupAndFormatValidation": true,
+  "allChecks": true,
+  "productionServer": true,
+  "accountAndProject": true,
+  "dependencyModelCachesReused": true
+}

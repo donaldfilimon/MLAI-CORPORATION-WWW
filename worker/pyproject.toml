@@ -1,0 +1,18 @@
+[project]
+name = "mlai-document-worker"
+version = "0.1.0"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "beautifulsoup4>=4.13",
+    "pytest>=8.3",
+    "sentence-transformers>=5.0",
+    "pillow>=11",
+    "reportlab>=5.0.1",
+    "odfpy>=1.4.1",
+    "pypdf>=6.17.0",
+    "docling>=2.126.0",
+    "docling-slim[format-iwork,format-opendocument]>=2.126.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
