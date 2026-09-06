@@ -69,6 +69,9 @@ try {
   db.prepare(
     "UPDATE jobs SET status='queued',worker_id=NULL,lease_until=NULL WHERE status='running'",
   ).run();
+  if (db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='agent_runs'").get()) {
+    db.prepare("UPDATE agent_runs SET status='queued',active_ms=active_ms+CASE WHEN active_since IS NULL THEN 0 ELSE max(0,min(?,coalesce(lease_until,?))-active_since) END,active_since=NULL,worker_id=NULL,lease_until=NULL,lease_token=NULL,revision=revision+1,updated_at=? WHERE status='running'").run(Date.now(),Date.now(),Date.now());
+  }
   db.prepare(
     "UPDATE messages SET status='interrupted' WHERE status='streaming'",
   ).run();

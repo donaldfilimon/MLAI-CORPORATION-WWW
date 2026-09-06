@@ -6,6 +6,7 @@ import { workspaceRoutes } from "./workspace";
 import { documentRoutes } from "./documents";
 import { portalRoutes } from "./portal";
 import { consoleRoutes, mutationEvents } from "./console";
+import { agentRoutes } from "./agent-routes";
 import { chat } from "./chat";
 export async function dispatch(req: Request, path: string[]) {
   return handle(req, async () => {
@@ -43,8 +44,19 @@ export async function dispatch(req: Request, path: string[]) {
         201,
       );
     }
+    if (path[0] === "agent" && req.headers.has("authorization"))
+      fail(
+        403,
+        "session_required",
+        "Agent operations require a browser session.",
+      );
     const scope =
-      req.method === "GET"
+      req.method === "GET" ||
+      path[0] === "agent" ||
+      (path[0] === "conversations" &&
+        !path[1] &&
+        req.method === "POST" &&
+        !req.headers.has("authorization"))
         ? "read"
         : path[0] === "chat"
           ? "chat"
@@ -64,6 +76,7 @@ export async function dispatch(req: Request, path: string[]) {
     )
       return mutationEvents(req, path[1], ctx);
     for (const route of [
+      agentRoutes,
       workspaceRoutes,
       documentRoutes,
       portalRoutes,

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+
 export function useDrawerFocus(
   open: boolean,
   selector: string,
@@ -9,44 +10,75 @@ export function useDrawerFocus(
   const close = useRef(onClose);
   close.current = onClose;
   useEffect(() => {
-    if (!open || !window.matchMedia(`(max-width: ${maxWidth}px)`).matches)
-      return;
+    if (!open) return;
     const root = document.querySelector<HTMLElement>(selector);
     if (!root) return;
     const previous = document.activeElement as HTMLElement | null;
-    root.setAttribute("role", "dialog");
-    root.setAttribute("aria-modal", "true");
+    const media = window.matchMedia(`(max-width: ${maxWidth}px)`);
+    const original: [string, string | null][] = [
+      ["role", root.getAttribute("role")],
+      ["aria-modal", root.getAttribute("aria-modal")],
+      ["tabindex", root.getAttribute("tabindex")],
+    ];
+    const restoreAttributes = () => {
+      for (const [name, value] of original) {
+        if (value === null) root.removeAttribute(name);
+        else root.setAttribute(name, value);
+      }
+    };
     const items = () =>
       [
         ...root.querySelectorAll<HTMLElement>(
           'button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]',
         ),
-      ].filter((x) => x.getClientRects().length);
-    items()[0]?.focus();
-    function key(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        e.preventDefault();
+      ].filter(
+        (item) => item.getClientRects().length && !item.closest("[inert]"),
+      );
+    const sync = () => {
+      if (media.matches) {
+        root.setAttribute("role", "dialog");
+        root.setAttribute("aria-modal", "true");
+        root.setAttribute("tabindex", "-1");
+        if (!root.contains(document.activeElement))
+          (items()[0] || root).focus();
+      } else {
+        restoreAttributes();
+      }
+    };
+    function key(event: KeyboardEvent) {
+      if (!media.matches) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
         close.current();
         return;
       }
-      if (e.key !== "Tab") return;
+      if (event.key !== "Tab") return;
       const options = items(),
         first = options[0],
         last = options.at(-1);
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last?.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first?.focus();
+      if (!first) {
+        event.preventDefault();
+        root!.focus();
+      } else if (
+        !root!.contains(document.activeElement) ||
+        (event.shiftKey && document.activeElement === first)
+      ) {
+        event.preventDefault();
+        (event.shiftKey ? last : first)?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     }
-    root.addEventListener("keydown", key);
+    sync();
+    media.addEventListener("change", sync);
+    document.addEventListener("keydown", key, true);
     return () => {
-      root.removeEventListener("keydown", key);
-      root.removeAttribute("aria-modal");
-      root.removeAttribute("role");
-      previous?.focus();
+      media.removeEventListener("change", sync);
+      document.removeEventListener("keydown", key, true);
+      restoreAttributes();
+      if (previous?.isConnected) previous.focus();
     };
   }, [open, selector, maxWidth]);
 }

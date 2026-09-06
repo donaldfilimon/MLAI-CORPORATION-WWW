@@ -5,7 +5,8 @@ import { tmpdir } from "node:os";
 const dir = mkdtempSync(join(tmpdir(), "mlai-models-"));
 process.env.MLAI_DATA_DIR = dir;
 const { sqlite, run } = await import("../src/lib/server/db");
-const { generate, selectedModel } = await import("../src/lib/server/models");
+const models = await import("../src/lib/server/models");
+const { generate, selectedModel } = models;
 const { checkedCitations } = await import("../src/lib/server/chat");
 const { embeddingSpace } = await import("../src/lib/server/embeddings");
 run("INSERT INTO workspaces(id,name,created_at) VALUES('workspace','Test',1)");
@@ -53,6 +54,47 @@ it("requires stored consent before any hosted request", async () => {
   await expect(selectedModel("workspace")).rejects.toMatchObject({
     code: "hosted_consent_required",
   });
+  expect(fetch).not.toHaveBeenCalled();
+});
+it("rejects a provider registry change before sending a pinned generation", async () => {
+  const selected = await selectedModel("workspace");
+  const expected = models.modelSelection(selected);
+  writeFileSync(join(dir, "connections.json"), JSON.stringify([
+    { ...local, url: "http://127.0.0.1:8099/v1" }, hosted,
+  ]));
+  const fetch = vi.spyOn(globalThis, "fetch");
+  await expect(async () => {
+    for await (const _ of generate("workspace", [], undefined, expected)) {}
+  }).rejects.toMatchObject({ code: "provider_changed" });
+  expect(fetch).not.toHaveBeenCalled();
+});
+it("pins auto-discovered model identity and checks it before generation", async () => {
+  writeFileSync(join(dir, "connections.json"), JSON.stringify([{ ...local, model: "" }]));
+  const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+    Response.json({ data: [{ id: "first-model" }] }),
+  ).mockResolvedValueOnce(Response.json({ data: [{ id: "other-model" }] }));
+  const expected = models.modelSelection(await selectedModel("workspace"));
+  await expect(async () => {
+    for await (const _ of generate("workspace", [], undefined, expected)) {}
+  }).rejects.toMatchObject({ code: "provider_changed" });
+  expect(fetch.mock.calls.map(([url]) => String(url))).toEqual([
+    "http://127.0.0.1:8080/v1/models", "http://127.0.0.1:8080/v1/models",
+  ]);
+});
+it("binds credential references without recording their values", async () => {
+  const expected = models.modelSelection(await selectedModel("workspace"));
+  writeFileSync(join(dir, "connections.json"), JSON.stringify([{ ...local, keyEnv: "ROTATED_LOCAL_KEY" }]));
+  expect(() => models.validateModelSelection("workspace", expected)).toThrowError();
+  expect(Object.keys(expected).sort()).toEqual(["connectionId", "fingerprint", "model"]);
+  expect(expected.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+});
+it("rejects a pre-cancelled generation before model discovery or traffic", async () => {
+  const controller = new AbortController();
+  controller.abort();
+  const fetch = vi.spyOn(globalThis, "fetch");
+  await expect(async () => {
+    for await (const _ of generate("workspace", [], controller.signal)) {}
+  }).rejects.toMatchObject({ name: "AbortError" });
   expect(fetch).not.toHaveBeenCalled();
 });
 it("streams the hosted-compatible protocol and preserves reported usage", async () => {

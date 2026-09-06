@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from "react";
 import type { Bootstrap } from "@/lib/types";
 export interface AppContextValue {
@@ -26,16 +27,28 @@ export function useData<T>(path: string | null) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const generation = useRef(0);
+  const identity = useRef({ api, path });
+  if (identity.current.api !== api || identity.current.path !== path) {
+    identity.current = { api, path };
+    generation.current++;
+  }
   const reload = useCallback(async () => {
-    if (!path) return;
+    if (identity.current.api !== api || identity.current.path !== path) return;
+    const request = ++generation.current;
+    if (!path) {
+      setLoading(false);
+      return;
+    }
     try {
       const value = await api<T>(path);
+      if (request !== generation.current) return;
       setData(value);
       setError("");
     } catch (e) {
-      setError((e as Error).message);
+      if (request === generation.current) setError((e as Error).message);
     } finally {
-      setLoading(false);
+      if (request === generation.current) setLoading(false);
     }
   }, [api, path]);
   useEffect(() => {
@@ -43,6 +56,9 @@ export function useData<T>(path: string | null) {
     setError("");
     setLoading(true);
     void reload();
+    return () => {
+      generation.current++;
+    };
   }, [reload]);
   return { data, setData, error, loading, reload };
 }

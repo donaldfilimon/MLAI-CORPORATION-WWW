@@ -19,7 +19,42 @@ import {
 } from "lucide-react";
 import { useApp, useData, ErrorMessage, locationLabel } from "./app-context";
 import type { Conversation, Message, Citation, Connection } from "@/lib/types";
+import { AgentView, updateAbbeyLocation } from "./agent-view";
+import styles from "./agent-view.module.css";
 export function ChatView() {
+  const [mode, setMode] = useState<"ask" | "agent">("ask");
+  useEffect(() => {
+    const read = () =>
+      setMode(
+        new URLSearchParams(window.location.search).get("mode") === "agent"
+          ? "agent"
+          : "ask",
+      );
+    read();
+    window.addEventListener("popstate", read);
+    return () => window.removeEventListener("popstate", read);
+  }, []);
+  return (
+    <div className={styles.workspace}>
+      <nav className={styles.modes} aria-label="Abbey mode">
+        {(["ask", "agent"] as const).map((value) => (
+          <button
+            key={value}
+            aria-pressed={mode === value}
+            onClick={() => {
+              updateAbbeyLocation({ mode: value === "agent" ? "agent" : null });
+              setMode(value);
+            }}
+          >
+            {value === "ask" ? "Ask" : "Agent"}
+          </button>
+        ))}
+      </nav>
+      {mode === "agent" ? <AgentView /> : <AskView />}
+    </div>
+  );
+}
+function AskView() {
   const { api, url, data: boot } = useApp();
   const list = useData<Conversation[]>("conversations"),
     connections = useData<Connection[]>("connections");
@@ -105,6 +140,7 @@ export function ChatView() {
         });
         cid = c.id;
         setSelected(cid);
+        updateAbbeyLocation({ conversation: cid, run: null });
       }
       const user: Message = {
           id: crypto.randomUUID(),
@@ -216,6 +252,7 @@ export function ChatView() {
           disabled={busy}
           onClick={() => {
             setSelected(null);
+            updateAbbeyLocation({ conversation: null, run: null });
             setSource(null);
             setMessages([]);
             setError("");
@@ -232,7 +269,12 @@ export function ChatView() {
               key={c.id}
               className={`conversation-item ${selected === c.id ? "active" : ""}`}
               disabled={busy}
-              onClick={() => setSelected(c.id)}
+              title={c.title}
+              onClick={() => {
+                setSelected(c.id);
+                setSource(null);
+                updateAbbeyLocation({ conversation: c.id, run: null });
+              }}
             >
               {c.title}
             </button>
@@ -290,6 +332,7 @@ export function ChatView() {
                   if (confirm("Delete this conversation and its messages?")) {
                     await api(`conversations/${selected}`, "DELETE");
                     setSelected(null);
+                    updateAbbeyLocation({ conversation: null, run: null });
                     await list.reload();
                   }
                 }}

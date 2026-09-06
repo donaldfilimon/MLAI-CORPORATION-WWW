@@ -1,3 +1,7 @@
+import {
+  agentRunRequestSchema,
+  agentActionDecisionSchema,
+} from "./agent-contracts";
 import { z } from "zod";
 import {
   projectCreateSchema,
@@ -24,6 +28,36 @@ export const operations: [
   summary: string,
   schema?: keyof typeof schemas | z.ZodType,
 ][] = [
+  [
+    "/agent/runs",
+    "post",
+    "Start a durable agent investigation (session only)",
+    agentRunRequestSchema,
+  ],
+  ["/agent/runs/{id}", "get", "Load authorized agent history (session only)"],
+  [
+    "/agent/runs/{id}/events",
+    "get",
+    "Stream revision-addressed snapshot events (session only)",
+  ],
+  [
+    "/agent/runs/{id}/cancel",
+    "post",
+    "Requester: cancel a run and its unfinished jobs",
+    agentActionDecisionSchema,
+  ],
+  [
+    "/agent/actions/{id}/confirm",
+    "post",
+    "Requester: approve the stored immutable proposal",
+    agentActionDecisionSchema,
+  ],
+  [
+    "/agent/actions/{id}/reject",
+    "post",
+    "Requester: reject the proposal and stop the run",
+    agentActionDecisionSchema,
+  ],
   ["/health", "get", "Local service health"],
   [
     "/inquiries",
@@ -332,7 +366,9 @@ export function openapi() {
       operationId: `${method}_${path.replace(/[^a-zA-Z0-9]+/g, "_")}`,
       security: ["/health", "/inquiries"].includes(path)
         ? []
-        : [{ session: [] }, { apiKey: [] }],
+        : path.startsWith("/agent/")
+          ? [{ session: [] }]
+          : [{ session: [] }, { apiKey: [] }],
       parameters,
       ...(body || upload
         ? {

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { connection, connections, Connection } from "./config";
 import { one } from "./db";
 import { ApiError, fail } from "./http";
@@ -37,7 +37,8 @@ function headers(c: Connection) {
     ...(key ? { Authorization: `Bearer ${key}` } : {}),
   };
 }
-export async function probe(c: Connection) {
+export async function probe(c: Connection, signal?: AbortSignal) {
+  signal?.throwIfAborted();
   if (!["local", "hosted"].includes(c.kind))
     return {
       connected: false,
@@ -46,7 +47,9 @@ export async function probe(c: Connection) {
   try {
     const res = await fetch(endpoint(c, "/models"), {
       headers: headers(c),
-      signal: AbortSignal.timeout(5000),
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(5000)])
+        : AbortSignal.timeout(5000),
       redirect: "error",
     });
     if (!res.ok)
@@ -66,6 +69,7 @@ export async function probe(c: Connection) {
       reason: models.length ? undefined : "No models are currently loaded.",
     };
   } catch (e) {
+    signal?.throwIfAborted();
     return {
       connected: false,
       reason:
@@ -75,7 +79,7 @@ export async function probe(c: Connection) {
     };
   }
 }
-export async function selectedModel(workspaceId: string) {
+function selectedConnection(workspaceId: string) {
   const w = one<{ provider_id: string | null; hosted_consent: number }>(
     "SELECT provider_id,hosted_consent FROM workspaces WHERE id=?",
     workspaceId,
@@ -95,9 +99,47 @@ export async function selectedModel(workspaceId: string) {
       "hosted_consent_required",
       "Hosted processing is disabled for this workspace.",
     );
+  endpoint(c, "/models");
+  return c;
+}
+export type ModelSelection = {
+  connectionId: string;
+  model: string;
+  fingerprint: string;
+};
+export function modelSelection(
+  selected: Awaited<ReturnType<typeof selectedModel>>,
+): ModelSelection {
+  const c = selected.connection;
+  return {
+    connectionId: c.id,
+    model: selected.model,
+    fingerprint: createHash("sha256").update(JSON.stringify({
+      id: c.id, kind: c.kind, url: c.url, configuredModel: c.model || "",
+      model: selected.model, keyEnv: c.keyEnv, tokenFile: c.tokenFile,
+      caFile: c.caFile, certFile: c.certFile, keyFile: c.keyFile,
+    })).digest("hex"),
+  };
+}
+function compareSelection(actual: ModelSelection, expected: ModelSelection) {
+  if (actual.connectionId !== expected.connectionId ||
+      actual.model !== expected.model || actual.fingerprint !== expected.fingerprint)
+    fail(409, "provider_changed", "The selected provider configuration or model changed. Start a new run.");
+}
+export function validateModelSelection(workspaceId: string, expected: ModelSelection): void {
+  const c = selectedConnection(workspaceId);
+  compareSelection(modelSelection({ connection: c, model: c.model || expected.model }), expected);
+}
+export async function assertModelSelection(workspaceId: string, expected: ModelSelection): Promise<void> {
+  validateModelSelection(workspaceId, expected);
+  compareSelection(modelSelection(await selectedModel(workspaceId)), expected);
+}
+export async function selectedModel(workspaceId: string, signal?: AbortSignal) {
+  signal?.throwIfAborted();
+  const c = selectedConnection(workspaceId);
   let model = c.model;
   if (!model) {
-    const result = await probe(c);
+    const result = await probe(c, signal);
     if (!result.connected)
       fail(503, "provider_unavailable", result.reason || "No model is loaded.");
     model = result.models?.[0];
@@ -114,22 +156,31 @@ export async function selectedModel(workspaceId: string) {
       "remote_model_in_local_mode",
       "This model is marked as a cloud model. Configure a hosted connection and explicitly enable hosted processing instead.",
     );
-  return { connection: c, model };
+  const selected = { connection: c, model };
+  signal?.throwIfAborted();
+  validateModelSelection(workspaceId, modelSelection(selected));
+  return selected;
 }
 export async function* generate(
   workspaceId: string,
   messages: ModelMessage[],
   signal?: AbortSignal,
+  expected?: ModelSelection,
 ): AsyncGenerator<{
   text?: string;
   usage?: { input?: number; output?: number };
   provider?: string;
 }> {
-  const selected = await selectedModel(workspaceId),
+  signal?.throwIfAborted();
+  if (expected) validateModelSelection(workspaceId, expected);
+  const selected = await selectedModel(workspaceId, signal),
     c = selected.connection;
+  if (expected) compareSelection(modelSelection(selected), expected);
   yield { provider: `${c.name} / ${selected.model}` };
   let response: Response;
   try {
+    signal?.throwIfAborted();
+    validateModelSelection(workspaceId, expected || modelSelection(selected));
     response = await fetch(endpoint(c, "/chat/completions"), {
       method: "POST",
       headers: headers(c),
@@ -168,7 +219,9 @@ export async function* generate(
     hasText = false;
   try {
     for (;;) {
+      signal?.throwIfAborted();
       const { done, value } = await reader.read();
+      signal?.throwIfAborted();
       pending += done
         ? decoder.decode()
         : decoder.decode(value, { stream: true });

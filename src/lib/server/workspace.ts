@@ -1,3 +1,4 @@
+import { agentSummaries } from "./agent-store";
 import { projectCreateSchema } from "../contracts";
 import { z } from "zod";
 import { createHash, randomBytes } from "node:crypto";
@@ -274,13 +275,28 @@ export async function workspaceRoutes(
           ),
         }));
         if (action === "export")
-          return new Response(JSON.stringify({ ...c, messages }, null, 2), {
-            headers: {
-              "Content-Type": "application/json",
-              "Content-Disposition": `attachment; filename="conversation-${key}.json"`,
+          return new Response(
+            JSON.stringify(
+              {
+                ...c,
+                messages,
+                agentRuns: ctx.apiKey ? [] : agentSummaries(key),
+              },
+              null,
+              2,
+            ),
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Content-Disposition": `attachment; filename="conversation-${key}.json"`,
+              },
             },
-          });
-        return json({ ...c, messages });
+          );
+        return json({
+          ...c,
+          messages,
+          agentRuns: ctx.apiKey ? [] : agentSummaries(key),
+        });
       }
       if (req.method === "PATCH") {
         const data = await body(

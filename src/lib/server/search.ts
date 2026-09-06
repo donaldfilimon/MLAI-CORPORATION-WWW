@@ -56,7 +56,9 @@ export async function retrieve(
   projectId?: string,
   documentIds?: string[],
   limit = 8,
+  signal?: AbortSignal,
 ) {
+  signal?.throwIfAborted();
   const keyword = search(workspaceId, query, projectId, documentIds, limit);
   if (!query.trim())
     return { mode: "keyword", results: [], reason: "Enter a search query." };
@@ -68,12 +70,14 @@ export async function retrieve(
       projectId,
       documentIds,
       limit,
+      signal,
     );
     const merged = new Map<string, Source>();
     for (const source of [...semantic, ...keyword])
       merged.set(source.id, source);
     return { mode: "hybrid", results: [...merged.values()].slice(0, limit) };
   } catch {
+    signal?.throwIfAborted();
     return {
       mode: "keyword",
       results: keyword,
