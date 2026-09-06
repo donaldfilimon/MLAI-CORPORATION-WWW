@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Play, Plus, Copy, Plug, RefreshCw } from "lucide-react";
 import { useApp, useData, ErrorMessage, Status, date } from "./app-context";
 import type { Connection, Trace } from "@/lib/types";
+import { WdbxStudioLink } from "./wdbx-studio-link";
 interface KeyRecord {
   id: string;
   name: string;
@@ -46,6 +47,7 @@ export function ConsoleView() {
       </div>
       <div className="page-padding">
         <ErrorMessage message={error || connections.error} />
+        {(tab === "connections" || tab === "playground") && <WdbxStudioLink />}
         {tab === "connections" && (
           <>
             <header className="view-intro">

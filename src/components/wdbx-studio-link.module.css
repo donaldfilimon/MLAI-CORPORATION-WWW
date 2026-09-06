@@ -1,0 +1,74 @@
+.panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-width: 0;
+  margin-bottom: 28px;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-wdbx);
+  border-radius: 5px;
+  background: var(--panel);
+}
+
+.description {
+  min-width: 0;
+  max-width: 720px;
+}
+
+.description h2 {
+  margin: 12px 0;
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.35;
+}
+
+.description p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.description .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--accent-wdbx);
+  font: 12px/1.6 var(--font-mono);
+}
+
+.description .storage {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.action {
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  min-height: 48px;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+.newTab {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+@media (max-width: 1000px) {
+  .panel {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .action {
+    width: 100%;
+  }
+}
