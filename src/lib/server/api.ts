@@ -50,22 +50,7 @@ export async function dispatch(req: Request, path: string[]) {
         "session_required",
         "Agent operations require a browser session.",
       );
-    const scope =
-      req.method === "GET" ||
-      path[0] === "agent" ||
-      (path[0] === "conversations" &&
-        !path[1] &&
-        req.method === "POST" &&
-        !req.headers.has("authorization"))
-        ? "read"
-        : path[0] === "chat"
-          ? "chat"
-          : path[0] === "documents"
-            ? "documents"
-            : ["playground", "connections"].includes(path[0])
-              ? "console"
-              : "write";
-    const ctx = await context(req, scope);
+    const ctx = await context(req, scopeFor(req, path));
     if (path[0] === "chat" && path[1] && req.method === "POST")
       return chat(req, path[1], ctx);
     if (
@@ -87,4 +72,30 @@ export async function dispatch(req: Request, path: string[]) {
     }
     fail(404, "not_found", "API route not found.");
   });
+}
+
+/**
+ * Required scope for a request. Two paths deliberately resolve to "read" even
+ * though they are not GETs, because a read-only viewer is allowed to perform
+ * them; context() gates every other non-read scope on membership role.
+ */
+function scopeFor(req: Request, path: string[]) {
+  // Agent endpoints are session-only and re-authorize per operation in
+  // agentRoutes: read tools run for viewers, write tools only ever produce
+  // proposals that an authorized requester must confirm.
+  if (path[0] === "agent") return "read";
+  // Starting an investigation creates its conversation first (agent-view's
+  // start()). Browser sessions only; a scoped Bearer key still needs "write".
+  if (
+    path[0] === "conversations" &&
+    !path[1] &&
+    req.method === "POST" &&
+    !req.headers.has("authorization")
+  )
+    return "read";
+  if (req.method === "GET") return "read";
+  if (path[0] === "chat") return "chat";
+  if (path[0] === "documents") return "documents";
+  if (["playground", "connections"].includes(path[0])) return "console";
+  return "write";
 }

@@ -169,6 +169,22 @@ describe("local account and workspace boundaries", () => {
         })
       ).status,
     ).toBe(200);
+    // A viewer may open its own investigation conversation (agent-view's
+    // start() creates one before POST agent/runs) while every other write stays
+    // forbidden. Scoped API keys are unaffected and still need write scope.
+    expect(
+      (
+        await call(
+          bob,
+          "conversations",
+          "POST",
+          { project_id: null },
+          {
+            workspace: alice.workspace,
+          },
+        )
+      ).status,
+    ).toBe(201);
     await call(alice, `workspaces/members/${bob.id}`, "DELETE");
     expect(
       (

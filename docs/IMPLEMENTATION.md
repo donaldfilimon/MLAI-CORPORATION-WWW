@@ -14,13 +14,13 @@ Combined application and shared UI release verified on 2026-09-06. The independe
 
 ## Automated evidence
 
-| Gate | Result |
-|---|---|
-| `bun run check` | TypeScript passed; 18 Vitest tests passed; 26 pytest tests passed; production build passed |
+| Gate                                            | Result                                                                                                                                                                                                                                                   |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run check`                                 | TypeScript passed; 18 Vitest tests passed; 26 pytest tests passed; production build passed                                                                                                                                                               |
 | `bun run test:e2e` with an explicit local model | Five Chromium workflows passed: shared public navigation, reduced motion and mobile focus; account/session controls; local grounded chat/cancellation; customer-to-staff versioned review; public routes/projects/documents/search/responsive navigation |
-| `bun run verify:formats` | 24 structured/legacy/OCR fixtures passed across 23 extensions, in addition to native text/code/structured-text/email/CSV/HTML parser tests |
-| `bun run verify:integrations` | Actual ABI, dedicated WDBX, local MLX, worker recovery, interpretation, source deletion, and restored workflows passed |
-| `bun run verify:clean-install` | Fresh source copy, frozen Bun/Python installation, setup and all format fixtures, full checks, development UI rebuild, process-tree teardown, production startup/restart, registration and project persistence passed; dependency/model caches reused |
+| `bun run verify:formats`                        | 24 structured/legacy/OCR fixtures passed across 23 extensions, in addition to native text/code/structured-text/email/CSV/HTML parser tests                                                                                                               |
+| `bun run verify:integrations`                   | Actual ABI, dedicated WDBX, local MLX, worker recovery, interpretation, source deletion, and restored workflows passed                                                                                                                                   |
+| `bun run verify:clean-install`                  | Fresh source copy, frozen Bun/Python installation, setup and all format fixtures, full checks, development UI rebuild, process-tree teardown, production startup/restart, registration and project persistence passed; dependency/model caches reused    |
 
 Evidence: [combined release artifact](verification/release-artifact.json), [local integrations](verification/local-integrations.json), [clean installation](verification/clean-install.json), [format fixtures](verification/formats.json), and [browser screenshots](verification/screenshots/).
 
@@ -97,7 +97,6 @@ Verified evidence for this handoff only:
 
 Remaining browser gaps: the published Studio itself was intentionally intercepted, so its availability, redirects, topology/trace/results/provenance tools, and storage persistence across reloads remain unverified here. This is Chromium desktop-engine coverage at three viewport sizes, not Safari/WebKit, Firefox, physical mobile, screen-reader, zoom, or cross-browser popup-policy acceptance. Existing Studio-origin cookies/data were not exercised. Full application typecheck/build, service integration, persistence/recovery, and production-release acceptance were not rerun for this test-only handoff. Gateway bindings, existing credentials, workspace authorization, and WDBX service behavior were not changed.
 
-
 ## Durable agent runtime/API checkpoint (2026-09-06)
 
 This section records the scoped missing-runtime task separately from the concurrent Agent UI, live-model verification, and local release work. The earlier missing-module checkpoint is superseded at source level; it is not a claim that the whole application agent has release acceptance.
@@ -111,3 +110,43 @@ This section records the scoped missing-runtime task separately from the concurr
 **Persistence evidence.** Isolated SQLite tests verified proposal-without-write, duplicate confirmation, expired-lease replay, immutable requester decisions, exactly one queued interpretation job, atomic interpretation/complete-job publication, and cancellation preventing later insight publication. The restore fixture invoked `scripts/restore.ts` in a separate process against a copied database, checked integrity, requeued interrupted execution, cleared lease ownership, preserved active-time accounting, and retained pending/approved actions. These fixture results do not establish successful restoration and use of a real local-model proposal in a separately running installation; that acceptance belongs to the concurrent live/recovery verification task.
 
 **Browser acceptance.** No Agent UI/browser acceptance is claimed by this runtime checkpoint. The concurrent application task owns the browser flows at 390/768/1440 pixels, keyboard/source-inspector checks, real local-model requests, and local release activation. Hosted-provider live acceptance remains unverified. Existing public-search and WDBX Studio browser evidence above is separate and does not substitute for agent acceptance.
+
+## Strict code-quality review of the agent runtime (2026-09-06)
+
+A structural and correctness review of `ec826ef^..HEAD` produced source changes, so the
+"Durable agent runtime/API checkpoint" receipts above predate the current tree and no longer
+tie to the source under review. This section supersedes them for gate status only; their
+behavioral findings still stand.
+
+**Applied.** Extraction failures again surface `extract.py`'s specific stdout error instead of a
+generic string (`scripts/worker.ts`), restoring the contract stated in `CLAUDE.md` and in that
+script's own module docstring. `agentLimits` gained `objectiveChars` and the browser view now
+consumes the shared limits rather than hardcoding `8`/`16000`. The non-terminal run-status set is
+exported once as `agentActiveStatuses`/`agentTerminalStatuses`/`agentActiveStatusSql` and reused by
+the store, routes, and view; the migration keeps its own literal, since applied migrations are
+immutable. `dispatch`'s scope expression became a named `scopeFor()` documenting why agent paths and
+browser conversation creation resolve to `read`. `invalidateAgentSources` now updates
+`agent_steps.count` alongside the ids it filters, so the UI no longer reports a stale record count.
+`validateModelSelection` carries a comment stating what it cannot prove. `README.md` no longer
+claims in-app agent actions are excluded from the release and documents `verify:agent`.
+
+**Not applied, reported instead.** For an unpinned connection (the `config.ts` default, `model: ""`),
+`validateModelSelection` compares `c.model || expected.model` against `expected`, so it cannot detect
+a swapped served model; only `generate()`/`assertModelSelection` probe. The interpretation
+publication path holds no probe-backed check, leaving a window in which a mid-job model swap goes
+unnoticed. Closing it requires an async probe at a publication boundary that is currently a
+synchronous transaction, which is a design decision rather than a review edit. Also reported and not
+executed: consolidating the nine agent tools into one registry, and collapsing the repeated
+model-selection re-validation behind a single wrapper.
+
+**Gate.** `bun run check` exited **0**: shared UI ESM/declarations, TypeScript, **52/52 tests across
+6 suites** (including a new `tests/api.test.ts` assertion that a viewer may open its own
+investigation conversation while other writes stay forbidden), **26/26 Python parser tests**, and the
+Next.js production build. `git diff --check` passed. `bun run format:check` was already failing at
+`e0f9907` and still fails on the same files carried in unformatted by the reviewed commits
+(`agent-contracts.ts`, `agent-jobs.ts`, `documents.ts`, `embeddings.ts`, `models.ts`, `worker.ts`,
+`restore.ts`, `verify-agent-restored.ts`, `agent-view.tsx`, `models.test.ts`, `worker-agent.test.ts`).
+This review deliberately did not reformat them: running Prettier over `agent-contracts.ts` alone
+expands 41 lines to 216 and buries a three-line change, so the repo-wide reformat belongs in its own
+commit (`bunx prettier --write .`) rather than mixed into review fixes. Edits here match each file's
+existing idiom. No live-model, browser, or release acceptance was rerun.

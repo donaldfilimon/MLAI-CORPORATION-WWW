@@ -1,5 +1,6 @@
 import {
   agentActionDecisionSchema,
+  agentActiveStatusSql,
   agentRunRequestSchema,
 } from "../agent-contracts";
 import { validateAction, type ActionRow } from "./agent-actions";
@@ -52,7 +53,7 @@ export async function agentRoutes(req: Request, path: string[], ctx: Context) {
         validateModelSelection(ctx.workspaceId, selection);
         if (
           one(
-            "SELECT id FROM agent_runs WHERE conversation_id=? AND status IN ('queued','running','awaiting_approval')",
+            `SELECT id FROM agent_runs WHERE conversation_id=? AND status IN (${agentActiveStatusSql})`,
             data.conversation_id,
           )
         )

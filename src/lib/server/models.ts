@@ -114,23 +114,57 @@ export function modelSelection(
   return {
     connectionId: c.id,
     model: selected.model,
-    fingerprint: createHash("sha256").update(JSON.stringify({
-      id: c.id, kind: c.kind, url: c.url, configuredModel: c.model || "",
-      model: selected.model, keyEnv: c.keyEnv, tokenFile: c.tokenFile,
-      caFile: c.caFile, certFile: c.certFile, keyFile: c.keyFile,
-    })).digest("hex"),
+    fingerprint: createHash("sha256")
+      .update(
+        JSON.stringify({
+          id: c.id,
+          kind: c.kind,
+          url: c.url,
+          configuredModel: c.model || "",
+          model: selected.model,
+          keyEnv: c.keyEnv,
+          tokenFile: c.tokenFile,
+          caFile: c.caFile,
+          certFile: c.certFile,
+          keyFile: c.keyFile,
+        }),
+      )
+      .digest("hex"),
   };
 }
 function compareSelection(actual: ModelSelection, expected: ModelSelection) {
-  if (actual.connectionId !== expected.connectionId ||
-      actual.model !== expected.model || actual.fingerprint !== expected.fingerprint)
-    fail(409, "provider_changed", "The selected provider configuration or model changed. Start a new run.");
+  if (
+    actual.connectionId !== expected.connectionId ||
+    actual.model !== expected.model ||
+    actual.fingerprint !== expected.fingerprint
+  )
+    fail(
+      409,
+      "provider_changed",
+      "The selected provider configuration or model changed. Start a new run.",
+    );
 }
-export function validateModelSelection(workspaceId: string, expected: ModelSelection): void {
+/**
+ * Synchronous re-validation, safe inside a SQLite transaction. It proves the connection record is
+ * unchanged. It CANNOT prove the served model is unchanged: an unpinned connection (config.ts
+ * defaults model to "") discovers its model by probing, so `c.model || expected.model` compares the
+ * expectation against itself on that dimension. Only assertModelSelection/generate probe and so
+ * detect a swapped model. Do not treat this as a model guard.
+ */
+export function validateModelSelection(
+  workspaceId: string,
+  expected: ModelSelection,
+): void {
   const c = selectedConnection(workspaceId);
-  compareSelection(modelSelection({ connection: c, model: c.model || expected.model }), expected);
+  compareSelection(
+    modelSelection({ connection: c, model: c.model || expected.model }),
+    expected,
+  );
 }
-export async function assertModelSelection(workspaceId: string, expected: ModelSelection): Promise<void> {
+export async function assertModelSelection(
+  workspaceId: string,
+  expected: ModelSelection,
+): Promise<void> {
   validateModelSelection(workspaceId, expected);
   compareSelection(modelSelection(await selectedModel(workspaceId)), expected);
 }

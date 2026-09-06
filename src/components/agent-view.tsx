@@ -11,6 +11,8 @@ import {
   X,
 } from "lucide-react";
 import {
+  agentLimits,
+  agentTerminalStatuses,
   agentRunDetailSchema,
   type AgentAction,
   type AgentRunDetail,
@@ -52,7 +54,7 @@ const statusNames: Record<string, string> = {
   stale: "Stale · source or record changed",
 };
 const terminal = (run: AgentRunDetail) =>
-  ["completed", "cancelled", "failed"].includes(run.status);
+  (agentTerminalStatuses as readonly string[]).includes(run.status);
 
 export function updateAbbeyLocation(values: Record<string, string | null>) {
   const next = new URL(window.location.href);
@@ -532,8 +534,8 @@ export function AgentView() {
                 changes for your review.
               </p>
               <p className="small muted">
-                Every change requires confirmation. Up to eight tool steps per
-                run.
+                Every change requires confirmation. Up to {agentLimits.steps}{" "}
+                tool steps per run.
               </p>
             </div>
           )}
@@ -543,7 +545,8 @@ export function AgentView() {
                 <span className="eyebrow">Agent objective</span>
                 <h2>{run.objective}</h2>
                 <p className="small muted">
-                  {date(run.created_at)} · {run.step_count} of 8 tool steps
+                  {date(run.created_at)} · {run.step_count} of{" "}
+                  {agentLimits.steps} tool steps
                 </p>
                 <p role="status" className={styles.runStatus}>
                   {statusNames[run.status]}
@@ -627,7 +630,7 @@ export function AgentView() {
               placeholder="Describe the outcome you want Abbey to investigate…"
               value={objective}
               rows={2}
-              maxLength={16000}
+              maxLength={agentLimits.objectiveChars}
               disabled={pending || active || loadingRun}
               onChange={(event) => setObjective(event.target.value)}
             />

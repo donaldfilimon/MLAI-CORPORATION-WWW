@@ -1,4 +1,5 @@
 import {
+  agentActiveStatuses,
   agentRunDetailSchema,
   agentRunSummarySchema,
   type AgentRunStatus,
@@ -282,7 +283,7 @@ export function invalidateAgentSources(
     documentId,
   );
   for (const row of rows) {
-    if (["queued", "running", "awaiting_approval"].includes(row.status))
+    if ((agentActiveStatuses as readonly string[]).includes(row.status))
       terminalAgent(
         row.id,
         "failed",
@@ -313,9 +314,10 @@ export function invalidateAgentSources(
         (id) => id !== documentId,
       );
       run(
-        "UPDATE agent_steps SET sources=?,resource_ids=? WHERE id=?",
+        "UPDATE agent_steps SET sources=?,resource_ids=?,count=? WHERE id=?",
         JSON.stringify(sources),
         JSON.stringify(ids),
+        ids.length,
         step.id,
       );
     }
