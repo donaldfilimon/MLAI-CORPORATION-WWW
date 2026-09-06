@@ -35,9 +35,13 @@ status: blocked
   it has `app/` + `src/` at the root, while `origin/main` has `apps/{web,mobile,quasar}`
   + `packages/`. The canonical checkout `~/dev/active/mlai` is clean at `origin/main`
   (`55a4149`), matching the home map.
-- The 3 commits unique to this checkout are `38c3ec6` (hero signature on mobile),
-  `7152476` (hero signature redesign), `442c7bc` (design-sync CSS). Whether they are
-  already represented upstream in another form is UNVERIFIED.
+- RESOLVED 2026-09-06 06:52: all 3 commits unique to this checkout (`38c3ec6` hero
+  signature on mobile, `7152476` hero signature redesign, `442c7bc` design-sync CSS)
+  ARE already upstream, landed as PRs #26 and #28 plus the `5b27e94` docs sync.
+  `apps/web/src/components/BacktracePanel.tsx` and `apps/web/src/__tests__/
+  hero-signature.test.ts` both exist upstream. **This checkout therefore holds zero
+  unique history beyond today's two commits, and is disposable** once `csp.test.ts`
+  is ported.
 - **The CSP fix made in this checkout already exists upstream** at
   `apps/web/next.config.ts`: `if (process.env.NODE_ENV === "development")
   scriptSrc.push("'unsafe-eval'")`, with a comment citing the same crawl noise. Arrived
