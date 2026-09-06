@@ -58,6 +58,14 @@ export default async function Page({ params }: Props) {
           </p>
         </header>
         <ContentIndex
+          searchLabel={
+            key === "docs" ? "Search documentation" : "Search research"
+          }
+          placeholder={
+            key === "docs"
+              ? "Search articles and guides…"
+              : "Search research and technical notes…"
+          }
           items={paths.map((path) => ({ href: `/${path}`, ...pages[path] }))}
         />
       </div>

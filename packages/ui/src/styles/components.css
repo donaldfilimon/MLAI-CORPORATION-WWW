@@ -298,6 +298,39 @@
   padding: 12px 0;
 }
 
+.content-search input {
+  min-width: 0;
+  flex: 1;
+}
+
+.content-search > svg {
+  flex-shrink: 0;
+}
+
+.content-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.content-search-clear {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+
+.content-search-clear:hover {
+  color: var(--text);
+}
+
+.article-index .empty {
+  overflow-wrap: anywhere;
+}
+
 .checkbox-label {
   display: flex;
   flex-direction: row;

@@ -63,3 +63,19 @@ The running release uses `.data/releases/mlai-clean-rG7B8J` for source, dependen
 A separate active task owns the newly requested in-app autonomous Abbey agent, confirmed mutations, durable proposals, and associated migrations. Those additions are outside this accepted release and require their own integrated acceptance before replacing it. The separate task's `docs/superpowers` planning files are preserved and are not part of this release commit.
 
 The accepted source checkpoint is `1cbaed670cd4773c56f720775c2de21859613002`. The release source freeze is lifted: the separate task may resume its agent implementation using isolated data and new acceptance evidence. Automatic task-message delivery failed because the destination had no active turn id; this committed ledger records the handoff.
+
+## Public content search improvement (2026-09-06)
+
+Documentation and research search now preserve the query in the URL across reloads and article back/forward navigation. Matching is case-insensitive, ignores extra whitespace, and accepts words in either order across the title, description, and category. Research uses its own search label. Both indexes expose a semantic search field, a live result count, an empty-state recovery hint, and a 44-pixel clear button that returns keyboard focus to the field. URL updates replace the current history entry and preserve unrelated parameters and the fragment.
+
+The shared package owns filtering and presentation; the Next.js adapter owns URL synchronization under a Suspense boundary. Standalone package consumers retain local query state. This change does not add article-body search.
+
+Current change evidence, separate from the historical combined release above:
+
+- `bunx playwright test tests/e2e/content-search.spec.ts tests/e2e/account.spec.ts`: **3 passed**. Covers URL initialization, back/forward, reload, multiword/whitespace matching, typing, empty results, keyboard clearing/focus, preserved URL parameters, research labels, and long-query overflow at 390, 768, and 1440 pixels, plus the existing profile/password/session/drawer workflow. Documentation search records no page errors. Mobile and desktop research screenshots were inspected; screenshots are saved with the task outputs, not over the historical release evidence.
+- `bunx vitest run tests/api.test.ts tests/models.test.ts tests/rate-limit.test.ts tests/release.test.ts`: **18 passed**.
+- `uv run --project worker pytest worker/tests`: **26 passed**.
+- Prettier validation of the five changed implementation/test files and `git diff --check`: **passed**. Shared UI ESM and declaration generation: **passed**.
+- `bun run check`: **blocked at TypeScript** by the pre-existing untracked `tests/agent.test.ts:21`, which imports the absent `src/lib/server/agent-runtime` owned by the separate agent task. `bun run build` compiled successfully and then stopped at the same TypeScript error. The unfinished agent test was not excluded or stubbed to make the gate pass.
+
+The existing local production release was not replaced. Integrated production build acceptance remains pending the agent task's implementation and a fresh complete gate. No hosted-provider, clean-install, or live-service verification is claimed for this search change.
