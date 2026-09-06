@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import path from "node:path";
+import { buildCsp } from "./src/lib/csp";
 
 /**
  * Next.js 15 App Router config (the Vite + Hono stack is retired).
@@ -10,34 +11,12 @@ import path from "node:path";
  *   builtins are externalized by Next automatically.
  */
 /**
- * Content-Security-Policy — pragmatic baseline for the real runtime surface:
- * - 'unsafe-inline' script/style: required by Next's inline hydration payloads,
- *   the JSON-LD block, and Framer Motion / KaTeX inline styles (no nonce
- *   middleware in this stack).
- * - 'wasm-unsafe-eval' + blob: workers + jsdelivr + huggingface: the Kokoro
- *   neural-voice runtime (src/film/neural-voice.ts) dynamic-imports
- *   kokoro.web.js from jsDelivr and pulls ONNX weights from Hugging Face.
- * - storage.googleapis.com: @tensorflow-models/posenet checkpoint downloads
- *   (/tf-pose-demo).
- * - avatars.githubusercontent.com: team avatars in src/data/categories/team.ts.
- * Extend the allowlist when a surface gains a new external origin; never widen
- * to a bare https: wildcard.
+ * Content-Security-Policy is built by src/lib/csp.ts (a pure function, pinned
+ * by src/__tests__/csp.test.ts). It differs by environment in exactly one way:
+ * development adds 'unsafe-eval', which Next's React Refresh runtime requires
+ * to hot-reload. Production never carries it.
  */
-const CSP = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' data: https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://avatars.githubusercontent.com",
-  "connect-src 'self' data: blob: https://storage.googleapis.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co https://fonts.gstatic.com https://fonts.googleapis.com",
-  "media-src 'self' blob:",
-  "worker-src 'self' blob:",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  "upgrade-insecure-requests",
-].join("; ");
+const CSP = buildCsp({ dev: process.env.NODE_ENV !== "production" });
 
 const SECURITY_HEADERS = [
   { key: "Content-Security-Policy", value: CSP },

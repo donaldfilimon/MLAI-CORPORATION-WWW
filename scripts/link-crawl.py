@@ -81,7 +81,13 @@ def console_errors():
 
 def visit(path: str):
     cli("goto", BASE + path)
-    data = result_payload(cli("eval", LINKS_FN)) or {"title": "", "is404": False, "links": []}
+    payload = result_payload(cli("eval", LINKS_FN))
+    # A None payload means the browser wrapper returned nothing parseable, so
+    # this route was never actually inspected. Silently falling back to an
+    # empty page would report it as "ok" — and a wrapper that no-ops would
+    # then produce a fully green crawl that proves nothing. Mark it instead;
+    # main() fails the run on any unreadable route.
+    data = payload or {"title": "", "is404": False, "links": [], "unreadable": True}
     data["errors"] = console_errors()
     return data
 
@@ -174,6 +180,7 @@ def main():
 
     broken = [p for p, d in results if d.get("is404")] + [a for a, _ in bad_assets]
     errored = [(p, d["errors"]) for p, d in results if d.get("errors")]
+    unreadable = [p for p, d in results if d.get("unreadable")]
 
     # Phase 2 — click-through: click each unique link once, assert navigation.
     click_fails = []
@@ -190,7 +197,14 @@ def main():
     # Report
     print(f"\nCrawled {len(results)} routes from {BASE}")
     for p, d in results:
-        flag = "x 404" if d.get("is404") else ("! err" if d.get("errors") else "ok   ")
+        if d.get("unreadable"):
+            flag = "? dead"
+        elif d.get("is404"):
+            flag = "x 404"
+        elif d.get("errors"):
+            flag = "! err"
+        else:
+            flag = "ok   "
         print(f"  [{flag}] {p}")
         for e in d.get("errors", []):
             print(f"          console: {e}")
@@ -200,11 +214,19 @@ def main():
     print(
         f"\nSummary: {len(results)} routes | {len(first_seen)} links click-tested | "
         f"{len(broken)} broken | {len(click_fails)} click failures | "
-        f"{len(errored)} console-error pages"
+        f"{len(errored)} console-error pages | {len(unreadable)} unreadable"
     )
+    if unreadable:
+        print(
+            f"\nUNREADABLE ({len(unreadable)}): the browser returned no parseable "
+            "payload for these routes, so the crawl harness is not actually "
+            "driving a browser and this run proves nothing:"
+        )
+        for p in unreadable:
+            print(f"  ?  {p}")
     if broken:
         print("BROKEN LINKS:", ", ".join(broken))
-    sys.exit(1 if (broken or click_fails or errored) else 0)
+    sys.exit(1 if (broken or click_fails or errored or unreadable) else 0)
 
 
 if __name__ == "__main__":
