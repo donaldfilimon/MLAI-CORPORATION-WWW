@@ -378,3 +378,64 @@ approved; both safe to remove whenever someone says so):
 - `_preview/{Dialog,DropdownMenu,Toaster,Tooltip}.js` — leftovers from a sync when those had
   previews. They are floor cards now, and floor-card HTML references no `_preview/` file
   (verified by grep), so nothing points at them.
+
+## Re-sync run (2026-09-06 17:0x) — Sheet added, uploaded writes-only
+
+`resync.mjs --remote` → build ok, diff ok, validate **exit 0**, capture skipped
+(`empty_worklist`), `anchor: "ok"`, `learningsUnmerged: []`. Verification: **40 unchanged,
+1 added (`Sheet`), 0 removed, `pendingGrade: []`**. Render check **41 total, 0 bad, 0 thin,
+0 variantsIdentical**. Uploaded 221 files (219 content + sentinel + anchor), **0 deletes**.
+
+- **`Sheet` is new since the 2026-08-22 anchor** and ships as a **floor card**, joining
+  Dialog, DropdownMenu, Toaster and Tooltip — five now, not four. Same Base UI portal reason:
+  it has no authored preview, and `fallbackCard: true` with `rootEmpty: false` and 19 KB of
+  PNG is the honest baseline, not a failure. Authorable whenever someone wants it.
+- **⚠️ NEW DURABLE TRAP, and it fails silently toward 40x the work: a hand-written
+  `remote-sync.json` that omits `sourceHashes` is rejected WHOLESALE.** The driver prints one
+  line — `! remote sidecar malformed — treating as no anchor` — and proceeds to
+  `full scope (41 component(s) verify + upload)`. It does not error, does not exit non-zero,
+  and the run looks normal. Because `.design-sync/.cache/review/` is gitignored and was
+  **empty on this machine**, full scope meant capturing and hand-grading all 41 instead of
+  the 1 that actually changed. The envelope needs `sourceHashes` (120 entries here: 3 files ×
+  40 components), not just `renderHashes`/`sourceKeys`. If you transcribe an anchor by hand,
+  validate it against the freshly built `ds-bundle/_ds_sync.json` before trusting the scope
+  line — all 40 renderHashes, 40 sourceKeys and 120 sourceHashes matched exactly, which is
+  what proved both the transcription AND that the 40 were genuinely unchanged.
+- **Determinism held again, measured not assumed.** `bun run design-sync:css` regenerated
+  `lab-compiled.css` byte-identical (sha256 `f33fea44…` before and after). `styleSha` DID
+  move against the 08-22 anchor, which is correct: today's `442c7bc` changed the CSS step.
+  Per the 08-22 note, a styleSha change from a stable baseline means a real source or config
+  change, and this one is exactly that.
+- **playwright pin re-verified, and the drift note can be updated:** the cache now holds
+  chromium **1234 and 1243**; playwright **1.63.0** pins 1243, so installing that exact
+  version into `.ds-sync/` matched with no browser download and no `DS_CHROMIUM_PATH`
+  needed. (Prior runs recorded 1228/1.61.0 then 1234/1.62.0 — it drifts every time; always
+  read `browsers.json` rather than trusting any version written here.)
+- **`conventions.md` re-validated against the fresh build: zero drift.** All 28 component
+  names, 14 utility classes and every token it declares still resolve in `_ds_bundle.css` /
+  `_ds_bundle.js`. **Proposed edit, deliberately NOT applied** (the file is authored, and the
+  skill says validate rather than rewrite): it does not mention `Sheet`. Worth a line next
+  time someone edits it.
+- **`[TOKENS_MISSING]` is now 5, up from 2** — `--accordion-panel-height`, `--available-height`,
+  `--anchor-width`, `--transform-origin`, `--tw`. All are Base UI / Tailwind values set at
+  runtime by the component itself, which the warn text itself calls expected. Non-blocking,
+  and now on the known-warns list so a future run does not read it as new.
+- **The self-symlink was absent this run**, so the unlink/restore dance was not needed. It
+  returns with `bun install`; the recipe above still stands.
+- **Two stale paths the 08-22 pass listed as "found but not deleted" are already gone** from
+  the project: `components/site/LogoMark/**` and `_preview/{Dialog,DropdownMenu,Toaster,Tooltip}.js`
+  are absent from `list_files` both before and after this run. Nothing here deleted them —
+  **this run issued zero deletes** — so they went in some other pass. The writes-only rule
+  was honored: `deletePaths` was `[]` from the diff independently of the policy.
+
+### Re-sync risks (updated watch-list)
+
+- The writes-only constraint stands and is unchanged. `preview/mobile-*.html` (8),
+  `guidelines/` (now **7** — `research-inventory.md` joined), `uploads/`, `ui_kits/`,
+  `templates/vision-trailer/`, `vendor/`, `_ds/`, `assets/`, `colors_and_type.css` and
+  `SKILL.md` were all confirmed present after this upload. Do not enable reconciliation
+  deletes without re-confirming that material is expendable.
+- **Grades are gone on this machine** (`.design-sync/.cache/review/` empty). That is fine
+  while the anchor is valid, because unchanged components skip grading entirely — but it
+  means any run that loses the anchor pays the full 41-component grading cost. The anchor is
+  the only thing standing between a 2-minute re-sync and an hours-long one.
