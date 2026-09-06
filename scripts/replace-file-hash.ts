@@ -11,9 +11,8 @@ export function replaceFileHash(
     "\\$&",
   );
   const pattern = new RegExp(`(${escaped}:\\s*")[a-f0-9]{64}(")`);
-  const next = manifestText.replace(pattern, `$1${hash}$2`);
-  if (next === manifestText) {
+  if (!pattern.test(manifestText)) {
     throw new Error(`no hash entry for ${relPath}`);
   }
-  return next;
+  return manifestText.replace(pattern, `$1${hash}$2`);
 }

@@ -25,4 +25,10 @@ describe("replaceFileHash", () => {
       replaceFileHash(`{"files":{}}`, "assets/filter.js", NEXT),
     ).toThrow("assets/filter.js");
   });
+
+  test("succeeds on an idempotent rebuild where the hash is already correct", () => {
+    const input = `{"files":{"assets/filter.js": "${OLD}"}}`;
+    const output = replaceFileHash(input, "assets/filter.js", OLD);
+    expect(output).toBe(input);
+  });
 });

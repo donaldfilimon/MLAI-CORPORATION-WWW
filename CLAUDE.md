@@ -10,8 +10,8 @@ commands and the provenance model behind `public/research-manifest.json`.
 ## What this repository is
 
 A generated static artifact: the approved MLAI research collection, exported for private
-review. There is no application here, no framework, no dev server, and no test suite. The
-only build step copies bytes.
+review. There is no application framework or dev server. Filter behavior lives in
+`src/*.ts`; `bun run build` emits browser JS then copies `public/` to `out/`.
 
 Origin is `git.chatgpt-team.site/.../appgprj_6a9d484ec5a881919dc02a7a3ee7934e.git`, a
 Codex-app generated host, not a `donaldfilimon/*` GitHub repository. Push rights and
@@ -24,14 +24,15 @@ control.
 ## Commands
 
 ```sh
-bun run build                        # or npm run build; same node one-liner
-node --check public/assets/filter.js # the only executable file; syntax check only
-git diff --check                     # whitespace check for documentation edits
+bun run build     # compile src/filter.ts → public/assets/filter.js, hash it, copy public/ → out/
+bun test          # publication-filter and applyFilter unit tests
+bun run check     # bun test && bun run build
+git diff --check  # whitespace check for documentation edits
 ```
 
-`build` runs a `node -e` one-liner that removes `out/` and recursively copies `public/` to
-`out/`. It compiles nothing, validates nothing, and deploys nothing. `out/` is gitignored and
-disposable; never leave unique work there.
+`build` is `scripts/build.ts` under bun. `out/` is gitignored and disposable; never leave
+unique work there. Package manager is bun only (`bun.lock`); do not reintroduce
+`package-lock.json`.
 
 ## The real gate: manifest verification
 
@@ -96,9 +97,9 @@ on regeneration they move. Preserve real provenance, never restate a hash you di
 
 Page layout mirrors it: `public/index.html` is the collection landing page,
 `public/research/index.html` the index, and `public/research/<slug>/index.html` one page per
-publication. `assets/filter.js` filters cards by `data-filter` against `data-publication-tag`
-and updates `#publication-status`; it is progressive enhancement, and every article link works
-without JavaScript.
+publication. Filter source is `src/filter.ts`; the emitted `assets/filter.js` filters cards
+by `data-filter` against `data-publication-tag` and updates `#publication-status`. It is
+progressive enhancement, and every article link works without JavaScript.
 
 Assets are only partly local. Geist and KaTeX fonts plus `lab.css` ship in `public/assets/`,
 but all 24 HTML pages load Spectral from `fonts.googleapis.com`, so the pages are not
