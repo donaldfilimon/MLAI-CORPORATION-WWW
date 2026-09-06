@@ -1,3 +1,4 @@
+import type { AgentRunSummary } from "./agent-contracts";
 export interface Workspace {
   id: string;
   name: string;
@@ -37,6 +38,7 @@ export interface Conversation {
   project_id: string | null;
   updated_at: number;
   messages?: Message[];
+  agentRuns?: AgentRunSummary[];
 }
 export interface Citation {
   id: string;

@@ -29,6 +29,13 @@
       "when": 1788672000003,
       "tag": "0003_agent_lifecycle",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1788672000004,
+      "tag": "0004_agent_execution",
+      "breakpoints": true
     }
   ]
 }

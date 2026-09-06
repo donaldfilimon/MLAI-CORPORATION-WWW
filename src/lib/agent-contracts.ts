@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { projectCreateSchema, interpretationSchema } from "./contracts";
-export const agentLimits = { steps: 8, activeMs: 300_000, sources: 20, excerptChars: 4000, list: 30 } as const;
+export const agentLimits = { steps: 8, activeMs: 300_000, sources: 20, excerptChars: 4000, list: 30, contextChars: 48000, outputChars: 16000 } as const;
 const identifier = z.string().min(1).max(200);
 const empty = z.object({}).strict();
 export const agentRunRequestSchema = z.object({ conversation_id: identifier, objective: z.string().trim().min(1).max(16000), document_ids: z.array(identifier).max(20).optional() }).strict();
@@ -31,7 +31,7 @@ export const agentAffectedResourceSchema = z.object({table:z.enum(["projects","d
 export const agentStepSchema = z.object({id:z.string(),tool:z.string(),count:z.number(),resource_ids:z.array(z.string()),sources:z.array(agentSourceReferenceSchema),created_at:z.number()});
 export const agentActionSchema = z.object({id:z.string(),run_id:z.string(),tool:z.string(),input:z.record(z.string(),z.unknown()),target_id:z.string(),affected:z.array(agentAffectedResourceSchema),status:agentActionStatusSchema,created_at:z.number()});
 export const agentResultSchema = z.object({id:z.string(),action_id:z.string().nullable(),kind:z.enum(["answer","write"]),content:z.string(),citations:z.array(agentSourceReferenceSchema),resource_id:z.string().nullable(),status:z.string(),created_at:z.number()});
-export const agentRunSummarySchema = z.object({id:z.string(),conversation_id:z.string(),objective:z.string(),status:agentRunStatusSchema,revision:z.number(),step_count:z.number(),active_ms:z.number(),provider:z.string(),model:z.string(),error:z.string().nullable(),created_at:z.number(),updated_at:z.number()});
+export const agentRunSummarySchema = z.object({id:z.string(),requester_id:z.string(),conversation_id:z.string(),objective:z.string(),status:agentRunStatusSchema,revision:z.number(),step_count:z.number(),active_ms:z.number(),provider:z.string(),model:z.string(),error:z.string().nullable(),created_at:z.number(),updated_at:z.number()});
 export const agentRunDetailSchema = agentRunSummarySchema.extend({steps:z.array(agentStepSchema),actions:z.array(agentActionSchema),results:z.array(agentResultSchema)});
 export type AgentSourceReference = z.infer<typeof agentSourceReferenceSchema>;
 export type AgentAffectedResource = z.infer<typeof agentAffectedResourceSchema>;
