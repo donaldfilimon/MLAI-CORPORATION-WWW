@@ -13,6 +13,8 @@ then this file, then the `AGENTS.md` inside the app you are changing.
   template, tests, and lockfile move together.
 - `packages/contracts` contains names and types, not publishable benchmark
   values. App content sources remain authoritative for copy and figures.
+- `packages/tooling` holds the topology gate: `check:topology` runs
+  `bun packages/tooling/src/check-topology.ts`.
 - The root is orchestration only. Run app-native gates independently and report
   their results independently.
 - Do not add web or mobile to the root Bun workspace. Their React type graphs
@@ -24,10 +26,15 @@ Use Bun, not npm, pnpm, or yarn.
 
 ```bash
 bun run install:all
+bun run check            # aggregate gate: check:topology && check:web && check:mobile && check:quasar
 bun run check:topology
 bun run check:web
 bun run check:mobile
 bun run check:quasar
+
+bun run dev:web          # cd apps/web && bun run dev
+bun run dev:mobile       # cd apps/mobile && bun run start
+bun run dev:quasar       # cd apps/quasar/apps/quasar && bun run start
 ```
 
 For focused work, change into the affected app and follow its local docs. Never

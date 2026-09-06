@@ -17,7 +17,7 @@ bun run ios               # iOS simulator
 bun run android           # Android emulator
 bun run web               # react-native-web
 bun run typecheck         # tsc --noEmit, strict
-bun run test              # jest (jest-expo) — pure-logic unit suites
+bun run test              # jest (jest-expo) — pure-logic and component-render suites
 bun run lint              # expo lint (eslint-config-expo)
 
 bun run test __tests__/cloud.test.ts     # single test file
