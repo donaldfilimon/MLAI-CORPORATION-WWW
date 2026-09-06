@@ -278,8 +278,14 @@ Two existed:
   A cleaner permanent fix would be a `libOverrides` fork of `dts.mjs` that skips symlinked
   dirs, or a `publishConfig.types` narrowing `root` to `src/` — neither was needed to ship.
 
-**Interactive `rm`.** The shell aliases `rm` to `rm -i`; with no tty it *silently skips the
-delete and still exits 0*, so a `rm x && echo done` chain lies. Use `unlink` / `command rm -f`.
+**Interactive `rm` — CORRECTED 2026-09-06, and the correction reverses the risk.** This note
+used to say the shell aliases `rm` to `rm -i`, so a tty-less delete *silently skipped and still
+exited 0*. That is **no longer true**: `~/.zshrc` was replaced with a stock oh-my-zsh template on
+2026-09-02 and none of `~/.zsh/*.zsh` is sourced, so `rm` and `cp` carry **no alias** and
+`noclobber` is **unset** (verified in a clean login shell). The old failure mode was a silent
+no-op; the current one is a **real delete**, and `cmd > existing-file` now truncates instead of
+failing. Write destructive steps defensively against both shells: `command rm -f`, `>|` for a
+deliberate truncate, and verify by reading the path back rather than trusting an exit code.
 
 **No browser download needed.** `package-capture.mjs` honours `DS_CHROMIUM_PATH`; pointing it
 at `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome` avoids Playwright's
