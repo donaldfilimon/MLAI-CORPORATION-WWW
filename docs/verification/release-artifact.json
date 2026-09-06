@@ -58,5 +58,11 @@
     "processState": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/local-release.json"
   },
   "rollbackArtifact": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/releases/verified-app",
-  "scope": "Combined local application, shared UI and project development agent. New in-app autonomous agent actions remain separate ongoing work."
+  "scope": "Combined local application, shared UI and project development agent. New in-app autonomous agent actions remain separate ongoing work.",
+  "sourceCommit": "1cbaed670cd4773c56f720775c2de21859613002",
+  "handoff": {
+    "sourceFreeze": "released",
+    "successorWork": "The separate task may resume its in-app agent feature using isolated data and new acceptance evidence.",
+    "taskMessage": "Automatic handoff delivery failed because the destination had no active turn id; this committed ledger is the handoff."
+  }
 }
