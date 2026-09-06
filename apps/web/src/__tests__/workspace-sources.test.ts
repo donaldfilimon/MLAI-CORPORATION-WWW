@@ -17,6 +17,7 @@ import {
   parseWorkspaceFile,
   sortByModifiedDesc,
   staticWorkspaceAdapter,
+  WorkspaceNotConnectedError,
   type WorkspaceFile,
 } from "../lib/workspace-sources";
 
@@ -125,6 +126,36 @@ describe("loadWorkspaceSources", () => {
     expect(results[1]?.status).toBe("ok");
   });
 
+  /* An unlinked account and a broken source look nothing alike to a user: one
+     offers a Connect button, the other reports a fault. Collapsing them into
+     "error" would tell people their Drive is down when they simply never
+     linked it. */
+  it("separates a not-connected source from a failing one", async () => {
+    const results = await loadWorkspaceSources([
+      {
+        id: "google-drive",
+        identity: "google",
+        label: "Google Drive",
+        list: async () => {
+          throw new WorkspaceNotConnectedError("google-drive", "not_connected");
+        },
+      },
+      {
+        id: "sharepoint",
+        identity: "microsoft",
+        label: "SharePoint / OneDrive",
+        list: async () => {
+          throw new Error("graph exploded");
+        },
+      },
+    ]);
+
+    expect(results[0]?.status).toBe("unconfigured");
+    expect(results[0]?.message).toBe("not_connected");
+    expect(results[1]?.status).toBe("error");
+    expect(results[1]?.message).toBe("graph exploded");
+  });
+
   it("preserves adapter order so the view's sections do not reshuffle", async () => {
     const results = await loadWorkspaceSources([
       staticWorkspaceAdapter({
@@ -177,6 +208,21 @@ describe("httpWorkspaceAdapter", () => {
       fetchImpl: (async () => ({ ok: false, status: 503, json: async () => ({}) })) as unknown as typeof fetch,
     });
     await expect(adapter.list({ days: 30 })).rejects.toThrow("Google Drive responded 503");
+  });
+
+  it("turns a 200 with connected:false into the not-connected state", async () => {
+    const adapter = httpWorkspaceAdapter({
+      id: "google-drive",
+      identity: "google",
+      label: "Google Drive",
+      endpoint: "/api/workspace/drive",
+      fetchImpl: (async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ ok: true, connected: false, reason: "not_connected", files: [] }),
+      })) as unknown as typeof fetch,
+    });
+    await expect(adapter.list({ days: 30 })).rejects.toBeInstanceOf(WorkspaceNotConnectedError);
   });
 
   it("treats a body without a files array as no files, not a crash", async () => {

@@ -79,6 +79,8 @@ OpenTofu creates these containers and populates only `DATABASE_PASSWORD`:
 | `AUDIT_SUBJECT_PEPPER` | at least 32 random characters |
 | `TURNSTILE_SECRET` | production widget secret; never in client code |
 | `ADMIN_EMAILS` | comma-separated, deliberately small allowlist |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | console workspace sources; omit to leave Google Drive unavailable |
+| `MICROSOFT_OAUTH_CLIENT_SECRET` | console workspace sources; omit to leave SharePoint/OneDrive unavailable |
 
 Add versions over stdin so values do not land in a tracked file:
 
@@ -116,10 +118,44 @@ values under **Settings -> Secrets and variables -> Actions -> Variables**:
 | `AUDIT_KMS_KEY_NAME` | full CryptoKey output |
 | `AUDIT_SCHEDULER_SERVICE_ACCOUNT` | scheduler output |
 | `AUDIT_SCHEDULER_AUDIENCE` | `https://quesar.cloud/api/internal/audits/expire` |
+| `GOOGLE_OAUTH_CLIENT_ID` | OAuth client for `/console/workspace`; redirect URI `https://quesar.cloud/api/workspace/callback/google` |
+| `MICROSOFT_OAUTH_CLIENT_ID` | Entra app registration; redirect URI `https://quesar.cloud/api/workspace/callback/microsoft` |
+| `MICROSOFT_OAUTH_TENANT` | tenant id, or `common` for multi-tenant |
+| `WORKSPACE_KMS_KEY_NAME` | CryptoKey wrapping stored refresh tokens; falls back to `AUDIT_KMS_KEY_NAME` |
 
 There is no `GCP_SA_KEY` secret. The OIDC provider accepts only the exact GitHub
 repository on `refs/heads/main`; the deployment job additionally requires a
 successful push CI run from the same repository and checks out the validated SHA.
+
+## 3b. Console workspace sources (optional)
+
+`/console/workspace` reads each user's own Google Drive and SharePoint/OneDrive
+through per-user OAuth. It is optional: with no credentials set, the console
+renders "not available on this deployment" and the rest of the site is
+unaffected. Nothing here grants the service access to anyone's files on its own
+— every read uses a refresh token that a signed-in user granted for their own
+account, and the user can disconnect from the console at any time.
+
+- **Google.** Create an OAuth client (Web application) in the same project.
+  Authorized redirect URI: `https://quesar.cloud/api/workspace/callback/google`.
+  Scope requested is `drive.readonly` plus `openid`/`email`; the app never
+  requests a write scope, and `workspace-oauth.test.ts` fails if one is added.
+  The consent screen must stay in a mode that returns a refresh token — the
+  flow sends `access_type=offline` and `prompt=consent` for exactly that
+  reason, and a grant without a refresh token is rejected rather than stored.
+- **Microsoft.** Register an application in Entra ID. Redirect URI:
+  `https://quesar.cloud/api/workspace/callback/microsoft`. Delegated
+  permissions: `Files.Read.All`, `User.Read`, `offline_access`. Set
+  `MICROSOFT_OAUTH_TENANT` to the tenant id, or leave it `common`.
+- **Key.** `WORKSPACE_KMS_KEY_NAME` should be its own CryptoKey so workspace
+  tokens rotate and revoke independently of conversation audits. Sharing
+  `AUDIT_KMS_KEY_NAME` is supported and safe — the two domains use different
+  AAD — but a separate key keeps the blast radius smaller.
+
+Only the refresh token is persisted, wrapped in the same KMS envelope as
+conversation audits and bound by AAD to one `(user, provider)` pair. Access
+tokens are minted per request and cached in memory only; no provider token is
+ever sent to the browser.
 
 ## 4. WorkOS
 

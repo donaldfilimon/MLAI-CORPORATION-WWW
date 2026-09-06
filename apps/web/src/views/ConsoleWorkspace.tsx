@@ -9,8 +9,10 @@
    ramp in src/design/mlai-ds-tokens.css stays scoped to .mlai-ds and is
    deliberately not pulled in here.
 
-   Data arrives through lib/workspace-sources.ts. Today that is a fixture; the
-   adapters are the seam the site team repoints at real route handlers. */
+   Data arrives through lib/workspace-sources.ts, backed by the same-origin
+   /api/workspace/* handlers. Provider tokens live server-side only; this view
+   never holds one. A source the user has not linked comes back as
+   `unconfigured` and renders a Connect action rather than an error. */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BarChart3,
@@ -23,6 +25,7 @@ import {
   Inbox,
   Layers,
   LayoutGrid,
+  Link2 as LinkIcon,
   List,
   PanelLeft,
   Presentation,
@@ -30,7 +33,8 @@ import {
   Table2,
   type LucideIcon,
 } from "lucide-react";
-import { fixtureWorkspaceAdapters } from "@/lib/workspace-fixture";
+import type { WorkspaceSourceId } from "@/lib/workspace-sources";
+import { SOURCE_PROVIDER, liveWorkspaceAdapters } from "@/lib/workspace-adapters";
 import {
   DEFAULT_WINDOW,
   KIND_LABEL,
@@ -45,6 +49,20 @@ import {
 } from "@/lib/workspace-sources";
 
 type Tab = "files" | "today" | "triage" | "work" | "metrics";
+
+/** One row of /api/workspace/connections. */
+interface ProviderRow {
+  provider: "google" | "microsoft";
+  label: string;
+  /** The server holds OAuth credentials for this provider. */
+  configured: boolean;
+  /** This user has linked an account. */
+  connected: boolean;
+  accountEmail: string | null;
+  connectedAt: string | null;
+}
+
+type ConnectionState = Partial<Record<"google" | "microsoft", ProviderRow>>;
 
 const TABS: readonly (readonly [Tab, string, LucideIcon])[] = [
   ["files", "Files", Folder],
@@ -111,12 +129,14 @@ export function ConsoleWorkspace() {
   const [kind, setKind] = useState<WorkspaceFileKind | null>(null);
   const [query, setQuery] = useState("");
   const [sources, setSources] = useState<WorkspaceSourceResult[] | null>(null);
+  const [connections, setConnections] = useState<ConnectionState>({});
+  const [reload, setReload] = useState(0);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     let live = true;
-    loadWorkspaceSources(fixtureWorkspaceAdapters(), DEFAULT_WINDOW, controller.signal).then(
+    loadWorkspaceSources(liveWorkspaceAdapters(), DEFAULT_WINDOW, controller.signal).then(
       (result) => {
         if (live) setSources(result);
       },
@@ -125,6 +145,36 @@ export function ConsoleWorkspace() {
       live = false;
       controller.abort();
     };
+  }, [reload]);
+
+  /* Which accounts are linked, and which providers the server can offer at
+     all — an unconfigured provider gets no Connect button, because pressing it
+     would only bounce off a missing client secret. */
+  useEffect(() => {
+    const controller = new AbortController();
+    let live = true;
+    fetch("/api/workspace/connections", { signal: controller.signal, headers: { accept: "application/json" } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: unknown) => {
+        if (!live || !body || typeof body !== "object") return;
+        const rows = (body as { providers?: unknown }).providers;
+        if (!Array.isArray(rows)) return;
+        const next: ConnectionState = {};
+        for (const row of rows as ProviderRow[]) next[row.provider] = row;
+        setConnections(next);
+      })
+      .catch(() => {
+        /* The console still renders; sources report their own state. */
+      });
+    return () => {
+      live = false;
+      controller.abort();
+    };
+  }, [reload]);
+
+  const disconnect = useCallback(async (source: WorkspaceSourceId) => {
+    await fetch(`/api/workspace/disconnect/${SOURCE_PROVIDER[source]}`, { method: "POST" });
+    setReload((n) => n + 1);
   }, []);
 
   /* ⌘K focuses search rather than opening a palette that goes nowhere. */
@@ -224,6 +274,8 @@ export function ConsoleWorkspace() {
                     files={filtered(source)}
                     view={view}
                     filtering={kind !== null || query.trim().length > 0}
+                    connection={connections[SOURCE_PROVIDER[source.source]]}
+                    onDisconnect={disconnect}
                   />
                 ))
               )}
@@ -652,14 +704,19 @@ function SourceSection({
   files,
   view,
   filtering,
+  connection,
+  onDisconnect,
 }: {
   source: WorkspaceSourceResult;
   files: WorkspaceFile[];
   view: "rows" | "grid";
   filtering: boolean;
+  connection: ProviderRow | undefined;
+  onDisconnect: (source: WorkspaceSourceId) => void;
 }) {
   const Icon = SOURCE_ICON[source.source] ?? Folder;
   const tint = source.identity === "google" ? "var(--cyan)" : "var(--violet)";
+  const provider = SOURCE_PROVIDER[source.source];
 
   return (
     <section style={{ marginBottom: 30 }}>
@@ -682,6 +739,33 @@ function SourceSection({
             background: "linear-gradient(90deg,rgba(255,255,255,0.11),transparent)",
           }}
         />
+        {connection?.connected && (
+          <>
+            {connection.accountEmail && (
+              <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(232,237,246,0.4)" }}>
+                {connection.accountEmail}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => onDisconnect(source.source)}
+              style={{
+                fontFamily: MONO,
+                fontSize: 10,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                padding: "4px 10px",
+                borderRadius: 999,
+                border: "1px solid rgba(255,255,255,0.11)",
+                background: "transparent",
+                color: "rgba(232,237,246,0.55)",
+                cursor: "pointer",
+              }}
+            >
+              Disconnect
+            </button>
+          </>
+        )}
       </div>
 
       {source.status === "error" ? (
@@ -690,10 +774,14 @@ function SourceSection({
           detail={source.message ?? "The source returned an error."}
         />
       ) : source.status === "unconfigured" ? (
-        <EmptyPanel
-          title={`${source.label} is not connected yet.`}
-          detail={source.message ?? "No credentials configured for this source."}
-        />
+        connection && !connection.configured ? (
+          <EmptyPanel
+            title={`${source.label} is not available on this deployment.`}
+            detail="NO OAUTH CREDENTIALS CONFIGURED FOR THIS PROVIDER"
+          />
+        ) : (
+          <ConnectPanel label={source.label} provider={provider} accent={tint} />
+        )
       ) : source.files.length === 0 ? (
         <EmptyPanel
           title={`No files returned for the last ${DEFAULT_WINDOW.days} days.`}
@@ -921,6 +1009,66 @@ function EmptyPanel({ title, detail }: { title: string; detail: string }) {
         }}
       >
         {detail}
+      </div>
+    </div>
+  );
+}
+
+/* A plain link, not a form: the CSP sets `form-action 'self'`, and the connect
+   route answers with a cross-origin redirect to the provider's consent screen. */
+function ConnectPanel({
+  label,
+  provider,
+  accent,
+}: {
+  label: string;
+  provider: "google" | "microsoft";
+  accent: string;
+}) {
+  return (
+    <div
+      style={{
+        border: "1px dashed rgba(255,255,255,0.11)",
+        borderRadius: 14,
+        padding: 30,
+        textAlign: "center",
+        background: "rgba(255,255,255,0.018)",
+      }}
+    >
+      <div style={{ fontSize: 13.5, color: "rgba(232,237,246,0.55)", marginBottom: 14 }}>
+        Connect {label} to see your recent files here.
+      </div>
+      <a
+        href={`/api/workspace/connect/${provider}`}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "8px 16px",
+          borderRadius: 999,
+          border: `1px solid ${accent}`,
+          color: accent,
+          background: "rgba(255,255,255,0.03)",
+          fontFamily: MONO,
+          fontSize: 11,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          textDecoration: "none",
+        }}
+      >
+        <LinkIcon size={13} strokeWidth={2} />
+        Connect {label}
+      </a>
+      <div
+        style={{
+          marginTop: 14,
+          fontFamily: MONO,
+          fontSize: 9.5,
+          letterSpacing: "0.1em",
+          color: "rgba(232,237,246,0.35)",
+        }}
+      >
+        READ-ONLY ACCESS &middot; REVOKE ANY TIME
       </div>
     </div>
   );
