@@ -1,16 +1,1 @@
-// Progressive enhancement: all article links remain usable without JavaScript.
-const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
-const publications = Array.from(document.querySelectorAll('[data-publication-tag]'));
-for (const button of filterButtons) {
-  button.addEventListener('click', () => {
-    const tag = button.getAttribute('data-filter');
-    for (const other of filterButtons) other.setAttribute('aria-pressed', String(other === button));
-    let shown = 0;
-    for (const article of publications) {
-      article.hidden = tag !== 'All' && article.getAttribute('data-publication-tag') !== tag;
-      if (!article.hidden) shown++;
-    }
-    const status = document.getElementById('publication-status');
-    if (status) status.textContent = shown ? `${shown} publications shown.` : 'No publications match that tag.';
-  });
-}
+(()=>{function a(t,e){return t==="All"||e===t}function u(t){return t===0?"No publications match that tag.":`${t} publications shown.`}function s(t,e,o,i){let p=t.getAttribute("data-filter");for(let n of e)n.setAttribute("aria-pressed",String(n===t));let r=0;for(let n of o){let l=a(p,n.getAttribute("data-publication-tag"));if(n.hidden=!l,l)r+=1}if(i)i.textContent=u(r)}function c(t){return Array.from(document.querySelectorAll(t))}function d(){let t=c("[data-filter]"),e=c("[data-publication-tag]");if(t.length===0)return;for(let o of t)o.addEventListener("click",()=>{s(o,t,e,document.getElementById("publication-status"))})}if(typeof document<"u")d();})();
