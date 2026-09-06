@@ -177,6 +177,12 @@ export const routeMetadata: Record<string, RouteMeta> = {
       "Use Quesar's organization-gated Gemini workspace and manage encrypted conversation audits.",
     noindex: true,
   },
+  "/console/workspace": {
+    title: "Console Workspace | Files Across Connected Sources",
+    description:
+      "Browse recent Google Drive and SharePoint files from one console screen, grouped by source with type filters and a rows or grid view.",
+    noindex: true,
+  },
   "/profile": {
     title: "Quesar Profile | Account and Access",
     description: "Manage the WorkOS profile used for Quesar access.",
