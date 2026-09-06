@@ -20,6 +20,8 @@ describe('generated private research artifact',()=>{
       const manifestPath=path.join(publicDir,'research-manifest.json');
       const first=readFileSync(manifestPath,'utf8');
       const manifest=JSON.parse(first);
+      execFileSync('bun',['run','build'],{cwd:site,stdio:'pipe'});
+      for(const [name,hash] of Object.entries(manifest.files)) expect(sha256(readFileSync(path.join(site,'out',name)))).toBe(hash);
       expect(JSON.parse(readFileSync(path.join(publicDir,'research-data.json'),'utf8'))).toEqual(projectResearch(research));
       expect(manifest.contentSha256).toBe(researchDigest(research));
       expect(manifest.publications.map((p:{slug:string})=>p.slug)).toEqual(research.publications.map(p=>p.slug));
