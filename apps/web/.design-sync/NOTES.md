@@ -464,8 +464,13 @@ BUNDLING one; this fork feeds only ts-morph, never esbuild. Verified after the b
 `window.MlaiLab: 109 exports (41 fn + 0 compound)`, byte-identical to before, and
 41/41 previews still render with the same 5 floor cards.
 
-**⚠️ Why this is not uploaded yet, and what it will cost.** Declaring the fork in
-`cfg.libOverrides` moves the preview-affecting global config slice, so **all 40
+**⚠️ Why this is not uploaded yet, and what it will cost.** **CORRECTED: it is the fork
+FILE, not the `cfg.libOverrides` declaration, that moves the keys.**
+`lib/sync-hashes.mjs:141-146` says `cfg.libOverrides` is *deliberately* not keyed - "its
+values are declaration prose with no render effect" - and then hashes **every `.mjs` under
+`.design-sync/overrides/` by its bytes**, because a lib fork genuinely can change rendering
+and the tool cannot know that this one does not. So dropping the declaration would not
+avoid the churn; it would only trip `[OVERRIDE_UNDECLARED]`. The effect: **all 40
 `sourceKeys` changed**, and 3 `renderHashes` moved as well (Dialog, DropdownMenu, Tooltip
 — floor cards embed the `.d.ts` crash-prevention props, so a richer contract changes their
 rendered card). A re-sync therefore puts every component in the `changed` partition, and
