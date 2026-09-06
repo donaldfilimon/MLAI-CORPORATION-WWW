@@ -17,3 +17,7 @@ backups/
 .data-e2e/
 
 .next-e2e/
+
+.next-*/
+packages/*/dist/
+next-env.d.ts

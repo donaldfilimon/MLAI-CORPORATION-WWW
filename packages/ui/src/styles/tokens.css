@@ -1,0 +1,18 @@
+:root {
+  color-scheme: dark;
+  --bg: #05070b;
+  --panel: #0a0e16;
+  --line: #252d37;
+  --text: #f1f3f6;
+  --muted: #98a1af;
+  --cyan: #00d4ff;
+  --purple: #a878f6;
+  --green: #10b981;
+  --font-body: "Manrope", sans-serif;
+  --font-heading: "Sora", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  /* Product accents. AGENTS.md fixes these three: WDBX cyan, ABI violet, Abbey emerald. */
+  --accent-wdbx: var(--cyan);
+  --accent-abi: var(--purple);
+  --accent-abbey: var(--green);
+}

@@ -1,6 +1,6 @@
 # MLAI implementation and acceptance ledger
 
-Application implementation verified on 2026-09-06. The independent repository contains the public website, authenticated Abbey workspace, developer console, and customer/staff portal. Application records and private files persist locally. Billing, public deployment, domain changes, external email, and changes to sibling repositories are outside this release.
+Combined application and shared UI release verified on 2026-09-06. The independent repository contains the public website, authenticated Abbey workspace, developer console, and customer/staff portal. Application records and private files persist locally. Billing, public deployment, domain changes, external email, and changes to sibling repositories are outside this release.
 
 ## Delivery gates
 
@@ -16,13 +16,13 @@ Application implementation verified on 2026-09-06. The independent repository co
 
 | Gate | Result |
 |---|---|
-| `bun run check` | TypeScript passed; 14 Vitest tests passed; 26 pytest tests passed; production build passed |
-| `bun run test:e2e` with an explicit local model | Four Chromium workflows passed: account/session controls; local grounded chat/cancellation; customer-to-staff versioned review; public routes/projects/documents/search/responsive navigation |
+| `bun run check` | TypeScript passed; 18 Vitest tests passed; 26 pytest tests passed; production build passed |
+| `bun run test:e2e` with an explicit local model | Five Chromium workflows passed: shared public navigation, reduced motion and mobile focus; account/session controls; local grounded chat/cancellation; customer-to-staff versioned review; public routes/projects/documents/search/responsive navigation |
 | `bun run verify:formats` | 24 structured/legacy/OCR fixtures passed across 23 extensions, in addition to native text/code/structured-text/email/CSV/HTML parser tests |
 | `bun run verify:integrations` | Actual ABI, dedicated WDBX, local MLX, worker recovery, interpretation, source deletion, and restored workflows passed |
-| `bun run verify:clean-install` | Fresh source copy, frozen Bun/Python installation, setup and all format fixtures, full checks, production server, registration and project persistence passed; dependency/model caches reused |
+| `bun run verify:clean-install` | Fresh source copy, frozen Bun/Python installation, setup and all format fixtures, full checks, development UI rebuild, process-tree teardown, production startup/restart, registration and project persistence passed; dependency/model caches reused |
 
-Evidence: [isolated release artifact](verification/release-artifact.json), [local integrations](verification/local-integrations.json), [clean installation](verification/clean-install.json), [format fixtures](verification/formats.json), and [browser screenshots](verification/screenshots/).
+Evidence: [combined release artifact](verification/release-artifact.json), [local integrations](verification/local-integrations.json), [clean installation](verification/clean-install.json), [format fixtures](verification/formats.json), and [browser screenshots](verification/screenshots/).
 
 API tests cover unauthorized workspace associations, downloads/search/citations, viewer restrictions, revoked membership/keys, staff boundaries, exact-version approvals, and database/file restoration. Model adapter tests cover local failure with zero hosted fallback, consent enforcement, hosted-compatible streaming/usage, empty responses, and invalid citation identifiers. A mocked hosted protocol check is separate from live hosted verification.
 
@@ -42,12 +42,22 @@ Compared the implementation with the approved Abbey and revised homepage referen
 
 ## Local handoff and boundaries
 
-The main installation is served at `http://127.0.0.1:3100` with its worker. The explicitly configured local model uses port 3102. `bun run gateway` manages a new, persistent playground store under private `.data/gateway` on ports 3104/3105; an owner must bind it to one workspace before use. These are local processes, not installed login services. Start commands and operator configuration are in [README](../README.md).
+The main installation is served at `http://127.0.0.1:3100` with its worker from the retained combined source/runtime snapshot recorded in `verification/release-artifact.json`. A controlled production restart preserved every main record count. The explicitly configured local model uses port 3102. `bun run gateway` manages a new, persistent playground store under private `.data/gateway` on ports 3104/3105; an owner must bind it to one workspace before use. These are local processes, not installed login services. Start commands and operator configuration are in [README](../README.md).
 
 No main-installation accounts or default passwords are seeded. Register an account, then use the operator command to grant staff access to the chosen existing account. Backups include application data and referenced artifacts; external model caches, service stores and environment/file credentials require their own operator management.
 
 Live hosted-provider verification remains **unverified because no hosted credentials were supplied**. Tika formats expose a warning when exact page/layout locations are unavailable; legacy conversion can change layout. Broad fixture support does not promise arbitrary proprietary/encrypted binaries or perfect extraction from every document. No benchmarks or customer traction claims were invented.
 
-## Concurrent checkout changes at handoff
+## Combined release and source identity
 
-A separate task began extracting `packages/ui` and changed the package/build graph during final closeout. Its files and working-tree edits were preserved. An isolated copy of the application Git index passed frozen installation, TypeScript, all 14 Vitest tests and a production build after the final project-association fix. The running app uses its saved `.data/releases/verified-app` artifact. The initial application commit records this task’s implementation; the concurrent package extraction remains outside that commit and requires its own final type/build/browser validation. The previously passing application checks above do not claim that every later concurrent edit is verified.
+The shared `@mlai/ui` package, typed application adapters, styles/fonts, and project-scoped Abbey development agent are integrated. Development and typechecking build the package first; production builds emit package ESM and declarations. Native ESM import and client directives are regression-tested. Generated package output, alternate Next builds, and `next-env.d.ts` are ignored.
+
+The final runtime source SHA-256 is `2b8d27fddf74fa006df57088aea0b0c19adb489bac909fa6fddd64e1090abbba`. Clean-install and live-integration receipts record the same source identity; documentation and evidence are excluded from this runtime hash. The original `1d4b727` baseline and `.data/releases/verified-app` remain rollback references. They are not the current combined release.
+
+Release verification exposed and fixed three defects: development children surviving a terminated Bun wrapper; a timeout fixture retaining sockets; and a deferred SQLite rate-limit transaction failing with `SQLITE_BUSY_SNAPSHOT` under a competing worker write. The first clean production result was rejected because it reached a stale development process. The corrected verifier terminates its process group and verifies the port is free before each start. The rate limiter now obtains its write lock before reading the counter; a competing-connection regression verifies both serialization and normal rate limiting. The final browser workflow fails on HTTP 5xx as well as page errors.
+
+The development-agent definition passes the plugin-dev structural validator, and Claude's initialization event lists the project `abbey` agent. A generated-response smoke test was blocked by the Claude account session limit; no agent response behavior is claimed from that test. See `verification/abbey-agent.json`.
+
+The running release uses `.data/releases/mlai-clean-rG7B8J` for source, dependencies, and the production build, with the canonical private `.data` directory supplied explicitly. It passed production homepage/mobile-sign-in checks and starts both web and worker processes. Logs and launch state are `.data/local-release.log` and `.data/local-release.json`. Startup is session-independent but is not installed as an operating-system login service.
+
+A separate active task owns the newly requested in-app autonomous Abbey agent, confirmed mutations, durable proposals, and associated migrations. Those additions are outside this accepted release and require their own integrated acceptance before replacing it. The separate task's `docs/superpowers` planning files are preserved and are not part of this release commit.

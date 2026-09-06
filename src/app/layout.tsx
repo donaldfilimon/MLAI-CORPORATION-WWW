@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import "@fontsource/manrope/400.css";
-import "@fontsource/manrope/500.css";
-import "@fontsource/manrope/600.css";
-import "@fontsource/manrope/700.css";
-import "@fontsource/sora/500.css";
-import "@fontsource/sora/600.css";
-import "@fontsource/jetbrains-mono/400.css";
+// The design system stylesheet carries the tokens, fonts and component styles.
+import "@mlai/ui/styles.css";
 import "./globals.css";
 export const metadata: Metadata = {
   title: {

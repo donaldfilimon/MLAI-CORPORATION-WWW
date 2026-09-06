@@ -16,7 +16,7 @@ Open **http://127.0.0.1:3100** and register your own account. No sample accounts
 
 `setup` migrates the database, installs the locked Python environment, verifies Apache Tika's SHA-512 checksum, downloads parser/embedding assets, and processes the supplied test fixtures. These setup downloads contain no customer content. Capabilities are advertised only after their fixtures pass. Missing dependencies produce an actionable setup error.
 
-The launcher starts the web server and worker on loopback. Keep it running while using the application. `Ctrl-C` stops both. Restarting preserves records and recovers expired job leases.
+Development first builds the private `@mlai/ui` workspace package, then the launcher starts the web server and worker on loopback. Production uses `bun run build` followed by `bun start`. Keep the launcher running while using the application. `Ctrl-C` stops both. Restarting preserves records and recovers expired job leases.
 
 ## Commands
 
@@ -28,11 +28,12 @@ The launcher starts the web server and worker on loopback. Keep it running while
 | `bun run model` | Optional dedicated local MLX-LM server, port 3102 |
 | `bun run gateway` | Dedicated persistent WDBX playground on loopback 3104/3105 |
 | `bun run build` / `bun start` | Production build / local Node server and worker |
-| `bun run check` | TypeScript, Vitest, pytest, and production build |
+| `bun run check` | Shared UI ESM/declarations, TypeScript, Vitest, pytest, and production build |
+| `bun run format:check` | Read-only formatting gate for application, scripts, tests, and shared UI |
 | `bun run test:e2e` | Playwright workflows in `.data-e2e` / port 3101 |
 | `bun run verify:formats` | Test broad format fixtures and update installed capabilities |
 | `bun run verify:integrations` | Real local model, ABI and isolated WDBX checks |
-| `bun run verify:clean-install` | Fresh dependency installation, setup, checks, and production account workflow |
+| `bun run verify:clean-install` | Source-hashed fresh installation, setup, checks, development rebuild, and production restart/account workflow |
 | `bun run db:migrate` | Apply pending Drizzle migrations |
 | `bun run backup /absolute/new-backup` | Snapshot database plus referenced original/derived files |
 | `bun run restore /backup /new-data` | Verify checksums and restore into a new directory |
@@ -97,4 +98,24 @@ Local test accounts/files are confined to test directories. The live integration
 
 ## Verified artifact during concurrent UI work
 
-The application baseline has a saved local production artifact at `.data/releases/verified-app`. While the separate `packages/ui` extraction is in progress, run `NEXT_DIST_DIR=.data/releases/verified-app bun start` to use that verified build. The model and gateway use their normal commands in separate terminals. This artifact is ignored by Git and can be rebuilt from the application baseline commit; it is not a deployment. Concurrent checkout changes need their own `check` and browser pass.
+The original baseline artifact at `.data/releases/verified-app` and its locked runtime at `.data/releases/runtime` remain available for rollback. The combined release includes `packages/ui` source; its generated `dist` and Next outputs are ignored and rebuilt by the documented commands.
+
+Run `MLAI_KEEP_RELEASE=1 bun run verify:clean-install` to retain a separately installed source snapshot, locked Node/Python dependencies, and production build under `.data/releases/mlai-clean-*`. Its exact path and source hashes are written to `docs/verification/clean-install.json`. The verifier includes new, non-ignored package sources, excludes generated `next-env.d.ts`, and refuses to report success if executable source changes during verification. It reuses dependency/model caches and the verified Tika jar; this is not an offline dependency-distribution bundle. Fixture accounts stay in the separate installation.
+
+Release receipts hash application code, shared UI, configuration, tests, agent definition, and lockfiles. Documentation and acceptance receipts are excluded from the runtime hash so evidence can be recorded afterward. `docs/verification/release-artifact.json` identifies the accepted combined release and local handoff. Generated outputs, private records, secrets, and dependencies are not committed.
+
+The current frozen release is already running on port 3100. After stopping that launcher, restart this exact snapshot from the canonical repository root with:
+
+```sh
+APP_URL=http://127.0.0.1:3100 \
+MLAI_DATA_DIR="$PWD/.data" \
+MLAI_CONNECTIONS_FILE="$PWD/.data/connections.json" \
+MLAI_TIKA_JAR="$PWD/.tools/tika-app-3.3.2.jar" \
+NEXT_DIST_DIR=.next bun run --cwd .data/releases/mlai-clean-rG7B8J start
+```
+
+This explicitly uses the main installation's records and connections, rather than the snapshot's isolated verification fixtures. The current launch metadata and logs are `.data/local-release.json` and `.data/local-release.log`. The launcher is not installed as a login service.
+
+## Abbey development agent
+
+`.claude/agents/abbey.md` is the project-scoped Claude Code development agent. Start Claude Code from this repository with `claude --agent abbey` to select it. It follows the repository's authorization, local-model, source-citation, privacy, and evidence rules. It is separate from the in-app Abbey chat assistant. New in-app autonomous agent actions and durable approval proposals are separate planned capabilities and are not included in this release.

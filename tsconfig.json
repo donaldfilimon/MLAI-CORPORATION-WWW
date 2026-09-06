@@ -24,12 +24,15 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "scripts/**/*.ts",
+    "tests/**/*.ts",
+    "*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next-e2e/types/**/*.ts",
     ".next-e2e/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "worker", ".data"]
+  "exclude": ["node_modules", "worker", ".data", "packages"]
 }

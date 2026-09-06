@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-09-06T11:03:06.852317+00:00",
+  "agentFile": ".claude/agents/abbey.md",
+  "agentSha256": "a86d4cd6fd7b9b400db3dd3a6848ba8a6a895d340f4cfa6b115fdfb924b8bea2",
+  "structureValidation": "passed plugin-dev validate-agent.sh",
+  "claudeDiscoveredProjectAgent": true,
+  "toolsDisabledForSmoke": true,
+  "responseSmoke": "blocked by Claude account session limit",
+  "responseSmokeResult": "You've hit your session limit \u00b7 resets 8:20am (America/New_York)"
+}

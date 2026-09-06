@@ -10,6 +10,10 @@ test("public pages, account onboarding, projects, document sources, and responsi
   mkdirSync(screenshots, { recursive: true });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  page.on("response", (response) => {
+    if (response.status() >= 500)
+      errors.push(`${response.status()} ${new URL(response.url()).pathname}`);
+  });
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto("/");
   await expect(

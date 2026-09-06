@@ -9,10 +9,11 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { spawn, execFileSync } from "node:child_process";
-import { createServer } from "node:net";
+import { createServer, type Socket } from "node:net";
 import { connect as tlsConnect } from "node:tls";
 import { randomBytes } from "node:crypto";
 import assert from "node:assert/strict";
+import { releaseSource } from "./release-source";
 const root = mkdtempSync(join(tmpdir(), "mlai-live-"));
 process.env.MLAI_DATA_DIR = root;
 process.env.APP_URL = "http://127.0.0.1:3199";
@@ -73,8 +74,11 @@ const { auth } = await import("../src/lib/server/auth");
 const { dispatch } = await import("../src/lib/server/api");
 const { all, one, run, sqlite } = await import("../src/lib/server/db");
 const children: ReturnType<typeof spawn>[] = [];
+const fixtureSockets = new Set<Socket>();
+let blackhole: ReturnType<typeof createServer> | undefined;
 const results: Record<string, unknown> = {
   checkedAt: new Date().toISOString(),
+  source: releaseSource(),
   hostedLive: "unverified: no hosted credentials provided",
 };
 function start(command: string, args: string[]) {
@@ -524,7 +528,7 @@ try {
         ALPNProtocols: ["h2"],
       },
       () => {
-        socket.end();
+        socket.destroy();
         resolve();
       },
     );
@@ -547,8 +551,12 @@ try {
     502,
   );
   (results.wdbx as Record<string, unknown>).tlsAndMtls = true;
-  const blackhole = createServer((socket) => socket.on("error", () => {}));
-  await new Promise<void>((r) => blackhole.listen(0, "127.0.0.1", r));
+  blackhole = createServer((socket) => {
+    fixtureSockets.add(socket);
+    socket.on("error", () => {});
+    socket.on("close", () => fixtureSockets.delete(socket));
+  });
+  await new Promise<void>((r) => blackhole!.listen(0, "127.0.0.1", r));
   const blackholePort = (blackhole.address() as { port: number }).port;
   writeFileSync(
     join(root, "connections.json"),
@@ -579,7 +587,8 @@ try {
   assert.ok(
     Date.now() - timeoutStart >= 9000 && Date.now() - timeoutStart < 15000,
   );
-  blackhole.close();
+  for (const socket of fixtureSockets) socket.destroy();
+  await new Promise<void>((resolve) => blackhole!.close(() => resolve()));
   (results.wdbx as Record<string, unknown>).boundedTimeout = true;
   children[0].kill("SIGTERM");
   await new Promise((r) => setTimeout(r, 400));
@@ -600,11 +609,18 @@ try {
     promptFree: true,
   };
   mkdirSync("docs/verification", { recursive: true });
+  assert.equal(
+    releaseSource().runtimeSourceSha256,
+    (results.source as ReturnType<typeof releaseSource>).runtimeSourceSha256,
+    "Source changed during integration verification; rerun against the final source.",
+  );
   writeFileSync(
     "docs/verification/local-integrations.json",
     JSON.stringify(results, null, 2) + "\n",
   );
 } finally {
+  for (const socket of fixtureSockets) socket.destroy();
+  blackhole?.close();
   for (const child of children) child.kill("SIGTERM");
   await new Promise((r) => setTimeout(r, 1200));
   for (const child of children)

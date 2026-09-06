@@ -1,0 +1,39 @@
+{
+  "name": "@mlai/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles/index.css",
+    "./tokens.css": "./dist/styles/tokens.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
+    "@fontsource/sora": "^5.3.0",
+    "lucide-react": "^1.41.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "typescript": "^7.0.2"
+  }
+}

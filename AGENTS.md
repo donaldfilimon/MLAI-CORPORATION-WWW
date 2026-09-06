@@ -8,7 +8,7 @@ Next.js App Router and TypeScript run on Node.js. Bun manages packages and scrip
 
 ## Commands
 
-Run `bun install`, `bun run setup`, then `bun run dev`. The development launcher starts the web process and persistent worker on loopback. `bun run check` covers types, unit tests, parser tests, and production build; `bun run test:e2e` covers browser workflows.
+Run `bun install --frozen-lockfile`, `bun run setup`, then `bun run dev`. Development builds the private shared UI package before starting the web process and persistent worker on loopback. `bun run check` covers shared UI ESM/declarations, types, unit tests, parser tests, and production build; `bun run test:e2e` covers browser workflows. Use `bun run format:check` for read-only formatting validation. Keep generated UI dist, Next output, and next-env.d.ts out of Git.
 
 ## Required invariants
 

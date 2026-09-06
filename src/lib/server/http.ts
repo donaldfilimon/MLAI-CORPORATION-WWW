@@ -75,23 +75,25 @@ export function sameOrigin(req: Request) {
     fail(403, "invalid_origin", "The request origin is not allowed.");
 }
 export function rateLimit(key: string, max = 60, windowMs = 60_000) {
-  sqlite.transaction(() => {
-    const row = one<{ count: number; expires_at: number }>(
-      "SELECT * FROM rate_limits WHERE key=?",
-      key,
-    );
-    if (!row || row.expires_at < now()) {
-      run(
-        "INSERT OR REPLACE INTO rate_limits(key,count,expires_at) VALUES(?,1,?)",
+  sqlite
+    .transaction(() => {
+      const row = one<{ count: number; expires_at: number }>(
+        "SELECT * FROM rate_limits WHERE key=?",
         key,
-        now() + windowMs,
       );
-      return;
-    }
-    if (row.count >= max)
-      fail(429, "rate_limited", "Too many requests. Try again shortly.");
-    run("UPDATE rate_limits SET count=count+1 WHERE key=?", key);
-  })();
+      if (!row || row.expires_at < now()) {
+        run(
+          "INSERT OR REPLACE INTO rate_limits(key,count,expires_at) VALUES(?,1,?)",
+          key,
+          now() + windowMs,
+        );
+        return;
+      }
+      if (row.count >= max)
+        fail(429, "rate_limited", "Too many requests. Try again shortly.");
+      run("UPDATE rate_limits SET count=count+1 WHERE key=?", key);
+    })
+    .immediate();
 }
 export interface Context {
   userId: string;

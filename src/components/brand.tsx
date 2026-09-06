@@ -1,9 +1,5 @@
-import Link from "next/link";
-export function Brand() {
-  return (
-    <Link href="/" className="brand" aria-label="MLAI home">
-      <img src="/brand/mlai-mark.svg" alt="" width="34" height="34" />
-      <span>MLAI</span>
-    </Link>
-  );
+import NextLink from "next/link";
+import { Brand as DesignSystemBrand, type BrandProps } from "@mlai/ui";
+export function Brand(props: BrandProps) {
+  return <DesignSystemBrand Link={NextLink} {...props} />;
 }
