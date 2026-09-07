@@ -382,3 +382,44 @@ give them a shared fixture account, or scope the limiter by something other than
 acceptance was run (`live-chat.spec.ts` was excluded throughout). The `Unknown at rule: @theme` /
 `@source` CSS parse warnings from `packages/ui/dist/styles/` still appear in the dev log; they did
 not affect these assertions and were not investigated.
+
+## Tailwind was never wired, so every shadcn primitive shipped unstyled (2026-09-07)
+
+**A user-visible defect, not a warning.** The dev log's `Unknown at rule: @source` / `@theme`
+messages from `packages/ui/dist/styles/` had been recorded as unexplained. They were the symptom of
+a missing build step: the repository had **no PostCSS config at all**, so Next never ran Tailwind
+over the design system stylesheet. `packages/ui/src/styles/index.css` states the intent in its own
+comment — "`@source` points at compiled package sources so shadcn utility classes in
+`components/ui` are generated **when the stylesheet is processed by the app bundler**" — and
+imports Tailwind's preflight, theme and utilities layers. Nothing consumed them, so every utility
+class in `packages/ui/src/components/ui/*` resolved to nothing.
+
+**Measured before the fix**, by opening the docs ⌘K palette and reading the dialog's computed
+style rather than inspecting CSS: the `[role="dialog"]` rendered at `x=0, y=763, w=1440, h=497` —
+in normal document flow below the footer — with `background: rgba(0,0,0,0)`, `padding: 0px` and
+`z-index: auto`. It was not a modal. **After** adding `postcss.config.mjs`: `x=464, y=275,
+w=512, h=350` (centred), `background: rgb(5,7,13)`, `border: 1px solid`, `z-index: 50`, and zero
+`Unknown at rule` warnings in the dev log.
+
+Affected surfaces, enumerated rather than assumed — the app imports shadcn primitives in three
+places: `docs-shell.tsx` (`CommandDialog` and friends), `repositories-page.tsx` (`Badge`, `Card`
+and its subcomponents) and `quesar-pages.tsx` (`Button`, `Card`, `Badge`, `Dialog`).
+`/repositories` now renders bordered cards and status chips instead of unstyled blocks.
+
+**Preflight risk was checked, not argued.** Tailwind's preflight arrives in `layer(base)` while
+the hand-written stylesheets are unlayered, so the existing CSS still wins the cascade. Verified
+by rendering `/`, `/repositories` and `/research` at 390 and 1440 after the change: horizontal
+overflow is `0px` on all six, and the home page is unchanged against the screenshot committed
+before it.
+
+**Evidence.** `bun run check` exit **0** — 75/75 TypeScript tests across 8 suites, 26/26 Python
+parser tests, production build prerendering 57 static pages with Tailwind now in the pipeline.
+Browser: `public-accessibility`, `content-search`, `research` and `workflows` pass **8/8** together
+on a reset `.data-e2e`. Exit codes read from the commands themselves. `tsconfig.json` compared
+before and after `next build` and unchanged.
+
+**Not done, stated plainly.** `/quesar` was not re-checked in a browser after the change, only
+`/`, `/repositories`, `/research` and `/docs`. No visual diff was run against the pre-Tailwind
+screenshots beyond the home page; other committed screenshots were regenerated from passing runs
+rather than compared pixel by pixel. Whether the design intends utilities to be available to the
+application's own `src/**` (the `@source` glob covers only the UI package) was not decided here.
