@@ -1,0 +1,210 @@
+[
+  {
+    "title": "Local completion and adaptive routing",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-ai/src/completion.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "9b4d8275497dfcf7e4665d6c6695cb00baa6e4d3ed935ec84872e0c1b7449189"
+  },
+  {
+    "title": "Deterministic persona router",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-ai/src/router.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "3327d6ce72476f482f47513e186ae24089038628eccf36fa1d35140fb687112a"
+  },
+  {
+    "title": "Constitutional checks and veto rules",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-ai/src/constitution.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "0246ca3b2ba7ca64f3ff52e9d8a5123d629ddc9e81279c0977ef6c291f07441e"
+  },
+  {
+    "title": "Durable store and writer ownership",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/durable.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "1dfaa1a6d191616b070661c1a18e49cbb9ecb82b2f0deef429f1c3d6936eafcd"
+  },
+  {
+    "title": "Layered HNSW index",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/hnsw.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "0f6dc3f69891b4c122856a90c515593e0e477bcc7666709faa637cfa69538ae9"
+  },
+  {
+    "title": "Hybrid retrieval and observable score factors",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/retrieval.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "27382274ac9c488d63af2ac79d6205df7de667b99cbb5cdc5a1cd87626234a15"
+  },
+  {
+    "title": "Canonical episode persistence",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/v3/episode/store.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "81834196404c285bcd4530ca59e7ecc1c50e8ebaa631d038330f42499598b401"
+  },
+  {
+    "title": "Episode persistence and replay tests",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/tests/v3_episode_store.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "test",
+    "gitObjectAvailable": true,
+    "sha256": "45fb4ec465111e9d0494b7c8b7053dcfebfc9c7b50a705e6b65df73992fc8a4a"
+  },
+  {
+    "title": "Reference cluster protocol boundaries",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/cluster_rpc.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "de9d36e3fe9f2a44da2a87fd688b0ddd5b34ea01d8f70c91b3f7a7584977e906"
+  },
+  {
+    "title": "Bounded evidence recall and prompt assembly",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-sea/src/evidence.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "c6b4036a76fd9f1577ae38fa8e300684af3c3bdc1d88c4a4a576724cb4ba46c4"
+  },
+  {
+    "title": "Eight-signal selection and task weights",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-sea/src/scorer.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "07a60597a4fecf266865296329eb9cfd87f0d41c8e07c7fbf0ca58a3d6e4e650"
+  },
+  {
+    "title": "Learning loop and persisted router weights",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-sea/src/learn_loop.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "8204d96af655927657286310460db55e2bbcafef9337be1b022bbaca9f923023"
+  },
+  {
+    "title": "GPU capability reporting and vector operations",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-gpu/src/lib.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "02fe78cf6105c0e8bfcd6d6d6cba1904d3dc22872633d3188b2766349514a2f2"
+  },
+  {
+    "title": "Optional Metal DOT kernel",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-gpu/src/metal_kernels.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "37567c7c1829bc0d1adcc0c2f7ed5052ce5a1d307006e493c0a77407cad33c2b"
+  },
+  {
+    "title": "Twelve-tool MCP contract",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-mcp/src/handlers.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "38cc7b51c46a0cfed0ea44bfa75009ae52aecb0881fdd439cc52ba6f523f4245"
+  },
+  {
+    "title": "Loopback HTTP compatibility boundary",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-mcp/src/http.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "0373b1b4d49101a9bb0ce4b0b65ddbd5d1f7d99e412990513181d373e7625249"
+  },
+  {
+    "title": "Agent REPL commands and session state",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-cli/src/repl.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "0a18fa199bea6d6cef04adcda658b845bc74ebfc619f030da485b312381bb4a8"
+  },
+  {
+    "title": "Diagnostics dashboard and one-shot output",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-cli/src/dashboard.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "f2db39be7a3bc4b94d5e4f9efec6101753b392aa406fbf02a5fde5892b6bdd92"
+  },
+  {
+    "title": "Snapshot chain verification",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/store.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "36ed6dae59df09cfc45e904d77947a09b1742003826b481f16ba0a6d2fa1676d"
+  },
+  {
+    "title": "Temporal and causal ranking functions",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-wdbx/src/temporal.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "d942a248dbf672c8268695956bc476626eaf79fdb34d6861d8fb5e7dec0f7a0e"
+  },
+  {
+    "title": "CPU cosine reference and vector edge cases",
+    "url": "https://github.com/donaldfilimon/wdbx/blob/14cb1341cb454bd3f887c4e54a83f8c42775a91d/crates/abi-compute/src/cpu.rs",
+    "revision": "14cb1341cb454bd3f887c4e54a83f8c42775a91d",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "6e66e45b396d3c791fffa013ba53e7fb2d71a583eade3181ef3a2de0c590db66"
+  },
+  {
+    "title": "Keyword-based task classification",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-sea/src/query_plan.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "2e205fc337cb6afd31f2c6fcf3416a4318217d439d8c389d1c825bcde0d57cf1"
+  },
+  {
+    "title": "Gateway episode admission implementation",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-wdbx-gateway/src/episodes.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "22962eaf03939a4882d2ca6d012ff711096144e25ec83c32374ed9e77b91425e"
+  },
+  {
+    "title": "EMA update and state validation",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-ai/src/modulator.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "f9e1ea76446958f21127db70c762c707bdcd12a8fe68d6407a5ab500fd6abbef"
+  },
+  {
+    "title": "Canonical persona priors",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-ai/src/identity.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "cadb694ed0e4866069f60633d2fa30c98a92252cf5cc94375d67cd26c5990ac6"
+  },
+  {
+    "title": "Terminal modes, input and restoration",
+    "url": "https://github.com/donaldfilimon/abi/blob/6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee/crates/abi-cli/src/terminal.rs",
+    "revision": "6321a47bf4c48a5f58caf2df0eb631b5a2ecdcee",
+    "kind": "source",
+    "gitObjectAvailable": true,
+    "sha256": "27f08c6f431f13fc69039262c43bf09f8d76079841e0d7ace5028411ef364b00"
+  }
+]

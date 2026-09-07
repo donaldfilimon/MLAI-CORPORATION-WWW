@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Code2, Users } from "lucide-react";
 import { ArchitectureDiagram, DocumentFlow } from "@/components/architecture";
-import { pages, researchPaths } from "@/content/pages";
+import { publications } from "@/content/research";
 export default function Home() {
   return (
     <div className="public-container">
@@ -79,13 +79,25 @@ export default function Home() {
             View all <ArrowRight size={16} />
           </Link>
         </div>
-        {researchPaths.map((path) => (
-          <Link className="editorial-row" href={`/${path}`} key={path}>
-            <span>{pages[path].title}</span>
-            <span className="muted">{pages[path].category}</span>
-            <ArrowRight size={18} />
-          </Link>
-        ))}
+        {publications
+          .filter((p) =>
+            [
+              "wdbx-weighted-backtrace-memory-store",
+              "multi-persona-routing-policy-weights",
+              "mcp-implementation-guide",
+            ].includes(p.slug),
+          )
+          .map((publication) => (
+            <Link
+              className="editorial-row"
+              href={`/research/${publication.slug}`}
+              key={publication.slug}
+            >
+              <span>{publication.title}</span>
+              <span className="muted">{publication.topic.toUpperCase()}</span>
+              <ArrowRight size={18} />
+            </Link>
+          ))}
       </section>
       <section className="work-section">
         <Link href="/docs">

@@ -1,0 +1,285 @@
+{
+  "format": "mlai-research-review",
+  "version": 1,
+  "sourceRevision": "0a516a84f3b2d8f6f0c96491b8ac4f3e4307cefb",
+  "sourceDirty": false,
+  "generatedAt": "2026-09-06T11:26:48.950Z",
+  "canonicalOrigin": "https://quesar.cloud",
+  "contentSha256": "1bac66896aa58c1c97813cdf7ff9ac80f94285abb6e3b183d901620a352ecaa4",
+  "topics": [
+    "ai",
+    "wdbx",
+    "sea",
+    "gpu",
+    "mcp",
+    "tui"
+  ],
+  "publications": [
+    {
+      "slug": "ai-overview",
+      "canonicalUrl": "https://quesar.cloud/research/ai-overview",
+      "contentSha256": "84d982d2b8f6f00b9a55c4a2663b17001cf0bbaa52b2dea84f179a026b39bc97",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "wdbx-overview",
+      "canonicalUrl": "https://quesar.cloud/research/wdbx-overview",
+      "contentSha256": "88c8c3366c25800cc36e2ff200476cbf47fabe2c622edb5aa818d3524d325695",
+      "sourceCount": 6,
+      "attachments": []
+    },
+    {
+      "slug": "sea-overview",
+      "canonicalUrl": "https://quesar.cloud/research/sea-overview",
+      "contentSha256": "b5f8f26fde38a0129129cfa8da3933fd19777a6111bd77ee33c77335caa3e23c",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "gpu-overview",
+      "canonicalUrl": "https://quesar.cloud/research/gpu-overview",
+      "contentSha256": "99f88655c405a878f591d6bf7d744b8c5609b19d8644a981df96d2b160ec161f",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "mcp-overview",
+      "canonicalUrl": "https://quesar.cloud/research/mcp-overview",
+      "contentSha256": "a57306fa223951c1d11b292f238bd5ddf48869aef7b9143731089350a56d8d91",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "tui-overview",
+      "canonicalUrl": "https://quesar.cloud/research/tui-overview",
+      "contentSha256": "024304b6a231d3f6da68213339a23d8e355a7bb9170f2a7c295fac060bbde2b4",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "wdbx-weighted-backtrace-memory-store",
+      "canonicalUrl": "https://quesar.cloud/research/wdbx-weighted-backtrace-memory-store",
+      "contentSha256": "08ec8f9430aa01624f8806933e44232ba2f74a1500131796332b88182f876c67",
+      "sourceCount": 7,
+      "attachments": [
+        {
+          "url": "/research/wdbx-weighted-backtrace-memory-store-2026-09-06.pdf",
+          "sha256": "294a7906391b064273691eff60a0f83242cbbb78e2a894321285e993f31f3fa2"
+        },
+        {
+          "url": "/research/wdbx-weighted-backtrace-memory-store.pdf",
+          "sha256": "1030bd50a64ab2426ba6558aee26398cfea1a7b7de39e527db0685bf54a853cf"
+        }
+      ]
+    },
+    {
+      "slug": "sparse-evidence-attention-context-assembly",
+      "canonicalUrl": "https://quesar.cloud/research/sparse-evidence-attention-context-assembly",
+      "contentSha256": "150ffbc72d4cfe961f76c67a18ceece0c9594d19a632eb4d91d74375e1f26f36",
+      "sourceCount": 4,
+      "attachments": []
+    },
+    {
+      "slug": "wdbx-graph-weights-traceable-retrieval",
+      "canonicalUrl": "https://quesar.cloud/research/wdbx-graph-weights-traceable-retrieval",
+      "contentSha256": "761e362ad07860a4548ef884a2452259af2a733319741d9dcdbe3361af608e43",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "policy-locked-tool-use-multi-agent",
+      "canonicalUrl": "https://quesar.cloud/research/policy-locked-tool-use-multi-agent",
+      "contentSha256": "095aadb30670f6647cdf1f7d5b0a4be7dffd85e16d551f3cf9b69b563395055f",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "latency-budgets-real-time-orchestration",
+      "canonicalUrl": "https://quesar.cloud/research/latency-budgets-real-time-orchestration",
+      "contentSha256": "1adc7fbb4dbecd13b0a8018e53d35fd40d9fcd8164722758ad305958da2f82fd",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "backtrace-confidence-signals-hallucination",
+      "canonicalUrl": "https://quesar.cloud/research/backtrace-confidence-signals-hallucination",
+      "contentSha256": "c70c442990c23fc042174ab7b931f095e9deb2fe13d310d1766b47b9a23f604a",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "vector-index-maintenance-continuous-ingestion",
+      "canonicalUrl": "https://quesar.cloud/research/vector-index-maintenance-continuous-ingestion",
+      "contentSha256": "490a43991bf656086b2301679e845da076543ee77a0f8fc557f49786908c5954",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "human-approval-gates-operators-use",
+      "canonicalUrl": "https://quesar.cloud/research/human-approval-gates-operators-use",
+      "contentSha256": "931c2a16e3c46c7fea138ac9575277794c719637e1661a5715ec861ed1a7d628",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "chunk-provenance-long-context-retrieval",
+      "canonicalUrl": "https://quesar.cloud/research/chunk-provenance-long-context-retrieval",
+      "contentSha256": "d73a09a0d121cfae5ff16e1ec6cc12753743d014ee1bd706f062f319b4acc0ff",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "offline-first-ai-sensitive-data",
+      "canonicalUrl": "https://quesar.cloud/research/offline-first-ai-sensitive-data",
+      "contentSha256": "3afdae91236119abca0aa4f102c432a5ba058662d7cf969899b838ec657fbefd",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "prompt-injection-drills-agentic-systems",
+      "canonicalUrl": "https://quesar.cloud/research/prompt-injection-drills-agentic-systems",
+      "contentSha256": "839d5287cc0430fee15472e51780c7c7eb2b39bcc27280b1f3f0faaedc9e4ccb",
+      "sourceCount": 3,
+      "attachments": []
+    },
+    {
+      "slug": "multi-persona-routing-policy-weights",
+      "canonicalUrl": "https://quesar.cloud/research/multi-persona-routing-policy-weights",
+      "contentSha256": "ef34288e7384d6958eff48ec0670c414d4eeadbab6839de47097e4b8d3187812",
+      "sourceCount": 5,
+      "attachments": [
+        {
+          "url": "/research/multi-persona-routing-policy-weights-2026-09-06.pdf",
+          "sha256": "38be0dfe5661e90d593e767c7a50c3030bb3daccf94b97ef5e64a3a8f70a0f37"
+        },
+        {
+          "url": "/research/multi-persona-routing-policy-weights.pdf",
+          "sha256": "3e0163af561bfd28e2c0c3544b5108478f87433e838e7d8a8acd94ca0303d5b8"
+        }
+      ]
+    },
+    {
+      "slug": "gpu-implementation-guide",
+      "canonicalUrl": "https://quesar.cloud/research/gpu-implementation-guide",
+      "contentSha256": "7e95bcafdcfa4c552f6367d61665d65a5c5cf17f9cdd864d4afb57672e51eeb3",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "mcp-implementation-guide",
+      "canonicalUrl": "https://quesar.cloud/research/mcp-implementation-guide",
+      "contentSha256": "05e4384680246900e5266d019183a9a678bf938da63d9fc0c0f1824b898ee565",
+      "sourceCount": 2,
+      "attachments": []
+    },
+    {
+      "slug": "tui-implementation-guide",
+      "canonicalUrl": "https://quesar.cloud/research/tui-implementation-guide",
+      "contentSha256": "f94724ef36c981f703a85dfb57d9d20c26a75fcc8e3400db87c87d6e181d2932",
+      "sourceCount": 3,
+      "attachments": []
+    }
+  ],
+  "files": {
+    "404.html": "42acfe5ab5b260c9865f4b188066421101ed7943e29b22ff37bca90c275699fd",
+    "assets/filter.js": "61baa9d62c2883931c8dcd5c413a313eb1019d34f76bebf05a378a30be39530e",
+    "assets/fonts/KaTeX_AMS-Regular.ttf": "68534840bcfdd2bffb6f0e8deb48684dd01e7f04ea2813267577afb906de1d13",
+    "assets/fonts/KaTeX_AMS-Regular.woff": "30da91e84c893f875e252689faebdc590b2871145e8adc7f9a9d4dbd8ce0b251",
+    "assets/fonts/KaTeX_AMS-Regular.woff2": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308",
+    "assets/fonts/KaTeX_Caligraphic-Bold.ttf": "07d8e303ce4fc12b4bb54f1004170dd190a1f3db45d400fe68060df3e0897268",
+    "assets/fonts/KaTeX_Caligraphic-Bold.woff": "1ae6bd7475590e97e7f145a89e09ccde322f7a6bc0b91607b1c8b8ee28290fed",
+    "assets/fonts/KaTeX_Caligraphic-Bold.woff2": "de7701e42cf1f4cf0b766c03fb27977207eee2f4fd5d76fa82188406da43ea4c",
+    "assets/fonts/KaTeX_Caligraphic-Regular.ttf": "ed0b74372feefcbb9c0666b2e210da37b7e49fa7fbbf3eeb11db5f693dacfbb7",
+    "assets/fonts/KaTeX_Caligraphic-Regular.woff": "3398dd02302557a793f2863f88e02d96ce10df2abffa07c8e9fa90775116e65c",
+    "assets/fonts/KaTeX_Caligraphic-Regular.woff2": "5d53e70ad607c2352162dec9e0923fb54ecdafaccbf604cd8dcf7d00facb989b",
+    "assets/fonts/KaTeX_Fraktur-Bold.ttf": "9163df9c7122432e6495b4229fa9071cf9ae86a758ae5efc4924ec2e1a6dbce1",
+    "assets/fonts/KaTeX_Fraktur-Bold.woff": "9be7ceb88004ab8ad124082246fbfcca4091e36385d4ec6ed1df67375dad50fb",
+    "assets/fonts/KaTeX_Fraktur-Bold.woff2": "74444efd593c005e3f4573b44524704c0af0a937fe911cca9e94068d0d140d3f",
+    "assets/fonts/KaTeX_Fraktur-Regular.ttf": "1e6f9579e90e2cac37f8f60a597c436e075c114385652b7cbeb0dec0421291b3",
+    "assets/fonts/KaTeX_Fraktur-Regular.woff": "5e28753be717dac97f559f49bc10be9cf3c124ddcabda6659d11cb68febc6463",
+    "assets/fonts/KaTeX_Fraktur-Regular.woff2": "51814d270d06ff0255dba0799994fa4d8c84d11f09951d47595f4abb1f3602dc",
+    "assets/fonts/KaTeX_Main-Bold.ttf": "138ac28d1663b3037e9c5f52371fa5c63d8324f4a38d22cd573e6ea3a3fd0cf8",
+    "assets/fonts/KaTeX_Main-Bold.woff": "c76c5d696297d51b9cb1639c7da4334f0e7dec81b42b11213b5e25ef671bb822",
+    "assets/fonts/KaTeX_Main-Bold.woff2": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021",
+    "assets/fonts/KaTeX_Main-BoldItalic.ttf": "70ee1f64a20f2048c21940ef46d0144fd215baa953ca69afd1e31e98544f708f",
+    "assets/fonts/KaTeX_Main-BoldItalic.woff": "a6f7ec0d846ac7ad975adb8959c37ed49b94acbc4ae436db9ce9e20287e4a64c",
+    "assets/fonts/KaTeX_Main-BoldItalic.woff2": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b",
+    "assets/fonts/KaTeX_Main-Italic.ttf": "0d85ae7cc30f23790a7f1a58c4a112fdca8aae769b6ba11429af1d98b1b6cb3a",
+    "assets/fonts/KaTeX_Main-Italic.woff": "f1d6ef86f3b11a528bd5185199bd2443ecb2b0dead96d88674b5a2c12be24bdf",
+    "assets/fonts/KaTeX_Main-Italic.woff2": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267",
+    "assets/fonts/KaTeX_Main-Regular.ttf": "d0332f52868370fd83ae7fa46470f90c8f2eab2fcf12bc4f88080b340c95a830",
+    "assets/fonts/KaTeX_Main-Regular.woff": "c6368d87e8a1a3a5d337623d83d8dc4b868f242a9ad476237d6f8d1e0f168cdc",
+    "assets/fonts/KaTeX_Main-Regular.woff2": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866",
+    "assets/fonts/KaTeX_Math-BoldItalic.ttf": "f9377ab0271cda59af24bcffbd46a4d0c8a3572ffafdbb38de2ad5ea7b0d5ee5",
+    "assets/fonts/KaTeX_Math-BoldItalic.woff": "850c0af5c2238497febaf5e461d880bf458c341f42f4f330f1b1ab5698b1998e",
+    "assets/fonts/KaTeX_Math-BoldItalic.woff2": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1",
+    "assets/fonts/KaTeX_Math-Italic.ttf": "08ce98e51b04d58945a301e639e02b6998af29fdfd61a7b8afdd07bbfc479d4a",
+    "assets/fonts/KaTeX_Math-Italic.woff": "8a8d244581371912b8f3f5a23e2437cb2a59cd9bcaebb0346e722c05737a2571",
+    "assets/fonts/KaTeX_Math-Italic.woff2": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264",
+    "assets/fonts/KaTeX_SansSerif-Bold.ttf": "1ece03f79f95277d57dc7f6b435a74e1379b0d46104a8530286b60ff49369ea0",
+    "assets/fonts/KaTeX_SansSerif-Bold.woff": "ece03cfd83e22c212cdef66feb8442d25a083beb988db3f1883f3f9738d750ba",
+    "assets/fonts/KaTeX_SansSerif-Bold.woff2": "e99ae51144bf1232efcc1bfe5add36262c6866b0faab24fa75740e1b98577a62",
+    "assets/fonts/KaTeX_SansSerif-Italic.ttf": "3931dd81faed86ba021bb2bbdc36f5bed9a38d6b4f4077aca59b265aa1b02083",
+    "assets/fonts/KaTeX_SansSerif-Italic.woff": "91ee67500cc0129aa0ace3ac5c61ff1692102f0f31d02b69347fba35dcb75bf2",
+    "assets/fonts/KaTeX_SansSerif-Italic.woff2": "00b26ac825e2095056396e0553b8ac26d3f8ad158c3826e28b4c45b385c4714a",
+    "assets/fonts/KaTeX_SansSerif-Regular.ttf": "f36ea897e19f4a2e571d1e900e4e3710e438deb05a842486045ba0a3e616a4ad",
+    "assets/fonts/KaTeX_SansSerif-Regular.woff": "11e4dc8a6471ff6d6ee561d53d10fde8f7489e798257ff449c5d37c197435605",
+    "assets/fonts/KaTeX_SansSerif-Regular.woff2": "68e8c73ef42afd3ccec58bf0fba302cce448938e7fc020a5e31f8a952eee1342",
+    "assets/fonts/KaTeX_Script-Regular.ttf": "1c67f068fea8bb09bf099c088b1cf64bd27516a6e07f4684344873564bb66a67",
+    "assets/fonts/KaTeX_Script-Regular.woff": "d96cdf2b3bdd4d64a8fd5f74a4c467f123a8a73931cd435889f08ffaf9bf947a",
+    "assets/fonts/KaTeX_Script-Regular.woff2": "036d4e95149b69ff9bcc0cd55771efeb25ffa3947293e69acd78d5ac328c684b",
+    "assets/fonts/KaTeX_Size1-Regular.ttf": "95b6d2f1a50173bfedb8c63e1d1c99b10427d0a4df4201cb44513b226951a22b",
+    "assets/fonts/KaTeX_Size1-Regular.woff": "c943cc986384f59e86bea5fd7dc50a9c4dfe567a7c05eb40d6790720dead97c9",
+    "assets/fonts/KaTeX_Size1-Regular.woff2": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe",
+    "assets/fonts/KaTeX_Size2-Regular.ttf": "a6b2099fb555c60e3a0db3a08842ebf1d732c6eb4e4bf44913613bed4fc4e39b",
+    "assets/fonts/KaTeX_Size2-Regular.woff": "2014c523c3210bcc166648c4d4cc57f05b747df07a24277bf71c51e67dc79e3d",
+    "assets/fonts/KaTeX_Size2-Regular.woff2": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd",
+    "assets/fonts/KaTeX_Size3-Regular.ttf": "500e04d54f0d51666332c9d2089aa803be22aa878eca539e59fa53c6e522b082",
+    "assets/fonts/KaTeX_Size3-Regular.woff": "6ab6b62e9b62dae2c00dd90f791bd10950be0ecc3490d7d6045f51c2e8fe0949",
+    "assets/fonts/KaTeX_Size3-Regular.woff2": "73d591271b1604960cb10bb90fee021670af7297017e0e98480b332d11f51995",
+    "assets/fonts/KaTeX_Size4-Regular.ttf": "c647367d1dd4e162468717d020e1fc0f1dc5c26ebfdffbe55261713bf88c5877",
+    "assets/fonts/KaTeX_Size4-Regular.woff": "99f9c6750b489c9462bf04900bd3f939df9b829339daaaaa99ef5495cdddea58",
+    "assets/fonts/KaTeX_Size4-Regular.woff2": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0",
+    "assets/fonts/KaTeX_Typewriter-Regular.ttf": "f01f3e87d9c6a61c0c081ceb577abd864eb00a612f7ac1620dd6915fad2ef5aa",
+    "assets/fonts/KaTeX_Typewriter-Regular.woff": "e14fed02b1aba7ce9f5afd5844b5d0321b22351febc720e0de8b8723527609f7",
+    "assets/fonts/KaTeX_Typewriter-Regular.woff2": "71d517d67827787cfabdf186914cc3358eda539e37931941f2b2fd4a21f68c0b",
+    "assets/geist-cyrillic-ext-wght-normal.woff2": "2317fa4bb293c9c0b110e18315d529235c47a0ddd3338cea3d8c7955e927899e",
+    "assets/geist-cyrillic-wght-normal.woff2": "6894439694946a589d157ece003086960a6a4013d74a813dab7602efdb3d8c09",
+    "assets/geist-latin-ext-wght-normal.woff2": "824f485b5d26e2f2da3c2b236132ece1bc8e4e43373452950bb0e40548b4313f",
+    "assets/geist-latin-wght-normal.woff2": "19f9c92546aa300c312235e3125af1b81394d8db9a4bc4a425cd5b641d2d54e1",
+    "assets/geist-vietnamese-wght-normal.woff2": "8fa40e5d248247735eb97a0bd593b8852440430600d6ba01364c31fe0abc1fe1",
+    "assets/katex.min.css": "a34ad8fc188e8f5a3af7ceaa2a58d7210c6c9171335a15bff2b48ebcd6a6f5b0",
+    "assets/lab.css": "1c7760d8b39647a74f88a993fad4ce074f9e77efbc3fdc85bdf0007d95909f26",
+    "assets/mlai-mark.svg": "c1004e6663f45d895102e11abaa082eee08af0db2b5d359bad7a1c3dec0ed8b1",
+    "index.html": "f64302a0f204cd955272b5ea34c705bdea5a08cffceef6d900f381fb5d2188a5",
+    "research-data.json": "6ec6b1e04553a3500e033f11d71a624f9c1efb43f7e48084ca1ca331fc11b6fe",
+    "research/ai-overview/index.html": "878b5dbc67a65a7062da28f7687da7efe1194e4040151501f0afe71aeebdc8bd",
+    "research/backtrace-confidence-signals-hallucination/index.html": "258fc10703b545b74a82446c7ba8f7f0e0eed3dc1342d139821c776134699bb2",
+    "research/chunk-provenance-long-context-retrieval/index.html": "7f52c5148c9f04d3e918c31887f7a75d0f04e3f44448d3e98987b3ed4bb15506",
+    "research/gpu-implementation-guide/index.html": "5b24c6761bf2b9551c118a3dab6866914a94cfd2f2236f41e206c07cc2f7432e",
+    "research/gpu-overview/index.html": "e03d9baa80b76627727e6dc9fedc84ae4fe3b106dbc2ca2fe9870d99b8780598",
+    "research/human-approval-gates-operators-use/index.html": "5b94be1ff08ad37079b231b75944503aa4473d6b8e19d7462ff25afa82c31994",
+    "research/index.html": "f64302a0f204cd955272b5ea34c705bdea5a08cffceef6d900f381fb5d2188a5",
+    "research/latency-budgets-real-time-orchestration/index.html": "7d979ede9e96730f2dffe7fd4b322426a77188a69df92c5b6284280ec4bed1a4",
+    "research/mcp-implementation-guide/index.html": "c427e193b838d7fc0ddba834c346d9573ed57f8c2ddc552ea1cbe564ceb908c3",
+    "research/mcp-overview/index.html": "a7cd8e86b3e2292056d0b9b86a0641efab454d896d417bce19a1120454efe016",
+    "research/multi-persona-routing-policy-weights-2026-09-06.pdf": "38be0dfe5661e90d593e767c7a50c3030bb3daccf94b97ef5e64a3a8f70a0f37",
+    "research/multi-persona-routing-policy-weights.pdf": "3e0163af561bfd28e2c0c3544b5108478f87433e838e7d8a8acd94ca0303d5b8",
+    "research/multi-persona-routing-policy-weights/index.html": "8190d398fa91eb5cdcb4525725eedf67db61bcbeccc141a1f54a63b599a7beb2",
+    "research/offline-first-ai-sensitive-data/index.html": "19d26ff13a86fa4e7158d7d59449e8d4439562ec4512fea38cd993e728769f46",
+    "research/policy-locked-tool-use-multi-agent/index.html": "67bea8c5fe1710cbe8d69cbf47ce6c924debb4e1551c18a1477b820040c44a1f",
+    "research/prompt-injection-drills-agentic-systems/index.html": "0c29d36cf746f6e1445294456683327a094c9bb117e5ef0d7978b5b28b8ab538",
+    "research/sea-overview/index.html": "ea726ea407c601151fa347057b5261d47f02c8684a32adb5009022d6b3fe13c9",
+    "research/sparse-evidence-attention-context-assembly/index.html": "0f01f8b7e59c826455b1d6d4ada9e06b9172bc260396efc255c1b0f301241486",
+    "research/tui-implementation-guide/index.html": "68560d27a4bc1ba5139e54a07055784f7ff9403f3267c89c809c1a17a75a68af",
+    "research/tui-overview/index.html": "662a05fde01f0905d8f7919b2602896ea1f7950cd6a85fdbfa390f18830a4266",
+    "research/vector-index-maintenance-continuous-ingestion/index.html": "a317e864f1172ec5334a21befd058f42d47ef7e6d4df359d596bf131dc9d6683",
+    "research/wdbx-graph-weights-traceable-retrieval/index.html": "4e7fe9019f766cfdb653df4aeebc675f2ae87147a23baac1b6c1c247d592835b",
+    "research/wdbx-overview/index.html": "8452ff4e12ce2842a886c70310b3a99ff49fff5f437c2a6c2eff6cab40e98110",
+    "research/wdbx-weighted-backtrace-memory-store-2026-09-06.pdf": "294a7906391b064273691eff60a0f83242cbbb78e2a894321285e993f31f3fa2",
+    "research/wdbx-weighted-backtrace-memory-store.pdf": "1030bd50a64ab2426ba6558aee26398cfea1a7b7de39e527db0685bf54a853cf",
+    "research/wdbx-weighted-backtrace-memory-store/index.html": "5d0b807d80e98cf7a905082549e6ab1e41c1d912cb96379340e66f14135717d9",
+    "robots.txt": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1"
+  }
+}

@@ -150,3 +150,79 @@ This review deliberately did not reformat them: running Prettier over `agent-con
 expands 41 lines to 216 and buries a three-line change, so the repo-wide reformat belongs in its own
 commit (`bunx prettier --write .`) rather than mixed into review fixes. Edits here match each file's
 existing idiom. No live-model, browser, or release acceptance was rerun.
+
+## MLAI research merge (2026-09-06)
+
+This section closes step 4 of `docs/research-merge/plan.md`, which had been "In progress" with
+the whole merge sitting uncommitted since 16:25. It records verification only; the merge's
+design rationale and its scope boundaries are in `docs/research-merge/report-source.md` and are
+not restated or weakened here.
+
+**Content integrity.** Verified independently of the merge's own tests, against
+`docs/research-merge/source-manifest.json`: the corpus hash of `src/content/research-data.json`
+recomputes to `1bac66896aa58c1c97813cdf7ff9ac80f94285abb6e3b183d901620a352ecaa4`, matching the
+manifest, and **all 21 per-publication hashes match with zero mismatches**. The imported data is
+**deep-equal to the source export** at `../mlai-research-sites/public/research-data.json`, and
+that export's own manifest carries the same `contentSha256`. All **four PDFs under
+`public/research/` match their manifest sha256 byte-for-byte**, and so do the originals they were
+copied from. `ensure_ascii=False` is required in these JSON hashes; Python's escaping default
+makes 8 of 21 publications appear corrupt.
+
+The source export is itself current rather than stale: its `sourceRevision`
+`0a516a84f3b2d8f6f0c96491b8ac4f3e4307cefb` is an ancestor of `../mlai`'s `main`, 13 commits back,
+with **zero changes to any research path** in between (checked against a control diff that did
+show the 10 unrelated changed files, so the empty result is a real negative and not a failed
+command).
+
+**Rendering.** The production build prerenders **all 21 publications** as static HTML under
+`research/`, plus the three retained application notes (`provenance`, `provider-boundaries`,
+`execution-traces`) — 24 pages, matching the library's card count — and the sitemap contains a
+`<loc>` for every one of the 21 slugs with none missing. Note when checking this by hand that a
+`find -path "*research*"` matches every file if the dist directory is itself named
+`.next-research-merge`; count by filename, not by path.
+
+**Browser acceptance, and two test defects found by running it.** `bunx playwright test
+tests/e2e/research.spec.ts` initially failed **3 of 4** tests. Both causes were in the spec, not
+in the product, and both were fixed:
+
+- `getByLabel("Research area", { exact: true })` can never match. Playwright's `getByLabel`
+  matches the label's text content, and the `<label>` wraps its `<select>`, so that text is
+  `"Research areaAll areasAI & agent behavior…"`. Measured directly: exact match resolved **0**
+  elements, loose match resolved **2** (the select and the `<nav aria-label="Research areas">`,
+  so loose is ambiguous and not the fix), while
+  `getByRole("combobox", { name: "Research area" })` resolved **1**. The rendered accessible name
+  was correct throughout. Same fix applied to "Document type".
+- `expect(page.locator("#evidence")).toContainText("Limitations")` never matched, because the
+  section heading renders **"Evidence & limitations"** with a lowercase l. Rather than just
+  lowering the case, the assertion now checks the rendered `h2` exactly and then asserts the
+  section contains the publication's own `statusNote` and every one of its `limitations` strings
+  from `src/content/research.ts`, so it verifies the data the section claims to show. This is the
+  same defect class as the earlier `API keys` / `Api keys` capitalization fix recorded above.
+
+After those two fixes: **4 passed** — the library at 390, 768 and 1440 pixels (topic and type
+filtering down to a single card, filter state surviving a reload and a back-navigation, reset,
+search-to-zero and clear-search keyboard focus, KaTeX visible, both download editions present, no
+horizontal overflow, no page errors, and every attachment served as `application/pdf`), plus
+route coverage asserting a 200 with an `id="sources"` body for all 21 slugs and the three legacy
+notes, and a 404 for an unknown one.
+
+**Repository gate.** `MLAI_DATA_DIR=.data/research-merge/build bun run check` exited **0** —
+shared UI ESM/declarations, TypeScript, **56/56 tests across 7 suites** (up from 52/6; the new
+suite is `tests/research.test.ts`, 4 tests), **26/26 Python parser tests**, and the Next.js
+production build. Exit codes were read from the commands themselves, not through a pipe.
+`git diff --check` passed. Prettier passes on every file this merge added or touched.
+`bun run format:check` repo-wide is **still failing on the eleven pre-existing files named in the
+section above**; that is unchanged by this work and deliberately not absorbed into this commit.
+
+`tsconfig.json` was reverted before committing. `next build` had rewritten it with generated
+`.next-research-merge/**` includes and reformatted its inline arrays; per the practice recorded
+above, generated TypeScript include changes are removed after validation. The final gate was
+re-run against the reverted file and still exited 0.
+
+**Gaps, carried forward unchanged.** No live fetch of the remote published page was performed, so
+nothing here is acceptance of its served content. The KaTeX 0.18.7 dependency risk posture remains
+unknown — no affirmative security verdict. Browser evidence is Chromium at three widths, not
+Safari/WebKit, Firefox, physical mobile, screen-reader, or zoom acceptance. This merge does not
+deploy the application and does not resolve any pre-existing runtime, auth, model or release
+acceptance gap. The repository still has **no remote of any kind**, so its bundle in
+`~/at-risk-bundles/` remains the only backup.

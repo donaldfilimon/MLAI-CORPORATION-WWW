@@ -1,21 +1,31 @@
+import { findPublication, publicationPaths } from "@/content/research";
+import { ResearchLanding, ResearchArticle } from "@/components/research-pages";
 import { operations } from "@/lib/openapi";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { pages, docPaths, researchPaths } from "@/content/pages";
+import { pages, docPaths } from "@/content/pages";
 import { ContentIndex } from "@/components/content-index";
 import { ContactForm } from "@/components/contact-form";
 type Props = { params: Promise<{ slug: string[] }> };
 export function generateStaticParams() {
-  return [...Object.keys(pages), "docs", "research", "contact"].map((path) => ({
+  return [
+    ...Object.keys(pages),
+    ...publicationPaths,
+    "docs",
+    "research",
+    "contact",
+  ].map((path) => ({
     slug: path.split("/"),
   }));
 }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const key = (await params).slug.join("/");
+  const publication = findPublication(key);
   return {
     title:
+      publication?.title ||
       pages[key]?.title ||
       (
         {
@@ -24,11 +34,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           contact: "Contact",
         } as Record<string, string>
       )[key],
-    description: pages[key]?.description,
+    description:
+      publication?.abstract ||
+      pages[key]?.description ||
+      (key === "research"
+        ? "Source-reviewed MLAI research, implementation guides, and application notes."
+        : undefined),
   };
 }
 export default async function Page({ params }: Props) {
   const key = (await params).slug.join("/");
+  const publication = findPublication(key);
+  if (publication) return <ResearchArticle publication={publication} />;
+  if (key === "research") return <ResearchLanding />;
   if (key === "contact")
     return (
       <div className="public-container article-layout">
@@ -43,30 +61,20 @@ export default async function Page({ params }: Props) {
         <ContactForm />
       </div>
     );
-  if (key === "docs" || key === "research") {
-    const paths = key === "docs" ? docPaths : researchPaths;
+  if (key === "docs") {
     return (
       <div className="public-container article-layout">
         <header className="article-header">
-          <h1>
-            {key === "docs" ? "Documentation" : "Research & technical notes"}
-          </h1>
+          <h1>Documentation</h1>
           <p>
-            {key === "docs"
-              ? "Set up the workspace, understand its boundaries, and connect real services."
-              : "Working notes on source provenance, model boundaries, and inspectable systems."}
+            Set up the workspace, understand its boundaries, and connect real
+            services.
           </p>
         </header>
         <ContentIndex
-          searchLabel={
-            key === "docs" ? "Search documentation" : "Search research"
-          }
-          placeholder={
-            key === "docs"
-              ? "Search articles and guides…"
-              : "Search research and technical notes…"
-          }
-          items={paths.map((path) => ({ href: `/${path}`, ...pages[path] }))}
+          searchLabel="Search documentation"
+          placeholder="Search articles and guides…"
+          items={docPaths.map((path) => ({ href: `/${path}`, ...pages[path] }))}
         />
       </div>
     );
@@ -92,6 +100,11 @@ export default async function Page({ params }: Props) {
               {section.title}
             </a>
           ))}
+          {key.startsWith("research/") && (
+            <Link href="/research">
+              Research library <ArrowRight size={14} />
+            </Link>
+          )}
           <Link href="/docs">
             Documentation <ArrowRight size={14} />
           </Link>
