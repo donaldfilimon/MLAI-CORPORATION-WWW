@@ -58,13 +58,93 @@ export const PROVENANCE = {
   { glyph: string; label: string; description: string }
 >;
 
-export const PROVENANCE_ORDER = Object.keys(PROVENANCE) as readonly Provenance[];
+export const PROVENANCE_ORDER = Object.keys(
+  PROVENANCE,
+) as readonly Provenance[];
 
 /**
  * Published figures. Keep empty until each row has a real `source`.
  * Do not paste design-handoff StatBlock grids here.
  */
-export const figures: readonly ProvenancedFigure[] = [];
+export const figures: readonly ProvenancedFigure[] = [
+  {
+    id: "hnsw-m",
+    value: "16",
+    label: "HNSW neighbors per node and layer (M)",
+    tag: "measured",
+    accent: "wdbx",
+    note: "Read from the constant the substrate compiles, not from a tuning guide.",
+    source:
+      "https://github.com/donaldfilimon/wdbx/blob/6114b95a9a44cba3c76c27908d797a7512c2d088/crates/abi-wdbx/src/hnsw.rs#L13",
+  },
+  {
+    id: "hnsw-ef-construction",
+    value: "40",
+    label: "HNSW candidate width while inserting (ef_construction)",
+    tag: "measured",
+    accent: "wdbx",
+    note: "Any page still showing 200 is quoting a default this substrate no longer has.",
+    source:
+      "https://github.com/donaldfilimon/wdbx/blob/6114b95a9a44cba3c76c27908d797a7512c2d088/crates/abi-wdbx/src/hnsw.rs#L15",
+  },
+  {
+    id: "hnsw-ef-search",
+    value: "32",
+    label: "HNSW minimum candidate width while searching (ef)",
+    tag: "measured",
+    accent: "wdbx",
+    source:
+      "https://github.com/donaldfilimon/wdbx/blob/6114b95a9a44cba3c76c27908d797a7512c2d088/crates/abi-wdbx/src/hnsw.rs#L17",
+  },
+  {
+    id: "hnsw-max-layers",
+    value: "4",
+    label: "HNSW graph layers, including layer zero",
+    tag: "measured",
+    accent: "wdbx",
+    source:
+      "https://github.com/donaldfilimon/wdbx/blob/6114b95a9a44cba3c76c27908d797a7512c2d088/crates/abi-wdbx/src/hnsw.rs#L11",
+  },
+  {
+    id: "wal-chain-digest",
+    value: "SHA-256",
+    label: "Write-ahead log chain digest",
+    tag: "measured",
+    accent: "wdbx",
+    note: "Each record carries prev_hash, so the chain is at the log rather than the index. Tamper-evidence for a local audit trail, not a witnessed transparency log.",
+    source:
+      "https://github.com/donaldfilimon/wdbx/blob/6114b95a9a44cba3c76c27908d797a7512c2d088/crates/abi-wdbx/src/format.rs#L16",
+  },
+  {
+    id: "persona-routing",
+    value: "Deterministic",
+    label: "Persona routing",
+    tag: "measured",
+    accent: "abi",
+    note: "Keyword-weighted f32 scores are normalized to a distribution and the highest weight wins. Inspectable and cheap; not a trained model.",
+    source:
+      "https://github.com/donaldfilimon/abi/blob/6cd758e327085acd18a877e7629142a1dbbafe77/crates/abi-ai/src/router.rs#L146",
+  },
+  {
+    id: "persona-routing-learned",
+    value: "Learned policy",
+    label: "Persona routing, planned",
+    tag: "target",
+    accent: "abi",
+    note: "No learned router exists in the runtime today. This row stays a target until one ships with an evaluation.",
+    source:
+      "Not implemented — the shipped router is the deterministic one above.",
+  },
+  {
+    id: "query-latency",
+    value: "—",
+    label: "Vector query latency",
+    tag: "target",
+    accent: "wdbx",
+    note: "No harness is published, so no number is. A figure appears here only with a named dataset, machine and toolchain spec, commit hash, and raw trials.",
+    source: "No published harness. See BANNED_HANDOFF_FIGURES below.",
+  },
+];
 
 /** Explicit refusals — handoff / deck numbers that must not ship as StatBlocks. */
 export const BANNED_HANDOFF_FIGURES = [

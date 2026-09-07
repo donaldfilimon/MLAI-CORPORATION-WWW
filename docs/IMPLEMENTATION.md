@@ -243,3 +243,84 @@ Safari/WebKit, Firefox, physical mobile, screen-reader, or zoom acceptance. This
 deploy the application and does not resolve any pre-existing runtime, auth, model or release
 acceptance gap. The repository still has **no remote of any kind**, so its bundle in
 `~/at-risk-bundles/` remains the only backup.
+
+## Claims reconciliation against sibling source — 2026-09-07
+
+A v3 design pass was applied to this tree. The design's own figure table was **not** copied in:
+`src/content/provenance.ts` already carried a stricter contract than the design did (a required
+`source` on every row, an explicit `BANNED_HANDOFF_FIGURES` refusal list, and provenance tags kept
+separate from claim-ledger status), and the design's grid tagged twelve cells `measured` with no
+source at all while shipping `efConstruction=200`. Importing it would have been a regression. The
+work became a reconciliation: every claim was checked against the sibling repositories, and only
+what source supports survived.
+
+**What was checked, and where.** `wdbx` at `6114b95a`, `abi` at `6cd758e3` — both HEADs verified to
+be on `origin/main`, so the pinned blob URLs in `provenance.ts` resolve publicly.
+
+- `wdbx/crates/abi-wdbx/src/hnsw.rs` — `MAX_LAYERS = 4`, `M = 16`, `EF_CONSTRUCTION = 40`,
+  `EF_SEARCH = 32`. The stale `200` default appears nowhere in this tree; `research-data.json`
+  already had the correct trio, so the site was self-consistent here and stays that way.
+- `wdbx/crates/abi-wdbx/src/format.rs` — `prev_hash` and a SHA-256 chain exist. The hash-chain
+  claim survives, with a source.
+- `abi/crates/abi-ai/src/router.rs` — routing is keyword-weighted `f32` scoring normalized to a
+  distribution, with `select_best_profile` taking the highest weight. Deterministic and
+  inspectable; **not** a trained model.
+- `abbey-bot/Cargo.toml` — Rust: serenity 0.12.5, poise 0.6.2, songbird 0.6.0.
+- `AbbeyBot/Package.swift` — swift-tools 6.4: DiscordBM, Vapor, Fluent. Twitch EventSub lives in
+  this Swift surface (`Sources/AbbeyServer/Routes/TwitchEventSubRoutes.swift`) and in no Rust
+  source. Both bot repositories are private, so those two rows cite a path, not a link.
+
+**Four claims were false against source and are gone.**
+
+1. `abbey-page.tsx` described Abbey Bot as "Discord (Bun + discord.js v14)". It is Rust. The site
+   already said so correctly in `src/content/knowledge.ts:181`, so this page was contradicting its
+   own knowledge base. Corrected, and the Swift product is now listed as a second product rather
+   than a "port in progress" of the first.
+2. "Neural backtracking — hash-chained interaction blocks rewind to the exact divergence point."
+   `backtrack` appears in **zero** files across `abi`, `abbey` and `wdbx` (`.rs`, `.md`, `.toml`;
+   the instrument was control-checked against `persona`, which matches 31 files). The nearest real
+   thing is abbey's `/rewind`, which clears a chat id. The hash chain is real; the rewind feature
+   is not. The card now claims only the chain, and names reconstruction as a target.
+3. "Training penalizes unsupportive phrasing via an explicit empathy loss term" and "a conciseness
+   loss term penalizes filler tokens. Fewer tokens, lower latency." Neither term exists in `abi`
+   (the only `empathy` hit in the repository is in `CODE_OF_CONDUCT.md`), and the latency half was
+   an unharnessed performance claim. Both replaced with the routing behavior that source shows.
+4. Persona routing was described as `argmax over P(persona | input, context)`. The weights are
+   normalized keyword scores, not a probability. Reworded to what `router.rs` does.
+
+**The provenance layer was live code that nothing rendered.** `provenance.ts` and
+`prov-tag.tsx` existed, `globals.css` styled `.prov-tag`, and `figures` was empty, so no page
+carried a tag. `figures` now holds eight source-cited rows and they render as tables on `/wdbx`
+(the five substrate rows) and `/abi` (the two routing rows), each row beside its own chip and a
+`● measured / ○ target / ◆ reported` legend. Vector query latency stays an em dash under a
+`target` tag: there is no published harness, so there is no number.
+
+**New gate: `tests/claims.test.ts`, 15 tests.** It pins what was verified rather than pretending to
+re-verify it — this repository cannot import the sibling crates. It requires a `source` on every
+figure, requires source URLs to name a 40-hex commit rather than a branch, holds the four HNSW
+constants, keeps the latency row an em-dash target, forbids the restoration of `ef*=200`,
+`discord.js`, `backtrack`, the two loss terms and the banned handoff figures, requires both real
+bot stacks by name on the Abbey page, and renders both pages to assert every figure reaches a page
+with its chip — so a figure can no longer become dead data again.
+
+**Repository gate.** `MLAI_DATA_DIR=<scratch> bun run check` exited **0**: shared UI build,
+TypeScript, **71/71 tests across 8 suites** (up from 56 across 7; the new suite is
+`tests/claims.test.ts`, 15 tests), **26/26 Python parser tests**, and the Next.js production build,
+which prerendered `/wdbx` and `/abi`. Exit codes were read from the commands themselves, never
+through a pipe. Prettier passes on all five files this pass touched. `bun run format:check`
+repo-wide is **still failing on the same eleven pre-existing files**; that red is not from this
+work and is not absorbed into this commit. `tsconfig.json` was compared before and after
+`next build` and was unchanged this time.
+
+**Not done, stated plainly.** No live browser acceptance was run against these two pages. The
+production server on port 3100 belongs to another session and serves a clean-install release
+snapshot out of `.data/releases/`, not this working tree, so it will never show these changes; it
+was left running. A second dev server could not be started through the launch mechanism because
+`scripts/dev.ts` takes its port only from `APP_URL`. The wide tables use `.table-scroll`
+(`packages/ui/src/styles/components.css`, `overflow: auto`), the same container the Abbey page's
+register table already uses under the passing 390 px no-horizontal-overflow assertion, and the
+build prerendered both pages — but that is structural evidence, not a screenshot at three widths.
+
+**Correction to the section above.** Its closing line, "the repository still has no remote of any
+kind", is stale: `origin` is `donaldfilimon/mlai-website-app` (private), and `main` tracked it at
+`29391e5` when this work began.

@@ -11,8 +11,8 @@ const capabilities = [
     desc: "Powered by WDBX. Remembers conversations, learns preferences — all stored locally on hardware you control.",
   },
   {
-    title: "Neural backtracking",
-    desc: "Hash-chained interaction blocks rewind to the exact divergence point when an agent drifts.",
+    title: "A chain you can walk back",
+    desc: "Stored blocks carry the digest of the block before them, so history cannot be edited without breaking the link. Reconstructing a session from that chain is a design target, not a shipped command.",
   },
   {
     title: "Emotional intelligence",
@@ -24,17 +24,17 @@ const personas = [
   {
     key: "abbey",
     name: "Abbey",
-    role: "Empathetic Polymath — training penalizes unsupportive phrasing via an explicit empathy loss term.",
+    role: "Empathetic polymath. The neutral prior favors Abbey, so an unremarkable turn lands here.",
   },
   {
     key: "aviva",
     name: "Aviva",
-    role: "Unfiltered Expert — a conciseness loss term penalizes filler tokens. Fewer tokens, lower latency.",
+    role: "Direct expert. Selected when the turn carries directness or urgency cues, not by a separate model.",
   },
   {
     key: "abi",
     name: "Abi",
-    role: "Adaptive Moderator — routes via argmax over P(persona | input, context), blending when needed.",
+    role: "Moderator. Keyword-weighted scores are normalized to a distribution and the highest weight wins; two profiles can be blended for one turn.",
   },
 ] as const;
 
@@ -44,10 +44,22 @@ const registers: [string, string, string][] = [
   ["Abi", "cyan", "router / moderator"],
 ];
 
+/**
+ * Two separate Discord products, not one port of the other. Stacks read from
+ * source: abbey-bot/Cargo.toml (serenity 0.12 · poise 0.6 · songbird 0.6) and
+ * AbbeyBot/Package.swift (swift-tools 6.4 · DiscordBM · Vapor · Fluent).
+ * Both repositories are private, so the citation is a path, not a link.
+ */
 const shipping = [
-  { k: "Discord (Bun + discord.js v14)", v: "Shipping" },
-  { k: "Swift 6 / Vapor 4 / DiscordBM port", v: "In progress" },
-  { k: "Python + Twitch expansion", v: "In progress" },
+  {
+    k: "Abbey Bot — Rust (serenity 0.12 · poise 0.6)",
+    v: "Shipping",
+  },
+  {
+    k: "AbbeyBot — Swift 6.4 (DiscordBM · Vapor · Fluent)",
+    v: "Shipping, voice audio not claimed",
+  },
+  { k: "Twitch EventSub, in the Swift surface only", v: "In progress" },
 ] as const;
 
 export function AbbeyPage() {

@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { figures } from "@/content/provenance";
+import { ProvLegend, ProvTag } from "@/components/prov-tag";
+
+/** Runtime rows only. Every one carries a source; see src/content/provenance.ts. */
+const runtimeFigures = figures.filter((f) => f.accent === "abi");
 
 const capabilities = [
   {
@@ -112,10 +117,77 @@ export function AbiPage() {
         </ol>
       </section>
 
+      <section className="system-section marketing-section">
+        <div className="section-intro">
+          <span className="eyeline abi">Routing, on the record</span>
+          <h2>What the router is, and what it is not.</h2>
+          <p className="muted">
+            The shipped router is deterministic. A learned policy is a goal, so
+            it carries a target tag rather than a description in the present
+            tense.
+          </p>
+        </div>
+        <div className="table-scroll">
+          <table>
+            <caption>
+              Routing behavior, read from <code>crates/abi-ai/src/</code>.
+            </caption>
+            <thead>
+              <tr>
+                <th>Value</th>
+                <th>What it is</th>
+                <th>Provenance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {runtimeFigures.map((figure) => (
+                <tr key={figure.id}>
+                  <td>
+                    <code>{figure.value}</code>
+                  </td>
+                  <td>
+                    {figure.label}
+                    {figure.note ? (
+                      <span className="prov-legend-gloss">
+                        {" "}
+                        — {figure.note}
+                      </span>
+                    ) : null}
+                  </td>
+                  <td>
+                    <ProvTag tag={figure.tag} />
+                    {figure.source.startsWith("https://") ? (
+                      <>
+                        {" "}
+                        <a
+                          href={figure.source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          source
+                        </a>
+                      </>
+                    ) : (
+                      <span className="prov-legend-gloss">
+                        {" "}
+                        {figure.source}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ProvLegend variant="inline" className="prov-note" />
+      </section>
+
       <nav className="next-up" aria-label="Continue reading">
         <Link className="next-up-card wdbx" href="/wdbx">
           <span className="eyeline wdbx">WDBX</span>
-          <strong>Memory and retrieval behind the same inspectable stack.</strong>
+          <strong>
+            Memory and retrieval behind the same inspectable stack.
+          </strong>
           <span>
             View WDBX <ArrowRight size={16} />
           </span>

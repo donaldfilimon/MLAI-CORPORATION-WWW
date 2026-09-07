@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { figures } from "@/content/provenance";
+import { ProvLegend, ProvTag } from "@/components/prov-tag";
+
+/** Substrate rows only. Every one carries a source; see src/content/provenance.ts. */
+const substrateFigures = figures.filter((f) => f.accent === "wdbx");
 
 const features = [
   {
@@ -47,7 +52,10 @@ export function WdbxPage() {
           </div>
         </div>
         <aside className="trace-panel" aria-label="Retrieval shape">
-          <div className="trace-panel-label" style={{ color: "var(--accent-wdbx)" }}>
+          <div
+            className="trace-panel-label"
+            style={{ color: "var(--accent-wdbx)" }}
+          >
             retrieve ❯
           </div>
           <pre>{`hnsw · k pinned · sources attached
@@ -71,6 +79,72 @@ illustrative shape — not a benchmark`}</pre>
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="system-section marketing-section">
+        <div className="section-intro">
+          <span className="eyeline wdbx">Substrate defaults</span>
+          <h2>The numbers come from the source that compiles.</h2>
+          <p className="muted">
+            Each row links to the line in the WDBX substrate that defines it, at
+            a pinned commit. Where no harness exists, the value stays an em dash
+            and the row stays a target.
+          </p>
+        </div>
+        <div className="table-scroll">
+          <table>
+            <caption>
+              WDBX substrate parameters, read from{" "}
+              <code>crates/abi-wdbx/src/</code>.
+            </caption>
+            <thead>
+              <tr>
+                <th>Value</th>
+                <th>What it is</th>
+                <th>Provenance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {substrateFigures.map((figure) => (
+                <tr key={figure.id}>
+                  <td>
+                    <code>{figure.value}</code>
+                  </td>
+                  <td>
+                    {figure.label}
+                    {figure.note ? (
+                      <span className="prov-legend-gloss">
+                        {" "}
+                        — {figure.note}
+                      </span>
+                    ) : null}
+                  </td>
+                  <td>
+                    <ProvTag tag={figure.tag} />
+                    {figure.source.startsWith("https://") ? (
+                      <>
+                        {" "}
+                        <a
+                          href={figure.source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          source
+                        </a>
+                      </>
+                    ) : (
+                      <span className="prov-legend-gloss">
+                        {" "}
+                        {figure.source}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ProvLegend variant="inline" className="prov-note" />
       </section>
 
       <section className="split-section wdbx">
