@@ -20,6 +20,8 @@
 | `Site Investors.dc.html` | `/investors` | `InvestorsPage` | In progress | Figure-free thesis + open-core facts. No TAM/$1.5M. |
 | `Site Company.dc.html` | `/company` | `CompanyPage` | In progress | Founder split, principles, facts, projects, hiring, NextUp. |
 | `Site Contact.dc.html` | `/contact` | `ContactPage` + `@mlai/ui` ContactForm | In progress | Two-up layout, privacy callout, elsewhere links, wired form. |
+| (Next handoff) | `/knowledge` | `KnowledgePage` + `src/content/knowledge.ts` | In progress | Motto, personas, invariant, glossary; no StatBlocks. |
+| (Next handoff) | `/repositories` | `RepositoriesPage` + claims ledger | In progress | Per-repo Current/Partial/Proposed/Not claimed. |
 | `Site Docs.dc.html` | `/docs` (+ shell) | `/docs` ContentIndex + `docs/*` articles | Partial | Searchable index exists; missing sticky 230px sidebar + Cmd-K palette DocsShell |
 | `Site Console.dc.html` | marketing gate + workspace | `/app` + `/sign-in` | Different | Better Auth sign-in + workspace console are product UI, not the design two-up marketing gate |
 | `Mobile App.dc.html` | Expo companion | out of scope for this Next app | N/A | Handoff mobile TSX targets a different surface |

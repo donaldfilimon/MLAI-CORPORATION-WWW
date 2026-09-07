@@ -3243,3 +3243,214 @@
     position: static;
   }
 }
+
+
+/* Knowledge / Repositories claims UI */
+.claim-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  font: 700 10px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.claim-status.current {
+  border-color: color-mix(in srgb, var(--accent-abbey) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-abbey) 12%, transparent);
+  color: var(--accent-abbey);
+}
+
+.claim-status.partial {
+  border-color: color-mix(in srgb, #fbbf24 40%, transparent);
+  background: color-mix(in srgb, #fbbf24 12%, transparent);
+  color: #fbbf24;
+}
+
+.claim-status.proposed {
+  border-color: color-mix(in srgb, var(--accent-abi) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-abi) 12%, transparent);
+  color: var(--accent-abi);
+}
+
+.claim-status.not-claimed {
+  color: var(--muted);
+  background: color-mix(in srgb, var(--panel) 80%, transparent);
+}
+
+.pull-quote {
+  margin: 24px 0 0;
+  padding: 22px 24px;
+  border-left: 3px solid currentColor;
+  border-radius: 0 14px 14px 0;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+}
+
+.pull-quote.wdbx {
+  color: var(--accent-wdbx);
+}
+
+.pull-quote p {
+  margin: 0;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.pull-quote cite {
+  display: block;
+  margin-top: 12px;
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-style: normal;
+}
+
+.repo-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0 8px;
+}
+
+.repo-tabs button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 14px;
+  font: 700 11px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.repo-tabs button:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent-abi) 40%, var(--line));
+}
+
+.repo-tabs button.active,
+.repo-tabs button[aria-selected="true"] {
+  color: var(--accent-abi);
+  border-color: color-mix(in srgb, var(--accent-abi) 55%, transparent);
+  background: color-mix(in srgb, var(--accent-abi) 12%, transparent);
+}
+
+.repo-panel {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: start;
+  margin-top: 28px;
+}
+
+.repo-panel-main h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.15;
+  margin: 14px 0 0;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.repo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.repo-summary {
+  margin-top: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.repo-summary p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.repo-panel-main .callout-card {
+  margin-top: 22px;
+}
+
+.repo-panel-main .callout-card code {
+  font: 12.5px/1.55 var(--font-mono);
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.claims-ledger {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+}
+
+.claims-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.claims-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.claims-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.claims-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.repo-related {
+  margin: 18px 0 0;
+  font: 600 10px/1.5 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+.repo-related a {
+  color: var(--accent-abi);
+  text-decoration: none;
+}
+
+.repo-related a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 960px) {
+  .repo-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .repo-tabs {
+    margin-top: 18px;
+  }
+}

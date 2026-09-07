@@ -12,6 +12,8 @@ import { WdbxPage } from "@/components/wdbx-page";
 import { ContactPage } from "@/components/contact-page";
 import { CompanyPage } from "@/components/company-page";
 import { InvestorsPage } from "@/components/investors-page";
+import { KnowledgePage } from "@/components/knowledge-page";
+import { RepositoriesPage } from "@/components/repositories-page";
 
 type Props = { params: Promise<{ slug: string[] }> };
 
@@ -21,6 +23,8 @@ export function generateStaticParams() {
     ...publicationPaths,
     "research",
     "contact",
+    "knowledge",
+    "repositories",
   ].map((path) => ({
     slug: path.split("/"),
   }));
@@ -39,6 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           contact: "Contact",
           company: "Company",
           investors: "Investors",
+          knowledge: "Knowledge",
+          repositories: "Repositories",
         } as Record<string, string>
       )[key],
     description:
@@ -54,6 +60,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             "Why MLAI exists — Delaware C-Corp, Orlando roots, evidence before projections.",
           investors:
             "Positioning thesis, deliberately figure-free. Evidence before projections.",
+          knowledge:
+            "Motto, personas, routing prior, substrate invariant — claim-honest knowledge base.",
+          repositories:
+            "Each repository's claims ledger: Current, Partial, Proposed, Not claimed.",
         } as Record<string, string>
       )[key],
   };
@@ -74,6 +84,8 @@ export default async function Page({ params }: Props) {
   if (key === "wdbx") return <WdbxPage />;
   if (key === "company") return <CompanyPage />;
   if (key === "investors") return <InvestorsPage />;
+  if (key === "knowledge") return <KnowledgePage />;
+  if (key === "repositories") return <RepositoriesPage />;
 
   const article = pages[key];
   if (!article) notFound();

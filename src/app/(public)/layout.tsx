@@ -12,6 +12,8 @@ const productLinks: [string, string][] = [
 const companyLinks: [string, string][] = [
   ["About", "/company"],
   ["Research", "/research"],
+  ["Knowledge", "/knowledge"],
+  ["Repositories", "/repositories"],
   ["Investors", "/investors"],
   ["Services", "/services"],
   ["Contact", "/contact"],
