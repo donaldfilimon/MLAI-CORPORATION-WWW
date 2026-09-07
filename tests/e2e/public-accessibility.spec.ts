@@ -19,7 +19,7 @@ test("shared navigation restores focus, respects reduced motion, and serves publ
       await page.getByRole("button", { name: "Open navigation" }).click();
       await page
         .locator("#public-nav")
-        .getByRole("link", { name: "Architecture", exact: true })
+        .getByRole("link", { name: "Platform", exact: true })
         .focus();
       await page.keyboard.press("Escape");
       await expect(

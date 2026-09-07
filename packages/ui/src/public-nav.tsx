@@ -10,21 +10,32 @@ export interface PublicNavProps {
   currentPath?: string;
   signInHref?: string;
   workspaceHref?: string;
+  contactHref?: string;
   brandMark?: string;
   Link?: LinkComponent;
 }
+/** SiteNav-aligned defaults — product pages first, Contact is the primary CTA. */
 const defaultItems: [string, string][] = [
-  ["Architecture", "/architecture"],
-  ["Products", "/platform"],
+  ["WDBX", "/wdbx"],
+  ["ABI", "/abi"],
+  ["Abbey", "/abbey"],
+  ["Platform", "/platform"],
   ["Research", "/research"],
-  ["Docs", "/docs"],
   ["Company", "/company"],
+  ["Investors", "/investors"],
+  ["Docs", "/docs"],
 ];
+function isActive(currentPath: string, href: string) {
+  if (!currentPath) return false;
+  if (currentPath === href) return true;
+  return href !== "/" && currentPath.startsWith(`${href}/`);
+}
 export function PublicNav({
   items = defaultItems,
   currentPath = "",
   signInHref = "/sign-in",
   workspaceHref = "/app",
+  contactHref = "/contact",
   brandMark,
   Link = Anchor,
 }: PublicNavProps) {
@@ -64,15 +75,19 @@ export function PublicNav({
             <Link
               key={href}
               href={href}
-              aria-current={currentPath === href ? "page" : undefined}
+              aria-current={isActive(currentPath, href) ? "page" : undefined}
             >
               {label}
             </Link>
           ))}
           <div className="nav-actions">
             <Link href={signInHref}>Sign in</Link>
-            <Link className="button secondary small" href={workspaceHref}>
-              Open workspace
+            <Link href={workspaceHref}>Console</Link>
+            <Link
+              className="button primary small nav-contact"
+              href={contactHref}
+            >
+              Contact
             </Link>
           </div>
         </nav>

@@ -347,29 +347,40 @@
 }
 
 .public-header {
-  border-bottom: 1px solid var(--line);
-  background: #05070bea;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(5, 7, 11, 0.8);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .header-inner {
-  max-width: 1420px;
-  padding: 21px 42px;
+  max-width: 80rem;
+  padding: 16px 40px;
   margin: auto;
   display: flex;
   align-items: center;
-  gap: 55px;
+  gap: 32px;
 }
 
 .public-nav {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 22px;
   flex: 1;
-  font-size: 12px;
+  font: 700 11px/1.35 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .public-nav > a {
-  color: #b7bec8;
+  color: var(--muted);
+}
+
+.public-nav > a:hover {
+  color: #fff;
 }
 
 .public-nav > a[aria-current] {
@@ -380,7 +391,23 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 18px;
+}
+
+.nav-actions > a:not(.button) {
+  color: var(--muted);
+}
+
+.nav-actions > a:not(.button):hover {
+  color: #fff;
+}
+
+.nav-contact {
+  border-radius: 999px;
+  padding: 8px 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font: 700 11px/1.35 var(--font-mono);
 }
 
 .architecture-diagram {
