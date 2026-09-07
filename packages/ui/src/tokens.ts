@@ -4,14 +4,16 @@
  * in a second form, not a second source of truth.
  */
 export const color = {
-  bg: "#05070b",
-  panel: "#0a0e16",
-  line: "#252d37",
-  text: "#f1f3f6",
-  muted: "#98a1af",
-  cyan: "#00d4ff",
-  purple: "#a878f6",
-  green: "#10b981",
+  bg: "#05070d",
+  panel: "#0e1218",
+  panelRaised: "#171b21",
+  line: "rgba(255, 255, 255, 0.1)",
+  text: "#e6edf6",
+  muted: "#93a4ba",
+  cyan: "#22d3ee",
+  purple: "#a855f7",
+  green: "#34d399",
+  warn: "#fbbf24",
 } as const;
 export const productAccent = {
   wdbx: color.cyan,
@@ -19,8 +21,8 @@ export const productAccent = {
   abbey: color.green,
 } as const;
 export const font = {
-  body: '"Manrope", sans-serif',
-  heading: '"Sora", sans-serif',
-  mono: '"JetBrains Mono", monospace',
+  body: '"Geist Sans", "Geist", system-ui, sans-serif',
+  heading: '"Spectral", Georgia, serif',
+  mono: '"JetBrains Mono", ui-monospace, monospace',
 } as const;
 export type ProductAccent = keyof typeof productAccent;

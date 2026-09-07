@@ -102,7 +102,7 @@ pre {
 }
 
 ::selection {
-  background: #00d4ff30;
+  background: color-mix(in srgb, var(--cyan) 19%, transparent);
 }
 
 :focus-visible {
