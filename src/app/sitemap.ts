@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "docs",
     "research",
     "contact",
+    "knowledge",
+    "repositories",
     ...Object.keys(pages),
     ...publicationPaths,
   ].map((path) => ({
