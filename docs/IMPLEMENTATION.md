@@ -423,3 +423,13 @@ before and after `next build` and unchanged.
 screenshots beyond the home page; other committed screenshots were regenerated from passing runs
 rather than compared pixel by pixel. Whether the design intends utilities to be available to the
 application's own `src/**` (the `@source` glob covers only the UI package) was not decided here.
+
+**Correction to the residual above (same session).** "`/quesar` was not re-checked in a browser"
+is no longer true. All three Quesar routes were rendered at 390 and 1440 with the Tailwind
+pipeline active: `/quesar` (no shadcn primitives — its Card and Badge usage is on the sub-routes),
+`/quesar/consent` (1 card) and `/quesar/audit` (3 cards, 4 badges). Cards compute a real
+`1px` border and a `15.2px` radius, horizontal overflow is `0px` on all six renders, and no page
+errors were raised. The selector was validated against `/repositories` first, so a zero count
+means the page genuinely has none rather than a wrong query. The remaining residuals stand: no
+pixel diff against the pre-Tailwind screenshots beyond home, and whether `@source` should also
+cover the application's own `src/**` is still undecided.

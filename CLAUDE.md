@@ -202,6 +202,16 @@ by `/app/[[...view]]` and switching on the view segment. Test layouts at 390, 76
 `next.config.ts` keeps `better-sqlite3` and the gRPC packages in `serverExternalPackages`; server
 modules that build paths dynamically carry `/* turbopackIgnore: true */`. Both are load-bearing.
 
+Two stylesheet systems coexist and only one is hand-written. Site layout lives in `globals.css` and
+`packages/ui/src/styles/*.css` as plain unlayered CSS; the shadcn primitives under
+`packages/ui/src/components/ui/` are styled entirely by Tailwind utility classes, which exist only
+because `postcss.config.mjs` runs `@tailwindcss/postcss` over the design-system stylesheet. Deleting
+that config does not fail the build — it silently strips every utility, and the command palette,
+cards and badges render as unstyled blocks. Tailwind's preflight arrives in `layer(base)` while the
+hand-written CSS is unlayered, so the hand-written rules win the cascade; keep it that way rather
+than layering `globals.css`. `@source` in `index.css` scans the UI package's compiled output, so a
+utility class used only in the application's own `src/**` is not generated.
+
 ## Public claims are gated by tests, not by review
 
 The public site describes four sibling repositories (`abi`, `abbey`, `abbey-bot`/`AbbeyBot`,
