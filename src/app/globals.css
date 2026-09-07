@@ -21,9 +21,9 @@
 }
 
 .home-hero h1 {
-  font-size: clamp(40px, 4.6vw, 65px);
-  line-height: 1.08;
-  letter-spacing: -0.065em;
+  font-size: var(--size-display-lg);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
   margin-bottom: 25px;
 }
 
@@ -2089,9 +2089,9 @@
 
 .marketing-hero h1 {
   font-family: var(--font-heading);
-  font-size: clamp(40px, 4.8vw, 56px);
-  line-height: 1.08;
-  letter-spacing: -0.015em;
+  font-size: var(--size-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
   margin: 18px 0 0;
   text-wrap: balance;
 }
@@ -3767,9 +3767,9 @@
 
 .ledger-hero-lede h1 {
   font-family: var(--font-heading);
-  font-size: clamp(40px, 4.8vw, 56px);
-  line-height: 1.08;
-  letter-spacing: -0.015em;
+  font-size: var(--size-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
   margin: 18px 0 0;
   text-wrap: balance;
 }

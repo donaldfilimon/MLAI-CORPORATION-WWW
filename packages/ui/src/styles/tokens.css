@@ -44,6 +44,14 @@
   --size-6: 27px;
   --size-7: clamp(28px, 3vw, 36px);
   --size-display: clamp(40px, 4.8vw, 56px);
+  /* The home hero is deliberately larger than an inner page's. That is a size
+     decision and it stays; what does not stay is three different trackings on
+     one serif at display size (-0.035em base, -0.065em home, -0.015em
+     marketing). Spectral has open counters and crowds under heavy negative
+     tracking, so one display tracking governs every hero. */
+  --size-display-lg: clamp(40px, 4.6vw, 65px);
+  --tracking-display: -0.02em;
+  --leading-display: 1.08;
 
   /* Spacing. Hand-tuned values ran 9/19/22/23/47px; this is a 4px grid, which
      is also what the Tailwind primitives already use. */
