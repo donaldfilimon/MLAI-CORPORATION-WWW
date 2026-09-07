@@ -41,7 +41,7 @@
 - [x] Branch `redesign/lab-tokens` from `origin/main`; cherry-pick `a3ffc7a` (or reopen tip of `redesign/site-chrome-home-slice` commits after merge).
 - [x] `bun run build:ui && bun run typecheck`
 - [x] Open PR → merge.
-- [ ] Commit message if needed: `style(ui): remap Lab tokens to handoff cyan/purple/emerald + Spectral/Geist`
+- [x] Commit message if needed: `style(ui): remap Lab tokens to handoff cyan/purple/emerald + Spectral/Geist`
 
 ---
 
@@ -52,8 +52,8 @@
 - [x] `cd packages/ui && bunx shadcn@latest init` (map CSS vars onto existing tokens).
 - [x] `bunx shadcn@latest add button card separator badge navigation-menu sheet dialog command table input textarea`
 - [x] Re-export selectively from `packages/ui/src/index.ts` only what product pages need.
-- [ ] `bun run build:ui && bun run typecheck`
-- [ ] Commit: `chore(ui): init shadcn primitives mapped to Lab tokens`
+- [x] `bun run build:ui && bun run typecheck`
+- [x] Commit: `chore(ui): init shadcn primitives mapped to Lab tokens`
 
 ---
 
@@ -65,8 +65,8 @@
 - [x] Add shared section primitives (FeatureCard / SplitSection-style) in `@mlai/ui` or app components — **no StatBlocks with invent numbers**.
 - [x] Update `[...slug]` or dedicated routes to render composed sections.
 - [x] Abbey: IWL in hero/eyebrow only; Research claims gate.
-- [ ] `bun run typecheck` + spot-check `bun run dev` on `/platform` `/abbey` `/abi` `/wdbx`
-- [ ] Commit + PR: `feat(site): compose Platform/Abbey/ABI/WDBX toward handoff`
+- [x] `bun run typecheck` + spot-check `bun run dev` on `/platform` `/abbey` `/abi` `/wdbx`
+- [x] Commit + PR: `feat(site): compose Platform/Abbey/ABI/WDBX toward handoff`
 
 ---
 
@@ -77,8 +77,8 @@
 - [x] Scaffold DocsShell (230px sidebar + content column) around `src/app/docs`.
 - [x] Wire `command` + `dialog` for ⌘K/Ctrl+K search over doc titles.
 - [x] Empty state copy may reference recall metaphor without fake scores unless branded.
-- [ ] Playwright smoke optional; typecheck required.
-- [ ] Commit + PR: `feat(docs): sidebar shell + command palette`
+- [x] Playwright smoke optional; typecheck required.
+- [x] Commit + PR: `feat(docs): sidebar shell + command palette`
 
 ---
 
@@ -89,16 +89,16 @@
 - [x] Research: PublicationIndex-style list from `src/content/research.ts` only.
 - [x] Investors: keep evidence-before-projections; reject handoff TAM/$1.5M until provenance.
 - [x] Contact: AccentGlow/Callout framing around existing ContactForm.
-- [ ] Commit + PR per page group if large.
+- [x] Commit + PR per page group if large.
 
 ---
 
 ## Task 6: Deferred / out of scope (track only)
 
-- [ ] Agent-view hardcoded green hex cleanup.
-- [ ] Public Console marketing gate distinct from `/sign-in` (product decision).
-- [ ] Mobile Expo Chat/onboarding/WDBX console (separate app).
-- [ ] Brand provenance module unlocking StatBlocks.
+- [x] Agent-view hardcoded green hex cleanup (shipped on earlier branch / main).
+- [ ] Public Console marketing gate distinct from `/sign-in` (product decision — parked).
+- [ ] Mobile Expo Chat/onboarding/WDBX console (separate app — parked).
+- [x] Brand provenance module (`src/content/provenance.ts` + ProvTag/ProvLegend); sourced `figures` render on `/wdbx` + `/abi`. Home Benchmarks grids still blocked until harness.
 
 ---
 
@@ -121,3 +121,16 @@ Chrome-devtools visual QA on `:3100` for Home/nav/product pages after each PR.
 | Tokens / shadcn | Abbey + Architecture | Architecture |
 | Claims / IWL copy | Research | Research |
 | Product/docs pages | Abbey | Architecture + Research |
+
+---
+
+## Task 7: Chrome / home closeout (this PR)
+
+**Deliverable:** Gap map honest; footer ProvLegend + legal; home claim-safe; no Console gate; no banned grids.
+
+- [x] Refresh `docs/design/redesign-gap.md` to shipped reality (Remaining only parked/blocked items).
+- [x] PublicNav link set already design-aligned — keep Sign in / Console → `/app` / Contact CTA (no new Console marketing page).
+- [x] Footer: Products / Company / External columns + ProvLegend strip + Delaware C-Corp · Orlando legal line.
+- [x] Home: light composition tighten + optional ProvLegend only — **no** handoff Benchmarks / StatBlock grids.
+- [x] `bun run check` (or typecheck + tests + build); fix regressions from this slice.
+- [x] Commit + PR: `feat(site): redesign closeout — chrome, gap map, ProvLegend footer`
