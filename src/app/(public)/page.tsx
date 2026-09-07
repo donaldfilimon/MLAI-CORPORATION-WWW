@@ -2,63 +2,87 @@ import Link from "next/link";
 import { ArrowRight, Code2, Users } from "lucide-react";
 import { ArchitectureDiagram, DocumentFlow } from "@/components/architecture";
 import { publications } from "@/content/research";
+
+const stack = [
+  {
+    name: "WDBX",
+    color: "wdbx",
+    href: "/wdbx",
+    title: "WDBX — Storage",
+    text: "Memory and retrieval with source references. The index stays where the data lives.",
+  },
+  {
+    name: "ABI",
+    color: "abi",
+    href: "/abi",
+    title: "ABI — Compute",
+    text: "Runtime and orchestration through explicit interfaces. Model choices are never silent.",
+  },
+  {
+    name: "Abbey",
+    color: "abbey",
+    href: "/abbey",
+    title: "Abbey — Application",
+    text: "Projects, documents, and conversations in one assistant workspace you can inspect.",
+  },
+] as const;
+
 export default function Home() {
   return (
     <div className="public-container">
       <section className="home-hero">
         <div>
+          <span className="eyeline wdbx">
+            Privacy-first AI infrastructure · Apple Silicon
+          </span>
           <h1>
-            Intelligence
+            AI infrastructure
             <br />
-            you can inspect.
+            that never phones home.
           </h1>
           <p className="hero-description">
-            Runtime, memory, and an assistant workspace—with explicit model
-            choices and traceable sources.
+            From the vector engine up — WDBX for memory, ABI for compute, and an
+            assistant workspace with explicit model choices. Inference, index,
+            and data stay on hardware you control.
           </p>
           <div className="button-row">
-            <Link className="button white" href="/architecture">
-              Read the architecture <ArrowRight size={18} />
+            <Link className="button primary" href="/wdbx">
+              Explore the stack <ArrowRight size={18} />
             </Link>
-            <Link className="button secondary" href="/app">
-              Open workspace
+            <Link className="button secondary" href="/investors">
+              Investors
             </Link>
           </div>
         </div>
         <ArchitectureDiagram />
       </section>
-      <section className="system-section">
-        <h2>The system, in three parts.</h2>
-        {[
-          {
-            name: "WDBX",
-            color: "wdbx",
-            text: "Store and retrieve knowledge with source references.",
-          },
-          {
-            name: "ABI",
-            color: "abi",
-            text: "Connect model and tool execution through explicit interfaces.",
-          },
-          {
-            name: "Abbey",
-            color: "abbey",
-            text: "Work with projects, documents, and conversations.",
-          },
-        ].map((p) => (
-          <Link
-            className={`product-row ${p.color}`}
-            href={`/${p.name.toLowerCase()}`}
-            key={p.name}
-          >
-            <h3>{p.name}</h3>
-            <p>{p.text}</p>
-            <span>
-              View documentation <ArrowRight size={18} />
-            </span>
-          </Link>
-        ))}
+
+      <section className="system-section stack-section">
+        <div className="section-intro">
+          <span className="eyeline wdbx">The stack</span>
+          <h2>Three layers. One machine.</h2>
+          <p className="muted">
+            Each is useful on its own; together they are a private AI stack that
+            does not need to phone home.
+          </p>
+        </div>
+        <div className="stack-grid">
+          {stack.map((p) => (
+            <Link
+              className={`stack-card ${p.color}`}
+              href={p.href}
+              key={p.name}
+            >
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+              <span>
+                View {p.name} <ArrowRight size={16} />
+              </span>
+            </Link>
+          ))}
+        </div>
       </section>
+
       <section className="flow-section">
         <div>
           <h2>Read the architecture.</h2>
@@ -72,6 +96,7 @@ export default function Home() {
         </div>
         <DocumentFlow />
       </section>
+
       <section className="research-section">
         <div className="section-heading">
           <h2>Research & technical notes</h2>
@@ -99,6 +124,7 @@ export default function Home() {
             </Link>
           ))}
       </section>
+
       <section className="work-section">
         <Link href="/docs">
           <Code2 size={36} />
@@ -121,6 +147,7 @@ export default function Home() {
           </div>
         </Link>
       </section>
+
       <section className="closing-row">
         <h2>Open your workspace.</h2>
         <Link href="/app" className="button secondary">

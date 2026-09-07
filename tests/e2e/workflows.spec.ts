@@ -17,7 +17,9 @@ test("public pages, account onboarding, projects, document sources, and responsi
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Intelligence you can inspect." }),
+    page.getByRole("heading", {
+      name: "AI infrastructure that never phones home.",
+    }),
   ).toBeVisible();
   await page.screenshot({
     path: `${screenshots}/home-1440.png`,
