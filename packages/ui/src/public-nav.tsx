@@ -18,7 +18,7 @@ export interface PublicNavProps {
 const defaultItems: [string, string][] = [
   ["WDBX", "/wdbx"],
   ["ABI", "/abi"],
-  ["Abbey", "/abbey"],
+  ["IWL", "/abbey"],
   ["Platform", "/platform"],
   ["Research", "/research"],
   ["Company", "/company"],

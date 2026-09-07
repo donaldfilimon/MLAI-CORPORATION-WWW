@@ -22,8 +22,8 @@ const stack = [
     name: "Abbey",
     color: "abbey",
     href: "/abbey",
-    title: "Abbey — Application",
-    text: "Projects, documents, and conversations in one assistant workspace you can inspect.",
+    title: "IWL — Application",
+    text: "Projects, documents, and conversations in one assistant workspace you can inspect. Abbey, Aviva, and Abi share the core.",
   },
 ] as const;
 

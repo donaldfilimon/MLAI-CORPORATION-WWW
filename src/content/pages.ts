@@ -8,9 +8,9 @@ export interface Article {
 const section = (title: string, ...body: string[]) => ({ title, body });
 export const pages: Record<string, Article> = {
   platform: {
-    title: "A workspace for inspectable intelligence.",
+    title: "Autonomy you can answer for.",
     description:
-      "Projects, documents, model connections, and customer work share one clear interface. You choose where processing happens.",
+      "Four layers make autonomy inspectable: what the agent saw, what it was allowed to do, how it was tested, and where it runs.",
     category: "Platform",
     sections: [
       section(
@@ -30,10 +30,10 @@ export const pages: Record<string, Article> = {
     ],
   },
   abi: {
-    title: "ABI",
+    title: "Compute you can interrogate.",
     description:
       "A Rust runtime for agent orchestration, model connections, and inspectable capabilities.",
-    category: "Runtime & orchestration",
+    category: "ABI · Runtime & orchestration",
     sections: [
       section(
         "Start with what the runtime can prove",
@@ -52,10 +52,10 @@ export const pages: Record<string, Article> = {
     ],
   },
   wdbx: {
-    title: "WDBX",
+    title: "Memory with a path you can follow.",
     description:
       "Memory and retrieval infrastructure with inspectable storage and explicit interfaces.",
-    category: "Memory & retrieval",
+    category: "WDBX · Memory & retrieval",
     sections: [
       section(
         "Query a real store",
@@ -77,10 +77,10 @@ export const pages: Record<string, Article> = {
     ],
   },
   abbey: {
-    title: "Abbey",
+    title: "IWL — an assistant that remembers locally.",
     description:
-      "An assistant workspace built around your projects, documents, and chosen models.",
-    category: "Assistant experience",
+      "IWL is the assistant workspace with persistent vector-backed memory. Abbey, Aviva, and Abi share one core on hardware you control.",
+    category: "IWL · Assistant experience",
     sections: [
       section(
         "Ask with sources in reach",

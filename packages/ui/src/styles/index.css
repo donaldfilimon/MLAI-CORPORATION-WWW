@@ -2,11 +2,13 @@
    Load order is significant: tokens define the custom properties the other two
    layers read, base sets element defaults, components style the exported parts.
    Consumers may load additional CSS after this file to override any of it. */
-/* Tailwind Preflight is the element reset this design system was built on.
-   No Tailwind utilities or theme are used, so only the reset is imported, in
-   the same cascade layer Tailwind places it in: unlayered rules below and in
-   consumers still win regardless of specificity. */
+/* Tailwind: preflight + theme + utilities. @source points at compiled package
+   sources so shadcn utility classes in components/ui are generated when the
+   stylesheet is processed by the app bundler. */
 @import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "../**/*.{js,jsx,ts,tsx}";
 @import "@fontsource/geist-sans/400.css";
 @import "@fontsource/geist-sans/500.css";
 @import "@fontsource/geist-sans/600.css";

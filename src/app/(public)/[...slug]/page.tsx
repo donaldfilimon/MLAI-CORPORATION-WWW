@@ -7,7 +7,13 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { pages, docPaths } from "@/content/pages";
 import { ContentIndex } from "@/components/content-index";
-import { ContactForm } from "@/components/contact-form";
+import { PlatformPage } from "@/components/platform-page";
+import { AbbeyPage } from "@/components/abbey-page";
+import { AbiPage } from "@/components/abi-page";
+import { WdbxPage } from "@/components/wdbx-page";
+import { DocsShell } from "@/components/docs-shell";
+import { ContactPage } from "@/components/contact-page";
+import { CompanyPage } from "@/components/company-page";
 type Props = { params: Promise<{ slug: string[] }> };
 export function generateStaticParams() {
   return [
@@ -44,45 +50,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 export default async function Page({ params }: Props) {
   const key = (await params).slug.join("/");
+  const docsItems = docPaths.map((path) => ({
+    href: `/${path}`,
+    title: pages[path].title,
+    description: pages[path].description,
+    category: pages[path].category,
+  }));
   const publication = findPublication(key);
   if (publication) return <ResearchArticle publication={publication} />;
   if (key === "research") return <ResearchLanding />;
-  if (key === "contact")
-    return (
-      <div className="public-container article-layout">
-        <header className="article-header">
-          <span className="eyeline">Contact</span>
-          <h1>Start with the actual problem.</h1>
-          <p>
-            Tell us what you are building, where you are stuck, and what a
-            useful outcome would look like.
-          </p>
-        </header>
-        <ContactForm />
-      </div>
-    );
+  if (key === "contact") return <ContactPage />;
   if (key === "docs") {
     return (
-      <div className="public-container article-layout">
-        <header className="article-header">
-          <h1>Documentation</h1>
-          <p>
-            Set up the workspace, understand its boundaries, and connect real
-            services.
-          </p>
-        </header>
-        <ContentIndex
-          searchLabel="Search documentation"
-          placeholder="Search articles and guides…"
-          items={docPaths.map((path) => ({ href: `/${path}`, ...pages[path] }))}
-        />
+      <div className="public-container">
+        <DocsShell items={docsItems}>
+          <header className="article-header docs-landing-header">
+            <span className="eyeline wdbx">Docs</span>
+            <h1>Documentation</h1>
+            <p>
+              Set up the workspace, understand its boundaries, and connect real
+              services. Use ⌘K to jump by title.
+            </p>
+          </header>
+          <ContentIndex
+            searchLabel="Filter documentation"
+            placeholder="Filter articles and guides…"
+            items={docPaths.map((path) => ({ href: `/${path}`, ...pages[path] }))}
+          />
+        </DocsShell>
       </div>
     );
   }
+  if (key === "platform") return <PlatformPage />;
+  if (key === "abbey") return <AbbeyPage />;
+  if (key === "abi") return <AbiPage />;
+  if (key === "wdbx") return <WdbxPage />;
+  if (key === "company") return <CompanyPage />;
   const article = pages[key];
   if (!article) notFound();
-  return (
-    <div className="public-container article-layout">
+  const articleBody = (
+    <div className="article-layout">
       <header className="article-header">
         <span
           className={`eyeline ${["abi", "abbey", "wdbx"].includes(key) ? key : ""}`}
@@ -170,4 +177,12 @@ export default async function Page({ params }: Props) {
       </div>
     </div>
   );
+  if (key.startsWith("docs/")) {
+    return (
+      <div className="public-container">
+        <DocsShell items={docsItems}>{articleBody}</DocsShell>
+      </div>
+    );
+  }
+  return <div className="public-container">{articleBody}</div>;
 }
