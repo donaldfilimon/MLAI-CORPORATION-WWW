@@ -1082,7 +1082,7 @@
   gap: 7px;
   max-width: 100%;
   text-align: left;
-  background: #a878f609;
+  background: color-mix(in srgb, var(--purple) 3.5%, transparent);
   border: 1px solid #67508a77;
   border-radius: 4px;
   padding: 8px 11px;
