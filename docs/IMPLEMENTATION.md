@@ -219,6 +219,23 @@ section above**; that is unchanged by this work and deliberately not absorbed in
 above, generated TypeScript include changes are removed after validation. The final gate was
 re-run against the reverted file and still exited 0.
 
+**Homepage screenshots, re-verified rather than assumed.** The merge changed
+`src/app/(public)/page.tsx`, and the three `docs/verification/screenshots/home-{390,768,1440}.png`
+staged with it were the earlier session's 16:23 output, so they were committed as verification of
+a page nobody had re-screenshotted. Those files are owned by `tests/e2e/public-accessibility.spec.ts`
+(not by the research spec, whose `MLAI_RESEARCH_SCREENSHOTS` path writes `research-library-*` and
+`research-article-*` instead). Running that owning spec passed and regenerated all three
+**byte-identically** — `git status docs/verification/screenshots/` came back empty afterwards — so
+the committed images do show the current homepage, and the accessibility assertions around them
+(no horizontal overflow at any of the three widths, mobile navigation focus restore and
+`aria-expanded`, a `0s` skip-link transition under reduced motion, `/docs/` served, unknown route
+404, no page errors) passed against the merged tree.
+
+**Gate fixture.** `.data/research-merge/` is a disposable fixture directory created for these
+runs, not application state; it is covered by `.gitignore:5` (`.data/`) and nothing under `.data`
+entered the commit. It sits beside the earlier `.data/agent-checkpoint/` fixture from the runtime
+checkpoint above and can be deleted freely.
+
 **Gaps, carried forward unchanged.** No live fetch of the remote published page was performed, so
 nothing here is acceptance of its served content. The KaTeX 0.18.7 dependency risk posture remains
 unknown — no affirmative security verdict. Browser evidence is Chromium at three widths, not
