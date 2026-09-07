@@ -354,7 +354,7 @@ export async function checkOrganizationAccess(
     return { ok: true, organizationId: cached.organizationId };
   }
   const auth = requireWorkOS();
-  if (!auth) return { ok: false, error: "WorkOS is not configured", status: 503 };
+  if (!auth) return { ok: false, error: "Sign-in is unavailable right now.", status: 503 };
   try {
     const memberships = await auth.userManagement.listOrganizationMemberships({
       userId: user.userId,

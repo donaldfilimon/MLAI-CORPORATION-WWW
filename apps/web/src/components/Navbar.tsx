@@ -216,7 +216,7 @@ export const Navbar = () => {
                     }}
                     className="w-full bg-white text-black font-bold h-12"
                   >
-                    Request Access
+                    Request access
                   </Button>
                 </div>
               </div>

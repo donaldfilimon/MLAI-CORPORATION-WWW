@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   const event = typeof body.event === "string" ? body.event : "";
   if (!TELEMETRY_EVENTS.has(event)) {
-    return Response.json({ error: "Unknown event" }, { status: 400 });
+    return Response.json({ error: "Unrecognized event name." }, { status: 400 });
   }
   // Path is allowlisted against the real route set, exactly like `event` above
   // — a leading-"/" check is not validation. `path` arrives unauthenticated, so

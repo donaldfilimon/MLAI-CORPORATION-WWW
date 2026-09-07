@@ -28,29 +28,29 @@ export async function POST(req: Request) {
   const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
 
   if (name.length < 2) {
-    return Response.json({ error: "Name must be at least 2 characters" }, { status: 400 });
+    return Response.json({ error: "Enter your full name." }, { status: 400 });
   }
   if (!email || !email.includes("@")) {
-    return Response.json({ error: "Invalid email address" }, { status: 400 });
+    return Response.json({ error: "Enter an email address we can reply to." }, { status: 400 });
   }
   if (company.length < 2) {
-    return Response.json({ error: "Company name is required" }, { status: 400 });
+    return Response.json({ error: "Enter your organization." }, { status: 400 });
   }
   if (message.length < 10) {
-    return Response.json({ error: "Message must be at least 10 characters" }, { status: 400 });
+    return Response.json({ error: "Add a bit more detail — at least 10 characters." }, { status: 400 });
   }
   if (!(await verifyTurnstile(req, turnstileToken, "inquiry"))) {
-    return Response.json({ error: "Human verification failed" }, { status: 403 });
+    return Response.json({ error: "We couldn't confirm you're not a bot. Reload the page and try again." }, { status: 403 });
   }
 
   try {
     const sql = await ensureDatabase();
     await sql`INSERT INTO inquiries (name, email, company, project_type, message)
       VALUES (${name}, ${email}, ${company}, ${projectType}, ${message})`;
-    return Response.json({ ok: true, message: "Inquiry submitted successfully." });
+    return Response.json({ ok: true, message: "Inquiry sent." });
   } catch (err) {
     console.error("Database error saving inquiry:", err);
-    return Response.json({ error: "Failed to store inquiry" }, { status: 500 });
+    return Response.json({ error: "We couldn't save that. Try again in a moment." }, { status: 500 });
   }
 }
 
@@ -68,6 +68,6 @@ export async function GET(req: Request) {
     return Response.json({ ok: true, inquiries });
   } catch (err) {
     console.error("Database error loading inquiries:", err);
-    return Response.json({ error: "Failed to load inquiries" }, { status: 500 });
+    return Response.json({ error: "Couldn't load inquiries. Refresh to retry." }, { status: 500 });
   }
 }
