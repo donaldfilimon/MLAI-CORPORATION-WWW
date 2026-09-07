@@ -3447,15 +3447,17 @@
   color: var(--text);
 }
 
-@media (max-width: 960px) {
+/* Folded into the existing ladder: these were the only 960px and 720px
+   breakpoints in the sheet, each carrying a single rule for one page. */
+@media (max-width: 1000px) {
   .repo-panel {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .repo-tabs {
-    margin-top: 18px;
+    margin-top: var(--space-4);
   }
 }
 
