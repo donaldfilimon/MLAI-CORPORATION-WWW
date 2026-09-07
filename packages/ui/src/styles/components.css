@@ -1,7 +1,7 @@
 .table-scroll {
   overflow: auto;
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   margin: 20px 0;
 }
 
@@ -22,7 +22,7 @@
 .button {
   padding: 12px 18px;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
@@ -66,7 +66,7 @@
   padding: 7px;
   border: 1px solid transparent;
   background: transparent;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
@@ -134,7 +134,7 @@
 .success {
   padding: 12px 14px;
   border: 1px solid #73313f;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: #4a122320;
   color: #ffb5be;
   font-size: 13px;
@@ -285,7 +285,7 @@
   align-items: center;
   gap: 10px;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 0 12px;
   max-width: 540px;
   background: #080d14;
@@ -403,7 +403,7 @@
 }
 
 .nav-contact {
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 8px 16px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -448,7 +448,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border: 1px dashed currentColor;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   position: relative;
   padding: 16px 6px;
   gap: 8px;
@@ -469,13 +469,13 @@
   justify-content: center;
   flex-direction: column;
   gap: 9px;
-  color: #c5ccd5;
+  color: var(--text-body);
   font-size: 10px;
   text-align: center;
 }
 
 .layer-items svg {
-  color: #c5ccd5;
+  color: var(--text-body);
   width: 24px;
 }
 
@@ -517,7 +517,7 @@
   height: 51px;
   padding: 13px;
   border: 1px dashed #687789;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
 }
 
 .flow-number {

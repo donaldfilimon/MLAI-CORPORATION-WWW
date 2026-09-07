@@ -11,9 +11,50 @@
   --purple: #a855f7;
   --green: #34d399;
   --warn: #fbbf24;
+  /* Text ramp. `--text` is for headings and anything that must read as
+     foreground; `--text-body` is running prose, which sat at four
+     near-identical literals (#c0c6cf, #c5ccd5, #b7c0cb, #b8c0cb) before this
+     token existed; `--muted` is supporting copy; `--text-faint` is the
+     footer-label tier. Four steps, so a fifth grey has to justify itself. */
+  --text-body: #c0c6cf;
+  --text-faint: #64748b;
+
   --font-body: "Geist Sans", "Geist", system-ui, sans-serif;
   --font-heading: "Spectral", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Radius scale. Was 15 distinct values with 4px and 5px used 29 times
+     between them for the same visual job; those collapse into `sm`.
+     `--radius` below is shadcn's and stays, since its primitives read it. */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  /* Type scale. The site had no size tokens at all and three conflicting h1
+     rules. Ratio is ~1.25 from the 14px body, with the display step set by
+     the hero clamp rather than the ratio. */
+  --size-1: 11px;
+  --size-2: 12px;
+  --size-3: 14px;
+  --size-4: 18px;
+  --size-5: 22px;
+  --size-6: 27px;
+  --size-7: clamp(28px, 3vw, 36px);
+  --size-display: clamp(40px, 4.8vw, 56px);
+
+  /* Spacing. Hand-tuned values ran 9/19/22/23/47px; this is a 4px grid, which
+     is also what the Tailwind primitives already use. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
   /* Product accents. AGENTS.md fixes these three: WDBX cyan, ABI violet, Abbey emerald. */
   --accent-wdbx: var(--cyan);
   --accent-abi: var(--purple);

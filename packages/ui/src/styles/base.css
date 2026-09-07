@@ -82,7 +82,7 @@ h4 {
 }
 
 p {
-  color: #c0c6cf;
+  color: var(--text-body);
 }
 
 code,
@@ -97,7 +97,7 @@ pre {
   background: #080c12;
   border: 1px solid var(--line);
   padding: 20px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   line-height: 1.75;
 }
 
@@ -127,7 +127,7 @@ textarea,
 select {
   background: #090e15;
   border: 1px solid #303945;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 11px 13px;
   color: var(--text);
   min-width: 0;
@@ -155,7 +155,7 @@ form > label {
 
 fieldset {
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   margin: 16px 0;
   padding: 15px;
 }
