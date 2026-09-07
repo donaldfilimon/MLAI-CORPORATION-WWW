@@ -50,12 +50,9 @@ subdirectory, which changes two things:
    enforcement history; "Abbey" has financial-services history. Renaming a persona
    costs nothing today and a great deal after launch.
 2. **Legal pages** are drafts full of [BRACKETS]. Not legal advice.
-3. **Self-host fonts** (`@fontsource/sora`, `@fontsource/manrope`,
-   `@fontsource/jetbrains-mono`) to drop the Google Fonts request. The privacy page
-   currently discloses it.
-4. **Benchmarks stay em-dash** until a reproducible harness exists. `lib/brand.ts`
+3. **Benchmarks stay em-dash** until a reproducible harness exists. `lib/brand.ts`
    is the only file to edit when that changes — never a component.
-5. **The repository moved from Zig to Rust.** Docs copy in `lib/content.ts` and the
+4. **The repository moved from Zig to Rust.** Docs copy in `lib/content.ts` and the
    build commands in `app/docs/page.tsx` still say `zig build`. Reconcile against
    whatever the main branch actually is before launch.
 
