@@ -28,14 +28,17 @@ const features = [
 export function WdbxPage() {
   return (
     <div className="public-container marketing-page">
-      <section className="marketing-hero">
-        <div>
-          <span className="eyeline wdbx">WDBX · Memory & retrieval</span>
+      {/* The ledger is the hero. Every other product page opens with a
+          decorative panel; this page opens with the evidence, because the
+          evidence is the product's actual argument. */}
+      <section className="ledger-hero">
+        <div className="ledger-hero-lede">
+          <span className="eyeline wdbx">WDBX · Memory &amp; retrieval</span>
           <h1>Memory with a path you can follow.</h1>
           <p className="hero-description">
-            Memory and retrieval infrastructure with inspectable storage and
-            explicit interfaces. Context stays as weighted paths — so you can
-            ask which sources were used and where confidence dropped.
+            Every value below is read from the line of the substrate that
+            defines it, at a pinned commit. Where no harness exists yet, the
+            value stays an em dash and the row stays a target.
           </p>
           <div className="button-row">
             <Link className="button primary" href="/docs/wdbx">
@@ -51,47 +54,7 @@ export function WdbxPage() {
             </Link>
           </div>
         </div>
-        <aside className="trace-panel" aria-label="Retrieval shape">
-          <div
-            className="trace-panel-label"
-            style={{ color: "var(--accent-wdbx)" }}
-          >
-            retrieve ❯
-          </div>
-          <pre>{`hnsw · k pinned · sources attached
-weight path · confidence labeled
-mutation event · workspace scoped
-
-illustrative shape — not a benchmark`}</pre>
-        </aside>
-      </section>
-
-      <section className="system-section marketing-section">
-        <div className="section-intro">
-          <span className="eyeline wdbx">Surface</span>
-          <h2>Interfaces that report the truth.</h2>
-        </div>
-        <div className="feature-grid">
-          {features.map((item) => (
-            <article className="feature-card wdbx" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.desc}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="system-section marketing-section">
-        <div className="section-intro">
-          <span className="eyeline wdbx">Substrate defaults</span>
-          <h2>The numbers come from the source that compiles.</h2>
-          <p className="muted">
-            Each row links to the line in the WDBX substrate that defines it, at
-            a pinned commit. Where no harness exists, the value stays an em dash
-            and the row stays a target.
-          </p>
-        </div>
-        <div className="table-scroll">
+        <div className="table-scroll ledger-hero-table">
           <table>
             <caption>
               WDBX substrate parameters, read from{" "}
@@ -113,10 +76,7 @@ illustrative shape — not a benchmark`}</pre>
                   <td>
                     {figure.label}
                     {figure.note ? (
-                      <span className="prov-legend-gloss">
-                        {" "}
-                        — {figure.note}
-                      </span>
+                      <span className="prov-legend-gloss"> — {figure.note}</span>
                     ) : null}
                   </td>
                   <td>
@@ -133,18 +93,30 @@ illustrative shape — not a benchmark`}</pre>
                         </a>
                       </>
                     ) : (
-                      <span className="prov-legend-gloss">
-                        {" "}
-                        {figure.source}
-                      </span>
+                      <span className="prov-legend-gloss"> {figure.source}</span>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <ProvLegend variant="inline" className="prov-note" />
         </div>
-        <ProvLegend variant="inline" className="prov-note" />
+      </section>
+
+      <section className="system-section marketing-section">
+        <div className="section-intro">
+          <span className="eyeline wdbx">Surface</span>
+          <h2>Interfaces that report the truth.</h2>
+        </div>
+        <div className="feature-grid">
+          {features.map((item) => (
+            <article className="feature-card wdbx" key={item.title}>
+              <h3>{item.title}</h3>
+              <p>{item.desc}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="split-section wdbx">

@@ -21,3 +21,4 @@ backups/
 .next-*/
 packages/*/dist/
 next-env.d.ts
+.skill-telemetry/

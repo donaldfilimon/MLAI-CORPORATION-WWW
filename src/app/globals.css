@@ -3749,3 +3749,124 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* ── Ledger hero (WDBX) ───────────────────────────────────────────────────
+   The evidence leads. Every other product page opens with a two-column
+   marketing hero and a decorative panel; this one opens with the substrate
+   table, because the table is the argument. The lede is deliberately narrow
+   so the ledger below it is the widest thing on the page. */
+
+.ledger-hero {
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ledger-hero-lede {
+  max-width: 34rem;
+}
+
+.ledger-hero-lede h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(40px, 4.8vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 18px 0 0;
+  text-wrap: balance;
+}
+
+.ledger-hero-table {
+  margin-top: 44px;
+  border-top: 1px solid var(--accent-wdbx);
+}
+
+/* The value column is the reason to look: give it the accent and the mono
+   face, and let the prose column stay quiet. */
+.ledger-hero-table td:first-child code {
+  font-size: 15px;
+  color: var(--accent-wdbx);
+  background: none;
+  padding: 0;
+}
+
+.ledger-hero-table td {
+  vertical-align: baseline;
+}
+
+.ledger-hero-table caption {
+  caption-side: bottom;
+  text-align: left;
+  padding-top: 14px;
+}
+
+.ledger-hero-table .prov-note {
+  margin-top: 16px;
+}
+
+@media (max-width: 767px) {
+  .ledger-hero {
+    padding: 48px 0 40px;
+  }
+  .ledger-hero-table {
+    margin-top: 32px;
+  }
+
+  /* Three columns in 390px squeezes the prose to two words a line and clips
+     the provenance chip. Each row becomes a record instead: value, then what
+     it is, then how it is known. Same markup, so the claims gate and the
+     table semantics are untouched — only the presentation stacks. The header
+     row stops carrying position once the cells stack, so it is hidden from
+     sight but left for assistive technology. */
+  /* `caption-side` stops applying once the table is no longer a table box, so
+     the caption would jump to the top in source order. Order it explicitly. */
+  .ledger-hero-table table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ledger-hero-table tbody {
+    order: 1;
+  }
+
+  .ledger-hero-table caption {
+    order: 2;
+    display: block;
+    width: 100%;
+  }
+
+  .ledger-hero-table tbody,
+  .ledger-hero-table tr,
+  .ledger-hero-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .ledger-hero-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .ledger-hero-table tr {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ledger-hero-table td {
+    padding: 0;
+  }
+
+  .ledger-hero-table td:first-child code {
+    display: block;
+    font-size: 24px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .ledger-hero-table td:last-child {
+    margin-top: 10px;
+  }
+}
