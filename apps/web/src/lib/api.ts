@@ -162,11 +162,37 @@ export function verifyWorkosUser() {
   }>("/api/auth/verify-user");
 }
 
-export function updateProfile(payload: { firstName?: string; lastName?: string; company?: string; useCase?: string }) {
-  return apiJson<{ ok: boolean }>("/api/profile", {
-    method: "PATCH",
-    body: JSON.stringify(payload),
+export type ProfileUpdateResult = { ok: true } | { ok: false; status: number; error: string };
+
+/**
+ * PATCH /api/profile answers five *structured* non-2xx statuses, every one of
+ * which the user has a different remedy for: **401** (session gone), **503**
+ * (`requireWorkOS()` unconfigured), **502** (the WorkOS call failed), **413**
+ * (body over the 16 KB cap) and **400** (unreadable body). All five carry an
+ * `error` string written for a person or mapped to copy by the view.
+ *
+ * `status` is returned alongside `error` so the view can key its copy on the
+ * status code rather than on the handler's prose, which is free to change.
+ * `apiJson` would not permit that: it throws `new Error(await res.text())`,
+ * which discards the status and stringifies the body.
+ *
+ * Anything else — a 500, a Cloud Run HTML 503, a network fault — still rejects,
+ * so the caller's catch keeps meaning "something actually went wrong" and an
+ * infrastructure error page is never rendered as product copy.
+ */
+export async function updateProfile(payload: {
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  useCase?: string;
+}): Promise<ProfileUpdateResult> {
+  const res = await apiJsonGated<{ ok: boolean }>("/api/profile", {
+    init: { method: "PATCH", body: JSON.stringify(payload) },
+    expectStatuses: [400, 401, 413, 502, 503],
   });
+
+  if (!res.ok) return { ok: false, status: res.status, error: res.error };
+  return { ok: true };
 }
 
 export type TelemetrySummary = {

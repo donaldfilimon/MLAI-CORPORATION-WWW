@@ -40,6 +40,56 @@ import {
 
 const LEGACY_HISTORY_KEYS = ["quesar_console_history", "mlai_console_history"];
 
+/** Copy for the console routes' bare status strings. The handlers behind this
+ *  view answer with a mix of prose written for a person ("Your account isn't in
+ *  the Quesar beta yet...", "An access reason of 8–200 characters is required",
+ *  "MFA enrollment required for administrative access") which is shown as-is,
+ *  and API status words that are not sentences. Only the latter are rewritten
+ *  here, in the view, so the routes keep speaking in status terms. */
+const CONSOLE_ERROR_COPY: Record<string, string> = {
+  Unauthorized: "Your session has expired. Sign in again to continue.",
+  "Too many requests": "Too many requests in a short time. Wait a minute and try again.",
+  "Invalid audit id": "That audit record could not be opened.",
+  "Audit not found": "That audit record no longer exists.",
+  "Protected generation failed": "The response could not be generated right now. Try again in a moment.",
+};
+
+/** Every call this view makes goes through `apiJson` in `src/lib/api.ts`, which
+ *  on a non-2xx throws `new Error(await res.text())` - so a handler's
+ *  `{ "error": "..." }` body arrives here as raw JSON *text*, not as a
+ *  `result.error` field. Parse it back out rather than discarding it and
+ *  asserting a cause of our own: these routes fail for many distinct reasons
+ *  (session, organization membership, consent, admin identity, MFA policy,
+ *  fresh authentication, reason length, audit decryption, rate limit) and each
+ *  has a different remedy, so one fixed string hid all of them.
+ *
+ *  Only a handler-written body counts, using the same test `apiJsonGated`
+ *  applies: a JSON object with a string `error`. A network fault, an `apiJson`
+ *  status fallback ("Request failed: 502"), or an infrastructure error page
+ *  (Cloud Run answers a cold-start 503 in HTML) is not product copy and falls
+ *  through to the caller's fallback rather than being rendered as if it were.
+ *
+ *  The status code is NOT recoverable this way - `apiJson` keeps only the body -
+ *  so copy here is keyed on the handler's error string, never on 401 vs 403 vs
+ *  503. That is a known workaround, not the intended end state: `Profile.tsx`
+ *  reaches the same goal by going through `apiJsonGated` and keying on the
+ *  status, and the agreed fix is to make `apiJson` throw a typed error so both
+ *  paths collapse into one. Until that lands, do not add status-dependent copy
+ *  here - it cannot be expressed. See tasks/goals.md. */
+function consoleErrorMessage(err: unknown, fallback: string): string {
+  const raw = err instanceof Error ? err.message : "";
+  let apiError: string | null = null;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    const candidate = (parsed as { error?: unknown } | null)?.error;
+    if (typeof candidate === "string") apiError = candidate;
+  } catch {
+    /* not a handler-written JSON body - fall through to the caller's fallback */
+  }
+  if (!apiError) return fallback;
+  return CONSOLE_ERROR_COPY[apiError] || apiError;
+}
+
 function downloadJson(audit: ConversationAudit) {
   const blob = new Blob([JSON.stringify(audit, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -90,8 +140,9 @@ export function Console() {
         setAudits(nextAudits.audits);
       })
       .catch((cause) => {
-        const message = cause instanceof Error ? cause.message : "Protected console unavailable";
-        setError(message);
+        // Was: the raw `cause.message`, i.e. the handler's `{"error":"..."}`
+        // body printed to the user as literal JSON.
+        setError(consoleErrorMessage(cause, "The console could not be loaded right now. Reload the page."));
       });
   }, [user]);
 
@@ -112,8 +163,8 @@ export function Console() {
         consentedAt: result.consent.consentedAt,
         withdrawnAt: null,
       });
-    } catch {
-      setError("The conversation audit policy could not be recorded.");
+    } catch (cause) {
+      setError(consoleErrorMessage(cause, "The audit policy could not be accepted right now. Try again in a moment."));
     } finally {
       setBusy(false);
     }
@@ -142,8 +193,10 @@ export function Console() {
       setMessages([...nextMessages, { role: "assistant", content: result.text }]);
       setReply(result.text);
       await refreshAudits();
-    } catch {
-      setError("Protected generation failed before a durable audit could be returned.");
+    } catch (cause) {
+      // No claim about the audit record: the route's 503 covers generation and
+      // audit persistence alike and does not say which one failed.
+      setError(consoleErrorMessage(cause, "The response could not be generated right now. Try again in a moment."));
     } finally {
       setBusy(false);
     }
@@ -157,8 +210,10 @@ export function Console() {
         ? await getAdminConversationAudit(id, adminReason.trim())
         : await getConversationAudit(id);
       setSelectedAudit(result.audit);
-    } catch {
-      setError(admin ? "Admin audit access requires MFA and a reason of at least 8 characters." : "Audit unavailable.");
+    } catch (cause) {
+      // The admin and self reads fail for different reasons, but the route says
+      // which one fired - so this no longer guesses from the `admin` flag.
+      setError(consoleErrorMessage(cause, "That audit record could not be opened right now. Try again in a moment."));
     } finally {
       setBusy(false);
     }
@@ -171,9 +226,9 @@ export function Console() {
     try {
       const result = await getAdminConversationAudits(adminReason.trim());
       setAdminAudits(result.audits);
-    } catch {
+    } catch (cause) {
       setAdminAudits([]);
-      setError("Administrator inventory requires active organization membership, verified MFA policy, fresh authentication, and a recorded reason.");
+      setError(consoleErrorMessage(cause, "The administrator audit inventory could not be loaded right now. Try again in a moment."));
     } finally {
       setBusy(false);
     }

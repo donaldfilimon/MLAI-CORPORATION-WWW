@@ -143,3 +143,215 @@ actually reported — not before.
   `body-limit.ts:82`.** Left alone on purpose: they are operator- and
   admin-facing, and rewriting an access-control module's whole vocabulary is a
   different change from porting a copy pass.
+
+## Finish the copy pass: entry points, swallowed errors, remaining vendor leaks
+status: in_progress
+
+Captured 2026-09-06 23:3x. The port goal above closed at `87e89e1` having
+deliberately left four findings on the table; this is that work, plus the two
+defects the agents found while doing it. One goal, not five, because it is one
+intention: make the user-facing copy say what is actually true.
+
+- **Entry-point noun (landed, uncommitted).** Four buttons opening one dialog
+  disagreed: Home and Navbar said *Request access*, `Login.tsx:62` *Start access
+  request*, `ContactCTA.tsx:48` *Start an Inquiry*. All four now read **"Start an
+  inquiry"**. The reasoning is worth keeping, because it inverts the obvious fix:
+  the same `openInquiry()` is bound to Footer's Careers, Contact and Press Kit,
+  to Services' "Discuss Service", and to every article footer. It is a general
+  contact form that emails MLAI and **grants nothing** — so "Request access" was
+  over-promising its own destination, and the access-gating language it carried
+  already lives in the surrounding copy (Home's `INVITE-ONLY` eyebrow, the
+  Navbar's "Invited? Sign in"). "Start an inquiry" was already shipped in
+  `article.tsx:220` and `FounderProfile.tsx:279`, so this joins a convention
+  rather than inventing one.
+- **Swallowed profile errors (landed, uncommitted).** `Profile.tsx:54` hardcoded
+  `'Profile update failed.'`, collapsing six distinct failure modes into one.
+  The cause was not the obvious one: `updateProfile` goes through `apiJson`,
+  which throws `new Error(await res.text())` on any non-2xx, so the handler's
+  `{"error":...}` arrives as **raw JSON text in `err.message`** and there is no
+  `result.error` to read. The fix parses that, applying the same validity test
+  `apiJsonGated` uses so infrastructure noise (a Cloud Run HTML 503) falls to a
+  generic fallback instead of rendering as product copy.
+- **Remaining vendor leaks (in flight).** `workos.ts` and `body-limit.ts`.
+- **Two defects found in passing, NOT fixed, and neither is copy.**
+  `ContactCTA.tsx:52` "Schedule a Framework Deep-Dive" is a **dead button** — no
+  `onClick`, no `asChild`, no `Link` — rendering full-size beside a working CTA.
+  And 413 is **genuinely reachable** on the profile form: the use-case textarea
+  has no client-side `maxLength`, and the route's `.slice(0, 240)` runs only
+  after the body is read, so a large paste hits the 16 KB cap first.
+- **Three follow-ups recorded so they are not rediscovered.** Route
+  `updateProfile` through `apiJsonGated` as `createCheckout` already does, which
+  deletes the error parsing entirely. `Console.tsx` has four `catch {}` sites
+  swallowing errors the same way, two of which assert a specific cause the
+  response may contradict. And `Profile.tsx`'s `try` wraps `await refresh()`, so
+  a refresh failure after a successful save reports failure — pre-existing, and
+  fixing it is a behaviour change rather than a display fix.
+
+Acceptance: all three slices landed, `/simplify` applied to the combined diff,
+`check:web` + `check:topology` green read from their own exit codes, committed,
+and pushed to `origin/main`. Deploy is CI's to trigger, not this goal's to claim.
+
+### Slice log — vendor leaks (landed 23:3x, uncommitted)
+
+- **Six strings in `workos.ts`, two in `body-limit.ts`, three test assertions.**
+  `bunx vitest run` from `apps/web`: exit 0, 35 files / 322 tests.
+- **⚠️ MUST RECONCILE BEFORE COMMIT: `Profile.tsx`'s `PROFILE_ERROR_COPY` key
+  `'Payload too large'` is now dead.** `body-limit.ts:62` no longer returns that
+  string, so the map falls through to `PROFILE_ERROR_COPY[apiError] || apiError`
+  and renders the new generic copy. Nothing crashes and nothing leaks — the
+  fallback is by design — but Profile silently loses its use-case-specific
+  wording ("Shorten the use case"), and the doc comment at `Profile.tsx:19-21`
+  now names two strings that no longer exist. This is exactly the class of defect
+  that survives a green gate: no test covers it and the failure is graceful.
+- **My brief for that agent was wrong on a load-bearing point, and it said so
+  rather than following it.** I framed `workos.ts` as admin/operator-facing and
+  told it to weigh precision over plainness. That holds for `checkAdminAccess`,
+  but `checkOrganizationAccess` errors are forwarded as `access.error` by
+  `/api/llm/chat`, `/api/llm/status`, `/api/consent`, `/api/audits` and
+  `/api/audits/[id]` — ordinary beta-user routes — and `Console.tsx:235` renders
+  them in a `role="alert"` banner. The earlier pass had already rewritten one
+  string in that same function (line 357), leaving three siblings in internal
+  voice on the same code path. Widening to six was correct; my instruction was
+  not. Recorded because the next person to write such a brief will make the same
+  mistake: *"which function is it in"* does not tell you who reads the string —
+  *"which routes forward it"* does.
+- **It also found a third pinned assertion my brief missed** (`body-limit.test.ts`
+  line 79, `payloadTooLarge()` direct), beyond the two I named at 101 and 128 —
+  where 128 sits inside a `describe.each` serving six cases.
+- **Six `workos.ts` strings deliberately left**, each naming a distinct condition
+  with a distinct remedy: `ADMIN_EMAILS` unset vs. not-on-the-allowlist; IdP
+  attestation missing vs. MFA policy unconfirmed vs. MFA not enrolled vs. factor
+  lookup transiently failing; impersonated/unknown session kind. Four are pinned
+  by `workos-admin.test.ts`, which is evidence they are vocabulary rather than
+  drift. Collapsing the MFA rows would invert the remedy in both directions.
+
+### Slice log — the dead CTA (landed 23:3x, uncommitted, PRODUCT-VISIBLE)
+
+- **`ContactCTA.tsx`'s "Schedule a Framework Deep-Dive" button was removed, not
+  wired — and the evidence says it was never wired in the first place.**
+  `git log --follow` traced it to its introduction in `bf43f25` ("feat:
+  modernize MLAI web platform"); the markup is **byte-identical across all 8
+  historical revisions**. It was born inert, not broken by a later refactor.
+- **Inertness was proven, not inferred.** No `onClick`, `asChild`, `Link`,
+  `href`, `form` or `formAction` on the button; `Magnetic` renders `{children}`
+  inside an `m.div` carrying only mouse handlers and never `cloneElement`s; the
+  `Button` primitive with `asChild` false forwards only variant/size/className;
+  and there is no `<form>` anywhere in the ancestor chain (`About.tsx` is the
+  sole consumer), so `type="submit"` could not have fired either.
+- **No destination exists to wire it to.** All 31 `page.tsx` files under
+  `apps/web/app/`: no `/schedule`, `/book`, `/contact`, or `/consultation`.
+  A grep for `calendly|cal\.com|savvycal|hubspot|meetings\.|book.*(call|demo)`
+  across `apps/web` returns **zero hits**.
+- **It deliberately refused two available redirects, and the reasoning is the
+  whole point of this goal.** Pointing it at `/showcase/explainer` (a
+  prerecorded video) or `/demo` (an in-browser WDBX miniature) — or at
+  `openInquiry()` like its sibling — would have made the button *do something*
+  while still lying: "Schedule a Framework Deep-Dive" promises a booked session
+  with a person. That is the same defect class as the "Check Inquiry Details"
+  button this goal started with. The section now shows one working CTA instead
+  of one working and one lying.
+- **⚠️ This is the only user-visible REMOVAL in the whole pass** — everything
+  else is wording. A button disappears from the About page. It is the right call
+  on the evidence, but it is a product decision and Donald can veto it; every
+  other change in this goal stands independently of it.
+- `bunx tsc --noEmit` exit 0. No test referenced `ContactCTA` or either string
+  (the lone `scheduler-auth.test.ts` grep hit is a false positive — GCP audit
+  scheduler OIDC, matched on the word "Schedule").
+
+### Slice log — Console error handling (landed 23:3x, uncommitted)
+
+- **Five sites fixed, not the four I scoped.** The fifth is the worst of them:
+  the initial `Promise.all(...).catch` set `cause.message` **raw**, so a user
+  outside the beta org was shown the literal string
+  `{"error":"Your account isn't in the Quesar beta yet. …"}` — JSON braces and
+  all — on screen. Nobody knew that was there.
+- **Guessed causes deleted, and this is the substance of the change.** `viewAudit`
+  asserted "requires MFA and a reason of at least 8 characters" for *any* admin
+  read failure, including 404, invalid-id, and a decryption 503.
+  `loadAdminAudits` enumerated four causes regardless of which fired.
+  `handleSubmit` asserted the audit write was the failure point, when that 503
+  wraps generation *and* persistence and does not say which. Two real conditions
+  were previously invisible: a 429 rate limit, and a 428 consent-required.
+- **Three defects reported and deliberately not fixed:** `withdrawPolicy`,
+  `exportAudit` and `removeAudit` have `try/finally` with **no catch**, so
+  failures become unhandled rejections and the user sees nothing at all — a
+  different defect class from the one scoped. `profileErrorMessage` and
+  `consoleErrorMessage` are now near-identical and want hoisting once the
+  `api.ts` work lands. And every Console call uses `apiJson`, none uses
+  `apiJsonGated`, so the HTTP status is unrecoverable and copy can only be keyed
+  on the message text.
+
+### ⚠️ NOT a leak: "WorkOS" and "AuthKit" in non-error copy. Do not "fix" this.
+
+The Console agent flagged `Console.tsx:271/284/294` as vendor names the removal
+pass missed. **Checked before acting, and it is a false positive.** The name
+appears deliberately across the whole product surface — `Home.tsx:13,29,115,164`,
+`Login.tsx:45,62,65`, `Docs.tsx:229-231,244-249,429,614`, `Hero.tsx:16,27`, and
+`Privacy.tsx:19,28,30`.
+
+The distinction that matters, stated once so it is not relitigated: a vendor name
+**inside an error message** is a leak, because someone hitting an error has no
+idea what WorkOS is and cannot act on it. A vendor name in **architecture, trust,
+or privacy copy** is a deliberate claim — for a security-positioned product,
+naming the identity provider is the point, and `Privacy.tsx` naming it as a
+sub-processor is plausibly a legal obligation. Removing these would have degraded
+product copy and possibly a privacy disclosure.
+
+Separate and still open, as a product question rather than a defect: the login
+button reads **"Continue with AuthKit"**, which names our vendor's product to a
+user deciding whether to click. That is a branding call, not a leak, and it is
+Donald's.
+
+### /simplify — 4 review agents, applied 23:4x
+
+**Applied (4):** the `api.ts` docblock paragraph asserting history that never
+happened (it claimed `Profile` "had to `JSON.parse(err.message)`", but at HEAD
+that catch was a single fixed string — it described an uncommitted intermediate
+state); the stale "out of scope here" memo in `Console.tsx`, replaced with the
+actual decision and a warning not to add status-dependent copy there because it
+cannot be expressed; a double type-assertion tidied to match what
+`apiJsonGated` already does; and `ContactCTA`'s wrapper, where removing the
+second child left `flex-col sm:flex-row` and `gap-4` dead — including a
+responsive variant that can never fire (`flex justify-center` renders
+identically). Also fixed a divergence this diff *introduced*: `workos.ts:370`
+and `Login.tsx:24` had two different sentences for the same refusal reached by
+two paths; `Login.tsx` now uses the `workos.ts` wording.
+
+**REJECTED, and this is the one worth keeping.** The simplification agent said
+to delete `CONSOLE_ERROR_COPY["Protected generation failed"]` because it is
+"byte-identical to its own call-site fallback" and "whether the body parses or
+not, the user sees the same sentence." **That reading of the mechanism is
+wrong.** `consoleErrorMessage` ends
+`if (!apiError) return fallback; return CONSOLE_ERROR_COPY[apiError] || apiError;`
+— the fallback is reached only when parsing *fails*. When the handler's body
+parses, a missing row falls through to `apiError`, i.e. the raw internal string.
+Deleting that row would have shown users **"Protected generation failed"**
+verbatim. The row is load-bearing. `"Invalid audit id"` was kept on the same
+asymmetry: deleting a dead row saves one line, and being wrong about
+reachability shows internal copy.
+
+**DEFERRED — the root cause, specified so it is not re-derived.** Three of four
+agents flagged that this diff solves one problem two ways: `Profile` keys copy
+on the HTTP **status**, `Console` on the handler's **prose**. The altitude agent
+found the real cause is neither view — it is `apiJson` doing
+`throw new Error(await res.text())`, which discards the status and stringifies
+the body, so `Console` re-parses what `apiJson` just serialized. The fix is to
+make `apiJson` throw a typed `ApiError { status, error, body, structured }`,
+after which `apiJsonGated` collapses into a thin wrapper over it and
+`consoleErrorMessage` becomes one line.
+
+Blast radius was **measured, not estimated**: `apiJson` is module-private with
+14 wrappers whose signatures are unchanged (`Promise<T>` before and after); the
+only behavioural change is the content of `err.message`, and every site reading
+it was grepped — `Console.tsx` (shrinks), `Profile.tsx:55-59` (reads
+`.value` only), two bare `catch {}`, and one assertion in `api.test.ts:20`.
+**≈3 files and one test assertion — smaller than the two workarounds this diff
+shipped combined.**
+
+**Not done now, deliberately.** It is shared-infrastructure surgery, and
+bundling it into the same push as a copy pass would mean that if the deploy
+misbehaves, nobody can tell which half caused it. The shallow alternative
+(migrating Console's 5 calls to gated wrappers) was also rejected: it would add
+7 wrappers that the deeper fix then deletes. Ship the copy pass; do this as its
+own change. Free deletion when it happens: `getInquiries` (`api.ts:137`) has
+zero callers.

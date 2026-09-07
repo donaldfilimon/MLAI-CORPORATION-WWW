@@ -253,11 +253,11 @@ export function accessTokenAuthTime(accessToken: string): number | null {
 
 function freshAuthentication(user: SessionData): { ok: true } | { ok: false; error: string } {
   if (!user.authenticatedAt) {
-    return { ok: false, error: "Verified WorkOS authentication time is required" };
+    return { ok: false, error: "We couldn't confirm when you last signed in. Sign in again." };
   }
   const age = Date.now() - user.authenticatedAt;
   if (age < -ADMIN_FUTURE_AUTH_SKEW_MS || age > ADMIN_FRESH_AUTH_MS) {
-    return { ok: false, error: "Fresh WorkOS authentication is required for administrative access" };
+    return { ok: false, error: "Your sign-in is too old for admin access. Sign in again." };
   }
   return { ok: true };
 }
@@ -314,7 +314,7 @@ export async function checkAdminMfa(
     return { ok: false, error: "Supported authentication method is required for admin access" };
   }
   if (!ADMIN_MFA_POLICY_VERIFIED) {
-    return { ok: false, error: "Verified WorkOS MFA policy is required for administrative access" };
+    return { ok: false, error: "Admin access is unavailable until multi-factor policy is confirmed for this deployment. Enrolling a factor won't unblock it." };
   }
   const enrolled = await userHasMfaFactor(user.userId);
   if (enrolled === null) {
@@ -347,7 +347,7 @@ export async function checkOrganizationAccess(
   | { ok: false; error: string; status: 403 | 503 }
 > {
   if (!WORKOS_ORGANIZATION_ID) {
-    return { ok: false, error: "Quesar beta organization is not configured", status: 503 };
+    return { ok: false, error: "The Quesar beta isn't available right now. Try again later.", status: 503 };
   }
   const cached = membershipCache.get(user.userId);
   if (cached && cached.expires > Date.now() && cached.organizationId === WORKOS_ORGANIZATION_ID) {
@@ -367,7 +367,7 @@ export async function checkOrganizationAccess(
         membership.organizationId === WORKOS_ORGANIZATION_ID && membership.status === "active",
     );
     if (!active) {
-      return { ok: false, error: "An active Quesar beta invitation is required", status: 403 };
+      return { ok: false, error: "Your account isn't in the Quesar beta yet. Request access, or ask your organization administrator for an invitation.", status: 403 };
     }
     membershipCache.set(user.userId, {
       organizationId: active.organizationId,
@@ -376,6 +376,6 @@ export async function checkOrganizationAccess(
     return { ok: true, organizationId: active.organizationId };
   } catch (error) {
     console.error("WorkOS organization membership check failed:", error);
-    return { ok: false, error: "Organization membership verification unavailable", status: 503 };
+    return { ok: false, error: "We couldn't check your Quesar access just now. Try again in a moment.", status: 503 };
   }
 }
