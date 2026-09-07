@@ -688,7 +688,11 @@
   }
 }
 
-@media (max-width: 767px) {
+/* The horizontal nav stops fitting below ~900px: eight section links plus three
+   actions measure 884px at a 768px viewport. Collapsing to the drawer here
+   rather than tightening type again keeps the next added link from
+   reintroducing a horizontal scrollbar. */
+@media (max-width: 900px) {
   .mobile-only {
     display: inline-flex;
   }
@@ -696,9 +700,6 @@
     padding: 18px 22px;
     justify-content: space-between;
     position: relative;
-  }
-  .brand span {
-    font-size: 24px;
   }
   .public-nav {
     display: none;
@@ -724,6 +725,12 @@
   .nav-actions {
     margin: 18px 0 0;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 767px) {
+  .brand span {
+    font-size: 24px;
   }
   .architecture-diagram {
     max-width: 520px;

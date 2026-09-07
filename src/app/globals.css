@@ -190,15 +190,18 @@
 }
 
 .public-footer {
+  /* The accent rule bleeds by exactly this much; keep them on one value so a
+     breakpoint that changes the padding cannot push the rule off-screen. */
+  --footer-pad: 40px;
   max-width: 80rem;
   margin: 48px auto 0;
-  padding: 0 40px 40px;
+  padding: 0 var(--footer-pad) 40px;
   border-top: 0;
 }
 
 .public-footer-accent {
   height: 1px;
-  margin: 0 -40px 40px;
+  margin: 0 calc(-1 * var(--footer-pad)) 40px;
   background: linear-gradient(90deg, var(--cyan), var(--purple), var(--green));
 }
 
@@ -2511,6 +2514,7 @@
     font-size: 22px;
   }
   .public-footer {
+    --footer-pad: 0px;
     margin: 0 23px;
     gap: 23px;
     padding: 25px 0;

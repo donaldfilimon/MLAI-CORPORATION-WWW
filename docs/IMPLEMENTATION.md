@@ -324,3 +324,61 @@ build prerendered both pages — but that is structural evidence, not a screensh
 **Correction to the section above.** Its closing line, "the repository still has no remote of any
 kind", is stale: `origin` is `donaldfilimon/mlai-website-app` (private), and `main` tracked it at
 `29391e5` when this work began.
+
+## Browser acceptance repair — two real layout defects, two stale expectations (2026-09-07)
+
+**Two genuine horizontal-overflow defects on the public site, both found by measuring the DOM
+rather than reading CSS, and both fixed.** `tests/e2e/public-accessibility.spec.ts` had been
+failing on `main` at the 390 px no-horizontal-overflow assertion.
+
+1. **Footer accent, ≤767 px.** `.public-footer-accent` bled `-40px` on each side to reach the
+   footer's padding edge, but the ≤767 px breakpoint sets the footer's horizontal padding to `0`
+   and its margin to `23px`. Measured at a 390 px viewport: the element rendered 424 px wide from
+   `left=-17` to `right=407`, making `documentElement.scrollWidth` 407. The bleed and the padding
+   are now one value (`--footer-pad`), so a breakpoint cannot change one without the other.
+2. **Public nav, 768–900 px.** The horizontal nav had outgrown its collapse point. At 768 px the
+   eight section links plus three actions measured 884 px against a 768 px viewport, and the drawer
+   only took over at ≤767 px. The nav-specific rules moved to `@media (max-width: 900px)`;
+   `.brand span` stayed at ≤767 px. Tightening type again was rejected — the next link added would
+   have reintroduced the scrollbar.
+
+Measured after the fix: 390 px `scrollWidth` 390 with zero overflowing elements, 768 px 768,
+1440 px 1440.
+
+**Two stale test expectations, corrected without weakening an assertion.** Neither was a
+capability regression, and both were verified against source before editing.
+
+- `tests/e2e/research.spec.ts` expected the `h1` "Research you can follow to the source."
+  Commit `3040d21` deliberately rewrote it to "Figures with their receipts." and did not update
+  the spec, so it had been red since that merge.
+- `tests/e2e/content-search.spec.ts` looked for a searchbox named "Search documentation". The docs
+  redesign renamed the in-page index filter to "Filter documentation" and gave the name "Search
+  documentation…" to the ⌘K command palette. URL-backed docs search still exists — every behavior
+  the section above records for it (URL initialization, back/forward, reload, whitespace matching,
+  result counts, keyboard clearing and focus, preserved parameters) still passes under the new
+  name.
+
+**Rate limiting, not a broken sign-up flow.** `workflows.spec.ts` and `wdbx-studio.spec.ts` failed
+with "Too many requests" on `/api/auth/sign-up/email`. `auth.ts` sets Better Auth to 30 requests
+per 60 s per IP, and `.data-e2e` persists that counter across runs, so both repeated runs and a
+single whole-suite sweep exhaust it. Each spec passes in isolation against a reset `.data-e2e`
+(`workflows` 7/7 with `content-search` and `research`; `wdbx-studio` 3/3). **The limit was not
+lowered and no test-only bypass was added** — that setting is production-correct, and weakening it
+to make a sweep green would trade a real protection for a green log.
+
+**Evidence.** `bun run check` exit **0** — 75/75 TypeScript tests across 8 suites, 26/26 Python
+parser tests, and the production build prerendering 57 static pages. Exit codes were read from the
+commands themselves, never through a pipe. Browser: `public-accessibility` passes at 390/768/1440;
+`content-search`, `research` and `workflows` pass 7/7 together on a reset `.data-e2e`;
+`wdbx-studio` passes 3/3 in isolation. Verification screenshots were regenerated from the passing
+runs, including a new `architecture-390.png`. `format:check` remains red on the same eleven
+pre-existing files and was not absorbed here. `tsconfig.json` was compared before and after
+`next build` and was unchanged.
+
+**Not done, stated plainly.** The full browser suite has still never been green in one invocation,
+and the block is the rate limiter described above, not any assertion. Making it green in one sweep
+needs a decision that is a product call, not a test fix: stagger the account-creating specs,
+give them a shared fixture account, or scope the limiter by something other than IP. No live-model
+acceptance was run (`live-chat.spec.ts` was excluded throughout). The `Unknown at rule: @theme` /
+`@source` CSS parse warnings from `packages/ui/dist/styles/` still appear in the dev log; they did
+not affect these assertions and were not investigated.

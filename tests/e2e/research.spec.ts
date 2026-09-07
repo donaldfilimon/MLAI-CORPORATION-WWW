@@ -11,7 +11,7 @@ for (const width of [390, 768, 1440]) {
     await page.setViewportSize({ width, height: 960 });
     await page.goto("/research?source=bookmark#main");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Research you can follow to the source.",
+      "Figures with their receipts.",
     );
     const cards = page.locator(".article-index > a");
     await expect(cards).toHaveCount(24);

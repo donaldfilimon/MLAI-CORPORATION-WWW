@@ -36,6 +36,12 @@ embedding model, and writes `.data/capabilities.json`.
   `bunx playwright install chromium`. Playwright starts its own `bun run dev` against `.data-e2e`,
   `.next-e2e` and port 3101, and reuses an already running server outside CI.
   `tests/e2e/live-chat.spec.ts` needs `MLAI_E2E_MODEL_URL` and `MLAI_E2E_MODEL_ID`.
+- **The browser suite is rate-limit bound, and it fails looking like a product bug.** `auth.ts`
+  sets Better Auth to 30 requests per 60 s per IP, and `.data-e2e` persists the counter between
+  runs, so a repeated or whole-suite run gets `Too many requests` on `/api/auth/sign-up/email` and
+  reports it as a broken sign-up flow. `rm -rf .data-e2e` before a run, and run the
+  account-creating specs (`workflows`, `wdbx-studio`, `account`, `agent`) in separate invocations
+  rather than one sweep — each passes in isolation. Do not lower the limit to make a run green.
 - Agent runs have their own suites: `tests/agent.test.ts` covers dispatch authority, proposal and
   confirmation, stale revisions, budgets, and lease fencing; `tests/worker-agent.test.ts` covers
   publication guards and restoring an interrupted run. The live gate is `bun run verify:agent`,

@@ -7,7 +7,9 @@ test("documentation search survives navigation and offers accessible recovery", 
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/docs?q=API&source=bookmark#main");
-  const search = page.getByRole("searchbox", { name: "Search documentation" });
+  // "Filter documentation" is the in-page index filter; the docs shell's ⌘K
+  // palette separately owns the "Search documentation…" name. Keep them distinct.
+  const search = page.getByRole("searchbox", { name: "Filter documentation" });
   await expect(search).toHaveValue("API");
   const cards = page.locator(".article-index > a");
   const firstTitle = await cards.first().locator("h2").innerText();
