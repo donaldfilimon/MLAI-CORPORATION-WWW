@@ -22,9 +22,11 @@
   /* The one cross-product accent: CTAs, live status, the measured tag. */
   --color-signal:    #d4ff3f;
 
-  --font-display: "Sora", "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-sans:    "Manrope", "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* The self-hosted @fontsource packages register the "<Family> Variable" name;
+     the plain name is kept next in each stack as a locally-installed fallback. */
+  --font-display: "Sora Variable", "Sora", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    "Manrope Variable", "Manrope", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 html { color-scheme: dark; }

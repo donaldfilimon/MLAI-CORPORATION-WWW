@@ -3,6 +3,11 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Palette } from "@/components/Palette";
 import { org } from "@/lib/brand";
+// Self-hosted, so the page makes no third-party font request. Imported before
+// globals.css so the @font-face rules land ahead of the theme that uses them.
+import "@fontsource-variable/sora";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 
 const bp = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -33,12 +38,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;800&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
-          rel="stylesheet"
-        />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>

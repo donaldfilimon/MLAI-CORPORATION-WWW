@@ -13,7 +13,7 @@ export function Mark({ size = 26 }: { size?: number }) {
       <rect width="128" height="128" rx="36" fill="url(#mk-c)" />
       <rect x="6.4" y="6.4" width="115.2" height="115.2" rx="29" fill="none" stroke="#fff" strokeOpacity="0.28" />
       <rect width="128" height="128" rx="36" fill="url(#mk-s)" />
-      <text x="64" y="60" textAnchor="middle" dominantBaseline="central" fontFamily="Sora, sans-serif"
+      <text x="64" y="60" textAnchor="middle" dominantBaseline="central" fontFamily="'Sora Variable', Sora, sans-serif"
         fontWeight="800" fontSize="64" letterSpacing="-3.2" fill="#fff">M</text>
       <line x1="38.4" y1="102.4" x2="89.6" y2="102.4" stroke="#fff" strokeOpacity="0.45" strokeWidth="1.8" />
       <circle cx="38.4" cy="102.4" r="5.6" fill="#34D399" />

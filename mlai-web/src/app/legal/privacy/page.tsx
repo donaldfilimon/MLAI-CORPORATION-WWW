@@ -27,8 +27,9 @@ export default function Page() {
           long as needed to respond.</P>
 
         <H>3. Fonts</H>
-        <P>Web fonts are currently requested from Google Fonts, which receives the visitor IP address.
-          Self-host the fonts to remove this third-party request — recommended before launch.</P>
+        <P>Web fonts are self-hosted and served from the same origin as the rest of the site.
+          No font request goes to Google Fonts or any other third party, so no third party
+          receives your IP address by way of this page.</P>
 
         <H>4. Your rights</H>
         <P>Depending on where you live you may have rights to access, correct, delete, or port your
