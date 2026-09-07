@@ -22,10 +22,13 @@ subdirectory, which changes two things:
   own repository (the generator's intent), or move the workflow to the parent's
   `.github/workflows/` and add `working-directory: mlai-web` to every step — noting
   that it would then commit `mlai-web/docs/` onto the parent's default branch.
-- **It is outside the parent's gates.** The root `tsconfig.json` includes only
-  `src/`, `scripts/`, `tests/` and root `*.ts`, and `format:check` names its paths
-  explicitly, so `bun run check` at the root neither typechecks nor formats this
-  project. Run `bun run typecheck` and `bun run build` from `mlai-web/`.
+- **It is outside the parent's own gates,** by construction. The root
+  `tsconfig.json` includes only `src/`, `scripts/`, `tests/` and root `*.ts`, and
+  `format:check` names its paths explicitly, so the root `bun run check` neither
+  typechecks nor formats this project — and nothing here can break it. This project
+  is checked instead by `.github/workflows/mlai-web.yml` at the repository root,
+  which runs `lint`, `typecheck`, `build` and asserts all 11 routes rendered,
+  filtered to `mlai-web/**`. It verifies only; it does not deploy.
 
 ## Deliberate omissions
 
@@ -52,11 +55,7 @@ subdirectory, which changes two things:
    currently discloses it.
 4. **Benchmarks stay em-dash** until a reproducible harness exists. `lib/brand.ts`
    is the only file to edit when that changes — never a component.
-5. **No linter.** `next lint` was removed in Next 16, and the script that called it
-   has been dropped — `typecheck` and `build` are the gates. Adding ESLint means
-   `eslint` + `eslint-config-next` and a flat config; `eslint-plugin-jsx-a11y` is
-   worth including given how much of this site is hand-rolled interactive markup.
-6. **The repository moved from Zig to Rust.** Docs copy in `lib/content.ts` and the
+5. **The repository moved from Zig to Rust.** Docs copy in `lib/content.ts` and the
    build commands in `app/docs/page.tsx` still say `zig build`. Reconcile against
    whatever the main branch actually is before launch.
 

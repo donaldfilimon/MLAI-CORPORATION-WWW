@@ -5,7 +5,13 @@ Next.js 16 · React 19 · Tailwind v4 · static export to `docs/` for GitHub Pag
     bun install
     bun run dev        # http://localhost:3000
     bun run build      # -> docs/ + docs/.nojekyll
+    bun run lint       # eslint (typescript-eslint, react-hooks, jsx-a11y)
+    bun run typecheck  # tsc --noEmit
     bun run serve      # preview the built output
+
+`lint`, `typecheck` and `build` are what CI runs — `.github/workflows/mlai-web.yml`
+at the repository root, filtered to `mlai-web/**`. Note that `next lint` no longer
+exists in Next 16; ESLint runs directly from `eslint.config.js`.
 
 ## Structure
 

@@ -16,12 +16,14 @@ export function Palette() {
     return s ? paletteItems.filter((a) => (a.label + a.hint).toLowerCase().includes(s)) : [...paletteItems];
   }, [q]);
 
-  useEffect(() => setSel(0), [q]);
-
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        // Reset here rather than in an effect on `open`: this is the event that
+        // changes it, so there is no cascading render to pay for.
+        setQ("");
+        setSel(0);
         setOpen((v) => !v);
       }
     };
@@ -29,8 +31,10 @@ export function Palette() {
     return () => window.removeEventListener("keydown", h);
   }, []);
 
+  // Focusing a freshly mounted node is a DOM side effect, so it does belong in
+  // an effect — the input is committed by the time this runs.
   useEffect(() => {
-    if (open) { setQ(""); setTimeout(() => inputRef.current?.focus(), 20); }
+    if (open) inputRef.current?.focus();
   }, [open]);
 
   useEffect(() => {
@@ -52,20 +56,26 @@ export function Palette() {
 
   return (
     <div
-      onClick={() => setOpen(false)}
       role="dialog" aria-modal="true" aria-label="Command palette"
-      className="fixed inset-0 z-[100] flex justify-center bg-black/70 px-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex justify-center px-4"
       style={{ paddingTop: "14vh" }}
     >
+      {/* A real button, not a div with onClick: the backdrop is genuinely
+          interactive, so it gets keyboard and screen-reader affordances for
+          free. Escape closes too, from the handler above. */}
+      <button
+        type="button" aria-label="Close command palette" onClick={() => setOpen(false)}
+        className="absolute inset-0 cursor-default bg-black/70 backdrop-blur-sm"
+      />
       <div
-        onClick={(e) => e.stopPropagation()}
-        className="rise h-fit w-full max-w-[520px] overflow-hidden rounded-[14px] border border-line-hi"
+        className="rise relative h-fit w-full max-w-[520px] overflow-hidden rounded-[14px] border border-line-hi"
         style={{ background: "#0A0A0B", boxShadow: "0 24px 80px -20px rgba(0,0,0,0.9)" }}
       >
         <div className="flex items-center gap-2.5 border-b border-line px-4 py-3.5">
           <Search size={15} className="text-faint" />
           <input
-            ref={inputRef} value={q} onChange={(e) => setQ(e.target.value)}
+            ref={inputRef} value={q}
+            onChange={(e) => { setQ(e.target.value); setSel(0); }}
             placeholder="Jump to…" aria-label="Search pages"
             className="flex-1 bg-transparent text-[14.5px] outline-none"
           />
