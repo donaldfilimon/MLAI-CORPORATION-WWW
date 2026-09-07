@@ -157,6 +157,24 @@ conversation audits and bound by AAD to one `(user, provider)` pair. Access
 tokens are minted per request and cached in memory only; no provider token is
 ever sent to the browser.
 
+**How the pipeline treats these.** They are deliberately *not* in the deploy
+workflow's `REQUIRED` / `REQUIRED_SECRETS` lists, so a deployment with none of
+them set builds and deploys exactly as before. Each optional variable is
+appended to the Cloud Run env only when set, and each optional secret is
+mounted only once it actually has a version — mounting an empty secret would
+fail the deploy. OpenTofu creates the two empty secret containers and grants
+the runtime account access; **populating them is what turns a provider on**:
+
+```bash
+printf %s "<client secret>" | gcloud secrets versions add GOOGLE_OAUTH_CLIENT_SECRET \
+  --project "<project>" --data-file=-
+```
+
+Set the matching `GOOGLE_OAUTH_CLIENT_ID` / `MICROSOFT_OAUTH_CLIENT_ID`
+repository variable in the same change; a client id with no secret (or the
+reverse) reads as unconfigured, and the console reports the source unavailable
+rather than half-working.
+
 ## 4. WorkOS
 
 In the production WorkOS environment:
