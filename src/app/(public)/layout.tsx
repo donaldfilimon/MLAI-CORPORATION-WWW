@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PublicNav } from "@/components/public-nav";
 import { Brand } from "@/components/brand";
+import { ProvLegend } from "@/components/prov-tag";
 
 const productLinks: [string, string][] = [
   ["WDBX", "/wdbx"],
@@ -59,8 +60,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </nav>
-            <nav aria-label="Resources">
-              <span className="public-footer-label">Resources</span>
+            <nav aria-label="External">
+              <span className="public-footer-label">External</span>
               {externalLinks.map(([label, href]) => (
                 <Link
                   href={href}
@@ -75,8 +76,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </nav>
           </div>
         </div>
+        <div className="public-footer-prov">
+          <ProvLegend variant="inline" />
+        </div>
         <div className="public-footer-meta">
           <p>© 2026 Machine Learning Advanced Innovations, Inc.</p>
+          <p>Delaware C-Corp · Orlando, FL</p>
           <p>Care first. Clarity always. Competence throughout.</p>
         </div>
       </footer>
