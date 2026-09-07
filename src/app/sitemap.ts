@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "contact",
     "knowledge",
     "repositories",
+    "quesar",
     ...Object.keys(pages),
     ...publicationPaths,
   ].map((path) => ({

@@ -52,5 +52,5 @@ Adapted from `design_handoff_mlai_next/README.md` (2026-09-05). Site `*.dc.html`
 
 - Home / Benchmarks StatBlock grids from handoff.
 - Knowledge / Repositories claims ledgers.
-- Quesar consent / audit mocks.
+- ~~Quesar consent / audit mocks.~~ Shipped on `redesign/quesar-private-ops` (`/quesar`, `/quesar/consent`, `/quesar/audit`).
 - Wholesale chrome replace (nav/footer already shipped in earlier slices).
