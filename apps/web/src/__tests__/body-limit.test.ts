@@ -76,7 +76,7 @@ describe("payloadTooLarge", () => {
   it("is a 413 with a JSON error body", async () => {
     const res = payloadTooLarge();
     expect(res.status).toBe(413);
-    await expect(res.json()).resolves.toEqual({ error: "Payload too large" });
+    await expect(res.json()).resolves.toEqual({ error: "That's too much to send at once. Shorten it and try again." });
   });
 });
 
@@ -98,7 +98,7 @@ describe("readJsonLimited — the shared JSON-route contract", () => {
     const body = await readJsonLimited(stringReq("not-json-at-all"), 1024);
     expect(body).toBeInstanceOf(Response);
     expect((body as Response).status).toBe(400);
-    await expect((body as Response).json()).resolves.toEqual({ error: "Invalid JSON body" });
+    await expect((body as Response).json()).resolves.toEqual({ error: "We couldn't read that request. Reload the page and try again." });
   });
 
   it("returns a 400 for an empty body — an aborted read is 413, a bodyless POST is 400", async () => {
@@ -125,7 +125,7 @@ describe("readJsonLimited — the shared JSON-route contract", () => {
       expect(body).toBeInstanceOf(Response);
       expect((body as Response).status).toBe(400);
       // Same error shape as the unparseable branch — no new string to learn.
-      await expect((body as Response).json()).resolves.toEqual({ error: "Invalid JSON body" });
+      await expect((body as Response).json()).resolves.toEqual({ error: "We couldn't read that request. Reload the page and try again." });
     });
   });
 

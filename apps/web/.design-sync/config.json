@@ -102,5 +102,8 @@
     "SpecList": {
       "cardMode": "column"
     }
+  },
+  "libOverrides": {
+    "dts.mjs": "Next.js app with no built .d.ts - resolve types from cfg.entry + real .tsx sources instead of an empty d.ts glob"
   }
 }

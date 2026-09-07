@@ -12,6 +12,23 @@ type AuthFeatures = Awaited<ReturnType<typeof getAuthFeatures>>;
 type BillingPlans = Awaited<ReturnType<typeof getBillingPlans>>;
 type VerifiedUser = Awaited<ReturnType<typeof verifyWorkosUser>>;
 
+/** Copy for the two statuses this page can say more about than the route can.
+ *  `PATCH /api/profile` writes prose of its own for 503 ("Sign-in is
+ *  unavailable right now."), 502 ("We couldn't save your profile. Try again.")
+ *  and 400, and those are shown as-is. The other two are rewritten here: 401
+ *  arrives as the bare status word `Unauthorized`, which is not a sentence; and
+ *  413 comes from the shared body-limit helper, which cannot know it is the
+ *  use-case field that is too long. 413 is reachable because that textarea has
+ *  no client-side length cap and the route reads at most 16 KB.
+ *
+ *  Keyed on the STATUS, not on the handler's string: the wording of the shared
+ *  413/400 bodies in `src/lib/server/body-limit.ts` is free to change, and a
+ *  message-keyed row silently stops matching when it does. */
+const PROFILE_ERROR_COPY: Record<number, string> = {
+  401: 'Your session has expired. Sign in again to save your profile.',
+  413: 'That is too much text to save. Shorten the use case and try again.',
+};
+
 export function Profile() {
   const { user, loading, refresh } = useAuth();
   const navigate = useNavigate();
@@ -47,11 +64,21 @@ export function Profile() {
     setSaving(true);
     setStatus('');
     try {
-      await updateProfile({ firstName, lastName, company, useCase });
+      const result = await updateProfile({ firstName, lastName, company, useCase });
+      // ok:false is one of the route's five structured refusals, each with its
+      // own remedy — show the mapped copy, or the handler's own prose when it
+      // already wrote a sentence. Nothing was saved, so skip the refresh.
+      if (!result.ok) {
+        setStatus(PROFILE_ERROR_COPY[result.status] ?? result.error);
+        return;
+      }
       await refresh();
       setStatus('Profile updated.');
     } catch {
-      setStatus('Profile update failed.');
+      // Only faults the route did not speak for land here — a 500, a Cloud Run
+      // HTML 503, a dropped connection. None of those are product copy, so say
+      // nothing about the cause.
+      setStatus("We couldn't save your profile right now. Try again in a moment.");
     } finally {
       setSaving(false);
     }

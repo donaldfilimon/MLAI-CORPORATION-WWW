@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, X, LogOut, User } from "lucide-react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, User, Search } from "lucide-react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,13 +21,30 @@ import { Magnetic } from "./Magnetic";
 import { Logo } from "./Logo";
 import { useAuth } from "@/lib/auth";
 import { useUI } from "@/lib/ui-context";
+import { DocsSearch } from "@/components/DocsSearch";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { openInquiry } = useUI();
+  const [docsSearchOpen, setDocsSearchOpen] = useState(false);
+
+  const openDocsSearch = () => {
+    const onDocs =
+      pathname === "/docs" ||
+      pathname.startsWith("/docs/") ||
+      pathname === "/research" ||
+      pathname.startsWith("/research/");
+    if (onDocs) {
+      setDocsSearchOpen(true);
+      return;
+    }
+    // Land on docs with search open; DocsSearch reads ?search=1.
+    navigate("/docs?search=1");
+  };
 
   const navItems = [
     { to: "/#control-plane", label: "Product" },
@@ -88,6 +105,14 @@ export const Navbar = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
+            <button
+              type="button"
+              onClick={openDocsSearch}
+              aria-label="Search documentation"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-300"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+            </button>
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -151,6 +176,7 @@ export const Navbar = () => {
               className="lg:hidden p-2 text-white"
               aria-label="Toggle navigation menu"
               aria-controls="mobile-navigation"
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
             </SheetTrigger>
@@ -164,6 +190,17 @@ export const Navbar = () => {
               </SheetHeader>
               <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openDocsSearch();
+                    }}
+                    className="inline-flex items-center gap-2 py-3 text-lg font-medium text-white"
+                  >
+                    <Search className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+                    Search docs
+                  </button>
                   {navItems.map((item) => (
                     <NavLink
                       key={item.to}
@@ -216,7 +253,7 @@ export const Navbar = () => {
                     }}
                     className="w-full bg-white text-black font-bold h-12"
                   >
-                    Request Access
+                    Start an inquiry
                   </Button>
                 </div>
               </div>
@@ -224,6 +261,11 @@ export const Navbar = () => {
           </Sheet>
         </div>
       </div>
+      <DocsSearch
+        open={docsSearchOpen}
+        onOpenChange={setDocsSearchOpen}
+        enableHotkey
+      />
     </nav>
   );
 };

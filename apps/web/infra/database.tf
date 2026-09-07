@@ -74,6 +74,11 @@ locals {
     "AUDIT_SUBJECT_PEPPER",
     "TURNSTILE_SECRET",
     "ADMIN_EMAILS",
+    # Console workspace sources (/console/workspace). Optional: the containers
+    # exist so the runtime can read them once populated, but the deploy does not
+    # require a version, and with none the feature stays inert.
+    "GOOGLE_OAUTH_CLIENT_SECRET",
+    "MICROSOFT_OAUTH_CLIENT_SECRET",
   ])
 }
 

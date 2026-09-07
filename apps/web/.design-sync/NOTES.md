@@ -439,3 +439,48 @@ approved; both safe to remove whenever someone says so):
   while the anchor is valid, because unchanged components skip grading entirely — but it
   means any run that loses the anchor pays the full 41-component grading cost. The anchor is
   the only thing standing between a 2-minute re-sync and an hours-long one.
+
+## dts override ported here (2026-09-06 19:1x) — BUILT AND VERIFIED, NOT YET UPLOADED
+
+`.design-sync/overrides/dts.mjs` is the fork proven on `donald-filimon-sites` the same
+evening. It fixes the fact that **every component here shipped
+`<Name>Props { [key: string]: unknown }` as its entire API contract** — which is precisely
+what the Claude Design agent codes against. Upstream computes the ts-morph entry as
+`pkgDir/<pkg.types || index.d.ts>` and globs only `**/*.d.ts`; this repo ships neither, so
+prop extraction found nothing. The fork changes three things: entry falls back to
+`cfg.entry` (`src/components/ds.ts`), the project also loads `srcDir`'s real `.tsx`, and
+`baseUrl`/`paths` come from `cfg.tsconfig`.
+
+**Result, measured:** `ButtonProps` now carries the full `variant` and `size` unions,
+`asChild`, and the inherited Base UI props with JSDoc. `StatBlockProps` is
+`{ stat: Stat; accent?: "wdbx" | "abi" | "abbey"; className?: string }` with the
+provenance-tag constraint in its doc comment. **39 of 40 emitted `.d.ts` changed.**
+Build exit 0, validate **exit 0**, "all .d.ts parse cleanly".
+
+**The router trap did NOT re-arm, and that was checked deliberately.** `tsconfig` maps
+`react-router-dom` to `src/lib/router-compat.tsx`, whose `next/link` import reads
+`process.env.__NEXT_*` at module scope and would kill every export. That failure is a
+BUNDLING one; this fork feeds only ts-morph, never esbuild. Verified after the build:
+`window.MlaiLab: 109 exports (41 fn + 0 compound)`, byte-identical to before, and
+41/41 previews still render with the same 5 floor cards.
+
+**⚠️ Why this is not uploaded yet, and what it will cost.** **CORRECTED: it is the fork
+FILE, not the `cfg.libOverrides` declaration, that moves the keys.**
+`lib/sync-hashes.mjs:141-146` says `cfg.libOverrides` is *deliberately* not keyed - "its
+values are declaration prose with no render effect" - and then hashes **every `.mjs` under
+`.design-sync/overrides/` by its bytes**, because a lib fork genuinely can change rendering
+and the tool cannot know that this one does not. So dropping the declaration would not
+avoid the churn; it would only trip `[OVERRIDE_UNDECLARED]`. The effect: **all 40
+`sourceKeys` changed**, and 3 `renderHashes` moved as well (Dialog, DropdownMenu, Tooltip
+— floor cards embed the `.d.ts` crash-prevention props, so a richer contract changes their
+rendered card). A re-sync therefore puts every component in the `changed` partition, and
+the upload gate requires each one graded `good`. There are **no grades on this machine**;
+the uploaded `_ds_sync.json` is what has been vouching for them. So shipping this means
+re-capturing and hand-grading **36 authored previews** that a previous session authored and
+verified — real work, and work that should be done deliberately rather than folded into an
+unrelated pass. The previews and component sources are byte-identical; only the emitted
+`.d.ts` and one config key moved, so this is pipeline churn, not content change.
+
+**To ship it:** run the driver, grade the 36 sheets against this file's preview conventions
+(the ink ground, the external-claims policy, the provenance-tag rules), then upload
+writes-only as always. Nothing about the writes-only constraint changes.

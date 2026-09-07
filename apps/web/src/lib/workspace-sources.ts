@@ -164,6 +164,22 @@ export function staticWorkspaceAdapter(config: {
 }
 
 /**
+ * Raised when a source answered normally but this user has not linked the
+ * account (or the server has no credentials for the provider). It is a state,
+ * not a failure: `loadWorkspaceSources` maps it to `unconfigured` so the
+ * console offers a Connect action instead of showing an error.
+ */
+export class WorkspaceNotConnectedError extends Error {
+  constructor(
+    public readonly source: WorkspaceSourceId,
+    public readonly reason: string,
+  ) {
+    super(`${source} is not connected`);
+    this.name = "WorkspaceNotConnectedError";
+  }
+}
+
+/**
  * HTTP adapter. `endpoint` is a same-origin path served by a route handler
  * that talks to Google/Microsoft with server-held credentials.
  */
@@ -186,10 +202,20 @@ export function httpWorkspaceAdapter(config: {
         throw new Error(`${config.label} responded ${response.status}`);
       }
       const body: unknown = await response.json();
-      const rows =
-        body && typeof body === "object" && Array.isArray((body as { files?: unknown }).files)
-          ? ((body as { files: unknown[] }).files satisfies unknown[])
-          : [];
+      const envelope = (body && typeof body === "object" ? body : {}) as {
+        files?: unknown;
+        connected?: unknown;
+        reason?: unknown;
+      };
+      // The handler answers 200 with `connected: false` when the account is not
+      // linked; that is not an error and must not be rendered as one.
+      if (envelope.connected === false) {
+        throw new WorkspaceNotConnectedError(
+          config.id,
+          typeof envelope.reason === "string" ? envelope.reason : "not_connected",
+        );
+      }
+      const rows = Array.isArray(envelope.files) ? envelope.files : [];
       return rows
         .map((row) => parseWorkspaceFile(row, config.id))
         .filter((file): file is WorkspaceFile => file !== null);
@@ -216,13 +242,16 @@ export async function loadWorkspaceSources(
   return adapters.map((adapter, index) => {
     const outcome = settled[index]!;
     if (outcome.status === "rejected") {
+      const notConnected = outcome.reason instanceof WorkspaceNotConnectedError;
       return {
         source: adapter.id,
         identity: adapter.identity,
         label: adapter.label,
-        status: "error",
+        status: notConnected ? "unconfigured" : "error",
         files: [],
-        message: messageOf(outcome.reason),
+        message: notConnected
+          ? (outcome.reason as WorkspaceNotConnectedError).reason
+          : messageOf(outcome.reason),
       };
     }
     const files = sortByModifiedDesc(outcome.value);

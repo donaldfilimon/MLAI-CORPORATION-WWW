@@ -7,7 +7,7 @@ export async function PATCH(req: Request) {
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const auth = requireWorkOS();
-  if (!auth) return Response.json({ error: "WorkOS is not configured" }, { status: 503 });
+  if (!auth) return Response.json({ error: "Sign-in is unavailable right now." }, { status: 503 });
 
   // 16 KB cap: a handful of short profile fields.
   const body = await readJsonLimited<{
@@ -62,6 +62,6 @@ export async function PATCH(req: Request) {
     );
   } catch (err) {
     console.error("WorkOS profile update error:", err);
-    return Response.json({ error: "Profile update failed" }, { status: 502 });
+    return Response.json({ error: "We couldn't save your profile. Try again." }, { status: 502 });
   }
 }

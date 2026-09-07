@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const auth = requireWorkOS();
-  if (!auth) return Response.json({ error: "WorkOS is not configured" }, { status: 503 });
+  if (!auth) return Response.json({ error: "Sign-in is unavailable right now." }, { status: 503 });
 
   try {
     const workosUser = await auth.userManagement.getUser(user.userId);
@@ -26,6 +26,6 @@ export async function GET(req: Request) {
     });
   } catch (err) {
     console.error("WorkOS user verification error:", err);
-    return Response.json({ error: "User could not be verified with WorkOS" }, { status: 502 });
+    return Response.json({ error: "We couldn't verify your account. Sign in again." }, { status: 502 });
   }
 }

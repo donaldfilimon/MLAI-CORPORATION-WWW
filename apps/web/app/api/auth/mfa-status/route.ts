@@ -27,6 +27,6 @@ export async function GET(req: Request) {
     });
   } catch (err) {
     console.error("WorkOS listUserAuthFactors failed:", err);
-    return Response.json({ error: "Failed to load MFA status" }, { status: 502 });
+    return Response.json({ error: "Couldn't check your security settings. Try again." }, { status: 502 });
   }
 }

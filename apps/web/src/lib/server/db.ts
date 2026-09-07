@@ -134,6 +134,35 @@ export const MIGRATIONS: readonly Migration[] = [
         CHECK (action IN ('list', 'read', 'export', 'delete', 'expire'))`,
     ],
   },
+  {
+    version: 3,
+    name: "workspace_source_connections",
+    statements: [
+      // One row per (user, provider) for the console's workspace sources. Only
+      // the refresh token is stored, and only as a KMS-wrapped AES-256-GCM
+      // envelope — the same column shape conversation audits use. Access
+      // tokens are minted on demand and never persisted.
+      //
+      // account_email is the connected account as the provider reports it, so
+      // the console can show *which* account is attached. It is the only piece
+      // of provider identity kept, and it is distinct from the session identity.
+      `CREATE TABLE IF NOT EXISTS workspace_connections (
+        user_id TEXT NOT NULL,
+        provider TEXT NOT NULL CHECK (provider IN ('google', 'microsoft')),
+        account_email TEXT,
+        scope TEXT,
+        ciphertext BYTEA NOT NULL,
+        iv BYTEA NOT NULL,
+        auth_tag BYTEA NOT NULL,
+        wrapped_key BYTEA NOT NULL,
+        kms_key_version TEXT NOT NULL,
+        aad TEXT NOT NULL,
+        connected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (user_id, provider)
+      )`,
+    ],
+  },
 ] as const;
 
 async function migrate(sql: Sql): Promise<void> {

@@ -44,19 +44,19 @@ async function submitInquiry(
   const errors: Record<string, string[]> = {};
 
   if (!data.name || String(data.name).length < 2)
-    errors.name = ["Name must be at least 2 characters"];
+    errors.name = ["Enter your full name."];
   if (!data.email || !String(data.email).includes("@"))
-    errors.email = ["Invalid email address"];
+    errors.email = ["Enter an email address we can reply to."];
   if (!data.company || String(data.company).length < 2)
-    errors.company = ["Company name is required"];
+    errors.company = ["Enter your organization."];
   if (!data.message || String(data.message).length < 10)
-    errors.message = ["Message must be at least 10 characters"];
+    errors.message = ["Add a bit more detail — at least 10 characters."];
 
   if (Object.keys(errors).length > 0) {
     return {
       success: false,
       errors,
-      message: "Please fix the errors in the form.",
+      message: "Some details need fixing — see the fields below.",
     };
   }
 
@@ -89,13 +89,13 @@ async function submitInquiry(
         success: true,
         errors: {},
         message:
-          "Your inquiry has been stored securely. Our partnerships team will review your specifications and contact you shortly.",
+          "We'll read it and reply by email within two working days.",
       };
     } else {
       return {
         success: false,
         errors: {},
-        message: result.error || "Failed to submit inquiry to the server.",
+        message: result.error || "We couldn't send that. Try again in a moment.",
       };
     }
   } catch (err) {
@@ -103,7 +103,7 @@ async function submitInquiry(
       success: false,
       errors: {},
       message:
-        "A network error occurred. Please verify your connection and try again.",
+        "We couldn't reach the server. Check your connection and try again.",
     };
   }
 }
@@ -117,7 +117,7 @@ function SubmitButton({ verified }: { verified: boolean }) {
       type="submit"
       className="w-full py-6 flex items-center justify-center gap-3 text-md"
     >
-      {pending ? "Checking..." : "Check Inquiry Details"}
+      {pending ? "Sending…" : "Send inquiry"}
       {!pending && <Send className="w-4 h-4" />}
     </Button>
   );
@@ -180,7 +180,7 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
             </div>
             <div className="space-y-2">
               <h3 className="text-2xl font-display font-bold text-white">
-                Inquiry Received
+                Inquiry sent
               </h3>
               <p className="text-text-dim text-sm max-w-sm mx-auto leading-relaxed">
                 {state.message}
@@ -190,7 +190,7 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
               onClick={onClose}
               className="w-full py-4 rounded-xl font-bold"
             >
-              Dismiss
+              Done
             </Button>
           </div>
         ) : (
@@ -200,10 +200,10 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
                 id="inquiry-form-title"
                 className="text-3xl font-display font-bold text-white"
               >
-                Start an Inquiry
+                Start an inquiry
               </h3>
               <p className="text-text-dim">
-                Define your requirements for neural orchestration.
+                Tell us what you&apos;re building and we&apos;ll get back to you.
               </p>
             </div>
 
@@ -374,7 +374,7 @@ export const InquiryForm = ({ isOpen, onClose }: InquiryFormProps) => {
                   rows={4}
                   defaultValue=""
                   className="w-full bg-black/50 border-white/10 rounded-xl px-4 py-3 text-white focus-visible:ring-primary transition-all resize-none"
-                  placeholder="How can we help architect your future?"
+                  placeholder="What are you building, and what do you need from us?"
                 />
                 {state.errors?.message && (
                   <p className="text-xs text-red-400">

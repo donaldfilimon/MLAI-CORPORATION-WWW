@@ -59,7 +59,7 @@ export async function readBodyLimited(req: Request, max: number): Promise<string
 
 /** The 413. Exported for routes that read raw text rather than JSON (csp-report). */
 export function payloadTooLarge(): Response {
-  return Response.json({ error: "Payload too large" }, { status: 413 });
+  return Response.json({ error: "That's too much to send at once. Shorten it and try again." }, { status: 413 });
 }
 
 /**
@@ -112,5 +112,5 @@ export async function readJsonLimited<T>(req: Request, max: number): Promise<T |
 }
 
 function invalidJsonBody(): Response {
-  return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+  return Response.json({ error: "We couldn't read that request. Reload the page and try again." }, { status: 400 });
 }

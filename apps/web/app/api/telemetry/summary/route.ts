@@ -31,6 +31,6 @@ export async function GET(req: Request) {
     });
   } catch (err) {
     console.error("Database error loading telemetry summary:", err);
-    return Response.json({ error: "Failed to load telemetry summary" }, { status: 500 });
+    return Response.json({ error: "Couldn't load usage data. Refresh to retry." }, { status: 500 });
   }
 }
