@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.env.local
+*.log
+.DS_Store
+
+# Build output — anchored with a leading slash so this matches only the export
+# directory at the project root, NOT src/app/docs/, which is the /docs route's
+# source. The Pages workflow commits the output explicitly with `git add -f docs`.
+/docs/
+next-env.d.ts
+*.tsbuildinfo
