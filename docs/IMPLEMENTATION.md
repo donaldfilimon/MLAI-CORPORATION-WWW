@@ -469,3 +469,10 @@ preflight in `layer(base)` cannot disturb the unlayered hand-written CSS held un
 **Still not done.** The full suite in a single invocation remains blocked by the rate limiter, and
 that is a product decision, not a test fix. Whether `@source` should also scan the application's
 own `src/**` is still undecided.
+
+**The `@source` scope question is settled, not deferred.** The application's own `src/**` contains
+**zero** Tailwind utility classes, so widening the glob would generate nothing today. The only
+Tailwind-shaped names there — `text-link`, `text-button`, `space-top` — are hand-written classes
+defined in `packages/ui/src/styles/components.css`. The current scope is correct as written. The
+consequence worth knowing: a genuine utility class written in `src/**` will silently do nothing
+until the glob is widened, which fails as missing styling rather than as a build error.

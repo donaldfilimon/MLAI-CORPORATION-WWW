@@ -210,7 +210,11 @@ that config does not fail the build — it silently strips every utility, and th
 cards and badges render as unstyled blocks. Tailwind's preflight arrives in `layer(base)` while the
 hand-written CSS is unlayered, so the hand-written rules win the cascade; keep it that way rather
 than layering `globals.css`. `@source` in `index.css` scans the UI package's compiled output, so a
-utility class used only in the application's own `src/**` is not generated.
+utility class used only in the application's own `src/**` is not generated — which costs nothing
+today, because `src/**` uses **zero** Tailwind utilities. The Tailwind-shaped names that do appear
+there (`text-link`, `text-button`, `space-top`) are hand-written classes in
+`packages/ui/src/styles/components.css`. Write a real utility class in `src/**` and it will
+silently do nothing until `@source` is widened.
 
 ## Public claims are gated by tests, not by review
 
