@@ -12,13 +12,9 @@ import {
   CommandItem,
   CommandList,
 } from "@mlai/ui";
+import { groupDocsNavItems, type DocsNavItem } from "@/lib/docs";
 
-export type DocsNavItem = {
-  href: string;
-  title: string;
-  description: string;
-  category: string;
-};
+export type { DocsNavItem };
 
 export function DocsShell({
   items,
@@ -31,15 +27,7 @@ export function DocsShell({
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const groups = useMemo(() => {
-    const map = new Map<string, DocsNavItem[]>();
-    for (const item of items) {
-      const list = map.get(item.category) ?? [];
-      list.push(item);
-      map.set(item.category, list);
-    }
-    return [...map.entries()];
-  }, [items]);
+  const groups = useMemo(() => groupDocsNavItems(items), [items]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
