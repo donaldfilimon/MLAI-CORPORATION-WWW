@@ -43,6 +43,22 @@ embedding model, and writes `.data/capabilities.json`.
   mid-run, restores into an isolated directory, and finishes the run there through
   `scripts/verify-agent-restored.ts`.
 
+Three gate behaviors have already cost sessions time; `docs/IMPLEMENTATION.md` records each.
+
+- Run `bun run db:migrate` once, serially, against the isolated `MLAI_DATA_DIR` you intend to
+  check with, before `bun run check`. The build stage otherwise races its own fresh-database
+  migration and dies on `table user already exists` after TypeScript has already passed.
+- `bun run format:check` fails repo-wide on eleven pre-existing files carried in unformatted since
+  `e0f9907` (`agent-contracts.ts`, `agent-jobs.ts`, `documents.ts`, `embeddings.ts`, `models.ts`,
+  `worker.ts`, `restore.ts`, `verify-agent-restored.ts`, `agent-view.tsx`, `models.test.ts`,
+  `worker-agent.test.ts`). That red is not yours. A repo-wide `bunx prettier --write .` belongs in
+  its own commit, because reformatting `agent-contracts.ts` alone expands 41 lines to 216.
+- `next build` sometimes rewrites `tsconfig.json` with generated dist-dir includes. Compare it
+  before and after and revert before committing; it does not happen on every run.
+
+Read the exit code from the command itself. A `bun run check | tail` reports tail's status and has
+already manufactured a false green here.
+
 `AGENTS.md` requires keeping `docs/IMPLEMENTATION.md` current with evidence. Separate the historical baseline from combined-release receipts; do not tick a gate without results tied to the source under review.
 
 ## Request path
@@ -178,3 +194,43 @@ by `/app/[[...view]]` and switching on the view segment. Test layouts at 390, 76
 
 `next.config.ts` keeps `better-sqlite3` and the gRPC packages in `serverExternalPackages`; server
 modules that build paths dynamically carry `/* turbopackIgnore: true */`. Both are load-bearing.
+
+## Public claims are gated by tests, not by review
+
+The public site describes four sibling repositories (`abi`, `abbey`, `abbey-bot`/`AbbeyBot`,
+`wdbx`) that this repository cannot import, so nothing here can prove a claim true. Two mechanisms
+substitute for that, and both fail the build rather than warn.
+
+`src/content/provenance.ts` is the gate in front of any published number. Every figure carries
+exactly one tag — `measured`, `target`, or `reported` — plus a `source`, and
+`BANNED_HANDOFF_FIGURES` names the design-handoff mock numbers (295×, 13× neural, 0.8 ms) that must
+never come back. An empty `figures` array is intentional until a reproducible harness exists; a
+number with no harness belongs on the `target` tag with no value, not on `measured`. Provenance
+tags describe how a figure was obtained and are distinct from the claim-ledger words on
+`/repositories` (`current` / `partial` / `proposed` / `not-claimed`), which describe capability
+honesty. `ProvTag` and `ProvLegend` in `src/components/prov-tag.tsx` render both.
+
+`tests/claims.test.ts` enforces it by walking every `.ts`/`.tsx` file under `src/content`,
+`src/components` and `src/app` and asserting that specific claims found false against sibling
+source on 2026-09-07 cannot be restored by pasting an older handoff back in — stale HNSW `200`
+defaults, `discord.js` as Abbey Bot's runtime, neural backtracking, empathy or conciseness loss
+terms. It also renders the WDBX, ABI and architecture pages to static markup and requires every
+figure to actually reach a page next to its own provenance chip, so no figure becomes dead data.
+The file header lists the source files and constants each claim was checked against; extend that
+header when adding a claim rather than asserting a number from memory.
+
+`tests/research.test.ts` hashes the research collection against
+`docs/research-merge/source-manifest.json`. The 21 publications and three legacy application notes
+render as native App Router pages here, and their content is pinned to that manifest; changing
+research copy means updating the manifest hash in the same commit.
+
+## mlai-web/
+
+A second, self-contained static Next.js marketing site with its own `package.json`, `bun.lock`,
+`tsconfig.json`, ESLint config and Tailwind setup. It is not a workspace of the root package, the
+root `tsconfig.json` `include` does not sweep it, and `bun run check` never touches it — build it
+with `cd mlai-web && bun install && bun run build`, which exports static HTML to `mlai-web/docs/`.
+`.github/workflows/mlai-web.yml` lints, typechecks, builds and verifies the exported routes, scoped
+by path so it only fires when `mlai-web/**` changes. It duplicates pages the application already
+serves from `src/app/(public)/`; confirm which of the two a request means before editing anything
+that sounds like "the MLAI site".
