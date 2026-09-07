@@ -187,12 +187,44 @@ jobs:
           AUDIT_KMS_KEY_NAME: ${{ vars.AUDIT_KMS_KEY_NAME }}
           AUDIT_SCHEDULER_SERVICE_ACCOUNT: ${{ vars.AUDIT_SCHEDULER_SERVICE_ACCOUNT }}
           AUDIT_SCHEDULER_AUDIENCE: ${{ vars.AUDIT_SCHEDULER_AUDIENCE }}
+          # Optional — console workspace sources. Unset leaves the feature inert.
+          GOOGLE_OAUTH_CLIENT_ID: ${{ vars.GOOGLE_OAUTH_CLIENT_ID }}
+          MICROSOFT_OAUTH_CLIENT_ID: ${{ vars.MICROSOFT_OAUTH_CLIENT_ID }}
+          MICROSOFT_OAUTH_TENANT: ${{ vars.MICROSOFT_OAUTH_TENANT }}
+          WORKSPACE_KMS_KEY_NAME: ${{ vars.WORKSPACE_KMS_KEY_NAME }}
         run: |
           set -euo pipefail
           # The custom @ delimiter is intentional: TURNSTILE_HOSTNAMES itself
           # contains a comma and gcloud's default dict parser would split it.
           ENV_VARS="^@^NODE_ENV=production@APP_URL=${APP_URL}@CLOUD_SQL_CONNECTION_NAME=${CLOUD_SQL_CONNECTION_NAME}@DATABASE_NAME=${DATABASE_NAME}@DATABASE_USER=${DATABASE_USER}@DATABASE_POOL_SIZE=5@WORKOS_ORGANIZATION_ID=${WORKOS_ORGANIZATION_ID}@WORKOS_MFA_POLICY_VERIFIED=${WORKOS_MFA_POLICY_VERIFIED}@WORKOS_SSO_MFA_POLICY_VERIFIED=${WORKOS_SSO_MFA_POLICY_VERIFIED}@CLOUDFLARE_AI_GATEWAY_URL=${CLOUDFLARE_AI_GATEWAY_URL}@CLOUDFLARE_AI_GATEWAY_ID=${CLOUDFLARE_AI_GATEWAY_ID}@NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}@TURNSTILE_HOSTNAMES=${TURNSTILE_HOSTNAMES}@AUDIT_KMS_KEY_NAME=${AUDIT_KMS_KEY_NAME}@AUDIT_SCHEDULER_SERVICE_ACCOUNT=${AUDIT_SCHEDULER_SERVICE_ACCOUNT}@AUDIT_SCHEDULER_AUDIENCE=${AUDIT_SCHEDULER_AUDIENCE}@ADMIN_REQUIRE_MFA=true"
+          # Console workspace sources are optional, so they are appended only
+          # when configured rather than added to REQUIRED — an unconfigured
+          # deployment must keep deploying exactly as before.
+          for optional in GOOGLE_OAUTH_CLIENT_ID MICROSOFT_OAUTH_CLIENT_ID MICROSOFT_OAUTH_TENANT WORKSPACE_KMS_KEY_NAME; do
+            value="${!optional:-}"
+            [ -n "${value}" ] || continue
+            # @ is the delimiter for this list; a value containing one would
+            # silently split into two bogus variables, so fail loudly instead.
+            case "${value}" in
+              *@*)
+                echo "::error::${optional} may not contain '@' (it is the env-var list delimiter)."
+                exit 1
+                ;;
+            esac
+            ENV_VARS="${ENV_VARS}@${optional}=${value}"
+          done
+
           SECRETS="WORKOS_API_KEY=WORKOS_API_KEY:latest,WORKOS_CLIENT_ID=WORKOS_CLIENT_ID:latest,SESSION_SECRET=SESSION_SECRET:latest,DATABASE_PASSWORD=DATABASE_PASSWORD:latest,CLOUDFLARE_AI_GATEWAY_TOKEN=CLOUDFLARE_AI_GATEWAY_TOKEN:latest,AUDIT_SUBJECT_PEPPER=AUDIT_SUBJECT_PEPPER:latest,TURNSTILE_SECRET=TURNSTILE_SECRET:latest,ADMIN_EMAILS=ADMIN_EMAILS:latest"
+
+          # Mounting a secret with no version fails the deploy, so each optional
+          # one is attached only once it actually has a payload. OpenTofu creates
+          # the empty containers; populating them is what turns a provider on.
+          for optional_secret in GOOGLE_OAUTH_CLIENT_SECRET MICROSOFT_OAUTH_CLIENT_SECRET; do
+            if gcloud secrets versions describe latest \
+              --secret "${optional_secret}" --project "${GCP_PROJECT_ID}" >/dev/null 2>&1; then
+              SECRETS="${SECRETS},${optional_secret}=${optional_secret}:latest"
+            fi
+          done
 
           gcloud run deploy "${CLOUD_RUN_SERVICE}" \
             --image "${IMAGE}" \

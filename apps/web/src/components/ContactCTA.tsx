@@ -39,18 +39,13 @@ export const ContactCTA = ({
               <Shield className="w-3.5 h-3.5" aria-hidden="true" />
               All inquiries are protected under NDA by default
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex justify-center">
               <Magnetic>
                 <Button
                   onClick={onOpenInquiry}
                   className="flex items-center gap-2 px-10 py-7 text-lg"
                 >
-                  Start an Inquiry <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Magnetic>
-              <Magnetic>
-                <Button variant="outline" className="px-8 py-7 text-sm">
-                  Schedule a Framework Deep-Dive
+                  Start an inquiry <ArrowRight className="w-5 h-5" />
                 </Button>
               </Magnetic>
             </div>

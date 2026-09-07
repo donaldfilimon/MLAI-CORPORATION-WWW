@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/colors.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/typography.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/motion.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/tokens/base.css">
+<link rel="stylesheet" href="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/styles.css">
+<script src="_ds/mlai-lab-design-system-cab2dbdc-6b6f-4af6-a20f-825139630070/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#05070d;color:#e8edf6;-webkit-font-smoothing:antialiased}
+a{color:#22d3ee;text-decoration:none}
+a:hover{color:#67e8f9}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#05070d;font-family:'Geist Variable',ui-sans-serif,system-ui,sans-serif;display:flex">
+
+  <aside style="width:{{ railWidth }}px;flex-shrink:0;background:{{ railBg }};border-right:{{ railBorder }};display:flex;flex-direction:column;padding:14px 10px;transition:width 280ms cubic-bezier(.22,1,.36,1)">
+    <div style="display:flex;align-items:center;gap:9px;padding:2px 4px 16px">
+      <div style="width:28px;height:28px;flex-shrink:0;border-radius:8px;background:linear-gradient(135deg,{{ accentHex }},#60a5fa);display:flex;align-items:center;justify-content:center;font-family:'Spectral',Georgia,serif;font-weight:700;font-size:14px;color:#05070d">M</div>
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <div style="line-height:1.15;min-width:0">
+          <div style="font-family:'Spectral',Georgia,serif;font-weight:700;letter-spacing:0.16em;font-size:13px;color:#fff">MLAI</div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;color:rgba(232,237,246,0.4)">console</div>
+        </div>
+      </sc-if>
+      <button onClick="{{ toggleRail }}" title="{{ railTitle }}" style="margin-left:auto;width:24px;height:24px;flex-shrink:0;border-radius:6px;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(232,237,246,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,0.06);color:#e8edf6">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+      </button>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="5">
+        <button onClick="{{ item.go }}" title="{{ item.label }}" style="display:flex;align-items:center;gap:11px;padding:{{ navPad }};border-radius:9px;border:0;cursor:pointer;font-family:inherit;font-size:{{ navFont }}px;font-weight:{{ item.weight }};text-align:left;color:{{ item.fg }};background:{{ item.bg }};box-shadow:{{ item.rail }};transition:background 180ms cubic-bezier(.22,1,.36,1)" style-hover="background:rgba(255,255,255,0.05)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ item.icfg }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="{{ item.icon }}"></path></svg>
+          <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+            <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.label }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </nav>
+
+    <div style="margin-top:auto;display:flex;gap:7px;align-items:center;justify-content:center;padding:10px 0">
+      <span style="width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px #a855f7"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:#22d3ee;box-shadow:0 0 8px #22d3ee"></span>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="height:{{ headerH }}px;flex-shrink:0;border-bottom:{{ headerBorder }};display:flex;align-items:center;gap:16px;padding:0 20px;background:{{ headerBg }};backdrop-filter:blur(24px)">
+      <div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:rgba(232,237,246,0.4);flex-shrink:0">
+        <span>mlai</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <span style="color:#e8edf6">console</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <span style="color:{{ accentHex }}">{{ tabLabel }}</span>
+      </div>
+      <label style="flex:1;max-width:520px;display:flex;align-items:center;gap:9px;height:34px;padding:0 12px;border-radius:9px;border:1px solid {{ searchBorder }};background:{{ searchBg }}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{ searchIcon }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+        <input value="{{ q }}" onInput="{{ onSearch }}" placeholder="Search files, threads, pages" style="flex:1;min-width:0;background:transparent;border:0;outline:none;color:#e8edf6;font-size:13px;font-family:inherit">
+        <kbd style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:{{ accentHex }};border:1px solid {{ accentLine }};border-radius:5px;padding:2px 5px">&#8984;K</kbd>
+      </label>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;padding:5px 10px;border-radius:999px;border:1px solid rgba(52,211,153,0.3);color:#34d399;background:rgba(52,211,153,0.1);flex-shrink:0">
+        <span style="width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399"></span>
+        on-device
+      </span>
+    </header>
+
+    <div style="flex:1;overflow:auto;padding:{{ contentPad }}">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:{{ headGap }}px">
+        <div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.22em;color:{{ accentHex }};margin-bottom:9px">RECENT ACROSS SOURCES</div>
+          <h1 style="margin:0 0 8px;font-family:'Spectral',Georgia,serif;font-size:{{ titleSize }}px;font-weight:600;letter-spacing:-0.015em;line-height:1.08;color:#fff">Files</h1>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(232,237,246,0.35)">{{ density }} &#183; {{ hierarchy }} &#183; {{ accentName }}</div>
+        </div>
+        <div style="display:flex;padding:3px;gap:2px;border-radius:9px;border:1px solid rgba(255,255,255,0.11);background:rgba(255,255,255,0.03)">
+          <button onClick="{{ setRows }}" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;border:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;background:{{ rowsBg }};color:{{ rowsFg }}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            Rows
+          </button>
+          <button onClick="{{ setGrid }}" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;border:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;background:{{ gridBg }};color:{{ gridFg }}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+            Grid
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:{{ headGap }}px">
+        <sc-for list="{{ types }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.go }}" style="padding:{{ pillPad }};border-radius:999px;cursor:pointer;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};transition:all 180ms cubic-bezier(.22,1,.36,1)">{{ t.label }} <span style="opacity:0.5">{{ t.count }}</span></button>
+        </sc-for>
+      </div>
+
+      <section style="margin-bottom:{{ sectionGap }}px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{ accentHex }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="12" x2="2" y2="12"></line><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path><line x1="6" y1="16" x2="6.01" y2="16"></line><line x1="10" y1="16" x2="10.01" y2="16"></line></svg>
+          <h2 style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.01em;color:#e8edf6">Google Drive</h2>
+          <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:rgba(232,237,246,0.4)">{{ driveCount }} FILES &#183; MY DRIVE</span>
+          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.11),transparent)"></div>
+        </div>
+
+        <sc-if value="{{ isRows }}" hint-placeholder-val="{{ true }}">
+          <div style="border:{{ panelBorder }};border-radius:{{ panelRadius }}px;overflow:hidden;background:{{ panelBg }};box-shadow:{{ panelShadow }}">
+            <div style="display:grid;grid-template-columns:minmax(0,3fr) 110px 130px 90px;gap:14px;padding:9px 16px;border-bottom:{{ panelBorder }};background:rgba(255,255,255,0.02);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;letter-spacing:0.12em;color:rgba(232,237,246,0.4)">
+              <span>NAME</span><span>TYPE</span><span>MODIFIED</span><span style="text-align:right">SIZE</span>
+            </div>
+            <sc-for list="{{ files }}" as="f" hint-placeholder-count="5">
+              <a href="{{ f.url }}" target="_blank" style="display:grid;grid-template-columns:minmax(0,3fr) 110px 130px 90px;gap:14px;padding:{{ rowPadY }}px 16px;border-bottom:1px solid {{ rowDivider }};align-items:center;text-decoration:none;transition:background 180ms cubic-bezier(.22,1,.36,1)" style-hover="background:rgba(255,255,255,0.035)">
+                <span style="display:flex;align-items:center;gap:10px;min-width:0">
+                  <span style="width:{{ iconChip }}px;height:{{ iconChip }}px;flex-shrink:0;border-radius:7px;display:flex;align-items:center;justify-content:center;background:{{ f.tint }};color:{{ f.accent }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ f.icon }}"></path></svg>
+                  </span>
+                  <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:{{ rowFont }}px;color:#e8edf6">{{ f.title }}</span>
+                </span>
+                <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:{{ f.accent }};letter-spacing:0.06em">{{ f.kind }}</span>
+                <span style="font-size:12px;color:rgba(232,237,246,0.55)">{{ f.modified }}</span>
+                <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:rgba(232,237,246,0.4);text-align:right">{{ f.size }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax({{ gridMin }}px,1fr));gap:14px">
+            <sc-for list="{{ files }}" as="f" hint-placeholder-count="5">
+              <a href="{{ f.url }}" target="_blank" style="display:flex;flex-direction:column;text-decoration:none;border:{{ panelBorder }};border-radius:{{ panelRadius }}px;overflow:hidden;background:{{ cardBg }};box-shadow:{{ panelShadow }};transition:border-color 280ms cubic-bezier(.22,1,.36,1),transform 280ms cubic-bezier(.22,1,.36,1)" style-hover="border-color:{{ accentLine }};transform:translateY(-2px)">
+                <span style="height:{{ thumbH }}px;display:flex;align-items:center;justify-content:center;background:{{ f.tint }};border-bottom:1px solid {{ rowDivider }};color:{{ f.accent }}">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="{{ f.icon }}"></path></svg>
+                </span>
+                <span style="padding:11px 13px 13px;display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <span style="font-size:{{ rowFont }}px;color:#e8edf6;line-height:1.35;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.title }}</span>
+                  <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;letter-spacing:0.08em;color:rgba(232,237,246,0.4)">{{ f.kind }} &#183; {{ f.modified }} &#183; {{ f.size }}</span>
+                </span>
+              </a>
+            </sc-for>
+          </div>
+        </sc-if>
+      </section>
+
+      <section>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <h2 style="margin:0;font-size:13px;font-weight:600;color:#e8edf6">SharePoint / OneDrive</h2>
+          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.11),transparent)"></div>
+        </div>
+        <div style="border:1px dashed rgba(255,255,255,0.11);border-radius:{{ panelRadius }}px;padding:30px;text-align:center;background:{{ panelBg }}">
+          <div style="font-size:13.5px;color:rgba(232,237,246,0.55);margin-bottom:6px">No files returned for the last 30 days.</div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.1em;color:rgba(232,237,246,0.4)">MICROSOFT 365 CONNECTED &#183; TENANT EMPTY OR OUT OF SCOPE</div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:760},&quot;density&quot;:{&quot;type&quot;:&quot;select&quot;,&quot;label&quot;:&quot;Density&quot;,&quot;options&quot;:[&quot;compact&quot;,&quot;comfortable&quot;,&quot;spacious&quot;],&quot;default&quot;:&quot;comfortable&quot;},&quot;hierarchy&quot;:{&quot;type&quot;:&quot;select&quot;,&quot;label&quot;:&quot;Panel hierarchy&quot;,&quot;options&quot;:[&quot;flat&quot;,&quot;layered&quot;,&quot;elevated&quot;],&quot;default&quot;:&quot;layered&quot;},&quot;accent&quot;:{&quot;type&quot;:&quot;select&quot;,&quot;label&quot;:&quot;Persona accent&quot;,&quot;options&quot;:[&quot;abi&quot;,&quot;aviva&quot;,&quot;abbey&quot;],&quot;default&quot;:&quot;abi&quot;}}">
+/* Canvas — MLAI console, Files tab (Shell C "layered panels" direction).
+
+   Three tweakable controls, declared in `data-props` above and read via
+   `this.props`. Each one moves many properties at once rather than a single
+   value, so the canvas explores real directions instead of nudging pixels:
+
+     density    compact | comfortable | spacious
+                → row padding, type sizes, icon chips, nav padding, header
+                  height, grid column width, section rhythm, title size
+     hierarchy  flat | layered | elevated
+                → panel fill, border strength, shadow, radius, rail + header
+                  surfaces, row dividers, card fill  (the "too dark and flat,
+                  needs hierarchy between panels" note)
+     accent     abi (cyan) | aviva (violet) | abbey (emerald)
+                → active nav tint + rail indicator, eyebrow, active filter
+                  pill, search field, mark gradient, grid hover border
+
+   Rail collapse stays interactive state (the shell's own affordance), not a
+   prop — it is something the operator toggles, not a design direction.
+
+   Drive rows are the real files returned for the last 30 days; SharePoint is
+   a genuine empty state, not placeholder rows. */
+
+const DRIVE = [
+  {title:"state-of-remote-work",kind:"SLIDES",modified:"Sep 5, 2026",size:"64 KB",type:"Slides",
+   url:"https://docs.google.com/presentation/d/1OP5UijBha8hMG82tEeiwdw5wSUesZQ8B9x4stEI8M2Y/edit"},
+  {title:"state-of-remote-work",kind:"SLIDES",modified:"Sep 5, 2026",size:"64 KB",type:"Slides",
+   url:"https://docs.google.com/presentation/d/1oDpwufY1SQ_enwjpS1pb5ocnZ4UrRj2rgpN5mDdSUOw/edit"},
+  {title:"MLAI Complete System Design and Architecture Reference",kind:"DOC",modified:"Sep 4, 2026",size:"5 KB",type:"Docs",
+   url:"https://docs.google.com/document/d/1C_ibsaUkpAPJH8rnD3pT50z8DNNJ6s22ASbXPvxTct0/edit"},
+  {title:"Individual High-Resolution Images & Prompts - 8 Panel Swimsuit Reference",kind:"DOC",modified:"Sep 4, 2026",size:"3 KB",type:"Docs",
+   url:"https://docs.google.com/document/d/1yLbPQwTFSWdWiyh0Sy9MEptN0W3HfRGteGNgPGhcioI/edit"},
+  {title:"VERIFY.md",kind:"DOC",modified:"Aug 27, 2026",size:"2 KB",type:"Docs",
+   url:"https://docs.google.com/document/d/1X7SRxtP24Yw5C30SZmGBVcJ2NeRv6PWzmG5iYK9uCeI/edit"}
+];
+
+const ICON_DOC = "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z";
+const ICON_SLIDES = "M2 3h20v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Z";
+
+const NAV = [
+  {key:"files",label:"Files",icon:"M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"},
+  {key:"today",label:"Today",icon:"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"},
+  {key:"triage",label:"Triage",icon:"M22 6 12 13 2 6M2 6h20v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Z"},
+  {key:"work",label:"Work",icon:"M12 2 2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5"},
+  {key:"metrics",label:"Metrics",icon:"M3 3v18h18M18 17V9M13 17V5M8 17v-3"}
+];
+
+/* ── the three control axes ──────────────────────────────────────────────── */
+
+const DENSITY = {
+  compact:     {contentPad:"16px 20px 32px", rowPadY:7,  rowFont:12.5, iconChip:22, gridMin:160, thumbH:84,  sectionGap:20, navPad:"7px 9px",   navFont:12.5, headerH:48, pillPad:"4px 10px",  titleSize:25, headGap:16},
+  comfortable: {contentPad:"24px 28px 40px", rowPadY:11, rowFont:13.5, iconChip:26, gridMin:190, thumbH:104, sectionGap:30, navPad:"9px 11px",  navFont:13.5, headerH:56, pillPad:"5px 12px",  titleSize:31, headGap:22},
+  spacious:    {contentPad:"34px 40px 56px", rowPadY:16, rowFont:14.5, iconChip:32, gridMin:230, thumbH:128, sectionGap:42, navPad:"12px 13px", navFont:14.5, headerH:66, pillPad:"7px 15px",  titleSize:37, headGap:30}
+};
+
+const HIERARCHY = {
+  flat: {
+    panelBg:"transparent",
+    panelBorder:"1px solid rgba(255,255,255,0.06)",
+    panelShadow:"none",
+    panelRadius:10,
+    cardBg:"transparent",
+    railBg:"#05070d",
+    railBorder:"1px solid rgba(255,255,255,0.06)",
+    headerBg:"#05070d",
+    headerBorder:"1px solid rgba(255,255,255,0.06)",
+    rowDivider:"rgba(255,255,255,0.045)"
+  },
+  layered: {
+    panelBg:"rgba(255,255,255,0.018)",
+    panelBorder:"1px solid rgba(255,255,255,0.09)",
+    panelShadow:"0 8px 32px rgba(0,0,0,0.35)",
+    panelRadius:14,
+    cardBg:"linear-gradient(145deg,rgba(255,255,255,0.035),rgba(255,255,255,0.008))",
+    railBg:"#080b12",
+    railBorder:"1px solid rgba(255,255,255,0.09)",
+    headerBg:"rgba(8,11,18,0.85)",
+    headerBorder:"1px solid rgba(255,255,255,0.09)",
+    rowDivider:"rgba(255,255,255,0.05)"
+  },
+  elevated: {
+    panelBg:"linear-gradient(145deg,rgba(255,255,255,0.055),rgba(255,255,255,0.012))",
+    panelBorder:"1px solid rgba(255,255,255,0.14)",
+    panelShadow:"0 28px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)",
+    panelRadius:20,
+    cardBg:"linear-gradient(145deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))",
+    railBg:"#0e0f18",
+    railBorder:"1px solid rgba(255,255,255,0.14)",
+    headerBg:"rgba(14,15,24,0.92)",
+    headerBorder:"1px solid rgba(255,255,255,0.14)",
+    rowDivider:"rgba(255,255,255,0.07)"
+  }
+};
+
+/* Persona colours are fixed by the brand: Abi cyan, Aviva violet, Abbey emerald. */
+const ACCENT = {
+  abi:   {name:"Abi",    hex:"#22d3ee", hi:"#67e8f9", soft:"rgba(34,211,238,0.14)",  line:"rgba(34,211,238,0.30)",  faint:"rgba(34,211,238,0.05)"},
+  aviva: {name:"Aviva",  hex:"#a855f7", hi:"#c084fc", soft:"rgba(168,85,247,0.14)",  line:"rgba(168,85,247,0.30)",  faint:"rgba(168,85,247,0.05)"},
+  abbey: {name:"Abbey",  hex:"#34d399", hi:"#6ee7b7", soft:"rgba(52,211,153,0.14)",  line:"rgba(52,211,153,0.30)",  faint:"rgba(52,211,153,0.05)"}
+};
+
+/* Resolve a control to a key the map actually has, so an unrecognised prop
+   value falls back visibly and consistently instead of rendering half-styled. */
+const resolve = (map, key, fallback) =>
+  Object.prototype.hasOwnProperty.call(map, key) ? key : fallback;
+
+class Component extends DCLogic {
+  state = { view: "rows", type: "All", tab: "files", q: "", expanded: true };
+
+  renderVals() {
+    const { view, type, tab, q, expanded } = this.state;
+
+    // the three controls, read off props with a safe fallback
+    const dKey = resolve(DENSITY, this.props.density, "comfortable");
+    const hKey = resolve(HIERARCHY, this.props.hierarchy, "layered");
+    const aKey = resolve(ACCENT, this.props.accent, "abi");
+    const d = DENSITY[dKey], h = HIERARCHY[hKey], a = ACCENT[aKey];
+
+    const query = q.trim().toLowerCase();
+    const files = DRIVE
+      .filter(f => type === "All" || f.type === type)
+      .filter(f => !query || f.title.toLowerCase().includes(query))
+      .map(f => ({
+        ...f,
+        icon: f.type === "Slides" ? ICON_SLIDES : ICON_DOC,
+        // Docs take the active accent; Slides keep amber so the two kinds stay
+        // separable on sight whichever persona accent is selected.
+        accent: f.type === "Slides" ? "#fbbf24" : a.hex,
+        tint: f.type === "Slides" ? "rgba(251,191,36,0.09)" : a.faint
+      }));
+
+    const counts = { All: DRIVE.length };
+    for (const f of DRIVE) counts[f.type] = (counts[f.type] || 0) + 1;
+
+    const types = ["All", "Docs", "Slides", "Sheets", "PDFs"].map(label => {
+      const active = label === type;
+      return {
+        label,
+        count: counts[label] || 0,
+        go: () => this.setState({ type: label }),
+        bg: active ? a.soft : "rgba(255,255,255,0.03)",
+        fg: active ? a.hi : "rgba(232,237,246,0.55)",
+        bd: active ? a.line : "rgba(255,255,255,0.08)"
+      };
+    });
+
+    const nav = NAV.map(n => {
+      const active = n.key === tab;
+      return {
+        label: n.label,
+        icon: n.icon,
+        go: () => this.setState({ tab: n.key }),
+        weight: active ? 600 : 500,
+        bg: active ? a.soft : "transparent",
+        fg: active ? "#e8edf6" : "rgba(232,237,246,0.55)",
+        icfg: active ? a.hex : "rgba(232,237,246,0.4)",
+        rail: active ? "inset 2px 0 0 " + a.hex : "none"
+      };
+    });
+
+    const current = NAV.find(n => n.key === tab);
+
+    return {
+      // control axes → many properties each
+      ...d, ...h,
+      // echo the RESOLVED axis names back to the template's state chip
+      density: dKey, hierarchy: hKey,
+      accentHex: a.hex, accentLine: a.line, accentSoft: a.soft, accentName: a.name,
+      searchBorder: a.line,
+      searchBg: a.faint,
+      searchIcon: a.hex,
+
+      // rail (interactive, not a prop)
+      expanded,
+      railWidth: expanded ? 208 : 60,
+      railTitle: expanded ? "Collapse rail" : "Expand rail",
+      toggleRail: () => this.setState({ expanded: !expanded }),
+
+      nav, types, files, q,
+      tabLabel: current ? current.label.toLowerCase() : "files",
+      driveCount: files.length,
+
+      isRows: view === "rows",
+      isGrid: view === "grid",
+      rowsBg: view === "rows" ? a.soft : "transparent",
+      rowsFg: view === "rows" ? a.hi : "rgba(232,237,246,0.55)",
+      gridBg: view === "grid" ? a.soft : "transparent",
+      gridFg: view === "grid" ? a.hi : "rgba(232,237,246,0.55)",
+      setRows: () => this.setState({ view: "rows" }),
+      setGrid: () => this.setState({ view: "grid" }),
+      onSearch: e => this.setState({ q: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>
