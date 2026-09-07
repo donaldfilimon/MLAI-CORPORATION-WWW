@@ -86,6 +86,29 @@ only 13 of 21 publications match, which reads as content corruption and is not.
 exported from. Read them from the manifest rather than trusting any revision quoted in prose;
 on regeneration they move. Preserve real provenance, never restate a hash you did not compute.
 
+### Checking this export against canonical source
+
+The `sourceRevision` resolves in `~/dev/active/mlai`, so freshness is measurable rather
+than assumed. Run this from that repo, not this one:
+
+```sh
+git cat-file -t <sourceRevision>                        # it is a real commit
+git merge-base --is-ancestor <sourceRevision> main      # it is on the canonical line
+git diff --name-only <sourceRevision>..main -- \
+  apps/web/app/research apps/web/src/components/research apps/web/scripts/export-research.tsx
+```
+
+Empty output from the last command means the research surface has not moved and this
+export is current. **Empty output is also what a broken command prints**, so pair it with
+a control (`git diff --stat <rev>..main | tail -3`) that must show the unrelated commits —
+that is the `find -newermt` trap in a different costume.
+
+Measured 2026-09-06 19:5x: `0a516a84f3b2d8f6f0c96491b8ac4f3e4307cefb` is an ancestor of
+`mlai` `main`, **13 commits back with zero changes to any research path**, control showing
+10 unrelated files changed. So this artifact matched canonical research content exactly at
+that point, and a re-export would have produced the same bytes. Re-measure rather than
+trusting this line; it dates the moment, not the repository.
+
 ## Content model
 
 `public/research-data.json` is the structured collection every page renders from:
