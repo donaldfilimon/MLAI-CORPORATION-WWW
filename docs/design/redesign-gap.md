@@ -20,6 +20,7 @@
 | `Site Investors.dc.html` | `/investors` | `InvestorsPage` | In progress | Figure-free thesis + open-core facts. No TAM/$1.5M. |
 | `Site Company.dc.html` | `/company` | `CompanyPage` | In progress | Founder split, principles, facts, projects, hiring, NextUp. |
 | `Site Contact.dc.html` | `/contact` | `ContactPage` + `@mlai/ui` ContactForm | In progress | Two-up layout, privacy callout, elsewhere links, wired form. |
+| (Next handoff) | `/quesar`, `/quesar/consent`, `/quesar/audit` | `QuesarLanding` / `QuesarConsent` / `QuesarAudit` + `src/content/quesar.ts` | Shipped (mock) | Private-ops narrative only; localStorage consent labelled; noindex consent/audit; no IWL; no StatBlocks |
 | (Next handoff) | `/knowledge` | `KnowledgePage` + `src/content/knowledge.ts` | In progress | Motto, personas, invariant, glossary; no StatBlocks. |
 | (Next handoff) | `/repositories` | `RepositoriesPage` + claims ledger | In progress | Per-repo Current/Partial/Proposed/Not claimed. |
 | (Research) | provenance module | `src/content/provenance.ts` + `ProvTag`/`ProvLegend` | In progress | ● measured / ○ target / ◆ reported; `figures` empty until harness; bans handoff 295×/0.8ms/$1.5M/TAM |
