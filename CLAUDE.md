@@ -254,13 +254,3 @@ copy defeats the check. `docs/research-merge/report-source.md` records the impor
 26 pinned source files behind 66 article-source references; `source-verification.json` holds their
 hashes. Research copy is imported content, not house copy.
 
-## mlai-web/
-
-A second, self-contained static Next.js marketing site with its own `package.json`, `bun.lock`,
-`tsconfig.json`, ESLint config and Tailwind setup. It is not a workspace of the root package, the
-root `tsconfig.json` `include` does not sweep it, and `bun run check` never touches it — build it
-with `cd mlai-web && bun install && bun run build`, which exports static HTML to `mlai-web/docs/`.
-`.github/workflows/mlai-web.yml` lints, typechecks, builds and verifies the exported routes, scoped
-by path so it only fires when `mlai-web/**` changes. It duplicates pages the application already
-serves from `src/app/(public)/`; confirm which of the two a request means before editing anything
-that sounds like "the MLAI site".
