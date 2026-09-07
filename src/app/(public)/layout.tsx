@@ -5,7 +5,7 @@ import { Brand } from "@/components/brand";
 const productLinks: [string, string][] = [
   ["WDBX", "/wdbx"],
   ["ABI Framework", "/abi"],
-  ["Abbey", "/abbey"],
+  ["IWL", "/abbey"],
   ["Platform", "/platform"],
 ];
 

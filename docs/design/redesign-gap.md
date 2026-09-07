@@ -14,8 +14,8 @@
 | `SiteFooter.dc.html` | site footer | `src/app/(public)/layout.tsx` `.public-footer` | Partial | Flat link row; missing gradient hairline, Products/Company/External columns, ProvLegend strip, Delaware/Orlando legal line |
 | `Site WDBX.dc.html` | `/wdbx` | `src/content/pages.ts` → `/(public)/[...slug]` | Partial | Article layout exists; not design sections (hero stats, feature grid, DataTable, SplitSection) |
 | `Site ABI.dc.html` | `/abi` | same | Partial | Article layout; no StatBlocks / StepList pipeline / Callout integrity note |
-| `Site Abbey.dc.html` | `/abbey` (IWL brand) | same | Partial | Article layout; no PersonaCard / registers table / shipping SpecList. Marketing copy should use IWL for Abbey-facing pages when product naming is updated |
-| `Site Platform.dc.html` | `/platform` | same | Partial | Article layout; design is four-layer platform + FAQList + HeroBench |
+| `Site Abbey.dc.html` | `/abbey` (IWL brand) | `AbbeyPage` + pages.ts | In progress | Composed marketing page (IWL product naming, personas, registers, shipping). No unsourced eval metrics. |
+| `Site Platform.dc.html` | `/platform` | `PlatformPage` + pages.ts | In progress | Four layers, refusals, audience, FAQ, NextUp. Illustrative trace only. |
 | `Site Research.dc.html` | `/research` | `src/components/research-pages.tsx` + `src/content/research.ts` | Partial | Research landing + publications exist; missing design PublicationIndex / SpecList / provenance callouts |
 | `Site Investors.dc.html` | `/investors` | `pages.investors` | Partial | Conservative evidence-before-projections article — do not paste design TAM/$1.5M figures unless sourced in-repo brand data |
 | `Site Company.dc.html` | `/company` | `pages.company` | Partial | Article layout vs design FeatureCard/DataTable/SplitSection |
@@ -54,22 +54,10 @@ App already ships CSS utilities: `.button`, `.eyeline`, product accent classes (
 
 ## shadcn status
 
-- **No `components.json`** in app root or `packages/ui`.
-- `@mlai/ui` is a custom ESM design package (esbuild per-file + CSS), not a shadcn tree.
-- user-Shadcn MCP is ready; registries empty until init.
-- Recommended init (does not replace `@mlai/ui` exports):
-
-```bash
-# from packages/ui — keep @mlai/ui public API stable
-cd packages/ui
-bunx shadcn@latest init
-# components -> src/components/ui; map CSS vars onto existing tokens.css
-bunx shadcn@latest add button card separator badge navigation-menu sheet dialog command table input textarea
-```
-
-**Guardrails:** keep Brand/PublicNav/forms/architecture exports; add shadcn under `packages/ui/src/components/ui/*` and re-export selectively; map onto `--bg/--panel/--cyan/--purple/--green`; prefer Bun (`bunx`).
-
-Suggested first shadcn set: button, card, separator, badge, navigation-menu, sheet (mobile nav), dialog+command (docs Cmd-K), table, input, textarea.
+- `packages/ui/components.json` present (new-york / CSS variables).
+- Primitives added under `packages/ui/src/components/ui/*` and re-exported from `@mlai/ui` without removing Brand/PublicNav/forms/architecture.
+- Lab tokens map shadcn vars (`--primary` → `--cyan`, panels → `--panel` / `--panel-raised`).
+- Imports use relative paths so the esbuild no-bundle build stays valid; local `src/lib/utils.ts` (`clsx` + `tailwind-merge`) replaces the registry `cn` package name.
 
 ## Fidelity priorities (ship order)
 

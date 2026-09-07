@@ -16,7 +16,7 @@ export function ResearchLanding() {
   return (
     <div className={`public-container article-layout ${styles.research}`}>
       <header className="article-header">
-        <span className="eyeline">MLAI Research</span>
+        <span className="eyeline abbey">MLAI Research</span>
         <h1>Research you can follow to the source.</h1>
         <p>
           Explore agent behavior, memory, evidence selection, compute, and
