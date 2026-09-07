@@ -433,3 +433,39 @@ errors were raised. The selector was validated against `/repositories` first, so
 means the page genuinely has none rather than a wrong query. The remaining residuals stand: no
 pixel diff against the pre-Tailwind screenshots beyond home, and whether `@source` should also
 cover the application's own `src/**` is still undecided.
+
+## Closing the two Tailwind residuals with measurement (2026-09-07)
+
+**The remaining browser specs now have post-Tailwind evidence.** Only four spec files were re-run
+when the PostCSS config landed; the account-creating ones had not been. Run in separate
+invocations against a reset `.data-e2e` to stay inside the auth rate limit: `portal` **1/1**,
+`account` **1/1**, `wdbx-studio` **3/3**, and `agent` **2 skipped** because it is gated on
+`MLAI_E2E_MODEL_URL`. With the earlier `public-accessibility`, `content-search`, `research` and
+`workflows` **8/8**, the whole non-live suite is **13 passed, 2 model-gated skips, 0 failures**
+under the Tailwind pipeline — though still only across separate invocations, never one sweep.
+
+**The pixel diff was run, and preflight's blast radius is now a measured number rather than a
+reassurance.** All 14 committed verification screenshots were compared against their pre-Tailwind
+versions at `76fd32a`:
+
+- **7 are byte-identical**, including `production-home-1440`, `customer-1440`, `staff-1440` and all
+  three `abbey-grounded` widths.
+- **4 grew slightly**: `home-1440` +3 px, `home-390` +6 px, `home-768` +7 px, `architecture-390`
+  +12 px. Every pixel above the change is identical, and `home-1440` is explained *entirely* by a
+  uniform 3 px shift — nothing on it was restyled.
+- The origin of the growth was located and inspected rather than assumed: it is the provenance
+  legend strip. Text, colour, glyphs and wrapping are identical; it simply sits a few pixels lower,
+  because preflight resets the default margins of the elements it is built from. `architecture-390`
+  differs across a wider span only because that page carries two such legends, so no single uniform
+  shift realigns it.
+- **3 differ in tiny bands that are not styling at all**: `abbey-390` (0.21 % of pixels),
+  `abbey-768` (0.15 %) and `documents-1440` (0.01 %). Cropping `abbey-390` shows the model picker
+  reading "Local · MLX Core / auto-discover" where it previously read "Choose a model" — an MLX
+  server was listening on port 3102 during the later run. Environmental content, not a regression.
+
+No text, colour, spacing-within-components or layout damage was found anywhere. The judgement that
+preflight in `layer(base)` cannot disturb the unlayered hand-written CSS held under measurement.
+
+**Still not done.** The full suite in a single invocation remains blocked by the rate limiter, and
+that is a product decision, not a test fix. Whether `@source` should also scan the application's
+own `src/**` is still undecided.
