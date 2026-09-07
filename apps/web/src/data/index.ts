@@ -9,6 +9,7 @@ import { stats } from './categories/stats';
 import { faq } from './categories/faq';
 import { products } from './categories/products';
 import { changelog } from './categories/changelog';
+import { docNav } from './categories/docs-nav';
 
 export * from './schemas';
 export * from './categories/about';
@@ -22,6 +23,7 @@ export * from './categories/stats';
 export * from './categories/faq';
 export * from './categories/products';
 export * from './categories/changelog';
+export * from './categories/docs-nav';
 
 export const content = {
   about,
