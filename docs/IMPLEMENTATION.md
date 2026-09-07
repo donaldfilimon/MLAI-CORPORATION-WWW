@@ -476,3 +476,33 @@ Tailwind-shaped names there — `text-link`, `text-button`, `space-top` — are 
 defined in `packages/ui/src/styles/components.css`. The current scope is correct as written. The
 consequence worth knowing: a genuine utility class written in `src/**` will silently do nothing
 until the glob is widened, which fails as missing styling rather than as a build error.
+
+## The whole browser suite is green in one invocation, and the earlier diagnosis was wrong (2026-09-07)
+
+**Correction first.** Two sections above attribute the suite's 429s to `auth.ts` setting Better
+Auth to 30 requests per 60 s. That is not the binding limit. Better Auth applies a **built-in**
+rule of **three requests per ten seconds**, keyed per IP *and path*, to `/sign-in`, `/sign-up`,
+`/change-password` and `/change-email`, and it replaces the configured window for those paths
+(`node_modules/better-auth/dist/api/rate-limiter/index.mjs`, `getDefaultSpecialRules`). The
+configured 30/60 s never applied to sign-up at all. Anything in this file that says otherwise is
+superseded by this paragraph.
+
+That correction changed the fix. A per-path `customRules` entry raising `/get-session` was tried
+first and **reverted**: it addressed a limit that was not the constraint, and it loosened a
+production setting for a test's benefit. `auth.ts` is untouched by this work.
+
+**The real fix is test-side, and it respects the throttle rather than removing it.**
+`tests/e2e/support/account.ts` creates fixture accounts through one helper that waits out a 429 —
+honouring `Retry-After` when present — and retries twice before failing. `wdbx-studio.spec.ts` was
+creating one account per width for an assertion identical at all three; it now creates one in
+`beforeAll` and replays its cookies, removing two sign-ups from a three-per-ten-second budget.
+`portal.spec.ts` and `account.spec.ts` route through the same helper.
+
+**Evidence.** `bunx playwright test tests/e2e --grep-invert live` exits **0** in a single
+invocation: **13 passed, 2 skipped** (`agent.spec.ts`, gated on `MLAI_E2E_MODEL_URL`), **0
+failed**, 45.1 s. This is the first recorded green whole-suite run; every earlier green was a set
+of separate invocations. `bun run check` exit 0 alongside it.
+
+**What did not change.** No production rate limit was raised, no assertion was weakened or
+deleted, and no test-only bypass was added to application code. The suite still needs
+`rm -rf .data-e2e` between runs because that database persists other counters.

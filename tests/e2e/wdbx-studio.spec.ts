@@ -1,7 +1,24 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Cookie } from "@playwright/test";
 import { randomBytes } from "node:crypto";
+import { signUpFixture } from "./support/account";
 
 const studioUrl = "https://wdbx-specimen-studio.underswitch.chatgpt.site/";
+
+// The account is a fixture, not the subject: the boundary assertion is
+// identical at every width. Creating it once and replaying its cookies keeps
+// three sign-ups off a credential endpoint that allows three per ten seconds.
+let fixtureCookies: Cookie[] = [];
+
+test.beforeAll(async ({ playwright, baseURL }) => {
+  const api = await playwright.request.newContext({ baseURL });
+  await signUpFixture(api, baseURL!, {
+    name: "Studio boundary fixture",
+    email: `studio-${randomBytes(12).toString("hex")}@example.test`,
+    password: randomBytes(24).toString("base64url"),
+  });
+  fixtureCookies = (await api.storageState()).cookies;
+  await api.dispose();
+});
 
 for (const width of [390, 768, 1440]) {
   test(`Studio handoff preserves the console boundary at ${width}px`, async ({
@@ -17,15 +34,7 @@ for (const width of [390, 768, 1440]) {
     await page.setViewportSize({ width, height: 960 });
     // Only synthetic accounts in the configured e2e installation. No provider
     // selection, binding, probes, or playground operations are performed.
-    const account = await page.request.post("/api/auth/sign-up/email", {
-      headers: { Origin: baseURL! },
-      data: {
-        name: "Studio boundary fixture",
-        email: `studio-${randomBytes(12).toString("hex")}@example.test`,
-        password: randomBytes(24).toString("base64url"),
-      },
-    });
-    expect(account.ok()).toBe(true);
+    await context.addCookies(fixtureCookies);
 
     const outbound: {
       url: string;

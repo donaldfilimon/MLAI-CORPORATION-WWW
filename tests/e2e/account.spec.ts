@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { randomBytes } from "node:crypto";
+import { signUpFixture } from "./support/account";
 test("profile, password, session revocation and keyboard drawer", async ({
   browser,
   page,
@@ -8,14 +9,11 @@ test("profile, password, session revocation and keyboard drawer", async ({
     email = `account-${Date.now()}@example.test`,
     password = randomBytes(24).toString("base64url"),
     next = randomBytes(24).toString("base64url");
-  expect(
-    (
-      await page.request.post(`${base}/api/auth/sign-up/email`, {
-        headers: { Origin: base },
-        data: { name: "Account fixture", email, password },
-      })
-    ).ok(),
-  ).toBe(true);
+  await signUpFixture(page.request, base, {
+    name: "Account fixture",
+    email,
+    password,
+  });
   const second = await browser.newContext();
   expect(
     (

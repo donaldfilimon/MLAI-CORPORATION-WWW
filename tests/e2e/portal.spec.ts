@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { mkdirSync } from "node:fs";
+import { signUpFixture } from "./support/account";
 test("customer request, assigned staff, milestones, replacement and exact-version review", async ({
   browser,
 }) => {
@@ -15,13 +16,11 @@ test("customer request, assigned staff, milestones, replacement and exact-versio
     [customerContext, `customer-${suffix}@example.test`, "Customer fixture"],
     [staffContext, staffEmail, "Staff fixture"],
   ] as const) {
-    const response = await context.request.post(
-      `${base}/api/auth/sign-up/email`,
-      {
-        headers: { Origin: base },
-        data: { email, name, password: randomBytes(24).toString("base64url") },
-      },
-    );
+    const response = await signUpFixture(context.request, base, {
+      email,
+      name,
+      password: randomBytes(24).toString("base64url"),
+    });
     expect(response.status()).toBe(200);
   }
   execFileSync(
