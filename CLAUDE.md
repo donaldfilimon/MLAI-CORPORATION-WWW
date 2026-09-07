@@ -56,8 +56,9 @@ Three gate behaviors have already cost sessions time; `docs/IMPLEMENTATION.md` r
 - `next build` sometimes rewrites `tsconfig.json` with generated dist-dir includes. Compare it
   before and after and revert before committing; it does not happen on every run.
 
-Read the exit code from the command itself. A `bun run check | tail` reports tail's status and has
-already manufactured a false green here.
+Read the exit code from the command itself, never through a pipe — `bun run check | tail` reports
+tail's status. `docs/IMPLEMENTATION.md` records every gate result here as having been read directly
+for that reason.
 
 `AGENTS.md` requires keeping `docs/IMPLEMENTATION.md` current with evidence. Separate the historical baseline from combined-release receipts; do not tick a gate without results tied to the source under review.
 
@@ -219,10 +220,16 @@ figure to actually reach a page next to its own provenance chip, so no figure be
 The file header lists the source files and constants each claim was checked against; extend that
 header when adding a claim rather than asserting a number from memory.
 
-`tests/research.test.ts` hashes the research collection against
-`docs/research-merge/source-manifest.json`. The 21 publications and three legacy application notes
-render as native App Router pages here, and their content is pinned to that manifest; changing
-research copy means updating the manifest hash in the same commit.
+`tests/research.test.ts` guards the research collection the same way. The 21 publications, six
+tracks and three retained application notes were imported from the sibling `mlai` source and the
+linked Sites export, and `docs/research-merge/source-manifest.json` describes **that original
+exported artifact**, not this app's generated HTML. The test asserts the local corpus still matches
+it by deep equality, that all four publication PDFs match their recorded SHA-256 editions, and that
+every track, legacy note, guide link, route and sitemap entry still resolves. So a failure means
+the corpus has diverged from the source it was imported from — editing the manifest to match new
+copy defeats the check. `docs/research-merge/report-source.md` records the import decision and the
+26 pinned source files behind 66 article-source references; `source-verification.json` holds their
+hashes. Research copy is imported content, not house copy.
 
 ## mlai-web/
 
