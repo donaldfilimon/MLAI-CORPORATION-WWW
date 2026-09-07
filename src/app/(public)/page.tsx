@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Code2, Users } from "lucide-react";
 import { ArchitectureDiagram, DocumentFlow } from "@/components/architecture";
+import { ProvLegend } from "@/components/prov-tag";
 import { publications } from "@/content/research";
 
 const stack = [
@@ -49,8 +50,8 @@ export default function Home() {
             <Link className="button primary" href="/wdbx">
               Explore the stack <ArrowRight size={18} />
             </Link>
-            <Link className="button secondary" href="/investors">
-              Investors
+            <Link className="button secondary" href="/architecture">
+              Architecture
             </Link>
           </div>
         </div>
@@ -80,6 +81,14 @@ export default function Home() {
               </span>
             </Link>
           ))}
+        </div>
+        <div className="home-prov">
+          <p className="muted home-prov-note">
+            Public figures carry provenance tags. Sourced constants live on{" "}
+            <Link href="/wdbx">WDBX</Link> and <Link href="/abi">ABI</Link> —
+            not as a home benchmarks grid.
+          </p>
+          <ProvLegend variant="inline" />
         </div>
       </section>
 
@@ -136,13 +145,13 @@ export default function Home() {
             </span>
           </div>
         </Link>
-        <Link href="/services">
+        <Link href="/contact">
           <Users size={36} />
           <div>
-            <h2>Work with the team</h2>
-            <p>Implementation support and technical collaboration.</p>
+            <h2>Talk with the team</h2>
+            <p>Deploy, pilot, partner, or invest — same inbox.</p>
             <span className="text-link abbey">
-              Explore services <ArrowRight size={16} />
+              Contact <ArrowRight size={16} />
             </span>
           </div>
         </Link>

@@ -4,6 +4,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { AbiPage } from "@/components/abi-page";
+import { ArchitecturePage } from "@/components/architecture-page";
 import { WdbxPage } from "@/components/wdbx-page";
 import {
   BANNED_HANDOFF_FIGURES,
@@ -146,7 +147,8 @@ describe("claims that were false against source", () => {
 describe("figures reach a page", () => {
   const markup =
     renderToStaticMarkup(createElement(WdbxPage)) +
-    renderToStaticMarkup(createElement(AbiPage));
+    renderToStaticMarkup(createElement(AbiPage)) +
+    renderToStaticMarkup(createElement(ArchitecturePage));
 
   it("renders every published figure, so none becomes dead data", () => {
     for (const figure of figures) {
@@ -165,5 +167,36 @@ describe("figures reach a page", () => {
     // .table-scroll is the shared-UI overflow container
     // (packages/ui/src/styles/components.css).
     expect(markup).toContain("table-scroll");
+  });
+});
+
+describe("architecture page", () => {
+  const markup = renderToStaticMarkup(createElement(ArchitecturePage));
+
+  it("names Rust, not Zig, for the two Rust workspaces", () => {
+    // knowledge.ts and the company page legitimately mention Zig for Nyon and
+    // for abi's removed tree, so the forbid is scoped to this page only.
+    expect(markup).not.toMatch(/\bZig\b/);
+    expect(markup).toContain("Rust workspace");
+    expect(markup).toContain("Rust substrate");
+  });
+
+  it("keeps the Metal path conditional rather than claiming a live kernel", () => {
+    // abi/crates/abi-gpu/src/metal_kernels.rs: kernels_linked() is a
+    // compile-time feature and dispatch needs the dylib to init a device.
+    expect(markup).not.toMatch(/live Metal/i);
+    expect(markup).toContain("accelerated=false");
+  });
+
+  it("renders all four layers including the hardware substrate", () => {
+    for (const name of ["Silicon", "ABI", "WDBX", "Abbey"]) {
+      expect(markup, name).toContain(name);
+    }
+  });
+
+  it("publishes no throughput, latency or speedup figure", () => {
+    expect(markup).not.toMatch(/\bQPS\b/i);
+    expect(markup).not.toMatch(/\d+\s*(ms|µs)\b/);
+    expect(markup).not.toMatch(/\d+\s*[×x]\s*(faster|speedup)/i);
   });
 });

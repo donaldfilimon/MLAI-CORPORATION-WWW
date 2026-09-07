@@ -9,6 +9,7 @@ import { PlatformPage } from "@/components/platform-page";
 import { AbbeyPage } from "@/components/abbey-page";
 import { AbiPage } from "@/components/abi-page";
 import { WdbxPage } from "@/components/wdbx-page";
+import { ArchitecturePage } from "@/components/architecture-page";
 import { ContactPage } from "@/components/contact-page";
 import { CompanyPage } from "@/components/company-page";
 import { InvestorsPage } from "@/components/investors-page";
@@ -82,6 +83,7 @@ export default async function Page({ params }: Props) {
   if (key === "abbey") return <AbbeyPage />;
   if (key === "abi") return <AbiPage />;
   if (key === "wdbx") return <WdbxPage />;
+  if (key === "architecture") return <ArchitecturePage />;
   if (key === "company") return <CompanyPage />;
   if (key === "investors") return <InvestorsPage />;
   if (key === "knowledge") return <KnowledgePage />;

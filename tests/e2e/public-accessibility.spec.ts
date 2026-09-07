@@ -42,6 +42,27 @@ test("shared navigation restores focus, respects reduced motion, and serves publ
   }
   await page.goto("/docs/");
   await expect(page.locator("h1")).toBeVisible();
+
+  // The architecture page carries the widest content on the public site: two
+  // parameter tables inside .table-scroll. Check the narrow viewport there
+  // specifically, since a wide table that escapes its container scrolls the
+  // whole page rather than just itself.
+  await page.setViewportSize({ width: 390, height: 960 });
+  await page.goto("/architecture/");
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth + 1,
+    ),
+  ).toBe(true);
+  // Provenance chips must reach the reader, not just the markup.
+  await expect(page.locator(".prov-tag").first()).toBeVisible();
+  await page.screenshot({
+    path: "docs/verification/screenshots/architecture-390.png",
+    fullPage: true,
+    animations: "disabled",
+  });
   const missing = await page.goto("/not-a-real-release-route");
   expect(missing?.status()).toBe(404);
   expect(errors).toEqual([]);

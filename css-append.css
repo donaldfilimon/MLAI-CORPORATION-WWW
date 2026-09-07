@@ -1,0 +1,28 @@
+
+/* Closeout: footer provenance strip + home claim-safe note */
+.public-footer-prov {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.public-footer-prov .prov-legend.inline {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: #64748b;
+}
+.home-prov {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 40rem;
+}
+.home-prov-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.home-prov-note a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
