@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env.local
+*.log
+.DS_Store
+
+# Build output. The Pages workflow commits it explicitly with `git add -f docs`.
+docs/
+next-env.d.ts
+*.tsbuildinfo
