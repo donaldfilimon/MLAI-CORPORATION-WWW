@@ -27,7 +27,7 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 ## Routes, Metadata, And Generated Surfaces
 
 - Adding a route normally means: view in `src/views/`, `app/<route>/client.tsx`, thin `page.tsx`, metadata in `src/lib/route-meta.ts`, and an explicit `scripts/generate-sitemap.ts` entry only when indexable. Dynamic blog/research/team/product routes derive metadata and sitemap entries from content.
-- The six `noindex` routes are `/login`, `/signup`, `/console`, `/profile`, `/financial-model`, and `/tf-pose-demo`; they are intentionally absent from the sitemap. Do not add them to `robots.txt` `Disallow`: crawlers must fetch them to see `noindex`.
+- The seven `noindex` routes are `/login`, `/signup`, `/console`, `/console/workspace`, `/profile`, `/financial-model`, and `/tf-pose-demo`; they are intentionally absent from the sitemap. Do not add them to `robots.txt` `Disallow`: crawlers must fetch them to see `noindex`.
 - Keep site-level Open Graph, Twitter, and feed-alternate defaults in `toNextMetadata()`. Next replaces those metadata objects instead of deep-merging layout defaults. The layout copies still cover `not-found`.
 - Blog, research, team, and product detail routes own `opengraph-image.tsx`. For those paths, `toNextMetadata()` must leave `images` absent, not `undefined`, or Next's file-convention image is overridden. `route-meta.test.ts` pins this behavior.
 - `site/` is a second, static GitHub Pages surface, not the Next app. It cannot reference `public/` or `/_next/`. Brand assets duplicated there must stay byte-aligned with `public/`; `landing-page.test.ts` is the publish guard. After `bun run og`, refresh the matching `site/` assets too.
@@ -52,6 +52,7 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 
 ## Server And Deployment Traps
 
+- `/console/workspace` reads each user's own Drive and OneDrive through per-user OAuth in `src/lib/server/workspace-*.ts`. Only refresh tokens are stored, KMS-wrapped and AAD-bound to one `(user, provider)` pair; access tokens are minted per request and never leave the server. Scopes are read-only and pinned by `workspace-oauth.test.ts` — widening them is a deliberate, reviewable change. With no OAuth credentials configured the feature is inert and the console says so; see `docs/deploy-cloud-run.md` §3b.
 - Every handler that consumes a request body must use `src/lib/server/body-limit.ts`; Next route handlers have no default body cap. Rate limits cap request count, not bytes. `readJsonLimited<T>` returns `T | Response`, guarantees only a non-null plain-object shape, and still requires route-level field validation. Current caps are 4 KB telemetry/checkout, 16 KB profile, 32 KB inquiries, 64 KB CSP reports, and 128 KB LLM chat.
 - Keep `/api/auth/login` behind `src/lib/server/authkit-entry.ts`; `/api/auth/signup` intentionally redirects to the request-access funnel and must not restore open self-provisioning.
 - The CSP is a specific-origin allowlist in `next.config.ts`; add origins to the narrow directive, never a bare `https:` wildcard. Keep both `report-to` and `report-uri`. In `app/api/csp-report/route.ts`, the rate-limit check must remain the first statement, and reports stay in stdout rather than privacy-limited telemetry storage.
