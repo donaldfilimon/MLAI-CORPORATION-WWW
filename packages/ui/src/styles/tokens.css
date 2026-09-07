@@ -53,16 +53,25 @@
   --tracking-display: -0.02em;
   --leading-display: 1.08;
 
-  /* Spacing. Hand-tuned values ran 9/19/22/23/47px; this is a 4px grid, which
-     is also what the Tailwind primitives already use. */
+  /* Spacing. The sheet carried 55 distinct padding/margin values, but they are
+     not all noise: 20px is the card gap in three separate grids, and 32/40/56/64
+     each set a real structural rhythm. Those stay as steps; the one-offs that
+     sat beside them for no recoverable reason (44, 55, 61, 72, 77) snap onto the
+     nearest, none moving more than 8px. Same rule as the colour and radius
+     sweeps — one authority per repeated value, not a scale imposed from
+     outside. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
-  --space-8: 64px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 56px;
+  --space-11: 64px;
+  --space-12: 80px;
   /* Product accents. AGENTS.md fixes these three: WDBX cyan, ABI violet, Abbey emerald. */
   --accent-wdbx: var(--cyan);
   --accent-abi: var(--purple);
