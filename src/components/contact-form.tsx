@@ -1,11 +1,14 @@
 "use client";
 import {
   ContactForm as DesignSystemContactForm,
+  type ContactFormProps,
   type ContactFormValues,
 } from "@mlai/ui";
-export function ContactForm() {
+
+export function ContactForm({ note }: Pick<ContactFormProps, "note"> = {}) {
   return (
     <DesignSystemContactForm
+      note={note}
       onSubmit={async (values: ContactFormValues) => {
         const response = await fetch("/api/v1/inquiries", {
           method: "POST",

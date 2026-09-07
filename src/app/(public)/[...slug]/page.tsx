@@ -11,6 +11,7 @@ import { AbiPage } from "@/components/abi-page";
 import { WdbxPage } from "@/components/wdbx-page";
 import { ContactPage } from "@/components/contact-page";
 import { CompanyPage } from "@/components/company-page";
+import { InvestorsPage } from "@/components/investors-page";
 
 type Props = { params: Promise<{ slug: string[] }> };
 
@@ -36,14 +37,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         {
           research: "Research",
           contact: "Contact",
+          company: "Company",
+          investors: "Investors",
         } as Record<string, string>
       )[key],
     description:
       publication?.abstract ||
       pages[key]?.description ||
-      (key === "research"
-        ? "Source-reviewed MLAI research, implementation guides, and application notes."
-        : undefined),
+      (
+        {
+          research:
+            "Source-reviewed MLAI research with provenance — no invented StatBlocks.",
+          contact:
+            "One inbox for deploy, pilot, partner, or invest. Privacy-first by default.",
+          company:
+            "Why MLAI exists — Delaware C-Corp, Orlando roots, evidence before projections.",
+          investors:
+            "Positioning thesis, deliberately figure-free. Evidence before projections.",
+        } as Record<string, string>
+      )[key],
   };
 }
 
@@ -61,6 +73,7 @@ export default async function Page({ params }: Props) {
   if (key === "abi") return <AbiPage />;
   if (key === "wdbx") return <WdbxPage />;
   if (key === "company") return <CompanyPage />;
+  if (key === "investors") return <InvestorsPage />;
 
   const article = pages[key];
   if (!article) notFound();

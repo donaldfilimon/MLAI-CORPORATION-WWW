@@ -3097,6 +3097,134 @@
   min-height: 200px;
 }
 
+.feature-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.feature-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.feature-card-link:hover {
+  border-color: color-mix(in srgb, currentColor 45%, var(--line));
+  background: color-mix(in srgb, currentColor 6%, var(--panel));
+  transform: translateY(-2px);
+}
+
+.feature-card-link h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.formal-model-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.formula-block {
+  font: 600 20px/1.4 var(--font-mono);
+  color: var(--accent-wdbx);
+  margin-bottom: 18px;
+  letter-spacing: 0.02em;
+}
+
+.scoring-list dd {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 22rem;
+  text-align: right;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+  padding: 72px 0 64px;
+}
+
+.contact-copy h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(36px, 4.2vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 18px 0 0;
+  text-wrap: balance;
+}
+
+.contact-copy .hero-description {
+  margin-top: 20px;
+  max-width: 32rem;
+}
+
+.contact-layout .callout-card {
+  margin-top: 32px;
+}
+
+.elsewhere {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.elsewhere-label {
+  font: 700 11px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.elsewhere a {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.elsewhere a:hover {
+  color: var(--text);
+}
+
+.contact-form-panel {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--panel-raised) 80%, transparent),
+    color-mix(in srgb, var(--panel) 60%, transparent)
+  );
+  padding: 32px;
+}
+
+@media (max-width: 900px) {
+  .feature-grid.three,
+  .formal-model-grid,
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card-link:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-card-link {
+    transition: none;
+  }
+}
+
 .contact-hero {
   border-bottom: 0;
   padding-bottom: 28px;

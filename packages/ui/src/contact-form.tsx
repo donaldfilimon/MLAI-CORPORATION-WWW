@@ -46,35 +46,43 @@ export function ContactForm({
       <div className="two-columns">
         <label>
           Name
-          <input name="name" required maxLength={100} autoComplete="name" />
+          <input
+            name="name"
+            required
+            maxLength={100}
+            autoComplete="name"
+            placeholder="Ada Lovelace"
+          />
         </label>
         <label>
-          Email
+          Work email
           <input
             name="email"
             type="email"
             required
             maxLength={200}
             autoComplete="email"
+            placeholder="ada@company.com"
           />
         </label>
       </div>
       <label>
-        Company <span className="muted">(optional)</span>
+        Organization <span className="muted">(optional)</span>
         <input name="company" maxLength={200} autoComplete="organization" />
       </label>
       <label>
-        What would you like to work on?
+        What are you trying to do?
         <textarea
           name="message"
           required
           minLength={10}
           maxLength={8000}
-          rows={6}
+          rows={5}
+          placeholder="The workflow, the failure modes you can't accept, the constraints we should respect."
         />
       </label>
       <button className="button primary" disabled={busy}>
-        {busy ? "Saving…" : "Send inquiry"}
+        {busy ? "Saving…" : "Send inquiry →"}
       </button>
       {message && (
         <p role="status" className={ok ? "success" : "error"}>
