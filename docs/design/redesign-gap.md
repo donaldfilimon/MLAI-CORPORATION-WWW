@@ -61,7 +61,7 @@ shadcn primitives under `packages/ui/src/components/ui/*` mapped to Lab tokens; 
 
 1. **Parked — product decision:** public Console marketing gate distinct from `/sign-in` + `/app`.
 2. **Parked — out of scope:** Mobile Expo companion; agent-runtime / abbey-completion Tasks 1–3.
-3. **Parked — do not merge:** nested `mlai-web` scaffold (`claude/filimon-audit-web-stack-nqgaf9` / PR #10 lineage).
+3. **Removed:** nested `mlai-web` scaffold (re-landed via PR #12 / merge `c2b0710` after #10 close; stripped again — second marketing system).
 4. **Blocked on harness:** Home Benchmarks grids and any handoff StatBlock numbers not in `figures` with real `source`.
 5. **Optional polish:** further visual fidelity vs Site*.dc.html (glow, PersonaCard density) without new claims.
 
