@@ -22,6 +22,7 @@
 | `Site Contact.dc.html` | `/contact` | `ContactPage` + `@mlai/ui` ContactForm | In progress | Two-up layout, privacy callout, elsewhere links, wired form. |
 | (Next handoff) | `/knowledge` | `KnowledgePage` + `src/content/knowledge.ts` | In progress | Motto, personas, invariant, glossary; no StatBlocks. |
 | (Next handoff) | `/repositories` | `RepositoriesPage` + claims ledger | In progress | Per-repo Current/Partial/Proposed/Not claimed. |
+| (Research) | provenance module | `src/content/provenance.ts` + `ProvTag`/`ProvLegend` | In progress | ● measured / ○ target / ◆ reported; `figures` empty until harness; bans handoff 295×/0.8ms/$1.5M/TAM |
 | `Site Docs.dc.html` | `/docs` (+ shell) | `/docs` ContentIndex + `docs/*` articles | Partial | Searchable index exists; missing sticky 230px sidebar + Cmd-K palette DocsShell |
 | `Site Console.dc.html` | marketing gate + workspace | `/app` + `/sign-in` | Different | Better Auth sign-in + workspace console are product UI, not the design two-up marketing gate |
 | `Mobile App.dc.html` | Expo companion | out of scope for this Next app | N/A | Handoff mobile TSX targets a different surface |
@@ -72,7 +73,7 @@ App already ships CSS utilities: `.button`, `.eyeline`, product accent classes (
 ## Brand / claims
 
 - Abbey marketing surfaces: use **IWL** naming when replacing Abbey product label (per brand direction); keep Abbey as assistant persona where appropriate.
-- Investors / Home stats from handoff (295×, 0.8ms, $1.5M, TAM tables) are not present as verified brand modules in this repo — leave out until a brand provenance module exists.
+- Investors / Home stats from handoff (295×, 0.8ms, $1.5M, TAM tables) are not present as verified brand modules in this repo — leave out until rows land in `src/content/provenance.ts` with real `source` citations (module shipped; `figures` still empty).
 - Existing app copy already enforces evidence before projections on `/investors`.
 
 ## First redesign slice (this PR)
