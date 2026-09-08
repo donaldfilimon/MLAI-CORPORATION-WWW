@@ -19,6 +19,13 @@ app-local `AGENTS.md` for web/mobile and `apps/quasar/README.md` for Quasar.
   their results independently.
 - Do not add web or mobile to the root Bun workspace. Their React type graphs
   intentionally differ; each app owns its own lockfile and `node_modules`.
+- `vendor/` holds site archives vendored verbatim on 2026-09-07. Nothing in it
+  is built, linted, tested, or deployed; `check:topology` asserts required
+  paths exist rather than forbidding extra ones, so a green root gate says
+  nothing about it. `vendor/mlai-review` and `vendor/mlai-site` are two
+  revisions of one standalone Next.js site, not patches against `apps/web`, so
+  "the MLAI site" resolves to three trees in this repository. Inventory,
+  provenance digests, and what was deliberately excluded: `vendor/README.md`.
 
 ## Commands
 
