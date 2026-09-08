@@ -207,7 +207,7 @@ Create `apps/web/src/__tests__/docs-routes.test.ts`:
 ```ts
 import { describe, expect, it } from "vitest";
 import { docs } from "@/data/categories/docs";
-import { docMeta, routeMetadata } from "@/lib/route-meta";
+import { docMeta, routeMetadata, NOT_FOUND_META } from "@/lib/route-meta";
 
 describe("doc routes", () => {
   it("gives every doc a title and description", () => {
@@ -219,7 +219,7 @@ describe("doc routes", () => {
   });
 
   it("returns the not-found meta for an unknown slug", () => {
-    expect(docMeta("no-such-doc").title).toBe(routeMetadata["/404"]?.title ?? docMeta("no-such-doc").title);
+    expect(docMeta("no-such-doc")).toEqual(NOT_FOUND_META);
   });
 
   it("leaves the static /docs route registered", () => {
@@ -228,7 +228,7 @@ describe("doc routes", () => {
 });
 ```
 
-Read `NOT_FOUND_META` in `src/lib/route-meta.ts` before writing the second assertion and match how `blogMeta`'s own tests (if any) express it; if none exist, assert on the exact `NOT_FOUND_META.title` value.
+`NOT_FOUND_META` must be imported from `src/lib/route-meta.ts`. If it is not currently exported, export it — do not weaken the assertion to work around a missing export, and do not add a fallback expression to the `expect`. An assertion with a `?? <the value under test>` fallback passes unconditionally and is a defect.
 
 - [ ] **Step 2: Run it to make sure it fails**
 
