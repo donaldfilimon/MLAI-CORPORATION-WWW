@@ -18,8 +18,8 @@ type VerifiedUser = Awaited<ReturnType<typeof verifyWorkosUser>>;
  *  and 400, and those are shown as-is. The other two are rewritten here: 401
  *  arrives as the bare status word `Unauthorized`, which is not a sentence; and
  *  413 comes from the shared body-limit helper, which cannot know it is the
- *  use-case field that is too long. 413 is reachable because that textarea has
- *  no client-side length cap and the route reads at most 16 KB.
+ *  use-case field that is too long. The client mirrors the route's 240-character
+ *  limit, while 413 remains a defensive response for forged or stale clients.
  *
  *  Keyed on the STATUS, not on the handler's string: the wording of the shared
  *  413/400 bodies in `src/lib/server/body-limit.ts` is free to change, and a
@@ -72,8 +72,12 @@ export function Profile() {
         setStatus(PROFILE_ERROR_COPY[result.status] ?? result.error);
         return;
       }
-      await refresh();
       setStatus('Profile updated.');
+      try {
+        await refresh();
+      } catch {
+        setStatus('Profile updated. Refresh the page to load the latest account details.');
+      }
     } catch {
       // Only faults the route did not speak for land here — a 500, a Cloud Run
       // HTML 503, a dropped connection. None of those are product copy, so say
@@ -138,7 +142,7 @@ export function Profile() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="useCase">Primary AI use case</Label>
-                <Textarea id="useCase" value={useCase} onChange={(event) => setUseCase(event.target.value)} className="min-h-28 border-white/10 bg-black/40 text-white" />
+                <Textarea id="useCase" value={useCase} onChange={(event) => setUseCase(event.target.value)} maxLength={240} className="min-h-28 border-white/10 bg-black/40 text-white" />
               </div>
               <Button disabled={saving} type="submit" className="w-full rounded-xl py-6 font-bold cursor-pointer">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}

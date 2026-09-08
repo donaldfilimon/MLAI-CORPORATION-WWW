@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { createCheckout, getLlmStatus, getMfaStatus, getTelemetrySummary, sendLlmMessage } from "../lib/api";
+import {
+  ApiError,
+  createCheckout,
+  getLlmStatus,
+  getMfaStatus,
+  getTelemetrySummary,
+  sendLlmMessage,
+  structuredApiErrorMessage,
+} from "../lib/api";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -17,7 +25,49 @@ describe("api — apiJson error/JSON contract (via wrappers)", () => {
 
   it("throws the response body text on a non-ok response", async () => {
     mockFetch(async () => new Response("upstream exploded", { status: 500 }));
-    await expect(getLlmStatus()).rejects.toThrow("upstream exploded");
+    const error = await getLlmStatus().catch((cause: unknown) => cause);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({
+      status: 500,
+      error: "upstream exploded",
+      body: "upstream exploded",
+      structured: false,
+    });
+  });
+
+  it("preserves a handler-written JSON error as a structured ApiError", async () => {
+    mockFetch(async () =>
+      new Response(JSON.stringify({ error: "Unauthorized", reason: "expired" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    const error = await getLlmStatus().catch((cause: unknown) => cause);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({
+      status: 401,
+      error: "Unauthorized",
+      body: { error: "Unauthorized", reason: "expired" },
+      structured: true,
+    });
+  });
+
+  it("maps only structured API errors to product copy", () => {
+    const copy = { Unauthorized: "Your session expired." };
+    expect(
+      structuredApiErrorMessage(
+        new ApiError(401, "Unauthorized", { error: "Unauthorized" }, true),
+        copy,
+        "Try again later.",
+      ),
+    ).toBe("Your session expired.");
+    expect(
+      structuredApiErrorMessage(
+        new ApiError(503, "<html>unavailable</html>", "<html>unavailable</html>", false),
+        copy,
+        "Try again later.",
+      ),
+    ).toBe("Try again later.");
   });
 
   it("falls back to 'Request failed: <status>' when the error body is empty", async () => {

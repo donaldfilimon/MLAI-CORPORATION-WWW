@@ -30,6 +30,7 @@ import {
   getConversationAudits,
   getLlmStatus,
   sendLlmMessage,
+  structuredApiErrorMessage,
   withdrawChatConsent,
   type ChatConsent,
   type ChatMessage,
@@ -54,40 +55,8 @@ const CONSOLE_ERROR_COPY: Record<string, string> = {
   "Protected generation failed": "The response could not be generated right now. Try again in a moment.",
 };
 
-/** Every call this view makes goes through `apiJson` in `src/lib/api.ts`, which
- *  on a non-2xx throws `new Error(await res.text())` - so a handler's
- *  `{ "error": "..." }` body arrives here as raw JSON *text*, not as a
- *  `result.error` field. Parse it back out rather than discarding it and
- *  asserting a cause of our own: these routes fail for many distinct reasons
- *  (session, organization membership, consent, admin identity, MFA policy,
- *  fresh authentication, reason length, audit decryption, rate limit) and each
- *  has a different remedy, so one fixed string hid all of them.
- *
- *  Only a handler-written body counts, using the same test `apiJsonGated`
- *  applies: a JSON object with a string `error`. A network fault, an `apiJson`
- *  status fallback ("Request failed: 502"), or an infrastructure error page
- *  (Cloud Run answers a cold-start 503 in HTML) is not product copy and falls
- *  through to the caller's fallback rather than being rendered as if it were.
- *
- *  The status code is NOT recoverable this way - `apiJson` keeps only the body -
- *  so copy here is keyed on the handler's error string, never on 401 vs 403 vs
- *  503. That is a known workaround, not the intended end state: `Profile.tsx`
- *  reaches the same goal by going through `apiJsonGated` and keying on the
- *  status, and the agreed fix is to make `apiJson` throw a typed error so both
- *  paths collapse into one. Until that lands, do not add status-dependent copy
- *  here - it cannot be expressed. See tasks/goals.md. */
 function consoleErrorMessage(err: unknown, fallback: string): string {
-  const raw = err instanceof Error ? err.message : "";
-  let apiError: string | null = null;
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    const candidate = (parsed as { error?: unknown } | null)?.error;
-    if (typeof candidate === "string") apiError = candidate;
-  } catch {
-    /* not a handler-written JSON body - fall through to the caller's fallback */
-  }
-  if (!apiError) return fallback;
-  return CONSOLE_ERROR_COPY[apiError] || apiError;
+  return structuredApiErrorMessage(err, CONSOLE_ERROR_COPY, fallback);
 }
 
 function downloadJson(audit: ConversationAudit) {
@@ -172,10 +141,13 @@ export function Console() {
 
   async function withdrawPolicy() {
     setBusy(true);
+    setError("");
     try {
       await withdrawChatConsent();
       const next = await getChatConsent();
       setConsent(next.consent);
+    } catch (cause) {
+      setError(consoleErrorMessage(cause, "Consent could not be withdrawn right now. Try again in a moment."));
     } finally {
       setBusy(false);
     }
@@ -235,19 +207,30 @@ export function Console() {
   }
 
   async function exportAudit(id: string) {
-    const result = await getConversationAudit(id, true);
-    downloadJson(result.audit);
+    setBusy(true);
+    setError("");
+    try {
+      const result = await getConversationAudit(id, true);
+      downloadJson(result.audit);
+    } catch (cause) {
+      setError(consoleErrorMessage(cause, "That audit record could not be exported right now. Try again in a moment."));
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function removeAudit(id: string) {
     if (!window.confirm("Delete this live encrypted audit now? Encrypted backups age out under the one-year retention policy.")) return;
     setBusy(true);
+    setError("");
     try {
       await deleteConversationAudit(id);
       if (selectedAudit?.id === id) setSelectedAudit(null);
       setMessages([]);
       setReply("");
       await refreshAudits();
+    } catch (cause) {
+      setError(consoleErrorMessage(cause, "That audit record could not be deleted right now. Try again in a moment."));
     } finally {
       setBusy(false);
     }
@@ -269,7 +252,7 @@ export function Console() {
             <CardTitle>Invitation required</CardTitle>
             <CardDescription>Quesar is available to active members of the MLAI beta organization.</CardDescription>
           </CardHeader>
-          <CardContent><Button onClick={() => login("/console")} className="w-full">Continue with AuthKit</Button></CardContent>
+          <CardContent><Button onClick={() => login("/console")} className="w-full">Sign in to Quesar</Button></CardContent>
         </Card>
       </div>
     );

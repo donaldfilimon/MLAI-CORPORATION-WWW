@@ -59,7 +59,7 @@ export function Login() {
           <div className="space-y-4 py-6">
             {errorCopy && <m.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} role="alert" className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm leading-relaxed text-amber-200">{errorCopy}</m.div>}
             {loading ? <div className="flex justify-center py-6"><Loader2 className="h-6 w-6 animate-spin text-text-dim" /></div> : <div className="space-y-3">
-              {requesting ? <Button onClick={openInquiry} className="w-full py-6 text-base font-semibold">Start an inquiry <ArrowRight className="h-5 w-5" /></Button> : <Button id="workos-primary-auth-btn" onClick={() => login("/console")} className="w-full py-6 text-base font-semibold">Continue with AuthKit <ArrowRight className="h-5 w-5" /></Button>}
+              {requesting ? <Button onClick={openInquiry} className="w-full py-6 text-base font-semibold">Start an inquiry <ArrowRight className="h-5 w-5" /></Button> : <Button id="workos-primary-auth-btn" onClick={() => login("/console")} className="w-full py-6 text-base font-semibold">Sign in to Quesar <ArrowRight className="h-5 w-5" /></Button>}
               <Button asChild variant="outline" className="w-full py-6 text-base font-semibold"><Link to={requesting ? "/login" : "/login?mode=request-access"}>{requesting ? "I already have an invitation" : "Request beta access"}</Link></Button>
             </div>}
             <p className="pt-3 text-center font-mono text-[10px] tracking-wide text-text-dim/70">No public account creation. Membership is managed in WorkOS.</p>

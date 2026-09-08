@@ -22,15 +22,46 @@ export type ChatMessage = {
   content: string;
 };
 
-export type Inquiry = {
-  id: number;
-  name: string;
-  email: string;
-  company: string;
-  project_type: string;
-  message: string;
-  created_at: string;
-};
+export class ApiError extends Error {
+  readonly name = "ApiError";
+
+  constructor(
+    readonly status: number,
+    readonly error: string,
+    readonly body: unknown,
+    readonly structured: boolean,
+  ) {
+    super(error);
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+async function responseError(res: Response): Promise<ApiError> {
+  const raw = await res.text();
+  let body: unknown = raw || null;
+  try {
+    body = raw ? JSON.parse(raw) : null;
+  } catch {
+    // Plain text and HTML responses are infrastructure output, not structured
+    // product copy. Preserve the original body for diagnostics.
+  }
+  const structuredError = isRecord(body) && typeof body.error === "string" ? body.error : null;
+  const structured = structuredError !== null;
+  const error = structuredError ?? (raw || `Request failed: ${res.status}`);
+  return new ApiError(res.status, error, body, structured);
+}
+
+export function structuredApiErrorMessage(
+  cause: unknown,
+  copy: Readonly<Record<string, string>>,
+  fallback: string,
+): string {
+  if (!(cause instanceof ApiError) || !cause.structured) return fallback;
+  return copy[cause.error] ?? cause.error;
+}
 
 async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -42,8 +73,7 @@ async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (!res.ok) {
-    const message = await res.text();
-    throw new Error(message || `Request failed: ${res.status}`);
+    throw await responseError(res);
   }
 
   return res.json() as Promise<T>;
@@ -132,10 +162,6 @@ export function getAdminConversationAudit(id: string, reason: string) {
     `/api/admin/audits/${encodeURIComponent(id)}`,
     { method: "POST", body: JSON.stringify({ reason }) },
   );
-}
-
-export function getInquiries() {
-  return apiJson<{ ok: boolean; inquiries: Inquiry[] }>("/api/inquiries");
 }
 
 export function getAuthFeatures() {
@@ -240,25 +266,20 @@ async function apiJsonGated<T>(
     headers: { "Content-Type": "application/json", ...opts?.init?.headers },
   });
   if (!res.ok) {
-    let body: Record<string, unknown> | null = null;
-    try {
-      const parsed: unknown = await res.json();
-      if (parsed && typeof parsed === "object") body = parsed as Record<string, unknown>;
-    } catch {
-      /* non-JSON error body — keep the status message */
+    const cause = await responseError(res);
+    const error = cause.structured ? cause.error : `Request failed: ${cause.status}`;
+    if (
+      opts?.expectStatuses &&
+      !(cause.structured && opts.expectStatuses.includes(cause.status))
+    ) {
+      throw new ApiError(cause.status, error, cause.body, cause.structured);
     }
-    // A *structured* response is one the handler wrote on purpose: JSON with a
-    // string `error`. The distinction matters because infrastructure emits the
-    // same statuses — a Cloud Run cold-start 503 arrives as HTML — and rendering
-    // "Request failed: 503" as if it were product copy is the failure mode this
-    // whole change exists to remove. So a listed status only counts as an
-    // outcome when the handler actually spoke.
-    const structured = typeof body?.error === "string";
-    const error = structured ? (body!.error as string) : `Request failed: ${res.status}`;
-    if (opts?.expectStatuses && !(structured && opts.expectStatuses.includes(res.status))) {
-      throw new Error(error);
-    }
-    return { ok: false, status: res.status, error, body };
+    return {
+      ok: false,
+      status: cause.status,
+      error,
+      body: isRecord(cause.body) ? cause.body : null,
+    };
   }
   return { ok: true, data: (await res.json()) as T };
 }
