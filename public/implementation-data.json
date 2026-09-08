@@ -1,0 +1,352 @@
+[
+  {
+    "title": "A six-layer architecture for evidence-aware AI systems",
+    "slug": "six-layer-evidence-aware-platform",
+    "summary": "MLAI organizes interface, orchestration, retrieval, acceleration, storage, and audit as distinct layers so that evidence and runtime claims can be traced to the component that actually supports them.",
+    "relatedTopics": [
+      "ai",
+      "wdbx",
+      "sea",
+      "gpu",
+      "mcp",
+      "tui"
+    ],
+    "sections": [
+      {
+        "heading": "Architecture",
+        "paragraphs": [
+          "The platform model places user-facing interfaces at L6, orchestration at L5, retrieval and learning at L4, acceleration at L3, durable storage at L2, and provenance and audit at L1. The separation is practical: an MCP or TUI surface can coordinate work without being mistaken for the storage engine, and a GPU path can accelerate computation without becoming the source of record.",
+          "The accompanying platform catalog maps concrete MLAI systems onto those layers. ABI spans orchestration and interface concerns, WDBX supplies storage and retrieval primitives, SEA contributes evidence-sensitive learning, GPU backends are acceleration paths, and MCP and TUI expose bounded control surfaces."
+        ]
+      },
+      {
+        "heading": "Evidence discipline",
+        "paragraphs": [
+          "The catalog records capability limits alongside descriptions. CPU execution is treated as the correctness oracle for accelerated paths, cluster RPC is not presented as automatic distributed sharding, and WebGPU or TPU entries remain capability descriptions until their specific runtime evidence is available.",
+          "This turns the layer diagram into a claim boundary rather than a feature collage: each public statement should identify its implementation layer, evidence artifact, and unsupported extension."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "MLAI platform catalog",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/web/src/data/categories/platform.ts",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "97f1fae66478a318af88088d80b32e1e3d2e8bc11c0763b32c8a4b768c78d319"
+      }
+    ],
+    "limitations": [
+      "The layer model is an architectural taxonomy, not evidence that every mapped subsystem is deployed together in one production environment.",
+      "Acceleration, clustering, and security claims still require backend-specific tests and operational evidence; adjacency in the stack does not establish those properties."
+    ]
+  },
+  {
+    "title": "A private document pipeline with explicit fallback behavior",
+    "slug": "private-document-intelligence-pipeline",
+    "summary": "The private MLAI application implements bounded ingestion, workspace-scoped extraction and search, and consent-gated model access while making degraded retrieval behavior visible instead of silently changing providers.",
+    "relatedTopics": [
+      "ai",
+      "wdbx"
+    ],
+    "sections": [
+      {
+        "heading": "Ingestion and workspace isolation",
+        "paragraphs": [
+          "Document creation validates the upload, normalizes the filename, checks whether the requested format has an installed extraction capability, verifies workspace access, and creates a tracked extraction job. Failure cleanup removes the newly written upload rather than leaving an untracked artifact behind.",
+          "Search is scoped to the current workspace and to documents whose extraction state is ready or partial. The hybrid path merges semantic and keyword results, while keyword-only retrieval remains available when embeddings cannot be produced."
+        ]
+      },
+      {
+        "heading": "Provider and degradation boundaries",
+        "paragraphs": [
+          "Local model providers are restricted to loopback endpoints. Hosted providers require HTTPS, reject credentials embedded in endpoint URLs, and require workspace consent before use. Those checks prevent a configuration string from quietly turning a private local workflow into a hosted one.",
+          "If semantic embedding fails, the search result records keyword fallback and its reason. That observable degradation is important for research interpretation because a returned answer is not automatically evidence that vector retrieval ran successfully."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Document ingestion service",
+        "url": "https://github.com/donaldfilimon/mlai-website-app/blob/47c97ffa81bebd97b3cfe53421056f600b5e8e91/src/lib/server/documents.ts",
+        "revision": "47c97ffa81bebd97b3cfe53421056f600b5e8e91",
+        "sha256": "424fbc3a3d9f7e00b383d197af610604ab64933ef24149e53413dc0847503bdc"
+      },
+      {
+        "title": "Workspace-scoped hybrid search",
+        "url": "https://github.com/donaldfilimon/mlai-website-app/blob/47c97ffa81bebd97b3cfe53421056f600b5e8e91/src/lib/server/search.ts",
+        "revision": "47c97ffa81bebd97b3cfe53421056f600b5e8e91",
+        "sha256": "77168a3a4de5a64bf19edfb8011ff852b4d64a5052cca29305620677e91ae7fd"
+      },
+      {
+        "title": "Model endpoint and consent policy",
+        "url": "https://github.com/donaldfilimon/mlai-website-app/blob/47c97ffa81bebd97b3cfe53421056f600b5e8e91/src/lib/server/models.ts",
+        "revision": "47c97ffa81bebd97b3cfe53421056f600b5e8e91",
+        "sha256": "54c5974d7dcf913adb5a9c8f467e28abd576cdb35b6acd9880c6336e677f76f0"
+      }
+    ],
+    "limitations": [
+      "These sources establish committed implementation behavior, not a current production deployment, successful extraction for every supported format, or live hosted-provider acceptance.",
+      "Keyword fallback preserves availability but is not equivalent to semantic retrieval, and its results should be labeled accordingly in evaluation data."
+    ]
+  },
+  {
+    "title": "Mobile Vault persistence across CloudKit and local fallback",
+    "slug": "mobile-vault-cloudkit-local-fallback",
+    "summary": "The MLAI mobile Vault keeps one CRUD contract while selecting either the user's private CloudKit database or an encrypted local SecureStore fallback and exposing the selected backend to the application.",
+    "relatedTopics": [
+      "ai",
+      "wdbx"
+    ],
+    "sections": [
+      {
+        "heading": "One data contract, two persistence profiles",
+        "paragraphs": [
+          "The cloud adapter defines list, create, update, and delete operations over Vault documents. When the native CloudKit module is available it uses the signed-in user's private iCloud database; otherwise the same operations use an encrypted local SecureStore payload.",
+          "The adapter reports its active backend as either cloudkit or local. That makes the fallback inspectable by the UI and by tests instead of presenting local-only persistence as successful cloud synchronization."
+        ]
+      },
+      {
+        "heading": "Failure containment",
+        "paragraphs": [
+          "Local records are normalized and ordered before return, and an unreadable local payload is contained as an empty local collection. The native bridge is loaded as an optional module so environments without the signed iOS capability can still exercise the Vault workflow.",
+          "This profile supports iterative mobile development while preserving a clear acceptance boundary: the local path validates the application contract, whereas CloudKit acceptance requires a properly entitled native build and a real device or supported simulator environment."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Mobile Vault persistence adapter",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/mobile/lib/cloud.ts",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "5d4f003302f282d59145250f34e5f5f3748989455eaa962989ba2e7d352c7798"
+      },
+      {
+        "title": "CloudKit native module implementation",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/mobile/modules/mlai-cloudkit/ios/MlaiCloudKitModule.swift",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "951b64ac6df821f27238a0134d24339fb9523f8a93253324469668aad14db74e"
+      },
+      {
+        "title": "Vault persistence contract tests",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/mobile/__tests__/cloud.test.ts",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "488f7645c4e0f64b3fdf5e225a43479c9ca2fe23bd4c6796085c9e7095ad4d8e"
+      }
+    ],
+    "limitations": [
+      "Expo Go, web, Android, and unsigned iOS development environments use the local fallback; they do not prove CloudKit synchronization.",
+      "The adapter does not by itself establish conflict resolution across devices, service availability, backup guarantees, or end-to-end signed-device acceptance."
+    ]
+  },
+  {
+    "title": "Quasar as a bounded repository-generation loop",
+    "slug": "quasar-bounded-repository-generation",
+    "summary": "Quasar couples an Anthropic tool loop to a narrowly constrained project filesystem, producing a local application through inspectable read, list, and write operations rather than granting an unconstrained shell.",
+    "relatedTopics": [
+      "ai",
+      "mcp",
+      "tui"
+    ],
+    "sections": [
+      {
+        "heading": "Generation loop",
+        "paragraphs": [
+          "The service exposes three generation tools: list project files, read a project file, and write a project file. The model can iterate over tool results until it reaches a terminal response, while the service translates model, tool, and error activity into a stream of structured events for the client.",
+          "The generated project is then previewed through a local development process. This makes the artifact and the tool transcript available for inspection instead of treating a single text completion as a finished application."
+        ]
+      },
+      {
+        "heading": "Filesystem boundary",
+        "paragraphs": [
+          "Project paths reject absolute inputs, parent traversal, repository metadata, dependency trees, and build-output paths. Existing ancestors are resolved through real paths to detect symlink escapes, and file reads have an explicit size ceiling.",
+          "Those controls reduce the authority of the model loop to a designated project root. They are a concrete example of separating generative capability from ambient workstation access."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Quasar generation engine",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/quasar/packages/service/src/engine.ts",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "1a2e0aadf17f390b7cae1bdefa41f346c505a648e7935ff36b7ed0208342ec09"
+      },
+      {
+        "title": "Quasar project path confinement",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/quasar/packages/service/src/paths.ts",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "d49f0c20427fd5290963d9142182cf56582fec772bef72af4e2dab86afc83ede"
+      },
+      {
+        "title": "Quasar implementation and scope notes",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/quasar/README.md",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "806ee390ad373e2d659c4d394d0be367803ef4d7527f432e4c1ee5de9b50f96f"
+      }
+    ],
+    "limitations": [
+      "The committed profile is a local development system; it does not establish multi-user isolation, authentication, billing, hosted deployment, or production sandboxing.",
+      "The documented client transport polls an event stream rather than proving true server-sent streaming, and source inspection is not a live Anthropic generation receipt."
+    ]
+  },
+  {
+    "title": "Abbey capability claims as an executable ledger",
+    "slug": "abbey-executable-capability-ledger",
+    "summary": "Abbey centralizes capability statements in a typed registry whose status, evidence, dependencies, feature flags, and refusal behavior can be projected into documentation and checked for drift.",
+    "relatedTopics": [
+      "ai",
+      "wdbx",
+      "sea",
+      "gpu",
+      "mcp",
+      "tui"
+    ],
+    "sections": [
+      {
+        "heading": "Claims as structured data",
+        "paragraphs": [
+          "The registry distinguishes current, partial, proposed, blocked, and out-of-scope capabilities. Each entry can identify its owning crate, dependencies, feature flags, evidence commands or files, and a refusal message for work the repository does not support.",
+          "This structure lets application surfaces answer capability questions from one source instead of inferring support from command names, optional dependencies, or aspirational prose."
+        ]
+      },
+      {
+        "heading": "Documentation synchronization",
+        "paragraphs": [
+          "A generated claims document provides a human-readable view of the registry, while the synchronization checker compares generated output with committed documentation. The useful pattern is not merely generation: it is the ability to fail a verification gate when the narrative and typed source diverge.",
+          "Feature-gated capabilities retain their flags in the ledger, and unsupported work has an explicit refusal path. Both properties help prevent a broad product description from erasing runtime prerequisites."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Abbey canonical capability registry",
+        "url": "https://github.com/donaldfilimon/abbey/blob/86179ecb58a2350dab6904f6ec75be933d0bd501/src/claims.rs",
+        "revision": "86179ecb58a2350dab6904f6ec75be933d0bd501",
+        "sha256": "40d68096790928c3c2c7d4989b036551723d004b7ec1b789b40c82547aa3dfbe"
+      },
+      {
+        "title": "Generated Abbey claims catalog",
+        "url": "https://github.com/donaldfilimon/abbey/blob/86179ecb58a2350dab6904f6ec75be933d0bd501/docs/claims.md",
+        "revision": "86179ecb58a2350dab6904f6ec75be933d0bd501",
+        "sha256": "36f522f7d8346b584dd88ed3d9b75f1ce4c5837d23a938a9b4321225d0b1df58"
+      },
+      {
+        "title": "Claims synchronization checker",
+        "url": "https://github.com/donaldfilimon/abbey/blob/86179ecb58a2350dab6904f6ec75be933d0bd501/tools/check_claims_sync.py",
+        "revision": "86179ecb58a2350dab6904f6ec75be933d0bd501",
+        "sha256": "b570216de8c8aba08f367a077cbf6f279e5d2c42037bfec99322d69b40d391d0"
+      }
+    ],
+    "limitations": [
+      "A current ledger entry means the cited repository evidence satisfies the entry's policy; it is not automatically proof of a deployed service, configured provider, or successful live interaction.",
+      "Feature-gated and environment-dependent capabilities must retain their prerequisites when summarized outside Abbey."
+    ]
+  },
+  {
+    "title": "WDBX Specimen separates architecture, runtime profiles, and proof",
+    "slug": "wdbx-specimen-architecture-and-conformance",
+    "summary": "WDBX Specimen combines a provenance-aware architecture specification with explicit browser and native runtime profiles, then uses conformance tests to make a bounded subset of the design executable.",
+    "relatedTopics": [
+      "ai",
+      "wdbx",
+      "sea",
+      "gpu",
+      "mcp",
+      "tui"
+    ],
+    "sections": [
+      {
+        "heading": "Specification with provenance",
+        "paragraphs": [
+          "The architecture specification separates source-backed statements, recommended design choices, and open questions. It also maintains a contradiction register and contributor provenance so unresolved design tension remains visible instead of being flattened into one apparently settled narrative.",
+          "Acceptance cases are written as requirements for an implementation, not retroactive proof that every requirement is already satisfied. That distinction makes the document useful as both an architectural map and a research agenda."
+        ]
+      },
+      {
+        "heading": "Two honest runtime profiles",
+        "paragraphs": [
+          "The browser profile emphasizes deterministic prompt features and seeded sampling without claiming online weight training or learned generation. The native profile documents an initial Rust implementation whose lexical processing and persistence behavior are narrower than unrestricted semantic intelligence.",
+          "Native conformance tests exercise the implemented profile. Together, the profiles show how one specification can support multiple runtimes while requiring each runtime to state exactly which semantics and proofs it provides."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "WDBX Specimen architecture specification",
+        "url": "https://git.chatgpt-team.site/747fc7e8-caa2-4a0d-9c30-7a122e46f912/appgprj_6a9a935175ac8191b15e8bb4e7319462.git#b730a044ef280c6cf240f83c5b25f4e44a2c2ca0:public/WDBX-Specimen-Architecture-Specification.md",
+        "revision": "b730a044ef280c6cf240f83c5b25f4e44a2c2ca0",
+        "sha256": "7489b6e12466faaaf6e5ef44fdbd98214c7470d8d4c9fdbd6ef8149ae828c327"
+      },
+      {
+        "title": "WDBX Specimen browser runtime profile",
+        "url": "https://git.chatgpt-team.site/747fc7e8-caa2-4a0d-9c30-7a122e46f912/appgprj_6a9a935175ac8191b15e8bb4e7319462.git#b730a044ef280c6cf240f83c5b25f4e44a2c2ca0:RUNTIME-PROFILE.md",
+        "revision": "b730a044ef280c6cf240f83c5b25f4e44a2c2ca0",
+        "sha256": "dbdec3898b14332e2610b50f4eec010f082edbb98a9029d13b51c77486d793ab"
+      },
+      {
+        "title": "WDBX Specimen native runtime profile",
+        "url": "https://git.chatgpt-team.site/747fc7e8-caa2-4a0d-9c30-7a122e46f912/appgprj_6a9a935175ac8191b15e8bb4e7319462.git#b730a044ef280c6cf240f83c5b25f4e44a2c2ca0:NATIVE-RUNTIME-PROFILE.md",
+        "revision": "b730a044ef280c6cf240f83c5b25f4e44a2c2ca0",
+        "sha256": "95a1a6e8110825616d9274a194de274bcd658a29039b5f2336d8e3ac839564cd"
+      },
+      {
+        "title": "Native conformance tests",
+        "url": "https://git.chatgpt-team.site/747fc7e8-caa2-4a0d-9c30-7a122e46f912/appgprj_6a9a935175ac8191b15e8bb4e7319462.git#b730a044ef280c6cf240f83c5b25f4e44a2c2ca0:native/specimen-core/tests/conformance.rs",
+        "revision": "b730a044ef280c6cf240f83c5b25f4e44a2c2ca0",
+        "sha256": "a1e7f0b0328a5f93c03ab22a97b6b2e87042ee222d56e9a222bc13b87a92586f"
+      }
+    ],
+    "limitations": [
+      "WDBX Specimen is an independent design-and-conformance project, not evidence for every capability of the canonical WDBX storage substrate.",
+      "Specification requirements, browser demonstrations, native conformance, performance measurements, and production readiness are separate evidence layers."
+    ]
+  },
+  {
+    "title": "Deterministic research exports with citation gates",
+    "slug": "deterministic-research-provenance-exports",
+    "summary": "The MLAI research export pipeline converts validated publication records into stable JSON and static HTML, verifies and copies declared attachments, and records content digests while enforcing unique identifiers, public source URLs, and canonical links.",
+    "relatedTopics": [
+      "ai",
+      "wdbx"
+    ],
+    "sections": [
+      {
+        "heading": "Validated public records",
+        "paragraphs": [
+          "Before export, the pipeline parses every research record through its schema, rejects duplicate slugs, and checks public citations for HTTPS URLs that are not localhost. Public PDF paths are constrained to the research download namespace.",
+          "The export projects only stable public fields into a versioned index. Internal rendering details do not become accidental API surface, and canonical publication URLs are rooted at the configured MLAI origin."
+        ]
+      },
+      {
+        "heading": "Reproducible artifacts",
+        "paragraphs": [
+          "The exporter writes machine-readable JSON and static HTML, verifies each declared attachment against its expected digest before copying it, and produces a manifest containing publication metadata plus hashes for exported files. It does not generate the PDF attachments it packages.",
+          "Digest and manifest generation strengthen provenance by connecting a public artifact to a specific validated content projection. They complement, rather than replace, the revision-pinned citations attached to each research record."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Research export validation and stable projection",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/web/src/lib/research-export.ts",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "635a4de5c32ef8e3c5e633d3c8847c45903764e46f3cb57056fca21943dd3a24"
+      },
+      {
+        "title": "Research artifact export script",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/web/scripts/export-research.tsx",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "cb5cace0e42052022f5d0b508a399f2f8b4ae0dba92499d0070b89f0137cb0e7"
+      },
+      {
+        "title": "Research content inventory",
+        "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/web/docs/research-inventory.md",
+        "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
+        "sha256": "338bc4f82b45143280b7efc444aa73f2a510711d04a70be8152d34d04e09b727"
+      }
+    ],
+    "limitations": [
+      "A valid URL and pinned revision establish traceability, not independent peer review, experimental replication, or the truth of every claim in the cited source.",
+      "A deterministic export proves reproducible transformation of its inputs; it does not prove that the deployed site currently serves the same artifacts."
+    ]
+  }
+]
