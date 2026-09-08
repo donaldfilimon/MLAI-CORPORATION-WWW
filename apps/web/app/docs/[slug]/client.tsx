@@ -3,50 +3,18 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { docs } from "@/data/categories/docs";
-import type { DocSection } from "@/data/schemas";
 import { ArticleNotFound } from "@/components/article";
 import { BlockMath } from "@/components/Math";
 import { Callout } from "@/components/site";
 import { Separator } from "@/components/ui/separator";
+import { sectionAnchors } from "@/lib/doc-anchors";
 
-/**
- * ASCII-only, hyphen-joined slug of the given text — the anchor base before
- * disambiguation. Curly quotes and other punctuation in vendored headings
- * (e.g. "Use the project's validation gate") collapse into surrounding
- * hyphens rather than surviving into the anchor.
- */
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-/**
- * Derive one heading anchor per body section.
- *
- * Task 1 dropped the vendored `id` field, and the vendored data's own
- * id/title pairing was already inconsistent (one section carried
- * `run-the-project-gate` against a title no slugify of the title
- * reproduces), so reproducing the original fragments is neither possible
- * nor useful — none of them were ever published under this domain. The only
- * real requirements are that an anchor is unique within the page and stable
- * across builds. A heading-less section falls back to its own index, and
- * any base that collides with an earlier section in the same doc is
- * disambiguated by appending that section's index — deterministic, not
- * random, and collision-free because indices are themselves unique.
- */
-function sectionAnchors(body: readonly DocSection[]): string[] {
-  const seen = new Map<string, number>();
-  return body.map((section, i) => {
-    const base = section.heading ? slugify(section.heading) : `section-${i}`;
-    const seenCount = seen.get(base) ?? 0;
-    seen.set(base, seenCount + 1);
-    return seenCount === 0 ? base : `${base}-${i}`;
-  });
-}
+// `slugify`/`sectionAnchors` live in `@/lib/doc-anchors` (a plain module
+// with no React import and no "use client") specifically so they stay
+// reachable from the Node-only Vitest suite: this file's `react-router-dom`
+// import resolves to `@/lib/router-compat`, which imports `next/link` and
+// reads `process.env.__NEXT_*` at module scope, so anything defined here
+// cannot be unit-tested directly. See `src/__tests__/doc-anchors.test.ts`.
 
 export function DocPage({ slug }: { slug: string }) {
   const doc = docs.find((d) => d.slug === slug);

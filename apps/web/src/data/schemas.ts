@@ -261,6 +261,7 @@ export const ContentSchema = z.object({
   faq: FAQSchema,
   products: ProductsSchema,
   changelog: ChangelogSchema,
+  docs: DocsSchema,
 });
 
 export type About = z.infer<typeof AboutSchema>;
