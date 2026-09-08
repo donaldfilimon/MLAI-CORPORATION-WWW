@@ -5,7 +5,11 @@
 Guided manual acceptance has started; see
 [the session record](verification/research-guided-acceptance.md). Candidate
 identity and preview ownership were reverified without changing runtime source.
-Manual results remain incomplete pending operator observations.
+Native Chrome displayed actual 200% zoom; keyboard Clear search recovery restored
+31 articles and focus to search, followed by both filter selectors in tab order.
+These are partial agent-observed subchecks, not a completed operator gate. The
+400% attempt was interrupted by a concurrent tab change; final zoom restoration,
+full-page overflow, VoiceOver and remaining rendered contrast remain unverified.
 
 This completion supersedes the earlier exporter-authorization gap below. The
 authorized canonical exporter work is committed on `mlai/main` at
@@ -36,9 +40,11 @@ proposed targets and rollback instructions are in
 [the source-bound acceptance receipt](verification/research-completion-acceptance.json).
 Candidate-specific receipt filenames preserve the prior activated-release receipts.
 
-All implementation is committed on canonical local `main`; nothing was pushed,
-published or activated in this pass. Pushes have publication effects and remain
-withheld. Hosted CI is green only for earlier pushed `b787f27`. Actual full-workflow
+All implementation is committed on canonical local `main`; this assistant did
+not push, publish or activate it. A later read-only refresh found `origin/main`
+matching local `029814f` and two successful hosted runs at that revision, linked
+in the session record. Those runs do not cover the subsequent evidence update.
+Pushes have publication effects and remain withheld by this session. Actual full-workflow
 200%/400% zoom, VoiceOver and unmeasured rendered-contrast cases remain operator
 gates. Publication-ready and activation-ready are therefore both false. Published
 Site version 2 and the healthy port-3100 `mlai-clean-bKPz2X` artifact are unchanged.

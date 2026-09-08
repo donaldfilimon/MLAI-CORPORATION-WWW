@@ -112,13 +112,19 @@ existing groups and failed inspection still block success and retain the artifac
 ## Manual gates and approvals
 
 The guided follow-up is tracked in `research-guided-acceptance.md`. Its refreshed
-identity and ownership preflight passed; it is awaiting operator observations.
+identity and ownership preflight passed; partial agent-observed Chrome results
+are recorded separately from the outstanding operator observations.
 No outstanding manual gate is closed merely by opening that session.
 
 Actual Chrome 200% zoom was observed on native Research with readable reflow.
+The follow-up also verified keyboard Clear search recovery from zero to 31
+articles, focus restoration to search, and tab order to both filter selectors.
+Full-page overflow and exact CSS viewport dimensions remain unverified. Evidence
+is in the task's native-UI outputs; no new screenshot file was persisted.
 Native 400%, Site 200%/400%, and VoiceOver announcement order/modal isolation are
-not verified. The native browser changed during interaction and later exposed
-no window; no unsupported automation result is called a manual pass.
+not verified. A concurrent tab change interrupted the latest 400% attempt;
+the acceptance tab's final zoom and restoration to 100% remain unverified.
+No unsupported automation result is called a manual pass.
 
 Operator check required: on the isolated candidate, verify 200%/400% browser zoom
 for collection, article contents/equations and sign-in, then use VoiceOver to
@@ -129,9 +135,16 @@ These unresolved manual gates block both publication and activation readiness.
 Computed contrast results do not close the remaining manual review of gradients,
 opacity, placeholder text, borders and pseudo-elements.
 
-Hosted CI passed for prior native commit `b787f27`, not this unpushed candidate.
+The initial completion checked hosted CI only at `b787f27`. A subsequent
+read-only refresh found native `main` and `origin/main` at `029814f`, with
+[run 34227542130](https://github.com/donaldfilimon/mlai-website-app/actions/runs/34227542130)
+and [run 34227540152](https://github.com/donaldfilimon/mlai-website-app/actions/runs/34227540152)
+both successful at that revision. The assistant did not perform that push.
+These hosted results do not close manual acceptance or cover the later evidence
+documentation update. No public Site publication was performed by this session.
 GitHub Pages is configured to publish the native repository's `main:/docs`;
-therefore even a documentation push has publication effects and was withheld.
+therefore even a documentation push has publication effects and remains withheld
+by this session. Remote movement alone does not establish the Site's live version.
 The canonical MLAI deployment branch likewise requires public-rollout approval.
 
 The active local application on port 3100 remains unchanged and healthy; its
