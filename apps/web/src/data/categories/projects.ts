@@ -33,7 +33,6 @@ const raw = [
     slug: 'abi',
     name: 'ABI',
     kind: 'Local AI runtime',
-    category: 'runtime',
     tagline: 'A runtime you can inspect.',
     description:
       'Nightly Rust foundations for local AI orchestration, semantic storage, and explicit capability reporting.',
@@ -55,7 +54,6 @@ const raw = [
     slug: 'wdbx',
     name: 'WDBX',
     kind: 'Semantic storage',
-    category: 'storage',
     tagline: 'Give retrieval a foundation.',
     description:
       'The semantic-storage work associated with ABI, with source-documented retrieval and persistence contracts.',
@@ -79,7 +77,6 @@ const raw = [
     slug: 'abbey',
     name: 'Abbey',
     kind: 'Companion & identity',
-    category: 'companion',
     tagline: 'A more thoughtful interface.',
     description:
       'The companion identity described in ABI’s source, with distinct interaction and governance roles.',
@@ -101,7 +98,6 @@ const raw = [
     slug: 'gama',
     name: 'Gama',
     kind: 'Swift UI framework',
-    category: 'framework',
     tagline: 'One tree. Many surfaces.',
     description:
       'A modular declarative UI framework in Swift, organized around scenes and a retained render tree.',

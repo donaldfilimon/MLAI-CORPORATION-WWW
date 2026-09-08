@@ -1,5 +1,44 @@
 import { DocsSchema, type Docs } from '../schemas';
 
+/**
+ * Provenance sources, ported verbatim from the vendored review site's own
+ * `sources` lookup map (`vendor/mlai-review/lib/content.ts`). Each document's
+ * `sources` array below is a set of keys into this map. They are resolved to
+ * objects before `DocsSchema.parse` so the page can link them, matching how
+ * `projects.ts` inlines its resolved `source` (Ruling B).
+ *
+ * Only the five keys the ported documents actually use are carried. The
+ * vendored map also held `website` and `wdbx`; no ported document references
+ * them, and they are not invented here.
+ */
+const DOC_SOURCES = {
+  platform: {
+    title: 'MLAI platform README',
+    url: 'https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/f08203c58ce1c1ab5ce69f5790597a72d1bad830/README.md',
+    scope: 'Repository structure; reviewed at the pinned source revision.',
+  },
+  abi: {
+    title: 'ABI README',
+    url: 'https://github.com/donaldfilimon/abi/blob/main/README.md',
+    scope: 'Source description, tool commands and stated limitations; not a reproduced test run.',
+  },
+  gama: {
+    title: 'Gama README',
+    url: 'https://github.com/donaldfilimon/gama/blob/main/README.md',
+    scope: 'Documented framework architecture, not independent platform acceptance.',
+  },
+  identity: {
+    title: 'Abbey identity specification',
+    url: 'https://github.com/donaldfilimon/abi/blob/main/docs/spec/abbey-core-identity.mdx',
+    scope: 'Further reading linked by the ABI README; not separately audited here.',
+  },
+  claims: {
+    title: 'External claims audit',
+    url: 'https://github.com/donaldfilimon/abi/blob/main/docs/contracts/external-claims-audit.mdx',
+    scope: 'Further reading linked by the ABI README; not separately audited here.',
+  },
+} as const;
+
 const raw = [
   {
     slug: "getting-started",
@@ -171,4 +210,15 @@ const raw = [
   },
 ];
 
-export const docs: Docs = DocsSchema.parse(raw);
+export const docs: Docs = DocsSchema.parse(
+  raw.map((doc) => ({
+    ...doc,
+    sources: doc.sources.map((key) => {
+      const source = DOC_SOURCES[key as keyof typeof DOC_SOURCES];
+      // Fail at module load rather than rendering a document with a silently
+      // missing provenance entry.
+      if (!source) throw new Error(`docs.ts: unknown source key "${key}"`);
+      return source;
+    }),
+  })),
+);

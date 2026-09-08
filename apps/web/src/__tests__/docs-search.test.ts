@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { searchDocuments, type SearchRecord } from "../lib/docs-search";
-import { buildDocsSearchIndex } from "../lib/docs-index";
+import { buildDocsSearchIndex, sectionText } from "../lib/docs-index";
 import { docNav } from "../data/categories/docs-nav";
 import { docs } from "@/data/categories/docs";
 
@@ -111,5 +111,39 @@ describe("ported docs in the search index", () => {
     const index = buildDocsSearchIndex();
     const slugs = index.map((r) => r.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});
+
+describe("sectionText", () => {
+  // Before this helper existed, the index body was heading + paragraphs only,
+  // so a term appearing solely in a list item, a code block or a note aside
+  // was unfindable. Each case below fails against that older shape.
+  it("includes list items, code captions, code bodies and the note aside", () => {
+    const flat = sectionText({
+      heading: "Heading",
+      paragraphs: ["A paragraph."],
+      list: ["a list item"],
+      code: [{ file: "check.sh", code: "zig build test" }],
+      note: "an aside",
+    }).join(" ");
+
+    expect(flat).toContain("a list item");
+    expect(flat).toContain("check.sh");
+    expect(flat).toContain("zig build test");
+    expect(flat).toContain("an aside");
+  });
+
+  it("omits math, which is LaTeX noise in a substring matcher", () => {
+    const flat = sectionText({
+      paragraphs: ["text"],
+      // `math` is not part of the accepted shape; pass it through anyway to
+      // pin that widening the type later does not silently start indexing it.
+      ...({ math: ["\\sum_{i=1}^{n}"] } as Record<string, unknown>),
+    }).join(" ");
+    expect(flat).not.toContain("sum_");
+  });
+
+  it("tolerates a section with nothing but paragraphs", () => {
+    expect(sectionText({ paragraphs: ["only this"] }).join(" ").trim()).toBe("only this");
   });
 });

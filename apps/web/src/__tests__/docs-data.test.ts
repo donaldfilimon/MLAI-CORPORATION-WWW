@@ -11,8 +11,15 @@ const EXPECTED_SLUGS = [
 ] as const;
 
 describe("docs corpus", () => {
-  it("validates against DocsSchema", () => {
-    expect(() => DocsSchema.parse(docs)).not.toThrow();
+  // `docs.ts` already runs DocsSchema.parse at module load, so re-parsing the
+  // parsed value cannot fail and asserts nothing. Assert the schema's
+  // discriminating power instead: a malformed record must be rejected.
+  it("rejects a record with a malformed slug", () => {
+    expect(() => DocsSchema.parse([{ ...docs[0], slug: 42 }])).toThrow();
+  });
+
+  it("rejects a source that is a bare string rather than a resolved object", () => {
+    expect(() => DocsSchema.parse([{ ...docs[0], sources: ["abi"] }])).toThrow();
   });
 
   it("contains exactly the five ported subjects", () => {

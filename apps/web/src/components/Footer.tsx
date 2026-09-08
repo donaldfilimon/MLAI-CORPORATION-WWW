@@ -115,6 +115,15 @@ export const Footer = () => {
               </li>
               <li>
                 <Link
+                  to="/projects"
+                  className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
+                >
+                  Projects{" "}
+                  <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/blog"
                   className="hover:text-cyan-400 transition-colors flex items-center gap-1 group"
                 >

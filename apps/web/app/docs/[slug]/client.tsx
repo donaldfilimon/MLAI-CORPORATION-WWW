@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { docs } from "@/data/categories/docs";
 import { ArticleNotFound } from "@/components/article";
@@ -127,19 +127,24 @@ export function DocPage({ slug }: { slug: string }) {
           <>
             <Separator className="my-14 bg-white/10" />
             <div>
-              {/* `sources` is an array of bare provenance keys (e.g. "abi",
-                  "gama"), not link objects — render as plain labels rather
-                  than inventing hyperlink titles or URLs for them. */}
               <p className="mb-3 text-sm font-mono uppercase tracking-widest text-text-dim/50">
                 Sources
               </p>
-              <ul className="flex flex-wrap gap-2">
+              <ul className="space-y-3">
                 {doc.sources.map((source) => (
-                  <li
-                    key={source}
-                    className="rounded-full border border-white/10 px-3 py-1 font-mono text-xs text-text-dim"
-                  >
-                    {source}
+                  <li key={source.url}>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors"
+                    >
+                      {source.title} <ExternalLink className="w-3 h-3" />
+                    </a>
+                    {/* The scope line is the vendored map's own hedge about what
+                        each source does and does not establish. It ships with the
+                        link so a reader cannot mistake a pointer for an audit. */}
+                    <p className="mt-1 text-xs text-text-dim">{source.scope}</p>
                   </li>
                 ))}
               </ul>

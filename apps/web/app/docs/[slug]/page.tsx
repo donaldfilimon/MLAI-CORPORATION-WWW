@@ -1,5 +1,6 @@
 import { DocPage } from "./client";
 import { docMeta, toNextMetadata } from "@/lib/route-meta";
+import { docLd } from "@/lib/structured-data";
 import { content } from "@/data";
 
 export function generateStaticParams() {
@@ -21,5 +22,19 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <DocPage slug={slug} />;
+  const record = content.docs.find((d) => d.slug === slug);
+  return (
+    <>
+      {record ? (
+        <script
+          type="application/ld+json"
+          // Safe only because the payload is in-repo content validated by the
+          // Zod schema in src/data/schemas (see content.test.ts) — JSON.stringify
+          // does NOT escape "</script>", so never widen this to user input.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(docLd(record)) }}
+        />
+      ) : null}
+      <DocPage slug={slug} />
+    </>
+  );
 }

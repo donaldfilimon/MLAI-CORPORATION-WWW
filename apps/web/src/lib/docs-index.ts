@@ -3,6 +3,34 @@ import { docNav } from "@/data/categories/docs-nav";
 import { docs as portedDocs } from "@/data/categories/docs";
 import type { SearchRecord } from "@/lib/docs-search";
 
+/**
+ * Flatten one content section into searchable text.
+ *
+ * Covers heading, paragraphs, list items, code (caption and body) and the
+ * doc-only `note` aside. `math` is deliberately excluded: `searchDocuments`
+ * is a lowercased substring matcher, and LaTeX source (`\\sum_{i=1}^{n}`)
+ * contributes noise tokens no reader would ever type.
+ *
+ * Typed structurally rather than against `DocSection` so it serves both the
+ * research sections (`BlogSectionSchema`, no `note`) and the ported docs
+ * (`DocSectionSchema`, which extends it).
+ */
+export function sectionText(section: {
+  heading?: string;
+  paragraphs?: string[];
+  list?: string[];
+  code?: { file?: string; code: string }[];
+  note?: string;
+}): string[] {
+  return [
+    section.heading ?? "",
+    ...(section.paragraphs ?? []),
+    ...(section.list ?? []),
+    ...(section.code ?? []).flatMap((block) => [block.file ?? "", block.code]),
+    section.note ?? "",
+  ];
+}
+
 /** Build the local search index from canonical docs nav + research records. */
 export function buildDocsSearchIndex(): SearchRecord[] {
   const docs: SearchRecord[] = docNav.flatMap((group) =>
@@ -26,10 +54,7 @@ export function buildDocsSearchIndex(): SearchRecord[] {
       paper.topic,
       paper.statusNote,
       paper.limitations.join(" "),
-      ...paper.body.flatMap((section) => [
-        section.heading ?? "",
-        ...section.paragraphs,
-      ]),
+      ...paper.body.flatMap(sectionText),
     ].join(" "),
     href: `/research/${paper.slug}`,
   }));
@@ -39,7 +64,7 @@ export function buildDocsSearchIndex(): SearchRecord[] {
     title: doc.title,
     description: doc.description,
     group: doc.group,
-    body: doc.body.flatMap((s) => [s.heading ?? "", ...s.paragraphs]).join(" "),
+    body: doc.body.flatMap(sectionText).join(" "),
     href: `/docs/${doc.slug}`,
   }));
 

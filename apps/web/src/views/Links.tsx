@@ -66,6 +66,12 @@ const LINK_SECTIONS: LinkSection[] = [
         label: "/docs",
       },
       {
+        title: "Projects",
+        body: "ABI, WDBX, Abbey and Gama — what each one is, the scope it claims, and the source it rests on.",
+        href: "/projects",
+        label: "/projects",
+      },
+      {
         title: "Benchmarks",
         body: "Targets with operating context — what we engineer toward, framed honestly.",
         href: "/benchmarks",

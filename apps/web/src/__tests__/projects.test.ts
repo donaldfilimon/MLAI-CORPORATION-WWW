@@ -6,8 +6,12 @@ import { ProjectsSchema } from "@/data/schemas";
 import { projectMeta, routeMetadata, NOT_FOUND_META } from "@/lib/route-meta";
 
 describe("projects corpus", () => {
-  it("validates against ProjectsSchema", () => {
-    expect(() => ProjectsSchema.parse(projects)).not.toThrow();
+  // `projects.ts` parses at module load, so re-parsing proves nothing. This
+  // asserts the closed glyph enum instead -- the runtime half of the invariant
+  // PROJECT_GLYPH_ICON relies on, which nothing else tests: an unrecognized
+  // glyph must fail at data-load time rather than silently render nothing.
+  it("rejects a glyph outside the closed enum", () => {
+    expect(() => ProjectsSchema.parse([{ ...projects[0], glyph: "bogus" }])).toThrow();
   });
 
   it("contains the four ported projects", () => {

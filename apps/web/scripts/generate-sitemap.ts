@@ -154,6 +154,20 @@ const team: LlmLink[] = content.team
     description: m.tagline ?? `${m.role} at MLAI Corporation.`,
   }));
 
+const docs: LlmLink[] = content.docs.map((d) => ({
+  title: d.title,
+  path: `/docs/${d.slug}`,
+  description: d.description,
+}));
+
+// `tagline` rather than `description`: it is the one-line summary the project
+// cards render, and llms.txt is a link index, not a body-text mirror.
+const projects: LlmLink[] = content.projects.map((p) => ({
+  title: p.name,
+  path: `/projects/${p.slug}`,
+  description: p.tagline,
+}));
+
 const legal: LlmLink[] = [link("/privacy"), link("/terms")];
 
 function section(title: string, links: LlmLink[]): string {
@@ -173,7 +187,7 @@ models and agentic crawlers can enumerate the site's real content without
 scraping rendered HTML. Content claims here are load-bearing on the same
 verifiable-architecture discipline as the rest of the site — see /docs and
 the linked repositories for implementation detail.
-${section("Platform", marketing)}${section("Products", products)}${section("Research", research)}${section("Lab Notes", blog)}${section("Team", team)}${section("Legal", legal)}
+${section("Platform", marketing)}${section("Documentation", docs)}${section("Products", products)}${section("Projects", projects)}${section("Research", research)}${section("Lab Notes", blog)}${section("Team", team)}${section("Legal", legal)}
 ## Other machine-readable endpoints
 
 - [Sitemap](${SITE}/sitemap.xml)
@@ -183,5 +197,5 @@ ${section("Platform", marketing)}${section("Products", products)}${section("Rese
 
 await Bun.write("public/llms.txt", llmsTxt);
 console.log(
-  `Wrote public/llms.txt with ${marketing.length + products.length + research.length + blog.length + team.length + legal.length} links.`,
+  `Wrote public/llms.txt with ${marketing.length + docs.length + products.length + projects.length + research.length + blog.length + team.length + legal.length} links.`,
 );

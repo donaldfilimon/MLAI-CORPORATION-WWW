@@ -143,7 +143,11 @@ export const DocsSchema = z.array(z.object({
   description: z.string(),
   group: z.string(),
   body: z.array(DocSectionSchema).default([]),
-  sources: z.array(z.string()).default([]),
+  sources: z.array(z.object({
+    title: z.string(),
+    url: z.string().url(),
+    scope: z.string(),
+  })).default([]),
 }));
 
 export type DocSection = z.infer<typeof DocSectionSchema>;
@@ -175,7 +179,6 @@ export const ProjectsSchema = z.array(z.object({
   slug: z.string(),
   name: z.string(),
   kind: z.string(),
-  category: z.string(),
   tagline: z.string(),
   description: z.string(),
   scope: z.array(z.string()).default([]),
