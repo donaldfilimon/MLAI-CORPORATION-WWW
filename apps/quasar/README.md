@@ -95,9 +95,25 @@ Or build a static export: `bunx expo export --platform web`.
 loopback interface (i.e. the web target on the same machine as the service).
 To drive the service from an iOS/Android device, find your Mac's LAN IP
 (`ipconfig getifaddr en0` or similar) and enter
-`http://<that-ip>:4700` in the app's **Settings** screen. That value is kept
-in memory only for the current app session — it resets to the default the
-next time the app starts.
+`http://<that-ip>:4700` in the app's **Settings** screen. That origin is saved on this device using AsyncStorage and hydrated before
+the first request. Only HTTP(S) origins are accepted; credentials, paths,
+queries and fragments are rejected. **Save and test connection** reads
+`GET /api/sites` without creating or changing sites.
+
+## Connection recovery
+
+Requests time out after 15 seconds; preview startup allows 120 seconds. On a
+connection error, use **Retry / refresh state** or **Open settings**. Retry reads
+current state and never resends a create, edit, preview, or delete action. A
+failed mutation can have reached the service: further mutations are blocked
+until a successful explicit refresh. For creation, Retry returns to the sites
+list so you can check whether the site was created before submitting again.
+Generation status and preview process status are displayed separately.
+
+Polling retains its event cursor while disconnected and drains completed jobs
+on reconnect. Changing the saved origin cancels requests, discards old results,
+and clears the site and event state. The origin is ordinary device storage;
+Anthropic credentials remain exclusively on the service side.
 
 ## Manual acceptance flow
 
@@ -163,3 +179,20 @@ credentials configured.
 - Design spec: `docs/superpowers/specs/2026-08-19-quasar-v1-design.md`
 - Implementation plan: `docs/superpowers/plans/2026-08-19-quasar-v1.md`
 - Task ledger: `tasks/todo.md`
+
+## Repeatable isolated journey acceptance
+
+After `bun run check:quasar` from the integration root, run from this workspace:
+
+```bash
+bun scripts/verify-journeys.ts --output /absolute/new-revision-receipt.json
+```
+
+The verifier requires the existing Playwright 1.63.0 tooling in the sibling
+`apps/web/.ds-sync` environment and its Chromium installation. It does not install
+browser tooling silently. It serves the exported Expo app, copies the real Next
+template, requires a frozen install, and uses disposable service/data directories
+and available ports. It tests connection persistence, origin switching, preview
+restart and a committed create whose response is lost. Each output filename must
+be new; receipts and screenshots from failures remain available. The generator is
+a synthetic fixture. Live Anthropic acceptance still requires separate credentials.

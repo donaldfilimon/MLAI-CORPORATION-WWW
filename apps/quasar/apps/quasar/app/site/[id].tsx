@@ -1,3 +1,4 @@
+import { Recovery, useOrigin } from "../../lib/connection-state";
 import { createElement, useCallback, useEffect, useRef, useState } from "react";
 import {
   Linking,
@@ -10,8 +11,10 @@ import {
   View,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { applyEventPage } from "@quasar/shared";
 import type { GenerationEvent, PreviewStatus, Site } from "@quasar/shared";
 import {
+  recoverConnection,
   deleteSite,
   editSite,
   getBaseUrl,
@@ -46,6 +49,8 @@ function WebPreviewFrame({ url }: { url: string }) {
 }
 
 export default function SiteDetail() {
+  const origin = useOrigin();
+  const retryRef = useRef<() => void>(() => {});
   const { id } = useLocalSearchParams<{ id: string }>();
   const [site, setSite] = useState<Site | null>(null);
   const [events, setEvents] = useState<GenerationEvent[]>([]);
@@ -61,6 +66,7 @@ export default function SiteDetail() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const cursorRef = useRef(0);
+  const historyRef = useRef<string | null>(null);
   // Guards against overlapping ticks (a slow request outliving the 1s
   // interval), and against a stale in-flight tick clobbering state after
   // an edit resets the cursor (epoch bump invalidates it).
@@ -78,6 +84,7 @@ export default function SiteDetail() {
     // ids, or a stray tap on the confirm button for the new site could
     // delete it immediately.
     cursorRef.current = 0;
+    historyRef.current = null;
     inFlightRef.current = false;
     epochRef.current += 1;
     prevStatusRef.current = null;
@@ -107,28 +114,18 @@ export default function SiteDetail() {
         setSite(nextSite);
         setLoadError(null);
 
-        if (nextSite.status === "generating") {
-          const page = await getEvents(id, cursorRef.current);
-          if (cancelled || epoch !== epochRef.current) return;
-          cursorRef.current = page.next;
-          if (page.events.length > 0) {
-            setEvents((prev) => [...prev, ...page.events]);
-          }
-        } else if (prevStatusRef.current === "generating") {
-          // Status just flipped away from generating — drain any trailing
-          // events (the final text chunk / the "done" event) once.
-          try {
-            const page = await getEvents(id, cursorRef.current);
-            if (!cancelled && epoch === epochRef.current) {
-              cursorRef.current = page.next;
-              if (page.events.length > 0) {
-                setEvents((prev) => [...prev, ...page.events]);
-              }
-            }
-          } catch {
-            // best-effort drain; not worth surfacing as a load error
-          }
+        const history = JSON.stringify(nextSite.promptHistory);
+        if (historyRef.current !== null && historyRef.current !== history) {
+          cursorRef.current = 0;
+          setEvents([]);
         }
+        historyRef.current = history;
+        // Always drain, including the first reconnect after generation finished.
+        const since = cursorRef.current;
+        const page = await getEvents(id, since);
+        if (cancelled || epoch !== epochRef.current) return;
+        cursorRef.current = page.next;
+        setEvents(prev => applyEventPage({ events: prev, next: since }, since, page).events);
         prevStatusRef.current = nextSite.status;
 
         // Fold preview polling into the same tick so a "starting" preview
@@ -164,16 +161,17 @@ export default function SiteDetail() {
       }
     }
 
+    retryRef.current = tick;
     tick();
     const interval = setInterval(tick, 1000);
     return () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [id]);
+  }, [id, origin]);
 
   const startPreview = useCallback(async () => {
-    if (!id) return;
+    if (!id || previewPendingRef.current) return;
     const epoch = epochRef.current;
     previewPendingRef.current = true;
     setPreviewPending(true);
@@ -200,7 +198,7 @@ export default function SiteDetail() {
   }, [id]);
 
   const stopPreview = useCallback(async () => {
-    if (!id) return;
+    if (!id || previewPendingRef.current) return;
     const epoch = epochRef.current;
     previewPendingRef.current = true;
     setPreviewPending(true);
@@ -305,7 +303,7 @@ export default function SiteDetail() {
     setDeleteError(null);
     try {
       await deleteSite(id);
-      router.back();
+      if (epoch === epochRef.current) router.back();
     } catch (err) {
       // Data-write guard: mirrors submitEdit's catch — a stale delete
       // failure for a site the user has since navigated away from must not
@@ -327,12 +325,13 @@ export default function SiteDetail() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {loadError ? <Text style={styles.error}>{loadError}</Text> : null}
+      {loadError || previewError || editError || deleteError ? <Recovery retry={() => recoverConnection().then(() => { setLoadError(null); setEditError(null); setDeleteError(null); setPreviewError(null); retryRef.current(); }).catch(err => setLoadError(String(err)))} /> : null}
 
       {site ? (
         <View style={styles.header}>
           <Text style={styles.name}>{site.name}</Text>
           <Text style={[styles.status, { color: statusColor(site.status) }]}>
-            {site.status}
+            Generation: {site.status}
           </Text>
           {site.status === "error" && site.lastError ? (
             <Text style={styles.error}>{site.lastError}</Text>

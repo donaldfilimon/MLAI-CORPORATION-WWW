@@ -50,3 +50,5 @@ export function slugify(name: string): string {
     .replace(/^-|-$/g, "");
   return s || "site";
 }
+
+export { Connection, normalizeOrigin, DEFAULT_ORIGIN, ORIGIN_KEY, applyEventPage } from "./connection";

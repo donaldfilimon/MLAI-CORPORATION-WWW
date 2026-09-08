@@ -1,15 +1,26 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { getBaseUrl, setBaseUrl } from "../lib/api";
+import { getBaseUrl, setBaseUrl, testConnection } from "../lib/api";
 import { color, radius, space } from "../lib/theme";
 
 export default function Settings() {
   const [url, setUrl] = useState(getBaseUrl());
   const [saved, setSaved] = useState(false);
+  const [message, setMessage] = useState("");
+  const [pending, setPending] = useState(false);
 
-  function save() {
-    setBaseUrl(url.trim());
-    setSaved(true);
+  async function save(test = false) {
+    if (pending) return;
+    setPending(true);
+    setMessage("");
+    setSaved(false);
+    try {
+      await setBaseUrl(url);
+      setUrl(getBaseUrl());
+      setSaved(true);
+      if (test) { const sites = await testConnection(); setMessage(`Connected. ${sites.length} sites available.`); }
+    } catch (err) { setMessage(err instanceof Error ? err.message : String(err)); }
+    finally { setPending(false); }
   }
 
   return (
@@ -27,13 +38,17 @@ export default function Settings() {
         autoCorrect={false}
         style={styles.input}
       />
-      <Pressable style={styles.button} onPress={save}>
+      <Pressable style={styles.button} disabled={pending} onPress={() => save()}>
         <Text style={styles.buttonText}>Save</Text>
       </Pressable>
-      {saved ? <Text style={styles.saved}>Saved for this session.</Text> : null}
+      <Pressable style={styles.button} disabled={pending} onPress={() => save(true)}>
+        <Text style={styles.buttonText}>{pending ? "Connecting…" : "Save and test connection"}</Text>
+      </Pressable>
+      {message ? <Text style={styles.note}>{message}</Text> : null}
+      {saved ? <Text style={styles.saved}>Saved on this device.</Text> : null}
       <Text style={styles.note}>
-        This is stored in memory only for now — it resets to the default the next time the app
-        starts.
+        The server origin persists on this device. Connection testing reads the sites list only.
+        For a phone, use your Mac’s LAN address. No credentials are stored here.
       </Text>
     </View>
   );

@@ -1,3 +1,4 @@
+import { Recovery } from "../lib/connection-state";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -9,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
-import { createSite } from "../lib/api";
+import { createSite, recoverConnection } from "../lib/api";
 import { color, radius, space } from "../lib/theme";
 
 export default function New() {
@@ -57,7 +58,7 @@ export default function New() {
         multiline
         editable={!pending}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <><Text style={styles.error}>{error}</Text><Recovery retry={() => recoverConnection().then(() => router.replace("/")).catch(err => setError(String(err)))} /></> : null}
       <Pressable
         style={[styles.button, disabled && styles.buttonDisabled]}
         onPress={submit}

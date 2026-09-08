@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { Recovery, useOrigin } from "../lib/connection-state";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -9,7 +10,7 @@ import {
 } from "react-native";
 import { Link, Stack, useFocusEffect } from "expo-router";
 import type { Site } from "@quasar/shared";
-import { getBaseUrl, listSites } from "../lib/api";
+import { getBaseUrl, listSites, connection, recoverConnection } from "../lib/api";
 import { color, radius, space } from "../lib/theme";
 
 function statusColor(status: Site["status"]): string {
@@ -19,22 +20,29 @@ function statusColor(status: Site["status"]): string {
 }
 
 export default function Index() {
+  const origin = useOrigin();
+  const loadToken = useRef(0);
+  useEffect(() => { setSites([]); setError(null); }, [origin]);
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
+    const token = ++loadToken.current;
+    const revision = connection.revision;
     setLoading(true);
     try {
       const result = await listSites();
+      if (revision !== connection.revision || token !== loadToken.current) return;
       setSites(result);
       setError(null);
     } catch (err) {
+      if (revision !== connection.revision || token !== loadToken.current) return;
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setLoading(false);
+      if (revision === connection.revision && token === loadToken.current) setLoading(false);
     }
-  }, []);
+  }, [origin]);
 
   useFocusEffect(
     useCallback(() => {
@@ -61,6 +69,7 @@ export default function Index() {
       {error ? (
         <View style={styles.errorBanner}>
           <Text style={styles.errorText}>{error}</Text>
+          <Recovery retry={() => recoverConnection().then(load).catch(err => setError(String(err)))} />
           <Text style={styles.errorHint}>Base URL: {getBaseUrl()} — check Settings.</Text>
         </View>
       ) : null}

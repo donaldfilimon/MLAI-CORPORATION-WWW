@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-09-08T13:43:46.559Z",
+  "sourceSha256": "c4b608458cd23eaeb8cfa512b074f738af4a498092263dc8d5bee9a25c55cacc",
+  "baseCommit": "04bd7e848e155c69b1bc2b588064d5ec6f76d455",
+  "base": "http://127.0.0.1:52052",
+  "home": "/var/folders/42/07tmt0n56jq4261xb9gz5jwm0000gn/T/mlai-quasar-journeys-mUmlH7",
+  "checks": [
+    "Create, terminal state and event cursor catch-up without duplicate events",
+    "Real copied Next template, frozen install, actual preview process and rendered synthetic heading",
+    "Service disconnect and restart preserve site and prompt history without replaying generation",
+    "Chromium exported Expo settings save/test, restart hydration, site discovery and actual preview iframe",
+    "Browser disconnect displays Retry/Open settings; recovery performs zero mutations and preserves preview",
+    "Lost create response after committed write: repeated Create sends no second request; explicit recovery discovers the single saved site",
+    "Changing to another isolated origin clears previous sites and persists across reload without replaying mutations",
+    "Explicit preview restart recovers saved source; delete stops preview and removes isolated registry entry"
+  ],
+  "generation": "injected fixture, no provider requests",
+  "liveAnthropic": "not exercised by this fixture verifier; see acceptance ledger for credential preflight",
+  "browserArtifacts": "/tmp/mlai-quasar-browser-20260908-e.json.artifacts",
+  "passed": true,
+  "processCleanup": true,
+  "stableSource": true,
+  "ownedDataRemoved": true,
+  "gate": {
+    "tests": 69,
+    "typechecks": 3,
+    "expoWebExport": "passed",
+    "templateFrozenInstall": "passed",
+    "templateBuild": "passed"
+  },
+  "credentialPreflight": {
+    "apiKeyPresent": false,
+    "authTokenPresent": false,
+    "sdkProfilePresent": false,
+    "result": "Live Anthropic acceptance blocked; no substitution made"
+  },
+  "limitations": [
+    "Fixture generation is not Anthropic acceptance",
+    "Expo web acceptance does not prove native-device behavior"
+  ],
+  "archivedScreenshot": "journeys-quasar-20260908-recovered.png"
+}

@@ -7,8 +7,8 @@ This record tracks the 2026-09-08 user-approved roadmap independently of histori
 | --- | --- | --- | --- |
 | Abbey | Implemented: derived progress, explicit provider checks, recovery, source review | Passed: 127 unit + 26 parser tests, build, browser 4/4 plus final live 1/1; all 15 evaluation outcomes retained | `50ebcf1`: CI 5/5, Pages published, Cloud Run deploy skipped |
 | Public website | Implemented: product navigation, intent setup, research links, standalone Pages | 396 tests/build; three engines passed; 79-route crawl passed | `9a67562`: CI 5/5; Pages published; Cloud Run deploy skipped |
-| Mobile companion | Implemented: fail-closed vault, serialized writes, retained drafts, stale-refresh guards | 59 tests/7 suites; TypeScript, lint, web export passed | Delivery pending |
-| Quasar | Pending | Pending | Pending |
+| Mobile companion | Implemented: fail-closed vault, serialized writes, retained drafts, stale-refresh guards | 59 tests/7 suites; TypeScript, lint, web export passed | `04bd7e8`: CI 5/5, Pages published, Cloud Run deploy skipped |
+| Quasar | Implemented: persistent origin, bounded requests, cancellation and recovery | 69 tests, three typechecks, export/template build; isolated service + Chromium passed | Delivery pending |
 
 Each milestone receives a scoped commit, affected-app gate, all-five-job hosted CI check,
 and observed automatic Pages / Cloud Run outcomes. The final pass reruns all four app gates.
@@ -85,3 +85,34 @@ race, now covered by a deferred-load regression. Native CloudKit errors cannot
 silently select local storage. Account availability is labeled without claiming sync.
 The unchanged storage format/key and native CloudKit record definitions remain in use.
 Signed-device CloudKit acceptance is unperformed; the local queue spans one JS runtime.
+
+Mobile delivery `04bd7e848e155c69b1bc2b588064d5ec6f76d455`:
+[CI 34232333027](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34232333027) passed all five jobs;
+[Pages 34232497919](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34232497919) published;
+[Cloud Run 34232497824](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34232497824) skipped deploy after readiness.
+
+## Quasar acceptance
+
+[Quasar receipt](../apps/quasar/docs/verification/journeys-quasar-20260908.json) records
+69 tests, three workspace typechecks, Expo export, a frozen template install/build,
+and isolated actual-service/Next-preview/Chromium acceptance. Settings survive reload;
+changing origins clears old sites; disconnect/retry restores the preview. A create
+was committed and its browser response deliberately lost: another click sent no
+second POST, and explicit recovery found one site with one prompt-history entry.
+The verifier stopped all owned listeners and removed only its disposable data.
+
+Review and browser execution exposed two defects that were fixed: overlapping
+recovery could clear newer write uncertainty, and an unbound browser fetch call
+failed with an illegal receiver. Deferred regressions and real-browser checks cover
+both. Generation remains an explicit fixture. Existing Anthropic API-key/auth-token
+environment variables and the SDK profile were absent, so live Anthropic acceptance
+is blocked. No provider configuration or active installation was replaced.
+
+## Final local gate repeat
+
+Node 24.20.0 / Bun 1.4.0: topology, pinned Actionlint and five root tooling tests
+passed. Abbey passed 127 unit tests, 26 parser tests, formatting, research verification
+and build; web passed 396 tests and build; mobile passed 59 tests, typecheck, lint
+and web export; Quasar passed 69 tests, three typechecks and web export, with its
+independent template frozen install/build. No app source changed during these final
+app gates; subsequent edits add verification/evidence and delivery status only.
