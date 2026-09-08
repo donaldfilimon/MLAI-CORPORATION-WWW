@@ -1,0 +1,37 @@
+# Verification only — this workflow never deploys and never writes to the repo.
+#
+# It runs the subset of `bun run check` that needs no `bun run setup`:
+# typecheck, the Node test suite, and the production build. The worker's pytest
+# suite is deliberately absent, because `setup` downloads a Tika jar and an
+# embedding model; adding it means provisioning uv and Python here first.
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to match "packageManager" in package.json. Older Bun cannot parse
+      # this repo's lockfileVersion 2 and silently resolves a different tree.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.0"
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
+
+      - name: Build
+        run: bun run build
