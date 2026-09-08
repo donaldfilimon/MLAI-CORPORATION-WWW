@@ -29,6 +29,74 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const BASE = (process.env.BASE_URL || "http://localhost:3000").replace(/\/$/, "");
 
 /**
+ * `networkidle` is the wrong READINESS signal for this site, and raising the
+ * budget makes it worse rather than better. Measured against a production
+ * build: /showcase/film serves HTTP 200 in 15ms and fires `load` in 78ms, but
+ * reaches networkidle only at 26.6s in isolation -- and during a full crawl,
+ * with the cinematic canvas loops and the lazily fetched neural-TTS runtime
+ * holding connections open, it does not settle at all. A 30s budget marked one
+ * route unreachable; moving to 45s marked FOUR (/showcase/{film,design},
+ * /projects/{abbey,gama}), because the extra waiting only lets more routes
+ * accumulate open sockets.
+ *
+ * So navigate on `load`, which is the signal that actually means "the document
+ * is here", then wait for idleness only on a short best-effort budget and
+ * swallow its timeout. A route that never goes idle is no longer reported as
+ * unreachable, and one that does still gets waited for. The click phase never
+ * depended on this anyway: client-side navigation starts no new document load,
+ * so it waits on the URL itself.
+ */
+const NAV_TIMEOUT_MS = 30_000;
+const SETTLE_TIMEOUT_MS = 5_000;
+
+/** Navigate, then settle if the page is willing to. Never fails on idleness. */
+async function gotoSettled(page, url) {
+  const res = await page.goto(url, { waitUntil: "load", timeout: NAV_TIMEOUT_MS });
+  await page.waitForLoadState("networkidle", { timeout: SETTLE_TIMEOUT_MS }).catch(() => {});
+  return res;
+}
+
+/**
+ * An unauthenticated crawl of the gated console SHOULD see 401s: /console,
+ * /console/workspace and /profile each fetch `/api/workspace/*` and friends on
+ * mount, and the routes correctly refuse without a session. Measured on
+ * /console/workspace: 401 on /api/workspace/{drive,sharepoint,connections}.
+ * Counting those as problems would leave `bun run crawl` permanently red, which
+ * is how a check stops being read. They are still PRINTED, just not counted --
+ * any other console error on those same routes, and any 401 anywhere else,
+ * still fails the run.
+ */
+const AUTH_GATED = [/^\/console(\/|$)/, /^\/profile(\/|$)/];
+const isExpectedAuthChallenge = (route, message) =>
+  AUTH_GATED.some((r) => r.test(route)) &&
+  /Failed to load resource.*status of 40[13]\b/.test(message);
+
+/**
+ * `scrollIntoView({ block: "start" })` lands the target's top at a FRACTIONAL
+ * offset, not at exactly 0: measured -0.3px for `/#request-path` on a 1280x720
+ * viewport, with the section itself 800px tall and filling the whole viewport.
+ * A `top >= 0` assertion therefore fails on a fragment that scrolled perfectly,
+ * which is how this check reported a false failure on every run. Allow a couple
+ * of pixels of sub-pixel slack; a genuinely unrevealed target is off by
+ * hundreds.
+ */
+const REVEAL_SLACK_PX = 2;
+
+/**
+ * Prefer a VISIBLE anchor among duplicates. The site renders its nav twice (a
+ * desktop bar and a mobile drawer), so `a[href="/docs/architecture"]` matches
+ * two elements on /docs and the first in DOM order is the hidden one. Calling
+ * `.first()` there makes `click()` wait out its timeout on an element that can
+ * never be actionable, reporting "landed on nowhere" for a link that works.
+ * Fall back to the first match when nothing is visible, so a genuinely hidden
+ * link still gets attempted and fails with a real reason.
+ */
+async function visibleFirst(locator) {
+  const visible = locator.filter({ visible: true });
+  return (await visible.count()) > 0 ? visible.first() : locator.first();
+}
+
+/**
  * Playwright is not a root dependency — it is installed into the gitignored
  * `.ds-sync/` staging dir by the design-sync flow, alongside a matching cached
  * Chromium. Resolve from either location and say exactly what to do if neither
@@ -107,7 +175,7 @@ async function main() {
   /** Visit a route and report 404-ness, console errors, and outbound links. */
   async function visit(route) {
     consoleErrors = [];
-    const res = await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 30_000 });
+    const res = await gotoSettled(page, BASE + route);
     const data = await page.evaluate(() => ({
       title: document.title,
       // SOFT 404: `/blog/[slug]` matches any slug, so a dead <Link> renders the
@@ -200,9 +268,10 @@ async function main() {
      */
     const attempt = async () => {
       try {
-        await page.goto(BASE + source, { waitUntil: "networkidle", timeout: 30_000 });
-        const link = page.locator(`a[href="${target}"], a[href="${target}/"]`).first();
-        if ((await link.count()) === 0) return { landed: null, why: "anchor vanished" };
+        await gotoSettled(page, BASE + source);
+        const all = page.locator(`a[href="${target}"], a[href="${target}/"]`);
+        if ((await all.count()) === 0) return { landed: null, why: "anchor vanished" };
+        const link = await visibleFirst(all);
         await link.click({ timeout: 10_000 });
         // Client-side navigation never starts a new document load, so
         // waitForLoadState("networkidle") resolves IMMEDIATELY (the current
@@ -236,9 +305,10 @@ async function main() {
 
   for (const [target, source] of [...fragmentLinks.entries()].sort()) {
     try {
-      await page.goto(BASE + source, { waitUntil: "networkidle", timeout: 30_000 });
-      const link = page.locator(`a[href=${JSON.stringify(target)}]`).first();
-      if ((await link.count()) === 0) throw new Error("anchor vanished");
+      await gotoSettled(page, BASE + source);
+      const all = page.locator(`a[href=${JSON.stringify(target)}]`);
+      if ((await all.count()) === 0) throw new Error("anchor vanished");
+      const link = await visibleFirst(all);
 
       await link.click({ timeout: 10_000 });
       await page.waitForURL(
@@ -248,13 +318,13 @@ async function main() {
 
       const id = decodeURIComponent(new URL(target, BASE).hash.slice(1));
       await page.waitForFunction(
-        (targetId) => {
+        ([targetId, slack]) => {
           const element = document.getElementById(targetId);
           if (!element) return false;
           const { top, bottom } = element.getBoundingClientRect();
-          return top >= 0 && top < window.innerHeight && bottom > 0;
+          return top >= -slack && top < window.innerHeight && bottom > 0;
         },
-        id,
+        [id, REVEAL_SLACK_PX],
         { timeout: 5_000 },
       );
       fragmentOk += 1;
@@ -267,7 +337,13 @@ async function main() {
 
   // ── Report ───────────────────────────────────────────────────────────────
   const broken = results.filter(([, d]) => d.is404).map(([p]) => p);
-  const errored = results.filter(([, d]) => d.errors.length);
+  const withErrors = results.filter(([, d]) => d.errors.length);
+  const errored = withErrors.filter(([p, d]) =>
+    d.errors.some((e) => !isExpectedAuthChallenge(p, e)),
+  );
+  const authChallenged = withErrors.filter(([p, d]) =>
+    d.errors.every((e) => isExpectedAuthChallenge(p, e)),
+  );
 
   console.log(`\nRoutes crawled : ${results.length}${navFails.length ? ` (+${navFails.length} unreachable)` : ""}`);
   console.log(`Asset links    : ${assetLinks.size - badAssets.length}/${assetLinks.size} OK`);
@@ -277,7 +353,13 @@ async function main() {
   for (const [p, why] of navFails) console.log(`  x  unreachable: ${p} — ${why}`);
   for (const p of broken) console.log(`  x  404 or unresolved: ${p}`);
   for (const [a, st] of badAssets) console.log(`  x  asset ${a} -> ${st}`);
-  for (const [p, d] of errored) console.log(`  !  console errors on ${p}: ${d.errors[0]}`);
+  for (const [p, d] of errored) {
+    const real = d.errors.filter((e) => !isExpectedAuthChallenge(p, e));
+    console.log(`  x  console errors on ${p}: ${real[0]}`);
+  }
+  for (const [p, d] of authChallenged) {
+    console.log(`  -  expected auth challenge on ${p}: ${d.errors[0]} (not counted)`);
+  }
   for (const [t, s, r] of clickFails) {
     console.log(`  x  click ${t} (from ${s}) landed on ${r.landed ?? "nowhere"}${r.why ? ` — ${r.why}` : ""}`);
   }
