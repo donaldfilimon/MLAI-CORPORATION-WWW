@@ -38,6 +38,7 @@ const staticEntries: Entry[] = [
   { path: "/team", changefreq: "monthly", priority: "0.7" },
   { path: "/blog", changefreq: "weekly", priority: "0.7" },
   { path: "/docs", changefreq: "monthly", priority: "0.8" },
+  { path: "/projects", changefreq: "monthly", priority: "0.7" },
   { path: "/benchmarks", changefreq: "monthly", priority: "0.8" },
   { path: "/links", changefreq: "monthly", priority: "0.5" },
   { path: "/changelog", changefreq: "monthly", priority: "0.6" },
@@ -80,6 +81,11 @@ const dynamicEntries: Entry[] = [
     })),
   ...content.docs.map((d) => ({
     path: `/docs/${d.slug}`,
+    changefreq: "monthly",
+    priority: "0.6",
+  })),
+  ...content.projects.map((p) => ({
+    path: `/projects/${p.slug}`,
     changefreq: "monthly",
     priority: "0.6",
   })),

@@ -150,6 +150,48 @@ export type DocSection = z.infer<typeof DocSectionSchema>;
 export type Docs = z.infer<typeof DocsSchema>;
 export type Doc = Docs[number];
 
+/**
+ * The project directory (`/projects`, `/projects/:slug`) — ported from
+ * `vendor/mlai-review/lib/content.ts`'s `projects[]`. The vendored `id` is
+ * renamed `slug` for consistency with every other route in this app.
+ *
+ * Two fields deliberately differ from the vendored shape rather than porting
+ * it as-is (see `.superpowers/sdd/2026-09-07-vendor-reconciliation/task-4-brief.md`
+ * Rulings A and B):
+ *  - vendored `source` was a key into a separate `sources` lookup map; here
+ *    it is the resolved `{ title, url }` inlined directly onto the record.
+ *  - vendored `docs` was a bare article slug, two of which (`runtime`,
+ *    `wdbx`) point at subjects this app never ported as standalone docs
+ *    routes (the existing `/docs` page already covers them). `docsHref` is
+ *    the fully resolved link — either a `/docs/<slug>` route or a `/docs`
+ *    anchor (`#runtime` / `#wdbx`) — so the view never has to guess.
+ *
+ * `glyph` is a closed enum (not a bare string) so the icon-mapping switch in
+ * the view can be an exhaustive `never`-checked switch per Ruling D: an
+ * unrecognized glyph value fails at data-load time (`ProjectsSchema.parse`
+ * throws) rather than silently rendering nothing.
+ */
+export const ProjectsSchema = z.array(z.object({
+  slug: z.string(),
+  name: z.string(),
+  kind: z.string(),
+  category: z.string(),
+  tagline: z.string(),
+  description: z.string(),
+  scope: z.array(z.string()).default([]),
+  /** A stated scope limitation. Always non-empty — dropping it would turn a
+   *  hedged claim into an unhedged one. */
+  limit: z.string(),
+  source: z.object({
+    title: z.string(),
+    url: z.string().url(),
+  }),
+  docsHref: z.string(),
+  glyph: z.enum(["layers", "database", "spark", "command"]),
+}));
+export type Projects = z.infer<typeof ProjectsSchema>;
+export type Project = Projects[number];
+
 export const TeamSchema = z.array(z.object({
   name: z.string(),
   role: z.string(),
@@ -262,6 +304,7 @@ export const ContentSchema = z.object({
   products: ProductsSchema,
   changelog: ChangelogSchema,
   docs: DocsSchema,
+  projects: ProjectsSchema,
 });
 
 export type About = z.infer<typeof AboutSchema>;
