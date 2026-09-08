@@ -513,3 +513,54 @@ Closed 2026-09-08. Merged as **PR #69** (`5934a2d`, one file, +56/-0), now in
 - Merged with all four CI checks green. Per the machine git policy the topic
   branch was merged back and then deleted both locally and on `origin`, so this
   checkout is on `main`, clean, and in sync.
+
+## Close the hosted provider gaps (Cloud Run cutover, orphaned Vercel project)
+status: blocked
+
+Captured 2026-09-08 04:3x. These two residuals were recorded as prose inside a
+closed goal, which is where an open item goes to be forgotten. They are one
+intention (finish the hosted provider state) and neither is a repository-code
+defect, so this section exists to keep them visible rather than to be worked.
+
+**Blocked on Donald, not on code. Nothing here is actionable by an agent:**
+provisioning deployment credentials and deleting a hosting project are
+authorization decisions, and the second is destructive.
+
+### Cloud Run deploy has never run, and the reason is measured
+
+- `deploy-cloudrun.yml` gates its `deploy` job behind a `readiness` job that
+  checks exactly two values, `vars.WIF_PROVIDER` and `vars.GCP_PROJECT_ID`.
+  When either is empty it emits a notice and sets `ready=false`, so the run
+  reports `success` while the deploy is skipped. Reading only the run
+  conclusion therefore says "deployed" when nothing deployed. On `c710619`,
+  run `34204233028` shows `readiness: success` and `deploy: skipped`.
+- **Checked at all three scopes, because a repository-only check would have
+  been a false negative:** the `production` environment exists and holds zero
+  variables and zero secrets, repository scope holds zero of each, and
+  `donaldfilimon` is a user account rather than an organization, so no
+  org-level scope exists (the API 404 there is expected, not missing data).
+- The workflow references **25 distinct `vars.*`** in total (project, region,
+  service, artifact repository, both service accounts, Cloud SQL connection and
+  database identity, the WorkOS organization and its two MFA policy flags, the
+  Cloudflare AI Gateway pair, Turnstile site key and hostnames, and the three
+  audit KMS/scheduler values). The two gate variables unblock the job; the rest
+  are what it needs to succeed once it runs.
+- The soft-skip is deliberate and documented in the workflow's own comment: it
+  avoids a red `google-github-actions/auth` on every push to `main` without
+  applying OpenTofu or touching Hostinger NS or Cloudflare. Do not "fix" the
+  red-free state by removing the gate.
+
+### Orphaned Vercel `mlai-web` project
+
+Carried forward from the previous goal's closure and **not independently
+verified in this session** (it needs authorized Vercel dashboard access, which
+this session does not have). Recorded as stated there: the project still
+requires an authorized dashboard session and a separately confirmed destructive
+deletion. Re-measure before acting on it.
+
+### What is not blocked
+
+Everything in the repository itself is green and pushed. `bun run check` at
+`c710619` exits 0 across all four gates, hosted CI run `34204092610` agrees,
+and Pages run `34204233040` published. GitHub Pages is the surface that is
+actually live; Cloud Run is the one that has never cut over.
