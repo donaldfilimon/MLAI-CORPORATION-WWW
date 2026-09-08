@@ -65,6 +65,17 @@ Three gate behaviors have already cost sessions time; `docs/IMPLEMENTATION.md` r
 - `next build` sometimes rewrites `tsconfig.json` with generated dist-dir includes. Compare it
   before and after and revert before committing; it does not happen on every run.
 
+CI runs a subset of that gate: `.github/workflows/check.yml` does a frozen-lockfile install,
+then `typecheck`, `test`, `db:migrate` and `build`, on every push to `main` and every pull
+request. It does not deploy. Two omissions are deliberate — the worker's pytest suite, which
+would need uv, Python and the `setup` downloads on every run, and `format:check`, which is
+red repo-wide on the eleven files above and would pin CI red until that backlog is cleared.
+Bun is pinned to 1.4.0 there to match `packageManager`: 1.3.x cannot parse this repo's
+`lockfileVersion: 2` and, rather than failing, rewrites the lockfile and resolves a different
+dependency tree — which locally produced one phantom test failure and six unrelated Turbopack
+errors. So CI green is narrower than `bun run check` green; it does not cover the parser
+suite, formatting, the browser suites, or `verify:agent`.
+
 Read the exit code from the command itself, never through a pipe — `bun run check | tail` reports
 tail's status. `docs/IMPLEMENTATION.md` records every gate result here as having been read directly
 for that reason.
