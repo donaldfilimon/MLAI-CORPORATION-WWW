@@ -127,10 +127,12 @@ actually reported — not before.
   is green (`bun run check:web`, read from the gate's own `EXIT: 0`, with
   `tsc --noEmit`, 35 files / 322 tests, and a completed `next build`), and the
   bullets above record what the gate actually reported.
-- **NOT pushed, and that was never in this goal's acceptance clause.** `main`
-  here is unprotected (0 rulesets, `protected: false`), and a push triggers CI,
-  which gates the Cloud Run and GitHub Pages deploys. That is a separate
-  decision and it is Donald's.
+- **Not pushed at the time this was written; since pushed.** Verified
+  2026-09-07 22:3x: `git merge-base --is-ancestor 87e89e1 origin/main` returns
+  true, so the commit is on `origin/main` and CI has run against it. The
+  original note stands as a record of the decision boundary at the time -- the
+  push was Donald's call, not this goal's -- but the state it describes is no
+  longer current.
 - **Two follow-ups this slice deliberately did not take, recorded so they are
   not lost.** (1) The entry-point noun is inconsistent across four files that
   lead into the now-coherent dialog: Home and Navbar say *Request access*,
@@ -145,7 +147,7 @@ actually reported — not before.
   different change from porting a copy pass.
 
 ## Finish the copy pass: entry points, swallowed errors, remaining vendor leaks
-status: in_progress
+status: done
 
 Captured 2026-09-06 23:3x. The port goal above closed at `87e89e1` having
 deliberately left four findings on the table; this is that work, plus the two
@@ -190,6 +192,34 @@ intention: make the user-facing copy say what is actually true.
 Acceptance: all three slices landed, `/simplify` applied to the combined diff,
 `check:web` + `check:topology` green read from their own exit codes, committed,
 and pushed to `origin/main`. Deploy is CI's to trigger, not this goal's to claim.
+
+### Closed 2026-09-07 22:3x
+
+The work completed at `f08203c` on 2026-09-06 and the status line was never
+flipped. Every acceptance condition is now verified rather than assumed:
+
+- **All three slices landed and were committed** as `f08203c`, which is on
+  `origin/main` (`merge-base --is-ancestor` returns true). The "landed,
+  uncommitted" phrasing throughout the slice logs below is stale -- the same
+  commit that wrote those words also landed the code.
+- **`/simplify` applied**, recorded in the section below.
+- **Gates green, read from their own exit codes.** The missing evidence, run
+  2026-09-07 22:3x: `bun run check` (which is `check:topology && check:web &&
+  check:mobile && check:quasar`) exits 0 -- topology OK on 8 required paths,
+  web at 40 files / 361 tests plus a 104-page `next build`, mobile at 41 tests
+  plus an Expo web export, quasar typechecking three workspaces plus its own
+  export. Run on `feat/reconcile-vendored-site` @ `1259bde`, which contains
+  `f08203c`; the counts are higher than this goal's own 322 because later work
+  added tests.
+- **The one blocking warning in this goal is resolved.** `Profile.tsx`'s
+  `PROFILE_ERROR_COPY` is now keyed on HTTP status numbers, and 413 keeps its
+  use-case wording, so the dead `'Payload too large'` key it warned about is
+  gone.
+
+Follow-ups recorded in the prose below remain genuinely open and are NOT
+covered by this closure: the typed `ApiError` refactor of `apiJson`, the
+catch-less `try/finally` blocks in `Console.tsx`, the missing client-side
+`maxLength` on the use-case textarea, and the callerless `getInquiries`.
 
 ### Slice log — vendor leaks (landed 23:3x, uncommitted)
 
