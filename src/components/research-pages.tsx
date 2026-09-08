@@ -3,123 +3,91 @@ import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import {
+  implementationStudies,
   publications,
   researchTracks,
   researchItems,
   researchGuideLinks,
+  type ImplementationStudy,
   type Publication,
 } from "@/content/research";
 import { ResearchIndex } from "./research-index";
 import styles from "./research.module.css";
 
-const linesOfWork = [
-  {
-    accent: "wdbx",
-    title: "WDBX Core",
-    desc: "Backtrace-aware retrieval, graph weighting, chunk provenance, and high-throughput vector search for production AI systems.",
-    href: "/research/wdbx-overview",
-  },
-  {
-    accent: "abbey",
-    title: "Agent Safety",
-    desc: "Permissioning, policy locks, prompt-injection resistance, role separation, and human escalation protocols.",
-    href: "/research/ai-overview",
-  },
-  {
-    accent: "abi",
-    title: "Runtime Performance",
-    desc: "GPU acceleration, memory layout, low-latency search, edge deployment, and repeatable benchmark design.",
-    href: "/research/gpu-overview",
-  },
-] as const;
-
-const scoringFactors = [
-  { k: "σⱼ", v: "cosine similarity over the HNSW index" },
-  { k: "τⱼ", v: "temporal recency — exponential half-life decay" },
-  { k: "γⱼ", v: "causal-hop weight, γⱼ = max(0.25, 0.6^hⱼ)" },
-  { k: "πⱼ", v: "source authority from the trust table" },
-] as const;
-
-const authorityRows: [string, string][] = [
-  ["inferred", "0.30"],
-  ["user_stated", "0.78"],
-  ["tool_verified", "0.86"],
-  ["file_verified", "0.90"],
-  ["system_pinned", "1.00"],
-];
-
-const glossary = [
-  {
-    term: "SEA",
-    def: "Sparse Evidence Attention — eight criteria with fixed weights, then greedy packing under a hard token budget and diversity constraint.",
-  },
-  {
-    term: "Backtrace",
-    def: "Walking a weighted retrieval path backward to the hop where confidence or authority dropped, then rewinding.",
-  },
-  {
-    term: "Authority",
-    def: "Trust scale from inferred → user-stated → tool-verified → file-verified → system-pinned (formal model values in the table above).",
-  },
-  {
-    term: "Claims discipline",
-    def: "Figures on this site stay tied to source-reviewed publications. Comparative study tables and unsourced StatBlocks are omitted until they ship with provenance.",
-  },
-] as const;
-
 export function ResearchLanding() {
   return (
     <div className={`public-container marketing-page ${styles.research}`}>
-      <section className="marketing-hero">
-        <div>
-          <span className="eyeline abbey">Research</span>
-          <h1>Figures with their receipts.</h1>
-          <p className="hero-description">
-            Technical analyses of the WDBX architecture and the Abbey–Aviva–Abi
-            multi-persona framework. Claims stay tagged to source-reviewed
-            publications; where a claim conflicts with measured benchmarks, the
-            measured number wins everywhere else on this site.
-          </p>
-          <div className="button-row">
-            <a className="button primary" href="#research-library">
-              Browse the index <ArrowRight size={18} />
-            </a>
-            <Link className="button secondary" href="/docs">
-              Application docs
-            </Link>
-          </div>
-        </div>
-        <aside className="callout-card abbey">
-          <strong>What this page will not invent</strong>
-          <p>
-            No TAM tables, no unsourced latency/throughput StatBlocks, and no
-            comparative “this system vs GPT-4” grids until a harness artifact
-            ships in brand sources. Counts below are library inventory only.
-          </p>
-        </aside>
+      <section className={styles.researchHero}>
+        <span className="eyeline abbey">MLAI Research</span>
+        <h1>Research you can build on.</h1>
+        <p className="hero-description">
+          Explore the ideas behind MLAI&apos;s AI systems, memory, evidence
+          selection, and developer tools. Start with the practical application,
+          then examine the research and its limits.
+        </p>
       </section>
 
-      <section className="system-section marketing-section">
+      <nav className={styles.areaGrid} aria-label="Research areas">
+        {researchTracks.map((track) => (
+          <Link
+            key={track.id}
+            href={`/research/${track.overviewSlug}`}
+            className={styles.areaCard}
+            data-research-area={track.id}
+          >
+            <h2>
+              {track.name} <ArrowUpRight size={18} aria-hidden="true" />
+            </h2>
+            <p>{track.description}</p>
+            <dl>
+              <div>
+                <dt>Practical applications</dt>
+                <dd>{track.application}</dd>
+              </div>
+              <div>
+                <dt>Availability</dt>
+                <dd>{track.availability}</dd>
+              </div>
+            </dl>
+            <span>
+              Explore research and limitations <ArrowRight size={15} />
+            </span>
+          </Link>
+        ))}
+      </nav>
+
+      <section
+        id="implementation-studies"
+        className="system-section marketing-section"
+        aria-labelledby="implementation-heading"
+      >
         <div className="section-intro">
-          <span className="eyeline abbey">Tracks</span>
-          <h2>Three lines of work.</h2>
+          <span className="eyeline wdbx">From research to systems</span>
+          <h2 id="implementation-heading">
+            Source-backed implementation studies
+          </h2>
           <p className="muted">
-            Thematic entry points into the source-reviewed library (
-            {publications.length} publications · {researchTracks.length} detailed
-            research areas).
+            {implementationStudies.length} studies connect the collection to
+            concrete systems. Each preserves its source revisions, operating
+            boundaries, and relationship to the research.
           </p>
         </div>
-        <div className="feature-grid three">
-          {linesOfWork.map((line) => (
+        <div className={styles.studyList}>
+          {implementationStudies.map((study) => (
             <Link
-              key={line.title}
-              href={line.href}
-              className={`feature-card ${line.accent} feature-card-link`}
+              key={study.slug}
+              href={`/research/implementations/${study.slug}`}
+              className={styles.studyRow}
+              data-implementation-study={study.slug}
             >
-              <h3>
-                {line.title} <ArrowUpRight size={16} aria-hidden="true" />
-              </h3>
-              <p>{line.desc}</p>
+              <span>
+                {study.relatedTopics
+                  .map((topic) => topic.toUpperCase())
+                  .join(" / ")}
+              </span>
+              <h3>{study.title}</h3>
+              <p>{study.summary}</p>
+              <ArrowUpRight size={19} aria-hidden="true" />
             </Link>
           ))}
         </div>
@@ -128,15 +96,16 @@ export function ResearchLanding() {
       <section
         id="research-library"
         className="system-section marketing-section"
-        aria-labelledby="research-library-heading"
+        aria-labelledby="publications-heading"
       >
         <div className="section-intro">
-          <span className="eyeline abbey">Publications</span>
-          <h2 id="research-library-heading">The index.</h2>
+          <span className="eyeline abbey">The research collection</span>
+          <h2 id="publications-heading">The research collection</h2>
           <p className="muted">
-            Filter by area or document type. Reference implementation reviews are
-            dated snapshots; research status does not establish a deployed
-            capability.
+            {publications.length} articles and guides, plus three application
+            notes. Filter by research area or document type. Source material,
+            application notes, and generated workspace interpretation remain
+            distinct.
           </p>
         </div>
         <ResearchIndex
@@ -144,97 +113,105 @@ export function ResearchLanding() {
           topics={researchTracks.map(({ id, name }) => ({ id, name }))}
         />
       </section>
+    </div>
+  );
+}
 
-      <section className="system-section marketing-section">
-        <div className="section-intro">
-          <span className="eyeline wdbx">The formal model</span>
-          <h2>Composite retrieval score.</h2>
-          <p className="muted">
-            From the WDBX paper: where the design names a target it is labelled as
-            such. These equations encode the scoring model — not measured
-            benchmark results.
-          </p>
-        </div>
-        <div className="formal-model-grid">
-          <div>
-            <div className="formula-block" aria-label="Hybrid score">
-              sᵢⱼ = σⱼ · τⱼ · γⱼ · πⱼ
-            </div>
-            <dl className="spec-list scoring-list">
-              {scoringFactors.map((row) => (
-                <div key={row.k}>
-                  <dt>{row.k}</dt>
-                  <dd>{row.v}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <div className="table-scroll registers-table">
-            <table>
-              <caption>
-                Authority-weighted records — an inferred guess is never treated
-                like a system-pinned fact.
-              </caption>
-              <thead>
-                <tr>
-                  <th>Source class</th>
-                  <th>Trust</th>
-                </tr>
-              </thead>
-              <tbody>
-                {authorityRows.map(([klass, trust]) => (
-                  <tr key={klass}>
-                    <td>
-                      <code>{klass}</code>
-                    </td>
-                    <td>{trust}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <aside className="callout-card wdbx" style={{ marginTop: 28 }}>
-          <strong>Hash-chained audit log</strong>
-          <p>
-            Hᵢ = SHA-256(Hᵢ₋₁ ‖ tᵢ ‖ seqᵢ ‖ pᵢ ‖ mᵢ), H₀ = 0 — every write lands
-            in a re-verifiable chain. That property makes retrieval explainable to
-            an auditor, not just a developer.
-          </p>
-        </aside>
-      </section>
+export function ImplementationStudyArticle({
+  study,
+}: {
+  study: ImplementationStudy;
+}) {
+  const related = study.relatedTopics.flatMap((topic) => {
+    const track = researchTracks.find((item) => item.id === topic);
+    return track ? [track] : [];
+  });
 
-      <section className="system-section marketing-section">
-        <div className="section-intro">
-          <span className="eyeline abi">Glossary</span>
-          <h2>Terms we use precisely.</h2>
+  return (
+    <div className={`public-container article-layout ${styles.research}`}>
+      <header className="article-header">
+        <Link className="text-link" href="/research#implementation-studies">
+          ← Implementation studies
+        </Link>
+        <span className="eyeline abbey">From research to systems</span>
+        <h1>{study.title}</h1>
+        <p>{study.summary}</p>
+        <div className={styles.metrics}>
+          <span>Source-backed implementation study</span>
+          <span>{study.sources.length} pinned sources</span>
         </div>
-        <div className="feature-grid">
-          {glossary.map((item) => (
-            <article className="feature-card abi" key={item.term}>
-              <h3>{item.term}</h3>
-              <p>{item.def}</p>
-            </article>
+      </header>
+      <div className="article-body">
+        <aside aria-label="On this page">
+          <strong>On this page</strong>
+          {study.sections.map((section, index) => (
+            <a key={section.heading} href={`#study-section-${index}`}>
+              {section.heading}
+            </a>
           ))}
+          <a href="#operating-boundaries">Operating boundaries</a>
+          <a href="#source-evidence">Source evidence</a>
+          <a href="#related-research">Related research</a>
+        </aside>
+        <div className={styles.body}>
+          <aside className={styles.sourceBoundary}>
+            This page summarizes revision-pinned source material. It is not a
+            generated workspace interpretation and does not establish current
+            deployment or live-service acceptance.
+          </aside>
+          {study.sections.map((section, index) => (
+            <section id={`study-section-${index}`} key={section.heading}>
+              <h2>{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+          <section id="operating-boundaries">
+            <h2>Operating boundaries</h2>
+            <ul>
+              {study.limitations.map((limitation) => (
+                <li key={limitation}>{limitation}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="source-evidence">
+            <h2>Source evidence</h2>
+            <p>
+              Each source is pinned to the exact revision and content digest
+              reviewed for this study.
+            </p>
+            <ol className={styles.sources}>
+              {study.sources.map((source) => (
+                <li key={source.url}>
+                  <a href={source.url}>
+                    {source.title} <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                  <span>
+                    revision <code>{source.revision}</code>
+                  </span>
+                  <span>
+                    SHA-256 <code>{source.sha256}</code>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="related-research">
+            <h2>Related research</h2>
+            <nav
+              className={styles.relatedStudies}
+              aria-label="Related research"
+            >
+              {related.map((track) => (
+                <Link key={track.id} href={`/research/${track.overviewSlug}`}>
+                  {track.name} <ArrowRight size={15} aria-hidden="true" />
+                </Link>
+              ))}
+            </nav>
+          </section>
         </div>
-      </section>
-
-      <nav className="next-up" aria-label="Continue reading">
-        <Link className="next-up-card wdbx" href="/wdbx">
-          <span className="eyeline wdbx">WDBX</span>
-          <strong>Where the measured numbers live.</strong>
-          <span>
-            Open WDBX <ArrowRight size={16} />
-          </span>
-        </Link>
-        <Link className="next-up-card abi" href="/platform">
-          <span className="eyeline abi">Platform</span>
-          <strong>The layers these papers inform.</strong>
-          <span>
-            View platform <ArrowRight size={16} />
-          </span>
-        </Link>
-      </nav>
+      </div>
     </div>
   );
 }
@@ -384,8 +361,8 @@ export function ResearchArticle({
             <h2>Connect the research to your work</h2>
             <p>
               These publications document the reference projects. Use the
-              application guides to see the integrations and boundaries available
-              in this workspace.
+              application guides to see the integrations and boundaries
+              available in this workspace.
             </p>
             {guide && (
               <Link className="text-link" href={guide.href}>

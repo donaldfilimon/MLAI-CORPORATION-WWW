@@ -1,5 +1,57 @@
 # MLAI implementation and acceptance ledger
 
+## Published MLAI Research review integration (2026-09-08)
+
+The September 8 published review is now a native application feature. The
+existing 21-publication corpus and three local application notes remain intact;
+seven source-backed implementation studies have dedicated static Next.js routes,
+metadata, sitemap entries, operating boundaries, exact revision evidence and
+related-research navigation. The `/research` landing page now follows the live
+review's hierarchy of six practical research areas, implementation studies and
+the searchable publication collection while using the application's existing
+public design system.
+
+The imported `implementation-data.json` is byte-identical to the source export
+at `../mlai-research-sites/public/implementation-data.json` (SHA-256
+`c9e7b8cb39e88ad6379de3aa022f051adc5914b6c30b50fd3b79991e61abc651`).
+`docs/research-merge/published-review-manifest.json` records the clean source
+revision `419f08b24753c024c6d40a720ea5a417d8192251`, generation timestamp and
+collection counts without replacing the original September 6 source manifest.
+Public study pages consume no workspace API or private application data and are
+explicitly labeled as source-backed summaries, not generated workspace
+interpretation or proof of live deployment.
+
+Focused evidence for this integration:
+
+- `bunx vitest run tests/research.test.ts`: **8 passed**. Covers the exact
+  implementation snapshot hash, source revision/digest shape, all static routes
+  and sitemap entries, study rendering, research-area/study collection anatomy,
+  and the original publication/equation/attachment checks.
+- `bunx playwright test tests/e2e/research.spec.ts`: **4 passed**. Covers the
+  landing page, search/filter persistence, publication evidence and downloads at
+  390, 768 and 1440 pixels, all 21 publication routes, all seven implementation
+  routes, the three retained application notes, responsive overflow and the
+  unknown-route 404. No page errors or hydration errors were observed in the
+  final run.
+- `bun run typecheck`: **passed**, including a fresh shared UI ESM/declaration
+  build and strict application TypeScript. Concurrent agent-runtime files were
+  not modified or staged by this research change.
+- `MLAI_DATA_DIR=.data/research-review-check NEXT_DIST_DIR=.next-research-review
+  bun run check`: **passed** after serial migration of the isolated database:
+  shared UI ESM/declarations, strict TypeScript, **81/81 Vitest tests across eight
+  suites**, **26/26 Python parser tests**, and the production Next.js build with
+  all static research routes. The generated `tsconfig.json` additions were
+  removed after the gate.
+- The published reference and application screenshots were inspected at 1440
+  pixels, with an additional 390-pixel application inspection. The final
+  application render preserves the accepted copy and three-section order,
+  presents all six research areas and seven studies, uses the existing MLAI
+  navigation and accent system, and collapses cleanly to one column on mobile.
+
+No deployment, external access, workspace authorization, model-provider or
+private-data setting was changed. This section does not claim release
+activation.
+
 Combined application and shared UI release verified on 2026-09-06. The independent repository contains the public website, authenticated Abbey workspace, developer console, and customer/staff portal. Application records and private files persist locally. Billing, public deployment, domain changes, external email, and changes to sibling repositories are outside this release.
 
 ## Delivery gates

@@ -109,6 +109,17 @@ export function proposeAction(
     now(),
   );
 }
+export function repeatsCompletedAction(
+  runId: string,
+  decision: AgentToolDecision,
+) {
+  return !!one(
+    "SELECT id FROM agent_actions WHERE run_id=? AND tool=? AND input=? AND status='completed'",
+    runId,
+    decision.tool,
+    JSON.stringify(decision.input),
+  );
+}
 export function validateAction(row: AgentRunRow, action: ActionRow) {
   const ctx = agentActor(row);
   validateAgentSources(row, ctx);

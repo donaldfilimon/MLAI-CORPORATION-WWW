@@ -1,5 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { publications } from "../../src/content/research";
+import {
+  implementationStudies,
+  publications,
+} from "../../src/content/research";
 
 for (const width of [390, 768, 1440]) {
   test(`merged research library and evidence at ${width}px`, async ({
@@ -11,8 +14,27 @@ for (const width of [390, 768, 1440]) {
     await page.setViewportSize({ width, height: 960 });
     await page.goto("/research?source=bookmark#main");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Figures with their receipts.",
+      "Research you can build on.",
     );
+    await expect(page.locator("[data-research-area]")).toHaveCount(6);
+    const studies = page.locator("[data-implementation-study]");
+    await expect(studies).toHaveCount(7);
+    await studies.first().click();
+    await expect(page).toHaveURL(
+      /research\/implementations\/six-layer-evidence-aware-platform/,
+    );
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "A six-layer architecture for evidence-aware AI systems",
+    );
+    await expect(page.locator("#operating-boundaries")).toBeVisible();
+    await expect(page.locator("#source-evidence a")).toHaveCount(1);
+    if (process.env.MLAI_RESEARCH_SCREENSHOTS) {
+      await page.screenshot({
+        path: `${process.env.MLAI_RESEARCH_SCREENSHOTS}/research-study-${width}.png`,
+        fullPage: true,
+      });
+    }
+    await page.goBack();
     const cards = page.locator(".article-index > a");
     await expect(cards).toHaveCount(24);
     await page
@@ -78,6 +100,9 @@ for (const width of [390, 768, 1440]) {
         fullPage: true,
       });
       await page.goto("/research");
+      await expect(
+        page.getByRole("combobox", { name: "Research area" }),
+      ).toBeVisible();
       await page.screenshot({
         path: `${process.env.MLAI_RESEARCH_SCREENSHOTS}/research-library-${width}.png`,
         fullPage: true,
@@ -99,6 +124,15 @@ test("every research route is served and unknown research returns 404", async ({
     const response = await request.get(`/research/${p.slug}`);
     expect(response.status(), p.slug).toBe(200);
     expect(await response.text()).toContain('id="sources"');
+  }
+  for (const study of implementationStudies) {
+    const response = await request.get(
+      `/research/implementations/${study.slug}`,
+    );
+    expect(response.status(), study.slug).toBe(200);
+    const body = await response.text();
+    expect(body).toContain('id="operating-boundaries"');
+    expect(body).toContain('id="source-evidence"');
   }
   for (const path of [
     "provenance",

@@ -135,7 +135,7 @@ export async function waitRun(
   assert.equal(
     detail.status,
     status,
-    `Agent ${id}: ${detail.error || detail.status}`,
+    `Agent ${id}: ${detail.error || detail.status}; steps=${detail.steps.map((step) => step.tool).join(",") || "none"}; actions=${detail.actions.map((action) => `${action.tool}:${action.status}`).join(",") || "none"}; results=${detail.results.map((result) => `${result.kind}:${result.status}`).join(",") || "none"}`,
   );
   return detail;
 }

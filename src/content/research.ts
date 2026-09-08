@@ -1,4 +1,5 @@
 import data from "./research-data.json" with { type: "json" };
+import implementationData from "./implementation-data.json" with { type: "json" };
 import { pages, researchPaths } from "./pages";
 
 // The collection is an immutable source-reviewed snapshot, imported from MLAI
@@ -36,11 +37,34 @@ export interface Publication {
   }[];
   body: ResearchSection[];
 }
+export interface ImplementationStudy {
+  title: string;
+  slug: string;
+  summary: string;
+  relatedTopics: string[];
+  sections: { heading: string; paragraphs: string[] }[];
+  sources: {
+    title: string;
+    url: string;
+    revision: string;
+    sha256: string;
+  }[];
+  limitations: string[];
+}
 export const researchTracks = data.tracks;
 export const publications: Publication[] = data.publications;
 export const publicationPaths = publications.map((p) => `research/${p.slug}`);
+export const implementationStudies: ImplementationStudy[] = implementationData;
+export const implementationPaths = implementationStudies.map(
+  (study) => `research/implementations/${study.slug}`,
+);
 export function findPublication(path: string) {
   return publications.find((p) => `research/${p.slug}` === path);
+}
+export function findImplementationStudy(path: string) {
+  return implementationStudies.find(
+    (study) => `research/implementations/${study.slug}` === path,
+  );
 }
 export const researchItems = [
   ...publications.map((p) => ({

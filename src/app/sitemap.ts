@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { publicationPaths } from "@/content/research";
+import { implementationPaths, publicationPaths } from "@/content/research";
 import { pages } from "@/content/pages";
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.APP_URL || "http://127.0.0.1:3100";
@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "quesar",
     ...Object.keys(pages),
     ...publicationPaths,
+    ...implementationPaths,
   ].map((path) => ({
     url: `${base}/${path}`,
     changeFrequency: "monthly",

@@ -2,6 +2,28 @@
 
 Audience: Donald Filimon and application reviewers. Date: 2026-09-06.
 
+## September 8 published-review integration
+
+The live review at `https://mlai-research-review.underswitch.chatgpt.site` was
+inspected in the browser on 2026-09-08. Its source export is the sibling
+`../mlai-research-sites/public` snapshot generated at
+`2026-09-08T05:04:24.000Z` from clean source revision
+`419f08b24753c024c6d40a720ea5a417d8192251`. The 21-publication corpus remains
+semantically identical to the September 6 import. The newer review adds seven
+implementation studies, preserved byte-for-byte in
+`src/content/implementation-data.json` with SHA-256
+`c9e7b8cb39e88ad6379de3aa022f051adc5914b6c30b50fd3b79991e61abc651`.
+
+The application now renders those studies as their own static content type.
+Each page shows the study narrative, operating boundaries, revision-pinned
+source evidence and related research. The renderer explicitly identifies the
+page as a source-backed summary rather than generated workspace interpretation.
+No workspace API, private document, provider, deployment or access configuration
+is involved in serving the public snapshot. The live review's practical
+research-area and implementation-study hierarchy informed the revised landing
+page; the application retains its own established navigation, typography,
+tokens and three local application-note routes.
+
 ## Direct answer and scope
 
 Consolidate the research collection into the independent `mlai-website-app` as native Next.js App Router pages and custom React TSX components. Keep its local SQLite/Better Auth/worker architecture and existing product interface. The reference MLAI repository and the linked Sites publication contain the same 21 structured publications and six research tracks (deep equality verified), so importing both separately would duplicate the corpus. Retain the destination's three original application notes. Copy the four publication PDFs with their original edition labels and SHA-256 hashes.
@@ -24,14 +46,14 @@ Every imported article has static parameters, a title and description, sitemap i
 
 ## Gaps and limits
 
-| Claim or gap | Evidence and confidence | Remaining boundary |
-| --- | --- | --- |
-| Selected collection fully incorporated | Original manifest, exact parsed-corpus hash, 21 per-publication hashes, four PDF hashes; high | The remote publication's individual content bytes were not fetched |
-| Reference and exported collection agree | Deep equality of current MLAI research data and saved export; high | Does not mean either reference repo is deployed |
-| Pinned sources exist | All 26 Git objects retrieved and hashed; high | This is not a fresh full scientific or performance evaluation |
-| Native Next.js/React integration | Existing package manifest plus new TSX routes/components and fresh gates; verified in implementation ledger | Auth/model/service acceptance is separate |
-| Dependency review | `dependency-reviewer` package-risk routing attempted for KaTeX 0.18.7 | Endor CLI lacks `agent` command and no risk MCP was available; risk posture unknown, no affirmative security verdict |
-| Application release readiness | Public content work retains existing authorization and data boundaries | This merge does not resolve pre-existing runtime acceptance gaps or deploy the application |
+| Claim or gap                            | Evidence and confidence                                                                                     | Remaining boundary                                                                                                   |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Selected collection fully incorporated  | Original manifest, exact parsed-corpus hash, 21 per-publication hashes, four PDF hashes; high               | The remote publication's individual content bytes were not fetched                                                   |
+| Reference and exported collection agree | Deep equality of current MLAI research data and saved export; high                                          | Does not mean either reference repo is deployed                                                                      |
+| Pinned sources exist                    | All 26 Git objects retrieved and hashed; high                                                               | This is not a fresh full scientific or performance evaluation                                                        |
+| Native Next.js/React integration        | Existing package manifest plus new TSX routes/components and fresh gates; verified in implementation ledger | Auth/model/service acceptance is separate                                                                            |
+| Dependency review                       | `dependency-reviewer` package-risk routing attempted for KaTeX 0.18.7                                       | Endor CLI lacks `agent` command and no risk MCP was available; risk posture unknown, no affirmative security verdict |
+| Application release readiness           | Public content work retains existing authorization and data boundaries                                      | This merge does not resolve pre-existing runtime acceptance gaps or deploy the application                           |
 
 ## Search and stopping record
 

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "format": "mlai-research-review",
+  "publishedUrl": "https://mlai-research-review.underswitch.chatgpt.site",
+  "generatedAt": "2026-09-08T05:04:24.000Z",
+  "canonicalOrigin": "https://quesar.cloud",
+  "sourceRevision": "419f08b24753c024c6d40a720ea5a417d8192251",
+  "sourceDirty": false,
+  "contentSha256": "1bac66896aa58c1c97813cdf7ff9ac80f94285abb6e3b183d901620a352ecaa4",
+  "implementationDataSha256": "c9e7b8cb39e88ad6379de3aa022f051adc5914b6c30b50fd3b79991e61abc651",
+  "implementationCount": 7,
+  "publicationCount": 21,
+  "topics": ["ai", "wdbx", "sea", "gpu", "mcp", "tui"]
+}

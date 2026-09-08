@@ -5,12 +5,17 @@ import { join } from "node:path";
 const generated = vi.hoisted(() => ({
   outputs: [] as string[],
   calls: 0,
+  messages: [] as string[][],
   pause: undefined as (() => Promise<void>) | undefined,
 }));
 vi.mock("../src/lib/server/models", async (original) => ({
   ...(await original<typeof import("../src/lib/server/models")>()),
-  generate: async function* () {
+  generate: async function* (
+    _workspaceId: string,
+    messages: { content: string }[],
+  ) {
     generated.calls++;
+    generated.messages.push(messages.map((message) => message.content));
     if (generated.pause) await generated.pause();
     yield {
       text: generated.outputs.shift() || '{"kind":"answer","content":"Done."}',
@@ -175,6 +180,20 @@ describe("durable session-only agent", () => {
     );
     expect(projectCount()).toBe(before + 1);
   });
+  it("completes instead of reproposing the exact confirmed write", async () => {
+    const before = projectCount(),
+      input = { name: "No duplicate", description: "One confirmed write" },
+      p = await proposal("create_project", input);
+    await call(alice, `agent/actions/${p.action.id}/confirm`, "POST", {});
+    generated.outputs.push(
+      JSON.stringify({ kind: "tool", tool: "create_project", input }),
+    );
+    await work();
+    const detail = (await call(alice, `agent/runs/${p.id}`)).data;
+    expect(detail.status).toBe("completed");
+    expect(detail.actions).toHaveLength(1);
+    expect(projectCount()).toBe(before + 1);
+  });
   it("rejects immutable input replacement and another member's confirmation", async () => {
     const p = await proposal();
     run(
@@ -252,6 +271,110 @@ describe("durable session-only agent", () => {
       );
     }
     expect(projectCount()).toBe(before);
+  });
+  it("does not publish a source-based answer without an authorized citation", async () => {
+    const documentId = "uncited-source";
+    run(
+      "INSERT INTO documents(id,workspace_id,name,extension,size,status,created_at,updated_at) VALUES(?,?,'Citation fixture','txt',1,'ready',1,1)",
+      documentId,
+      alice.workspace,
+    );
+    run(
+      "INSERT INTO chunks(id,document_id,workspace_id,ordinal,content,location) VALUES('uncited-chunk',?,?,0,'Morgan owns the review.','{}')",
+      documentId,
+      alice.workspace,
+    );
+    const id = await start(alice, "Who owns the review?", [documentId]);
+    generated.outputs.push(
+      JSON.stringify({
+        kind: "tool",
+        tool: "search_documents",
+        input: { query: "review" },
+      }),
+      JSON.stringify({ kind: "answer", content: "Morgan owns the review." }),
+      JSON.stringify({
+        kind: "answer",
+        content: "Morgan still owns the review.",
+      }),
+    );
+    await work();
+    const detail = (await call(alice, `agent/runs/${id}`)).data;
+    expect(detail.status).toBe("failed");
+    expect(detail.results).toHaveLength(0);
+  });
+  it("corrects one uncited source-based answer before publication", async () => {
+    const documentId = "corrected-citation-source";
+    run(
+      "INSERT INTO documents(id,workspace_id,name,extension,size,status,created_at,updated_at) VALUES(?,?,'Corrected citation fixture','txt',1,'ready',1,1)",
+      documentId,
+      alice.workspace,
+    );
+    run(
+      "INSERT INTO chunks(id,document_id,workspace_id,ordinal,content,location) VALUES('corrected-citation-chunk',?,?,0,'Morgan owns the review.','{}')",
+      documentId,
+      alice.workspace,
+    );
+    const id = await start(alice, "Who owns the review?", [documentId]);
+    generated.outputs.push(
+      JSON.stringify({
+        kind: "tool",
+        tool: "search_documents",
+        input: { query: "review" },
+      }),
+      JSON.stringify({ kind: "answer", content: "Morgan owns the review." }),
+      JSON.stringify({
+        kind: "answer",
+        content: "Morgan owns the review [1].",
+      }),
+    );
+    await work();
+    const detail = (await call(alice, `agent/runs/${id}`)).data;
+    expect(detail.status).toBe("completed");
+    expect(detail.results).toHaveLength(1);
+    expect(detail.results[0].citations).toHaveLength(1);
+    expect(detail.results[0].citations[0].documentId).toBe(documentId);
+    expect(generated.messages.at(-1)?.at(-1)).toContain(
+      'inside the "content" string',
+    );
+    expect(generated.messages.at(-1)?.at(-1)).toContain(
+      "Do not add any other properties",
+    );
+  });
+  it("corrects one strict-schema source answer before publication", async () => {
+    const documentId = "corrected-schema-source";
+    run(
+      "INSERT INTO documents(id,workspace_id,name,extension,size,status,created_at,updated_at) VALUES(?,?,'Schema correction fixture','txt',1,'ready',1,1)",
+      documentId,
+      alice.workspace,
+    );
+    run(
+      "INSERT INTO chunks(id,document_id,workspace_id,ordinal,content,location) VALUES('corrected-schema-chunk',?,?,0,'Morgan owns the review.','{}')",
+      documentId,
+      alice.workspace,
+    );
+    const id = await start(alice, "Who owns the review?", [documentId]);
+    generated.outputs.push(
+      JSON.stringify({
+        kind: "tool",
+        tool: "search_documents",
+        input: { query: "review" },
+      }),
+      JSON.stringify({
+        kind: "answer",
+        content: "Morgan owns the review.",
+        source: ["[1]"],
+      }),
+      JSON.stringify({
+        kind: "answer",
+        content: "Morgan owns the review [1].",
+      }),
+    );
+    await work();
+    const detail = (await call(alice, `agent/runs/${id}`)).data;
+    expect(detail.status).toBe("completed");
+    expect(detail.results).toHaveLength(1);
+    expect(detail.results[0].citations).toHaveLength(1);
+    expect(detail.results[0].citations[0].documentId).toBe(documentId);
   });
   it("removed membership prevents model use", async () => {
     const id = await start({ ...bob, workspace: alice.workspace });
