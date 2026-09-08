@@ -627,3 +627,27 @@ older text is still an accurate record of what was true when it was written.
   `git --no-optional-locks diff --cached --name-only`). A bare `git commit`
   there would sweep in another session's work. Not a defect in this repository
   and not part of this goal.
+
+### Blocking conditions re-measured 2026-09-08 18:4x — still blocked, now verified at HEAD
+
+Re-measured rather than re-asserted, because the block is a factual condition
+that could have changed since it was captured at 04:3x.
+
+- **Both gate variables are still absent, checked at every scope that exists.**
+  Repository scope holds `0` variables. The `production` environment holds `0`
+  variables and `0` secrets. Two environments exist (`github-pages`,
+  `production`). So `vars.WIF_PROVIDER` and `vars.GCP_PROJECT_ID` are still
+  unset and the `deploy` job still cannot run.
+- **The misleading-green pattern is confirmed at HEAD, not just at `c710619`.**
+  On `cf8cefd`, run `34235087682` ("Deploy to Cloud Run") reports the run
+  conclusion **success** while its jobs read `readiness: success` /
+  `deploy: skipped`. Reading the run conclusion alone still says "deployed"
+  when nothing deployed. Check the job breakdown, never the run badge.
+- **Hosted CI is genuinely green at HEAD.** Run `34234922098` on `cf8cefd`
+  passes all five jobs (`topology`, `web`, `mobile`, `quasar`, `website-app`),
+  and Pages run `34235087719` succeeded. This corroborates the local
+  `check:web` result recorded above, from an independent runner.
+- **Unchanged and still Donald's call.** Setting the two variables is an
+  authorization decision; the orphaned Vercel `mlai-web` project still needs an
+  authorized dashboard session and a separately confirmed destructive deletion,
+  and was again not verified here for that reason. `status:` stays `blocked`.
