@@ -1,5 +1,0 @@
-# Vendored payloads are kept verbatim. The repository-root ignore rules would
-# otherwise silently drop parts of them (browser logs are the QA evidence; the
-# boilerplate's next-env.d.ts ships in the archive). Re-include them here.
-!*.log
-!next-env.d.ts

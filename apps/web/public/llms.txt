@@ -19,10 +19,25 @@ the linked repositories for implementation detail.
 - [WDBX Architecture & Evidence](https://quesar.cloud/benchmarks): How WDBX is built and what has actually been measured on MLAI hardware — architectural properties, and GPU figures labeled measured or target. No head-to-head comparisons against other products.
 - [Quesar Security](https://quesar.cloud/security): Review MLAI security principles for authentication, private deployment, auditability, protected APIs, and production AI controls.
 
+## Documentation
+
+- [Start with the source.](https://quesar.cloud/docs/getting-started): Prepare an ABI checkout and follow its own validation workflow.
+- [Different tools. Clear roles.](https://quesar.cloud/docs/architecture): Separate runtime, storage, interface, and application framework responsibilities.
+- [A companion, not a capability claim.](https://quesar.cloud/docs/identity): Understand Abbey, Aviva and ABI without confusing identity with implementation.
+- [One tree. Many surfaces.](https://quesar.cloud/docs/gama): A source-based introduction to Gama’s Swift scene and rendering model.
+- [Evidence before promises.](https://quesar.cloud/docs/evidence): Keep documented behavior, reported testing, measured results and targets separate.
+
 ## Products
 
 - [ABI Framework](https://quesar.cloud/products/abi): Local AI orchestration with inspectable memory. Instead of one brain switching contexts, ABI routes each interaction through specialized personas — Abbey, Aviva, Abi — and says what the ledger can prove.
 - [Abbey](https://quesar.cloud/products/abbey): Intelligence Without Limits — with a claims ledger. Abbey is your companion for routing, memory, and calm ops help: personas that say what they know and what they don't. No AGI claims, no unverified benchmarks, no Quesar features dressed up as the bot.
+
+## Projects
+
+- [ABI](https://quesar.cloud/projects/abi): A runtime you can inspect.
+- [WDBX](https://quesar.cloud/projects/wdbx): Give retrieval a foundation.
+- [Abbey](https://quesar.cloud/projects/abbey): A more thoughtful interface.
+- [Gama](https://quesar.cloud/projects/gama): One tree. Many surfaces.
 
 ## Research
 

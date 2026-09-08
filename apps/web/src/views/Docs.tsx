@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { research } from "@/data/categories/research";
+import { docNav } from "@/data/categories/docs-nav";
 import { m } from "framer-motion";
 import {
   Book,
@@ -10,6 +11,8 @@ import {
   Shield,
   Terminal,
   ArrowRight,
+  Search,
+  Menu,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
@@ -262,85 +265,98 @@ const deploymentSteps = [
   },
 ];
 
-// Single source of truth for the docs section nav — drives both the desktop
-// sidebar and the mobile section bar. Every anchor maps to a real section id,
-// and each group name is reused as that section's Eyebrow kicker.
-const docNav = [
-  {
-    group: "Start",
-    items: [
-      { id: "intro", label: "Introduction" },
-      { id: "runtime", label: "ABI Runtime" },
-    ],
-  },
-  {
-    group: "Security & trust",
-    items: [{ id: "trust", label: "Security & trust" }],
-  },
-  {
-    group: "Architecture",
-    items: [
-      { id: "personas", label: "Persona Routing" },
-      { id: "wdbx", label: "WDBX Retrieval" },
-      { id: "wdbx-v2", label: "WDBX V2 Docs" },
-      { id: "mcp", label: "MCP Server" },
-    ],
-  },
-  {
-    group: "Operations",
-    items: [{ id: "deployment", label: "Deployment" }],
-  },
-  {
-    group: "Reference",
-    items: [{ id: "api", label: "Protected API" }],
-  },
-];
+function DocsNavLinks() {
+  return (
+    <>
+      {docNav.map((g) => (
+        <div key={g.group}>
+          <h3 className="font-semibold text-white mb-3 text-sm">{g.group}</h3>
+          <ul className="space-y-2 text-text-dim text-sm">
+            {g.items.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  className="hover:text-primary transition-colors"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function SearchTrigger({
+  onClick,
+  label,
+  className = "",
+}: {
+  onClick: () => void;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Search documentation"
+      className={`inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-300 ${className}`}
+    >
+      <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      <kbd className="hidden rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] text-text-dim sm:inline">
+        ⌘K
+      </kbd>
+    </button>
+  );
+}
 
 export function Docs() {
+  const openSearch = () => {
+    window.dispatchEvent(new Event("mlai:open-docs-search"));
+  };
+
   return (
     <div className="container-custom pt-32 pb-20 min-h-screen">
-      {/* Mobile section nav — the desktop sidebar is hidden < md, so small
-          screens get a horizontally scrollable bar of section anchors. */}
-      <nav
-        className="md:hidden mb-8 -mx-5 overflow-x-auto px-5"
-        aria-label="Documentation sections"
-      >
-        <ul className="flex w-max gap-2">
-          {docNav.flatMap((g) => g.items).map((item) => (
-            <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                className="inline-flex whitespace-nowrap rounded-full border border-white/10 px-3.5 py-1.5 text-xs font-medium text-text-dim transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {/* Mobile: search + collapsible contents (review mobile-docs-nav pattern). */}
+      <div className="md:hidden mb-8 space-y-3">
+        <SearchTrigger
+          onClick={openSearch}
+          label="Search the documentation"
+          className="w-full"
+        />
+        <details className="rounded-xl border border-white/10 bg-white/[0.03] px-4 open:pb-3">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm font-medium text-white [&::-webkit-details-marker]:hidden">
+            <span className="inline-flex items-center gap-2">
+              <Menu className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+              Browse documentation
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-text-dim">
+              Sections
+            </span>
+          </summary>
+          <nav className="space-y-5 border-t border-white/10 pt-4" aria-label="Documentation sections">
+            <DocsNavLinks />
+          </nav>
+        </details>
+      </div>
 
       <div className="flex overflow-hidden">
         {/* Sidebar (desktop) */}
         <aside className="w-64 pr-8 hidden md:block">
-          <nav className="space-y-6 sticky top-32" aria-label="Documentation">
-            {docNav.map((g) => (
-              <div key={g.group}>
-                <h3 className="font-semibold text-white mb-3">{g.group}</h3>
-                <ul className="space-y-2 text-text-dim text-sm">
-                  {g.items.map((item) => (
-                    <li key={item.id}>
-                      <a
-                        href={`#${item.id}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </nav>
+          <div className="sticky top-32 space-y-6">
+            <SearchTrigger
+              onClick={openSearch}
+              label="Search guides"
+              className="w-full"
+            />
+            <nav className="space-y-6" aria-label="Documentation">
+              <DocsNavLinks />
+            </nav>
+          </div>
         </aside>
 
         {/* Main Content */}

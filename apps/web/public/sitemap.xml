@@ -7,6 +7,7 @@
   <url><loc>https://quesar.cloud/team</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://quesar.cloud/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://quesar.cloud/docs</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://quesar.cloud/projects</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://quesar.cloud/benchmarks</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://quesar.cloud/links</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://quesar.cloud/changelog</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -59,4 +60,13 @@
   <url><loc>https://quesar.cloud/blog/zig-016-migration</loc><lastmod>2026-01-08</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/blog/why-zig</loc><lastmod>2025-11-30</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/team/donald-filimon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/docs/getting-started</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/docs/architecture</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/docs/identity</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/docs/gama</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/docs/evidence</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/projects/abi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/projects/wdbx</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/projects/abbey</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://quesar.cloud/projects/gama</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>

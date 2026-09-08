@@ -63,6 +63,12 @@ const SEEDS = [
   "/", "/about", "/research", "/services", "/team", "/blog", "/docs",
   "/benchmarks", "/links", "/showcase", "/privacy", "/terms", "/security",
   "/login", "/signup", "/console", "/profile", "/changelog", "/demo",
+  // The ported /docs/:slug and /projects surfaces. Without these the crawl
+  // never reaches a single new route and its "no dead links" result says
+  // nothing about them.
+  "/projects",
+  "/docs/getting-started", "/docs/architecture", "/docs/identity",
+  "/docs/gama", "/docs/evidence",
 ];
 
 /** Auth-guarded routes legitimately bounce to /login — not a broken link. */

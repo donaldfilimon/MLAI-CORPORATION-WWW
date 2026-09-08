@@ -1,1 +1,0 @@
-20 TypeScript/TSX files syntax-transpiled; 0 syntax diagnostics. This is not full dependency type-checking.

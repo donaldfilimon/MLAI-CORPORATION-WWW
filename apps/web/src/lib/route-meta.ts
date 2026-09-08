@@ -114,6 +114,11 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "Review MLAI platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.",
   },
+  "/projects": {
+    title: "Projects | MLAI Corporation",
+    description:
+      "ABI, WDBX, Abbey, and Gama — the projects behind MLAI, introduced with their documented scope, stated limitations, and source links.",
+  },
   // Retitled when the fabricated competitor charts came down. "Performance
   // Evidence" and "benchmark dashboards" described a page of invented
   // head-to-head figures; what remains is an architecture table and one
@@ -272,6 +277,25 @@ export function productMeta(slug: string): RouteMeta {
   const product = content.products.find((p) => p.slug === slug);
   if (!product) return NOT_FOUND_META;
   return { title: `${product.name} | MLAI ${product.kicker}`, description: product.intro };
+}
+
+export function docMeta(slug: string): RouteMeta {
+  const doc = content.docs.find((d) => d.slug === slug);
+  if (!doc) return NOT_FOUND_META;
+  return {
+    title: `${doc.title} | Quesar Documentation`,
+    description: doc.description,
+    ogType: "article",
+  };
+}
+
+export function projectMeta(slug: string): RouteMeta {
+  const project = content.projects.find((p) => p.slug === slug);
+  if (!project) return NOT_FOUND_META;
+  return {
+    title: `${project.name} | MLAI Projects`,
+    description: project.description,
+  };
 }
 
 /**

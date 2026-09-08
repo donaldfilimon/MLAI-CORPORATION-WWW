@@ -1,6 +1,7 @@
 /**
  * JSON-LD structured-data builders for the dynamic-slug detail pages
- * (`/blog/:slug`, `/research/:slug`, `/team/:slug`, `/products/:slug`).
+ * (`/blog/:slug`, `/research/:slug`, `/team/:slug`, `/products/:slug`,
+ * `/docs/:slug`, `/projects/:slug`).
  * Each returns a ready-to-stringify object (`@context`/`@type` included);
  * callers render it via a `<script type="application/ld+json">` in the
  * route's server-component `page.tsx`, alongside the OG/canonical metadata
@@ -12,7 +13,7 @@
 import { SITE_URL } from "@/lib/route-meta";
 import { bylineNames } from "@/lib/byline";
 import { toIsoDate } from "@/lib/dates";
-import type { Blog, Research, Team, Products } from "@/data";
+import type { Blog, Research, Team, Products, Doc, Project } from "@/data";
 
 type BlogPost = Blog[number];
 type ResearchPub = Research["publications"][number];
@@ -141,6 +142,48 @@ export function softwareApplicationLd(product: Product) {
     applicationCategory: "DeveloperApplication",
     applicationSubCategory: product.kicker,
     operatingSystem: "Cross-platform",
+    publisher: ORG_REF,
+  };
+}
+
+/*
+ * `Doc` carries no date field, so this builder emits neither `datePublished`
+ * nor `dateModified`. The other Article builders derive both from real data;
+ * synthesizing one here would publish a fabricated date as structured data.
+ */
+export function docLd(doc: Doc) {
+  const url = `${SITE_URL}/docs/${doc.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "@id": url,
+    mainEntityOfPage: url,
+    headline: doc.title,
+    description: doc.description,
+    url,
+    citation: doc.sources.map(source => source.url),
+    author: ORG_REF,
+    publisher: ORG_REF,
+    keywords: doc.group,
+  };
+}
+
+/*
+ * `SoftwareSourceCode` rather than `SoftwareApplication`: every project record
+ * describes a source repository and its documented scope, not a distributable
+ * application. `codeRepository` is the field that carries that distinction.
+ */
+export function projectLd(project: Project) {
+  const url = `${SITE_URL}/projects/${project.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "@id": url,
+    mainEntityOfPage: url,
+    name: project.name,
+    description: project.description,
+    url,
+    codeRepository: project.source.url,
     publisher: ORG_REF,
   };
 }
