@@ -1,8 +1,24 @@
 # CLAUDE.md
 
-The MLAI repository-wide map and verification boundaries are in `AGENTS.md`.
-Read that file, then the app-local `AGENTS.md` and `CLAUDE.md` for the surface
-being changed. Do not duplicate their detailed instructions here.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+`AGENTS.md` is the canonical repository-wide map: the boundaries between the
+three apps, the root commands, and what each gate does and does not prove.
+Read it first, then the guidance for the surface you are changing. Do not
+duplicate their detailed instructions here.
+
+| Surface | Read before editing |
+|---|---|
+| `apps/web` | `apps/web/AGENTS.md`, `apps/web/CLAUDE.md`, and `apps/web/infra/README.md` for OpenTofu |
+| `apps/mobile` | `apps/mobile/AGENTS.md`, `apps/mobile/CLAUDE.md` |
+| `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
+| `packages/*` | that package's own `README.md` |
+| `vendor/` | `vendor/README.md` — reference archives, not a product surface |
+
+Three trees here are a Next.js site named MLAI: the shipping app at
+`apps/web`, plus `vendor/mlai-review` and `vendor/mlai-site`, which are two
+revisions of one standalone archived site and are not patches against
+`apps/web`. Confirm which tree a request means before editing.
 
 <!-- machine-git-policy -->
 ## Git workflow (machine policy, 2026-08-27)
