@@ -19,6 +19,12 @@ jobs:
         with:
           bun-version: "1.4"
       - run: bun run check:topology
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          cache: false
+      - run: bun run check:workflows
+      - run: bun run check:tooling
 
   web:
     runs-on: ubuntu-latest
@@ -75,10 +81,10 @@ jobs:
     defaults:
       run:
         working-directory: apps/website-app
-    env:
-      MLAI_DATA_DIR: ${{ runner.temp }}/mlai-website-app-ci
     steps:
       - uses: actions/checkout@v7
+      - name: Initialize isolated application data
+        run: echo "MLAI_DATA_DIR=$RUNNER_TEMP/mlai-website-app-ci" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"

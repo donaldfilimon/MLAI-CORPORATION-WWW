@@ -28,12 +28,14 @@ specific belongs to an app and runs from that app's own directory. Use Bun
 
 ```bash
 bun run install:all      # root packages, then web, mobile, quasar, website-app (non-frozen)
-bun run check            # check:topology, then web, then mobile, then quasar, then website-app
+bun run check            # check:topology, check:workflows, check:tooling, then web, then mobile, then quasar, then website-app
 bun run check:topology   # bun packages/tooling/src/check-topology.ts
+bun run check:workflows  # pinned Actionlint 1.7.12 via Go (requires Go 1.25+)
+bun run check:tooling    # repository wrapper regression tests
 bun run check:web        # cd apps/web && lint && test && build
 bun run check:mobile     # cd apps/mobile && typecheck && test && lint && expo export
 bun run check:quasar     # cd apps/quasar && typecheck && test && expo export
-bun run check:website-app # cd apps/website-app && db:migrate && check
+bun run check:website-app # isolated data wrapper: db:migrate, then check
 bun run dev:web          # also dev:mobile, dev:quasar, dev:website-app
 ```
 

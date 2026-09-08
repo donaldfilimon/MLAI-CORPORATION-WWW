@@ -15,7 +15,7 @@ them one discoverable layout and one coordination command.
 | `apps/website-app/` | Next.js local application, Abbey workspace, SQLite/Better Auth, Python worker, and agent package | `bun run check:website-app` |
 | `packages/contracts/` | Shared type vocabulary for product, persona, and claim provenance axes | `bun run check:topology` |
 | `packages/design-tokens/` | Raw cross-platform Lab colors; semantic UI tokens remain app-local | `bun run check:topology` |
-| `packages/tooling/` | Repository topology checks | `bun run check:topology` |
+| `packages/tooling/` | Repository topology and workflow checks | `bun run check:topology`, `bun run check:workflows`, `bun run check:tooling` |
 
 The former mobile `www/` subtree was a historical copy of the website. Its
 history is retained by the merge, but the current implementation lives only at
@@ -31,6 +31,8 @@ over Expo SDK 53's React 19.0 types (or vice versa).
 ```bash
 bun run install:all
 bun run check:topology
+bun run check:workflows
+bun run check:tooling
 bun run check:web
 bun run check:mobile
 bun run check:quasar
@@ -38,6 +40,12 @@ bun run check:website-app
 # or run every gate in order
 bun run check
 ```
+
+`check:workflows` runs pinned Actionlint 1.7.12 through Go (requires Go 1.25+
+and network access on the first run; subsequent runs use the Go cache). It validates
+workflow syntax and expressions, with optional ShellCheck and Pyflakes disabled.
+`check:tooling` runs the repository wrapper regression tests. Both checks run in
+the aggregate gate and the CI topology job.
 
 Development entry points:
 
@@ -79,6 +87,9 @@ website with its existing deployment workflows.
 Before the full website-app gate, follow [its setup guide](apps/website-app/README.md):
 `bun run setup` installs Python/parser/model dependencies. The root gate migrates
 the database serially before checking to avoid concurrent build migration races.
+Both stages share a new temporary `MLAI_DATA_DIR`, removed on exit. An explicitly
+supplied nonempty `MLAI_DATA_DIR` is used as supplied and never removed by the
+wrapper; migration and checks can modify that directory.
 CI runs its separate TypeScript/format/research/unit/build subset; parser and
 browser acceptance remain local gates. Private databases, credentials, uploaded
 documents, model weights and generated output are not part of the import.

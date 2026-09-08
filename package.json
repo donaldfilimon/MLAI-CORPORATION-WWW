@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "install:all": "bun install && (cd apps/web && bun install) && (cd apps/mobile && bun install) && (cd apps/quasar && bun install) && (cd apps/website-app && bun install)",
-    "check": "bun run check:topology && bun run check:web && bun run check:mobile && bun run check:quasar && bun run check:website-app",
+    "check": "bun run check:topology && bun run check:workflows && bun run check:tooling && bun run check:web && bun run check:mobile && bun run check:quasar && bun run check:website-app",
     "check:topology": "bun packages/tooling/src/check-topology.ts",
     "check:web": "cd apps/web && bun run lint && bun run test && bun run build",
     "check:mobile": "cd apps/mobile && bun run typecheck && bun run test -- --runInBand && bun run lint && bunx expo export --platform web",
@@ -16,7 +16,9 @@
     "dev:web": "cd apps/web && bun run dev",
     "dev:mobile": "cd apps/mobile && bun run start",
     "dev:quasar": "cd apps/quasar/apps/quasar && bun run start",
-    "check:website-app": "cd apps/website-app && bun run db:migrate && bun run check",
-    "dev:website-app": "cd apps/website-app && bun run dev"
+    "check:website-app": "sh packages/tooling/scripts/check-website-app.sh",
+    "dev:website-app": "cd apps/website-app && bun run dev",
+    "check:workflows": "go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 -shellcheck= -pyflakes=",
+    "check:tooling": "bun test packages/tooling/src"
   }
 }

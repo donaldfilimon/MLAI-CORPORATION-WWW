@@ -18,7 +18,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:public": "MLAI_E2E_CROSS_BROWSER=1 playwright test tests/e2e/public-cross-browser.spec.ts",
-    "check": "bun run typecheck && bun run test && uv run --project worker pytest worker/tests && next build",
+    "check": "bun run typecheck && bun run test && uv run --frozen --no-sync --project worker pytest worker/tests && next build",
     "db:migrate": "node --import tsx scripts/migrate.ts",
     "backup": "node --import tsx scripts/backup.ts",
     "restore": "node --import tsx scripts/restore.ts",

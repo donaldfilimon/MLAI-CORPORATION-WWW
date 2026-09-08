@@ -16,8 +16,8 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
   together. Run commands from that app directory; never add it to root workspaces.
 - `packages/contracts` contains names and types, not publishable benchmark
   values. App content sources remain authoritative for copy and figures.
-- `packages/tooling` holds the topology gate: `check:topology` runs
-  `bun packages/tooling/src/check-topology.ts`.
+- `packages/tooling` holds repository checks and the isolated website-app gate
+  wrapper. `check:topology` runs `bun packages/tooling/src/check-topology.ts`.
 - The root is orchestration only. Run app-native gates independently and report
   their results independently.
 - Do not add web, mobile, or website-app to the root Bun workspace. Their React type graphs
@@ -29,8 +29,10 @@ Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn.
 
 ```bash
 bun run install:all
-bun run check            # aggregate gate: check:topology && check:web && check:mobile && check:quasar && check:website-app
+bun run check            # aggregate gate: check:topology && check:workflows && check:tooling && check:web && check:mobile && check:quasar && check:website-app
 bun run check:topology
+bun run check:workflows
+bun run check:tooling
 bun run check:web
 bun run check:mobile
 bun run check:quasar
@@ -52,6 +54,11 @@ local build alone.
   separately in web, mobile, Quasar, and website-app. Root workspaces contain only `packages/*`.
 - `check:topology` only checks required paths exist; it does not compile contracts
   or validate content, lockfile drift, or app behavior.
+- `check:workflows` runs pinned Actionlint 1.7.12 via Go (Go 1.25+ required;
+  first run downloads the module). It checks workflow syntax and expressions,
+  with optional ShellCheck and Pyflakes disabled.
+- `check:tooling` runs `bun test packages/tooling/src` for repository wrapper
+  regressions; the aggregate gate and CI topology job include it.
 - `check:web`: `lint` is `tsc --noEmit`, then Node-only Vitest, then sitemap/llms
   generation and Next build. From `apps/web`, focus with
   `bun run test src/__tests__/landing-page.test.ts`; do not substitute `bun test`.
@@ -61,7 +68,9 @@ local build alone.
   export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
   `bun test packages/service/src/paths.test.ts` (Bun's runner, unlike web/mobile).
 - `check:website-app`: serial database migration, UI build, TypeScript, Vitest,
-  Python pytest and Next build. Run app setup first for parser/model dependencies.
+  Python pytest and Next build. Both stages share a temporary `MLAI_DATA_DIR`
+  removed on exit; a nonempty explicit override is preserved and may be modified
+  by migration/checks. Run app setup first for parser/model dependencies.
   CI covers formatting, research validation, TypeScript, Vitest, migration and
   build; it does not cover pytest, Playwright, or live integrations. The nested
   agent scaffold remains non-deployable under its own `AGENTS.md`.
