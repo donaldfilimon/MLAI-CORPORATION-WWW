@@ -102,20 +102,25 @@ test("every production session and control route fails before dispatch", async (
       );
       assert.ok(route, `missing protected route ${method} ${path}`);
     }
-    for (const route of channel.routes.filter((route) => route.path !== "/eve/v1/health")) {
+    for (const route of channel.routes.filter(
+      (route) => route.path !== "/eve/v1/health",
+    )) {
       const { method, path } = route;
       for (const headers of [undefined, { authorization: "Bearer fixture" }]) {
-      const requestPath = path.replace(":sessionId", "wrun_fixture");
-      const response = await route.handler(
-        new Request(`https://agent.example.test${requestPath}`, { method, headers }),
-        {},
-      );
+        const requestPath = path.replace(":sessionId", "wrun_fixture");
+        const response = await route.handler(
+          new Request(`https://agent.example.test${requestPath}`, {
+            method,
+            headers,
+          }),
+          {},
+        );
+        assert.equal(
+          response.status,
+          401,
+          `${method} ${path} did not fail closed`,
+        );
       }
-      assert.equal(
-        response.status,
-        401,
-        `${method} ${path} did not fail closed`,
-      );
     }
   } finally {
     if (previousVercelEnvironment === undefined) {

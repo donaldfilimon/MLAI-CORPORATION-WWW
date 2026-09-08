@@ -4,7 +4,8 @@ This package is a retained Eve scaffold for a possible future MLAI agent adapter
 
 ## Current fail-closed boundary
 
-- The Eve channel accepts only Eve's synthetic local-development identity. Anonymous callers, Bearer tokens, Vercel OIDC identities, and every non-development caller receive `401` before session dispatch.
+- Every non-health Eve route, including callbacks, continuations, and subagent streams, passes the standalone authentication boundary. It accepts only Eve's synthetic local-development identity; Bearer tokens and non-development callers receive `401` before dispatch. This boundary remains in the compiled runtime even if the deployment command is bypassed.
+- The scaffold landing page (`GET`/`HEAD /`) and health endpoint (`GET`/`HEAD /eve/v1/health`) remain public infrastructure surfaces. They do not authorize agent execution. Callback capability tokens cannot bypass the standalone boundary.
 - The model is a dynamic refusal. No model identifier, Vercel AI Gateway route, hosted credential, direct provider, or fallback is configured.
 - Eve's optional default tools are disabled and this package declares no authored tools or connections.
 - The package is private. `bun run deploy` exits with status 1 and explains why deployment is blocked.
@@ -41,4 +42,4 @@ All of the following require separate evidence tied to the source being deployed
 7. Run a frozen Bun install and prove there is no undeclared hoisted dependency. Review current vulnerability, malware, license, and policy evidence for Better Auth, Eve, AI SDK, Vercel Connect, Nitro, and their transitive dependencies. Eve `0.52.2` is preview software and uses a beta Nitro runtime, so compatibility and upgrade behavior need explicit acceptance.
 8. Record distinct passing evidence for type/build, production authentication, cross-user and cross-workspace isolation, durable-session ownership, membership revocation, local-only failure, explicitly consented hosted processing, no-silent-fallback, trace redaction, persistence/recovery, and browser acceptance. Only then may the deployment refusal and model refusal be reconsidered.
 
-The current package intentionally provides no escape hatch or environment variable that bypasses these prerequisites.
+Eve's local-development identity is for local inspection only, not MLAI authentication. Even in development, model execution always refuses. Do not expose a development server or treat development environment flags as production authorization.

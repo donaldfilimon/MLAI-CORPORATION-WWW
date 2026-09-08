@@ -1,5 +1,10 @@
 import { eveChannel } from "eve/channels/eve";
-import { localDev, routeAuth, UnauthenticatedError, type AuthFn } from "eve/channels/auth";
+import {
+  localDev,
+  routeAuth,
+  UnauthenticatedError,
+  type AuthFn,
+} from "eve/channels/auth";
 
 const developmentAuth = localDev();
 

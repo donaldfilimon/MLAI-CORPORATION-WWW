@@ -1,5 +1,39 @@
 # MLAI implementation and acceptance ledger
 
+## Standalone agent scaffold validation (2026-09-08)
+
+`mlai-website-agent` remains intentionally non-deployable. Abbey instructions
+preserve application-owned authorization, explicit stored hosted consent,
+privacy, source evidence, and confirmed actions. Better Auth integration is
+deferred until the existing application session and workspace checks can also
+enforce durable agent-session ownership on every access.
+
+The Eve channel now wraps every non-health route with the standalone auth
+boundary, including connection callbacks, activity/task continuations, workflow
+webhooks, and subagent streams. Production anonymous and bearer requests fail
+before dispatch. Only the generated landing page and health endpoint remain
+public infrastructure surfaces. The dynamic model always throws before provider
+access, default tools are disabled, and the deployment script exits 1.
+
+Validation: `bun run verify` in the scaffold exited 0: **5 tests passed, 0 failed**,
+TypeScript passed (including the tests), and Eve's Node-server build passed.
+The route test covers every declared non-health Eve route with both anonymous
+and bearer requests. Generated summary inspection confirmed dynamic model
+routing, zero tools, zero connections, and zero schedules. Compiled server
+inspection confirmed the auth wrapper, model refusal, and `defaultTools: false`.
+Eve still bundles AI Gateway library code; its presence is not a configured
+provider or evidence of a network call. The resolver test recorded zero fetches.
+
+The scaffold README contains the exact deployment prerequisites: reuse of the
+application auth/runtime, workspace and durable-session ownership, per-call
+stored hosted consent, reviewed capabilities and confirmation controls,
+privacy-safe persistence/traces and deletion, frozen dependency and security
+review, and production isolation/recovery/browser acceptance. Current dependency
+security and malware evidence remains unavailable; no dependency clearance is
+claimed. These checks do not establish the main app's live local-model/browser
+acceptance or authorize deployment. No hosted credentials or model access were
+enabled by this work.
+
 ## Published MLAI Research review integration (2026-09-08)
 
 The September 8 published review is now a native application feature. The
