@@ -147,6 +147,7 @@ try {
     (await fetch(base + "/app", { redirect: "manual" })).status,
     307,
   );
+  await stopServer();
   assert.equal(
     releaseSource(origin).runtimeSourceSha256,
     source.runtimeSourceSha256,

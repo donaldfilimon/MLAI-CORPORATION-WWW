@@ -8,6 +8,18 @@ import {
 } from "../scripts/verification-command";
 
 describe("owned verification commands", () => {
+  it("stops the restarted server before writing a successful clean receipt", () => {
+    const source = readFileSync("scripts/verify-clean-install.ts", "utf8");
+    const persistenceCheck = source.indexOf("const projects = await fetch");
+    const receipt = source.indexOf(
+      'join(origin, "docs/verification/clean-install.json")',
+    );
+    const shutdown = source.indexOf("await stopServer();", persistenceCheck);
+    expect(persistenceCheck).toBeGreaterThan(-1);
+    expect(shutdown).toBeGreaterThan(persistenceCheck);
+    expect(receipt).toBeGreaterThan(shutdown);
+    expect(source.indexOf("passed = true;", receipt)).toBeGreaterThan(receipt);
+  });
   it("reports success and nonzero exit", async () => {
     await runVerificationCommand(
       process.execPath,
