@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { research } from '../data/categories/research';
+import { researchContext } from '../data/categories/research-context';
 import { projectResearch, researchDigest, sha256 } from '../lib/research-export';
 
 const root=process.cwd();
@@ -25,6 +26,13 @@ describe('generated private research artifact',()=>{
       expect(JSON.parse(readFileSync(path.join(publicDir,'research-data.json'),'utf8'))).toEqual(projectResearch(research));
       expect(manifest.contentSha256).toBe(researchDigest(research));
       expect(manifest.publications.map((p:{slug:string})=>p.slug)).toEqual(research.publications.map(p=>p.slug));
+      expect(JSON.parse(readFileSync(path.join(publicDir,'implementation-data.json'),'utf8'))).toEqual(researchContext);
+      for (const study of researchContext) {
+        const html=readFileSync(path.join(publicDir,'research/implementations',study.slug,'index.html'),'utf8');
+        for (const section of study.sections) for (const paragraph of section.paragraphs) expect(html).toContain(escapeHtml(paragraph));
+        for (const source of study.sources) expect(html).toContain(escapeHtml(source.url));
+        for (const limitation of study.limitations) expect(html).toContain(escapeHtml(limitation));
+      }
       for(const [name,hash] of Object.entries(manifest.files)) expect(sha256(readFileSync(path.join(publicDir,name)))).toBe(hash);
       for(const p of research.publications){
         const html=readFileSync(path.join(publicDir,'research',p.slug,'index.html'),'utf8');
@@ -39,7 +47,11 @@ describe('generated private research artifact',()=>{
         expect(html).toContain(`https://quesar.cloud/research/${p.slug}`);
         expect(html).toContain('noindex,nofollow');
       }
+      const retainedPackage=readFileSync(path.join(site,'package.json'),'utf8');
+      writeFileSync(path.join(site,'README.md'),'Locally maintained artifact instructions.');
       run(site);
+      expect(readFileSync(path.join(site,'package.json'),'utf8')).toBe(retainedPackage);
+      expect(readFileSync(path.join(site,'README.md'),'utf8')).toBe('Locally maintained artifact instructions.');
       expect(readFileSync(manifestPath,'utf8')).toBe(first);
       // An invalid run cannot remove the last complete artifact.
       expect(()=>run(site,'not-a-date')).toThrow();

@@ -1,6 +1,20 @@
 /* Presentation shell for the generated private review. Shared content components
    use the canonical Lab utilities compiled from src/index.css. */
 html { color-scheme: dark; }
+html { scroll-padding-top: 2rem; }
+.preview-discovery { display: grid; grid-template-columns: 2fr 1fr 1fr auto; align-items: end; gap: 1rem; margin: 2rem 0; }
+.preview-discovery label { display: grid; gap: .5rem; font-size: .875rem; color: #bacbda; }
+.preview-discovery input,.preview-discovery select,.preview-discovery button { width: 100%; min-height: 3rem; padding: .65rem; background: #0b1420; color: #e8edf6; border: 1px solid #334155; border-radius: .4rem; font: inherit; }
+.preview-discovery button { cursor: pointer; }
+.preview-contents { display: grid; gap: .6rem; padding: 1.4rem; border-left: 2px solid #67e8f9; background: #0b1420; margin: 2rem 0; }
+.preview-article a,.preview-footer a { color: #67e8f9; text-underline-offset: .2em; }
+.preview-article > section h2 { font-size: 1.65rem; margin: 1rem 0; }
+.preview-article > section li { margin: .8rem 0; line-height: 1.7; }
+.preview-claim { padding: 1rem 0; color: #afc7d8; line-height: 1.7; }
+.preview-filters button:hover { border-color: #67e8f9; }
+input:focus-visible,select:focus-visible { outline: 2px solid #67e8f9; outline-offset: 3px; }
+@media(max-width:800px) { .preview-discovery { grid-template-columns: 1fr 1fr; } }
+@media(max-width:480px) { .preview-discovery { grid-template-columns: 1fr; } }
 body { margin: 0; background: #05070d; color: #e8edf6; font-family: 'Geist Variable', sans-serif; font-size: 1rem; }
 .preview-banner { border-bottom: 1px solid #1b3140; background: #09131c; padding: .65rem 1.5rem; color: #a5b7c9; text-align: center; font-size: .875rem; }
 .preview-header { max-width: 80rem; margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.5rem 2rem; border-bottom: 1px solid #26303b; }

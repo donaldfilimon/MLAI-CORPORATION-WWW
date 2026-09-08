@@ -42,7 +42,7 @@ export function ResearchArticleEvidence({ publication }: { publication: Publicat
 
 /** Explicitly renders structured text. Static exporters supply their own KaTeX renderer. */
 export function ResearchArticleBody({ body, renderMath = tex => <BlockMath tex={tex} /> }: { body: Publication["body"]; renderMath?: (tex: string) => ReactNode }) {
-  return <div className="space-y-12">{body.map((section, index) => <section key={index}>
+  return <div className="space-y-12">{body.map((section, index) => <section key={index} id={`section-${index + 1}`}>
     {section.heading && <h2 className="mb-5 text-2xl font-display font-bold text-white leading-tight">{section.heading}</h2>}
     <div className="space-y-5">{section.paragraphs.map((paragraph, i) => <p key={i} className="text-base md:text-lg text-text-dim leading-relaxed">{paragraph}</p>)}</div>
     {section.math && <div className="mt-6 space-y-3">{section.math.map((tex, i) => <div key={i} className="overflow-x-auto">{renderMath(tex)}</div>)}</div>}
