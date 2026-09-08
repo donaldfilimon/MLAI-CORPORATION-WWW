@@ -1,6 +1,7 @@
 import { type ChildProcess, execFileSync } from "node:child_process";
 import { once } from "node:events";
 import { createServer } from "node:net";
+import { signalVerificationGroup } from "./verification-command";
 
 export async function portAvailable(port: number) {
   const probe = createServer();
@@ -25,7 +26,7 @@ export async function stopProcessTree(child: ChildProcess, port: number) {
         execFileSync("taskkill", ["/pid", String(child.pid), "/T", "/F"], {
           stdio: "ignore",
         });
-      else if (child.pid) process.kill(-child.pid, name);
+      else if (child.pid) signalVerificationGroup(child.pid, name);
     } catch (error) {
       if (
         process.platform !== "win32" &&

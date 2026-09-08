@@ -1,7 +1,39 @@
-import { spawn, type SpawnOptions } from "node:child_process";
+import { execFileSync, spawn, type SpawnOptions } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
 export class VerificationCleanupError extends Error {}
+
+/** Only inspect/signal a detached group created by this verifier. */
+export function signalVerificationGroup(
+  pid: number,
+  signal: NodeJS.Signals | 0,
+) {
+  try {
+    process.kill(-pid, signal);
+    return true;
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === "ESRCH") return false;
+    if (code === "EPERM" && process.platform === "darwin") {
+      // Darwin can report EPERM while a terminated group disappears. Require
+      // independent absence evidence; never reinterpret a populated group.
+      const groups = execFileSync("/bin/ps", ["-axo", "pgid="], {
+        encoding: "utf8",
+        timeout: 5000,
+        stdio: ["ignore", "pipe", "pipe"],
+      })
+        .trim()
+        .split(/\s+/);
+      if (
+        groups.length &&
+        groups.every((group) => /^\d+$/.test(group)) &&
+        !groups.some((group) => Number(group) === pid)
+      )
+        return false;
+    }
+    throw error;
+  }
+}
 
 export function verificationCommandEnvironment(
   args: readonly string[],
@@ -69,13 +101,7 @@ export async function runVerificationCommand(
   });
   const signalGroup = (signal: NodeJS.Signals | 0) => {
     if (!child.pid) return false;
-    try {
-      process.kill(-child.pid, signal);
-      return true;
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ESRCH") return false;
-      throw error;
-    }
+    return signalVerificationGroup(child.pid, signal);
   };
   try {
     await finished;

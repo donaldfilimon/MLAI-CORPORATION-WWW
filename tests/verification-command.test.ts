@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -6,9 +7,30 @@ import {
   runVerificationCommand,
   selectedLocalModel,
   verificationCommandEnvironment,
+  signalVerificationGroup,
 } from "../scripts/verification-command";
 
 describe("owned verification commands", () => {
+  it.skipIf(process.platform !== "darwin")(
+    "corroborates an EPERM probe with the process table",
+    () => {
+      const currentGroup = Number(
+        execFileSync("/bin/ps", ["-o", "pgid=", "-p", String(process.pid)], {
+          encoding: "utf8",
+        }).trim(),
+      );
+      const error = Object.assign(new Error("kill EPERM"), { code: "EPERM" });
+      const kill = vi.spyOn(process, "kill").mockImplementation(() => {
+        throw error;
+      });
+      try {
+        expect(signalVerificationGroup(2_000_000_000, 0)).toBe(false);
+        expect(() => signalVerificationGroup(currentGroup, 0)).toThrow(error);
+      } finally {
+        kill.mockRestore();
+      }
+    },
+  );
   it("lets check fixtures own their registries without changing setup selection", () => {
     const env = {
       ...process.env,
