@@ -15,6 +15,11 @@ accepts historical `track` and `tag` links, represents unknown filters, and keep
 Clear search, Reset filters and Clear all separate. Clearing restores search
 focus. Without JavaScript, all document links remain available.
 
+Historical tag links display their active constraint beside the recovery
+controls, including unknown tags. Reset filters clears both that constraint and
+its label; `tag=All` remains unconstrained. This prevents historical URL state
+from invisibly narrowing results while the area and type menus show defaults.
+
 Reading pages retain their section fragments and provide sticky desktop contents,
 a mobile disclosure, and keyboard-focusable equation and code overflow. The
 original logo, reviewed content, source links and attachment bytes are unchanged.

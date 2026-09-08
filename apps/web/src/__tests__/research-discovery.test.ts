@@ -38,18 +38,22 @@ function harness(search = "") {
     },
   ];
   const nodes = Object.fromEntries(
-    ["publication-status", "clear-search", "reset-filters", "clear-all"].map(
-      (id) => [
-        id,
-        {
-          textContent: "",
-          hidden: false,
-          addEventListener: (_event: string, fn: (event: Event) => void) => {
-            listeners[id] = fn;
-          },
+    [
+      "publication-status",
+      "clear-search",
+      "reset-filters",
+      "clear-all",
+      "legacy-tag-filter",
+    ].map((id) => [
+      id,
+      {
+        textContent: "",
+        hidden: false,
+        addEventListener: (_event: string, fn: (event: Event) => void) => {
+          listeners[id] = fn;
         },
-      ],
-    ),
+      },
+    ]),
   );
   const location = {
     pathname: "/research",
@@ -152,4 +156,26 @@ it("represents invalid URL filters rather than silently showing unrelated result
   );
   h.fire("reset-filters");
   expect(h.cards.every((c) => !c.hidden)).toBe(true);
+});
+
+it("exposes historical tag constraints and clears their label with filters", () => {
+  const h = harness("?tag=RESEARCH");
+  expect(h.cards.map((c) => c.hidden)).toEqual([false, true]);
+  expect(h.nodes["legacy-tag-filter"]!.hidden).toBe(false);
+  expect(h.nodes["legacy-tag-filter"]!.textContent).toBe(
+    "Active tag filter: RESEARCH",
+  );
+  h.location.search = "?tag=unknown";
+  h.fire("popstate");
+  expect(h.cards.every((c) => c.hidden)).toBe(true);
+  expect(h.nodes["legacy-tag-filter"]!.textContent).toBe(
+    "Active tag filter: unknown",
+  );
+  h.fire("reset-filters");
+  expect(h.nodes["legacy-tag-filter"]!.hidden).toBe(true);
+  expect(h.nodes["legacy-tag-filter"]!.textContent).toBe("");
+  expect(h.cards.every((c) => !c.hidden)).toBe(true);
+  h.location.search = "?tag=All";
+  h.fire("popstate");
+  expect(h.nodes["legacy-tag-filter"]!.hidden).toBe(true);
 });

@@ -350,6 +350,7 @@ try {
             </select>
           </label>
         </form>
+        <p id="legacy-tag-filter" hidden />
         <div className="preview-recovery">
           <button type="button" id="clear-search" hidden>
             Clear search

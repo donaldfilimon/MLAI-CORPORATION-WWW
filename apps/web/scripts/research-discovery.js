@@ -23,6 +23,9 @@
       if (!card.hidden) shown++;
     }
     const filtered = Boolean(values.topic || values.type || legacyTag);
+    const tagLabel = document.getElementById("legacy-tag-filter");
+    tagLabel.hidden = !legacyTag;
+    tagLabel.textContent = legacyTag ? `Active tag filter: ${legacyTag}` : "";
     document.getElementById("publication-status").textContent = shown
       ? `${shown} research documents shown.`
       : words.length && filtered
