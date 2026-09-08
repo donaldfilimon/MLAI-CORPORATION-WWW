@@ -78,7 +78,9 @@ export function DocsShell({
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search documentation…" />
         <CommandList>
-          <CommandEmpty>Nothing matches — try another title or topic.</CommandEmpty>
+          <CommandEmpty>
+            Nothing matches — try another title or topic.
+          </CommandEmpty>
           {groups.map(([category, entries]) => (
             <CommandGroup heading={category} key={category}>
               {entries.map((item) => (

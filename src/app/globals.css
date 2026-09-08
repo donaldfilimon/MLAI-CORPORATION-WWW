@@ -309,7 +309,10 @@
   border-radius: 12px;
   background: #ffffff03;
   min-height: 180px;
-  transition: border-color 0.18s, background 0.18s, transform 0.28s;
+  transition:
+    border-color 0.18s,
+    background 0.18s,
+    transform 0.28s;
 }
 
 .stack-card:hover {
@@ -2071,7 +2074,6 @@
   }
 }
 
-
 /* Marketing product pages (Platform / IWL Abbey) */
 
 .marketing-page {
@@ -2964,10 +2966,13 @@
 }
 
 @media (max-width: 900px) {
-  .stack-grid { grid-template-columns: 1fr; }
-  .public-footer-columns { gap: 32px; }
+  .stack-grid {
+    grid-template-columns: 1fr;
+  }
+  .public-footer-columns {
+    gap: 32px;
+  }
 }
-
 
 /* Docs shell + Cmd-K */
 
@@ -3109,7 +3114,10 @@
   text-decoration: none;
   color: inherit;
   display: block;
-  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.15s;
 }
 
 .feature-card-link:hover {
@@ -3247,7 +3255,6 @@
     position: static;
   }
 }
-
 
 /* Knowledge / Repositories claims UI */
 .claim-status {

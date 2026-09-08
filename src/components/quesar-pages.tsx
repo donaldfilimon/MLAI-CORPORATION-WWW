@@ -36,7 +36,9 @@ export function QuesarLanding() {
     <div className="public-container marketing-page quesar-page">
       <section className="marketing-hero">
         <div>
-          <span className="eyeline wdbx">Quesar by MLAI · invite-only beta</span>
+          <span className="eyeline wdbx">
+            Quesar by MLAI · invite-only beta
+          </span>
           <h1>{quesar.tagline}</h1>
           <p className="hero-description">{quesar.lede}</p>
           <div className="button-row">
@@ -51,8 +53,8 @@ export function QuesarLanding() {
         <aside className="callout-card wdbx" aria-label="Private-ops scope">
           <strong>Private-ops only</strong>
           <p>
-            Invite membership, metadata-only gateway, KMS-wrapped audit.
-            This surface does not carry Abbey product naming.
+            Invite membership, metadata-only gateway, KMS-wrapped audit. This
+            surface does not carry Abbey product naming.
           </p>
         </aside>
       </section>
@@ -139,8 +141,8 @@ export function QuesarConsent() {
             encrypted-audit policy. Read each line; you agree to all or none.
           </p>
           <p className="quesar-mock-label">
-            Mock · consent stored in localStorage (
-            <code>{CONSENT_KEY}</code>) — not a production auth gate.
+            Mock · consent stored in localStorage (<code>{CONSENT_KEY}</code>) —
+            not a production auth gate.
           </p>
         </div>
       </section>
@@ -151,7 +153,11 @@ export function QuesarConsent() {
           <p className="quesar-consent-recorded">
             <Check size={16} aria-hidden="true" /> This browser agreed to{" "}
             {quesar.consent.version}.
-            <Button variant="link" className="quesar-withdraw" onClick={withdraw}>
+            <Button
+              variant="link"
+              className="quesar-withdraw"
+              onClick={withdraw}
+            >
               Withdraw
             </Button>
           </p>
@@ -289,7 +295,9 @@ export function QuesarAudit() {
             <Card key={record.id} className="quesar-record-card">
               <CardHeader className="quesar-record-header">
                 <div>
-                  <CardTitle className="quesar-record-id">{record.id}</CardTitle>
+                  <CardTitle className="quesar-record-id">
+                    {record.id}
+                  </CardTitle>
                   <CardDescription>
                     {new Date(record.created).toLocaleString()} · {record.turns}{" "}
                     turns · {(record.bytes / 1024).toFixed(1)} KiB ciphertext ·

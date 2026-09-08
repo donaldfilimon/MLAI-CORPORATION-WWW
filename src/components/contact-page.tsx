@@ -1,7 +1,10 @@
 import { ContactForm } from "@/components/contact-form";
 
 const elsewhere = [
-  { href: "https://github.com/donaldfilimon/abi", label: "github.com/donaldfilimon/abi" },
+  {
+    href: "https://github.com/donaldfilimon/abi",
+    label: "github.com/donaldfilimon/abi",
+  },
   { href: "https://mlai.dev", label: "mlai.dev" },
   { href: "https://x.com/donaldfilimonx", label: "x.com/donaldfilimonx" },
 ] as const;

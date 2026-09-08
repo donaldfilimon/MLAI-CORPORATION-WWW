@@ -97,8 +97,8 @@ export function CompanyPage() {
           <strong>How we talk about progress</strong>
           <p>
             Investors and partners get evidence before projections. Numeric
-            market claims (TAM, raise amounts, fabricated traction) stay off this
-            site until they ship with provenance.
+            market claims (TAM, raise amounts, fabricated traction) stay off
+            this site until they ship with provenance.
           </p>
         </aside>
       </section>
@@ -112,8 +112,8 @@ export function CompanyPage() {
           <p>
             Polyglot systems engineer who works deliberately low in the stack —
             Rust, Swift, TypeScript, Python, and GPU-oriented runtimes — because
-            the guarantees MLAI cares about (latency, provenance, data residency)
-            are won or lost at that level.
+            the guarantees MLAI cares about (latency, provenance, data
+            residency) are won or lost at that level.
           </p>
           <p>
             Leads WDBX retrieval, the Abbey–Aviva–Abi orchestration framework,

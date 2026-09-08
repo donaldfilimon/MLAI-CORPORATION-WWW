@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@mlai/ui";
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@mlai/ui";
 import { knowledge, repos, type Repo } from "@/content/knowledge";
 import { StatusBadge } from "./status-badge";
 
@@ -21,7 +28,9 @@ function RepoPanel({
         <h2>{repo.oneLiner}</h2>
         <div className="repo-meta">
           <Badge variant="outline">{repo.language}</Badge>
-          {repo.license ? <Badge variant="outline">{repo.license}</Badge> : null}
+          {repo.license ? (
+            <Badge variant="outline">{repo.license}</Badge>
+          ) : null}
           <a
             href={repo.url}
             target="_blank"
@@ -157,12 +166,7 @@ export function RepositoriesPage() {
         })}
       </div>
 
-      {selected ? (
-        <RepoPanel
-          repo={selected}
-          onSelectRepo={setActive}
-        />
-      ) : null}
+      {selected ? <RepoPanel repo={selected} onSelectRepo={setActive} /> : null}
 
       <section className="system-section marketing-section">
         <div className="section-intro">

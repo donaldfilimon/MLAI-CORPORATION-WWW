@@ -116,8 +116,8 @@ export function InvestorsPage() {
           <article className="feature-card abi">
             <h3>Architecture</h3>
             <p>
-              Runtime, memory, and control boundaries described without inventing
-              throughput or accuracy scores.
+              Runtime, memory, and control boundaries described without
+              inventing throughput or accuracy scores.
             </p>
           </article>
         </div>

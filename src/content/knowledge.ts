@@ -337,8 +337,7 @@ export const knowledge = {
       name: "Aviva",
       role: "Unfiltered Expert",
       accent: "abi" as const,
-      register:
-        "Direct, dense, zero hedging. Research and architecture notes.",
+      register: "Direct, dense, zero hedging. Research and architecture notes.",
     },
     {
       name: "Abi",

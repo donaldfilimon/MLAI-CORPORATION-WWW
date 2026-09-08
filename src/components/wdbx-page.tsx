@@ -76,7 +76,10 @@ export function WdbxPage() {
                   <td>
                     {figure.label}
                     {figure.note ? (
-                      <span className="prov-legend-gloss"> — {figure.note}</span>
+                      <span className="prov-legend-gloss">
+                        {" "}
+                        — {figure.note}
+                      </span>
                     ) : null}
                   </td>
                   <td>
@@ -93,7 +96,10 @@ export function WdbxPage() {
                         </a>
                       </>
                     ) : (
-                      <span className="prov-legend-gloss"> {figure.source}</span>
+                      <span className="prov-legend-gloss">
+                        {" "}
+                        {figure.source}
+                      </span>
                     )}
                   </td>
                 </tr>

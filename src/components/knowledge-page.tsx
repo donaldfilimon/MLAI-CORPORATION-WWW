@@ -52,8 +52,8 @@ export function KnowledgePage() {
             <strong>Status vocabulary</strong>
             <p>
               Every public claim should be tagged Current, Partial, Proposed, or
-              Not claimed — the repositories&apos; own words, never conflated with
-              provenance tags on measured figures.
+              Not claimed — the repositories&apos; own words, never conflated
+              with provenance tags on measured figures.
             </p>
           </aside>
         </div>
@@ -72,8 +72,8 @@ export function KnowledgePage() {
           <span className="eyeline abbey">Personas</span>
           <h2>Three registers, fixed accents.</h2>
           <p className="muted">
-            Personas are not the product accent axis: the product &ldquo;abi&rdquo;
-            is violet, the persona &ldquo;Abi&rdquo; is cyan.
+            Personas are not the product accent axis: the product
+            &ldquo;abi&rdquo; is violet, the persona &ldquo;Abi&rdquo; is cyan.
           </p>
         </div>
         <div className="feature-grid three">
@@ -82,7 +82,9 @@ export function KnowledgePage() {
               className={`feature-card ${persona.accent}`}
               key={persona.name}
             >
-              <span className={`persona-dot ${persona.accent === "abi" ? "aviva" : persona.accent === "wdbx" ? "abi" : "abbey"}`} />
+              <span
+                className={`persona-dot ${persona.accent === "abi" ? "aviva" : persona.accent === "wdbx" ? "abi" : "abbey"}`}
+              />
               <p className="muted" style={{ marginBottom: 8 }}>
                 {persona.role}
               </p>
@@ -122,15 +124,18 @@ export function KnowledgePage() {
           <cite>donaldfilimon/wdbx README</cite>
         </blockquote>
         <div className="formal-model-grid" style={{ marginTop: 24 }}>
-          <div className="formula-block" aria-label="Hybrid score and hash chain">
+          <div
+            className="formula-block"
+            aria-label="Hybrid score and hash chain"
+          >
             sᵢⱼ = σⱼ · τⱼ · γⱼ · πⱼ ··· Hᵢ = SHA-256(Hᵢ₋₁ ‖ …)
           </div>
           <aside className="callout-card wdbx">
             <strong>Proposed, not Current</strong>
             <p>
-              The multiplicative collapse is exactly what the constitution&apos;s
-              invariant I3 forbids — evidence-weighted retrieval is Proposed on
-              the WDBX ledger, not Current.
+              The multiplicative collapse is exactly what the
+              constitution&apos;s invariant I3 forbids — evidence-weighted
+              retrieval is Proposed on the WDBX ledger, not Current.
             </p>
           </aside>
         </div>

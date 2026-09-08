@@ -144,7 +144,10 @@ export function PlatformPage() {
         </div>
         <div className="feature-grid">
           {layers.map((layer) => (
-            <article className={`feature-card ${layer.accent}`} key={layer.title}>
+            <article
+              className={`feature-card ${layer.accent}`}
+              key={layer.title}
+            >
               <h3>{layer.title}</h3>
               <p>{layer.desc}</p>
             </article>
@@ -200,7 +203,9 @@ export function PlatformPage() {
       <nav className="next-up" aria-label="Continue reading">
         <Link className="next-up-card abbey" href="/research">
           <span className="eyeline abbey">Research</span>
-          <strong>The publications and formal model behind these layers.</strong>
+          <strong>
+            The publications and formal model behind these layers.
+          </strong>
           <span>
             Open research <ArrowRight size={16} />
           </span>
