@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { research } from "@/data/categories/research";
 import { docNav } from "@/data/categories/docs-nav";
+import { docs as portedDocs } from "@/data/categories/docs";
 import { m } from "framer-motion";
 import {
   Book,
@@ -266,20 +267,45 @@ const deploymentSteps = [
 ];
 
 function DocsNavLinks() {
+  // The ported guides live at their own `/docs/<slug>` routes rather than as
+  // anchors in this page. Without this group the only way to reach them is the
+  // search box, which requires already knowing a term to type -- so a visitor
+  // browsing the docs could not discover them at all.
+  const guideGroups = [
+    ...docNav,
+    {
+      group: "Guides",
+      items: portedDocs.map((doc) => ({
+        id: doc.slug,
+        label: doc.title,
+        href: `/docs/${doc.slug}`,
+      })),
+    },
+  ];
+
   return (
     <>
-      {docNav.map((g) => (
+      {guideGroups.map((g) => (
         <div key={g.group}>
           <h3 className="font-semibold text-white mb-3 text-sm">{g.group}</h3>
           <ul className="space-y-2 text-text-dim text-sm">
             {g.items.map((item) => (
               <li key={item.id}>
-                <a
-                  href={`#${item.id}`}
-                  className="hover:text-primary transition-colors"
-                >
-                  {item.label}
-                </a>
+                {"href" in item && item.href ? (
+                  <Link
+                    to={item.href}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={`#${item.id}`}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
