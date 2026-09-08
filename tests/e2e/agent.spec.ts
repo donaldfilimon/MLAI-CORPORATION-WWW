@@ -303,6 +303,17 @@ test("persistent reviewed agent actions, source focus and queued interpretation"
     timeout: 60000,
   });
   const runId = new URL(page.url()).searchParams.get("run");
+  await expect
+    .poll(
+      async () => {
+        const current = (await (
+          await page.request.get(`${base}/api/v1/agent/runs/${runId}`)
+        ).json()) as AgentRunDetail;
+        return current.results.some((r) => r.kind === "write" && r.resource_id);
+      },
+      { timeout: 60000 },
+    )
+    .toBe(true);
   const run = (await (
     await page.request.get(`${base}/api/v1/agent/runs/${runId}`)
   ).json()) as AgentRunDetail;
