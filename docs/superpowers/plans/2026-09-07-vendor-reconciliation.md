@@ -499,12 +499,28 @@ git commit -m "feat(web): add the projects directory"
 - Consumes: everything from Tasks 1-4.
 - Produces: nothing.
 
-- [ ] **Step 1: Prove nothing references vendor/**
+- [ ] **Step 1: Prove nothing IMPORTS from vendor/**
+
+The check is for a dependency, not a mention. Provenance comments naming
+`vendor/mlai-review/lib/content.ts` are expected and must be kept — they are the
+record of where the ported content came from, and git history resolves the path
+once the directory is gone.
 
 ```bash
-cd .. && grep -rn "vendor/" apps packages --include='*.ts' --include='*.tsx' --include='*.mjs' --include='*.json' | grep -v node_modules
+cd .. && grep -rnE "(from|require\()\s*['\"][^'\"]*vendor" apps packages --include='*.ts' --include='*.tsx' --include='*.mjs' | grep -v node_modules
 ```
-Expected: no output. If anything matches, STOP — the port left a runtime dependency on staging.
+Expected: no output. If anything matches, STOP — the port left a real runtime
+dependency on staging.
+
+Then confirm the mentions that DO remain are comments only, and say so in your
+report:
+
+```bash
+cd .. && grep -rn "vendor/" apps packages --include='*.ts' --include='*.tsx' | grep -v node_modules
+```
+Expected at the time of writing: exactly three lines, all inside `/** */` blocks
+— `apps/web/src/data/categories/projects.ts` (two) and
+`apps/web/src/data/schemas.ts` (one). Do not delete them.
 
 - [ ] **Step 2: Delete it**
 
