@@ -651,3 +651,41 @@ that could have changed since it was captured at 04:3x.
   authorization decision; the orphaned Vercel `mlai-web` project still needs an
   authorized dashboard session and a separately confirmed destructive deletion,
   and was again not verified here for that reason. `status:` stays `blocked`.
+
+### ⚠️ 2026-09-08 23:0x — hosted CI stopped running entirely; the green above is now historical
+
+The `af58896`/`cf8cefd` CI evidence recorded above was accurate when measured
+and is left standing. **It no longer describes the current state**, and anyone
+reading this file for "is CI green" must read this entry too.
+
+- **Every job is rejected before it executes.** On `3ed1f2c`, run `34288578444`
+  failed in **4 seconds** (`22:59:40Z` → `22:59:44Z`). All five CI jobs plus
+  Cloud Run's `readiness` job report `failure` with **zero steps executed**, no
+  runner assigned (`runner: ""`), and null output. `readiness` merely reads two
+  `vars` and had succeeded on `cf8cefd`, so this is not a test or a code fault.
+- **The trigger was a docs-only commit**, touching just `tasks/goals.md`. No
+  source, config, workflow or dependency changed, which rules out the change
+  itself as the cause.
+- **It is not a workflow permission setting.** `repos/.../actions/permissions`
+  reports `enabled: true`, `allowed_actions: all`.
+- **Window:** the last fully green runs were at `13:5xZ` on `cf8cefd`. A
+  scheduled run in `donaldfilimon/abi` still succeeded at `20:26Z`. So the
+  change happened between `20:26Z` and `22:59Z` today.
+- **Cannot be diagnosed further from here, and this is the honest limit.** The
+  billing endpoint needs the `user` OAuth scope, which this session does not
+  hold; acquiring it means changing auth scope, which is Donald's decision, not
+  an agent's. The signature (instant rejection, no runner, account-wide) most
+  commonly means an Actions spending limit or a payment problem. **Verify on
+  the GitHub billing page before believing that guess.**
+- **Consequence for this ledger:** "verify" in any land/push/verify goal cannot
+  currently be satisfied by hosted CI for this repository. Local gates still
+  can — `bun run check:web` passed locally at `cf8cefd`.
+
+### Open Dependabot alert, surfaced by the push and unrelated to CI
+
+- Alert 5, **moderate**, still `open`: `accelerate` path traversal and denial of
+  service via sharded checkpoint `weight_map` entries, in
+  `apps/website-app/worker/uv.lock`, vulnerable range `<= 1.14.0`.
+- **There is no fixed version yet** (`first_patched_version: null`), so this
+  cannot be closed by bumping and is not an oversight. Recorded so it is not
+  rediscovered as new.
