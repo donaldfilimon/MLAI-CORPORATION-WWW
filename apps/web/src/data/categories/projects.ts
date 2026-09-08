@@ -5,7 +5,7 @@ import { ProjectsSchema, type Projects } from '../schemas';
  * the vendor-reconciliation plan —
  * `.superpowers/sdd/2026-09-07-vendor-reconciliation/task-4-brief.md`). The
  * vendored `id` is renamed `slug`; every other field is carried verbatim
- * (curly apostrophes included) with two exceptions:
+ * (curly apostrophes included) with three exceptions:
  *
  * Ruling A — `docsHref`: the vendored `docs` field was a bare article slug.
  * `abbey`/`gama` ported cleanly to `/docs/identity` and `/docs/gama`, but

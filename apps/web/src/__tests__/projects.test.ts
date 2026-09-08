@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { projects } from "@/data/categories/projects";
 import { docs } from "@/data/categories/docs";
 import { flattenDocNav } from "@/data/categories/docs-nav";
@@ -51,8 +53,22 @@ describe("projects corpus", () => {
   // docNav id or a dropped doc slug out from under a project's docsHref. This
   // resolves every docsHref against the actual targets so it fails as a real
   // dead link, not just a string mismatch.
+  //
+  // The anchor ids come from `flattenDocNav()` AND from the `id=` props
+  // Docs.tsx actually renders. Those two lists are identical today, so
+  // resolving against the nav alone would pass even if the view stopped
+  // rendering a section -- a proxy target rather than the real one.
   it("every docsHref resolves to a real /docs anchor or a real /docs/:slug route", () => {
-    const anchorIds = new Set(flattenDocNav().map((item) => item.id));
+    const docsView = readFileSync(
+      resolve(__dirname, "../views/Docs.tsx"),
+      "utf8",
+    );
+    const renderedIds = new Set(
+      [...docsView.matchAll(/id="([^"]+)"/g)].map((m) => m[1]),
+    );
+    const anchorIds = new Set(
+      flattenDocNav().map((item) => item.id).filter((id) => renderedIds.has(id)),
+    );
     const docSlugs = new Set(docs.map((d) => d.slug));
 
     for (const p of projects) {

@@ -1,7 +1,0 @@
-node_modules/
-.next/
-*.tsbuildinfo
-.env*
-!.env.example
-.DS_Store
-__pycache__/

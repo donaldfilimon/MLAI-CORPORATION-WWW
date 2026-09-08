@@ -15,7 +15,6 @@ them one discoverable layout and one coordination command.
 | `packages/contracts/` | Shared type vocabulary for product, persona, and claim provenance axes | `bun run check:topology` |
 | `packages/design-tokens/` | Raw cross-platform Lab colors; semantic UI tokens remain app-local | `bun run check:topology` |
 | `packages/tooling/` | Repository topology checks | `bun run check:topology` |
-| `vendor/` | Site archives vendored verbatim 2026-09-07; reference only | none — not built or tested |
 
 The former mobile `www/` subtree was a historical copy of the website. Its
 history is retained by the merge, but the current implementation lives only at

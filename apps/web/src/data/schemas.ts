@@ -170,8 +170,9 @@ export type Doc = Docs[number];
  *    the fully resolved link — either a `/docs/<slug>` route or a `/docs`
  *    anchor (`#runtime` / `#wdbx`) — so the view never has to guess.
  *
- * `glyph` is a closed enum (not a bare string) so the icon-mapping switch in
- * the view can be an exhaustive `never`-checked switch per Ruling D: an
+ * `glyph` is a closed enum (not a bare string) so the icon map in the view can
+ * be a `Record<Project["glyph"], LucideIcon>` — exhaustive at the type level,
+ * which is stronger than the `never`-checked switch Ruling D described: an
  * unrecognized glyph value fails at data-load time (`ProjectsSchema.parse`
  * throws) rather than silently rendering nothing.
  */

@@ -13,12 +13,10 @@ duplicate their detailed instructions here.
 | `apps/mobile` | `apps/mobile/AGENTS.md`, `apps/mobile/CLAUDE.md` |
 | `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
 | `packages/*` | that package's own `README.md` |
-| `vendor/` | `vendor/README.md` — reference archives, not a product surface |
 
-Three trees here are a Next.js site named MLAI: the shipping app at
-`apps/web`, plus `vendor/mlai-review` and `vendor/mlai-site`, which are two
-revisions of one standalone archived site and are not patches against
-`apps/web`. Confirm which tree a request means before editing.
+`apps/web` is the only Next.js site named MLAI in this repository. Other trees
+by that name exist elsewhere on this machine (`~/CLAUDE.md` maps them), so
+confirm which one a request means before editing.
 
 <!-- machine-git-policy -->
 ## Git workflow (machine policy, 2026-08-27)
