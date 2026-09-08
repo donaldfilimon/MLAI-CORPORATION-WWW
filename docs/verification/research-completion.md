@@ -111,6 +111,10 @@ existing groups and failed inspection still block success and retain the artifac
 
 ## Manual gates and approvals
 
+The guided follow-up is tracked in `research-guided-acceptance.md`. Its refreshed
+identity and ownership preflight passed; it is awaiting operator observations.
+No outstanding manual gate is closed merely by opening that session.
+
 Actual Chrome 200% zoom was observed on native Research with readable reflow.
 Native 400%, Site 200%/400%, and VoiceOver announcement order/modal isolation are
 not verified. The native browser changed during interaction and later exposed

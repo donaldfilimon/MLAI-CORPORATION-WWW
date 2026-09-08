@@ -2,6 +2,11 @@
 
 ## Research and release preparation completion (2026-09-08)
 
+Guided manual acceptance has started; see
+[the session record](verification/research-guided-acceptance.md). Candidate
+identity and preview ownership were reverified without changing runtime source.
+Manual results remain incomplete pending operator observations.
+
 This completion supersedes the earlier exporter-authorization gap below. The
 authorized canonical exporter work is committed on `mlai/main` at
 `2718e0cc61dfa969cb7d30ade1af1fd826652b22`. The generated Site candidate is on its
