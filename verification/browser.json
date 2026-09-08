@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-09-08T11:44:20.139Z",
+  "sourceRevision": "2718e0cc61dfa969cb7d30ade1af1fd826652b22",
+  "harnessSha256": "cbe1b07d9fe32eb8cbd9769368e30803df9661384680ebb1db5ad645226f189d",
+  "manifestSha256": "ee4a1c630a917581946ed5ab2585efe21826d228b168bff4621a5db80f0e90b6",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "engine": "chromium",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "engine": "chromium",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "width": 1440,
+      "status": "passed"
+    }
+  ],
+  "noJavascript": "28 accessible links in all engines",
+  "attachments": "four PDF hashes passed",
+  "actualZoom": "separate manual gate",
+  "voiceOver": "separate manual gate",
+  "published": false
+}

@@ -18,9 +18,10 @@ Canonical guidance for this generated review artifact, not the MLAI source app.
 
 ## Local command boundary
 
-- `bun run build` compiles `src/filter.ts` to `public/assets/filter.js` (browser
-  IIFE), then recursively removes `out/` and copies `public/` to `out/`. It does
-  not validate research content or deploy. Never keep unique work in `out/`.
+- `bun run build` verifies the clean canonical manifest, exact file inventory,
+  and every file hash, then recursively removes `out/` and copies `public/`
+  unchanged to `out/`. It verifies the copy too. It never repairs hashes or
+  rewrites canonical browser code. Never keep unique work in `out/`.
 - `.openai/hosting.json` configures static hosting from `out/`; `.gitignore`
   excludes that directory. Changing hosting configuration is not a content edit.
 - Package manager is bun, and this artifact has **zero dependencies**: there is no
@@ -28,17 +29,17 @@ Canonical guidance for this generated review artifact, not the MLAI source app.
   `bun test` and `bun build` are bun builtins and need no install step. Do not add
   `package-lock.json`, and do not reintroduce a dependency without a use for it —
   the previous `shadcn` devDependency pulled 81 MB of Babel for nothing and was
-  removed. `bun test` covers publication-filter logic; `bun run check` runs tests
-  then a browser IIFE compile. There is no CI workflow.
+  removed. `bun test` covers historical filter logic and export packaging;
+  `bun run check` runs tests then integrity-checked packaging. There is no CI workflow.
 - For documentation-only work, review the diff and use `git diff --check`.
 
 ## Static behavior
 
 - `public/index.html` and `public/research/` contain the review pages;
   `research-data.json` is the structured collection and `assets/` is bundled locally.
-- `src/filter.ts` is the filter source. `bun run build` emits
-  `public/assets/filter.js`, which pages load with `defer`. It filters cards
-  through `data-filter` and `data-publication-tag`; article links work without
-  JavaScript.
+- Canonical `scripts/research-discovery.js` is exported as
+  `public/assets/discovery.js`, loaded with `defer`. Historical `src/filter.ts`
+  utilities remain tested but are no longer loaded by the exported pages.
+  Article links work without JavaScript.
 - `public/robots.txt` disallows crawling. This is not authentication or a privacy
   boundary; hosting access control must be verified independently before sharing.
