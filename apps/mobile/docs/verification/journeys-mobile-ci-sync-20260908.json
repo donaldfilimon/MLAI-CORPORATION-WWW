@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-09-08T13:50:54.189806+00:00",
+  "baseCommit": "9ddb023227ba819514e61668a27281db03384b00",
+  "scope": "Vault component test synchronization only; application source unchanged",
+  "sourceSha256": "bf6889d312d9c6d689d4c9ecbbce240776ca8c824b6f941990b8e38c3208d2c0",
+  "failedHostedRun": 34233985128,
+  "failedTests": [
+    "failed deletion retry UI",
+    "failed refresh retry UI"
+  ],
+  "correction": "Await fireEventAsync async-act boundary and assert exact retry repository calls; retain deferred race controls",
+  "timeoutIncreased": false,
+  "linuxFailureReproducedLocally": false,
+  "focusedCIEnvironmentRuns": 6,
+  "focusedTestsPerRun": 12,
+  "fullGate": {
+    "tests": 59,
+    "suites": 7,
+    "typescript": "passed",
+    "lint": "passed",
+    "expoWebExport": "passed",
+    "CI": true
+  }
+}

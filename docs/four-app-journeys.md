@@ -116,3 +116,15 @@ and build; web passed 396 tests and build; mobile passed 59 tests, typecheck, li
 and web export; Quasar passed 69 tests, three typechecks and web export, with its
 independent template frozen install/build. No app source changed during these final
 app gates; subsequent edits add verification/evidence and delivery status only.
+
+## Hosted retry synchronization repair
+
+The first Quasar delivery attempt, `9ddb023`, passed four hosted jobs but failed
+two mobile component retry assertions in [CI 34233985128](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34233985128).
+Pages correctly skipped publication; Cloud Run skipped deploy. The tests used
+synchronous events around asynchronous React updates. The follow-up awaits the
+installed async-act event helper and asserts exact retry call counts, without
+changing app code or increasing timeouts. Six focused CI-environment repeats and
+the full 59-test mobile gate passed. The specific Linux schedule was not reproduced
+locally; the [repair receipt](../apps/mobile/docs/verification/journeys-mobile-ci-sync-20260908.json)
+records that limit. Delivery remains subject to the follow-up hosted result.
