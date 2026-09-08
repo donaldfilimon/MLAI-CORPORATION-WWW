@@ -32,9 +32,10 @@ embedding model, and writes `.data/capabilities.json`.
   `next build`. There is no linter; use `bun run format:check` for read-only formatting validation.
 - One unit test: `bunx vitest run tests/api.test.ts -t "partial name"`.
 - One parser test: `uv run --project worker pytest worker/tests/test_extract.py -k archive`.
-- One browser test: `bunx playwright test tests/e2e/portal.spec.ts`. Install the browser once with
-  `bunx playwright install chromium`. Playwright starts its own `bun run dev` against `.data-e2e`,
-  `.next-e2e` and port 3101, and reuses an already running server outside CI.
+- One browser test: `bunx playwright test tests/e2e/portal.spec.ts`. Install browsers with
+  `bunx playwright install chromium firefox webkit`. Playwright starts its own `bun run dev`
+  on port 3101 with UUID-isolated data/build directories and an ignored TypeScript config.
+  It refuses to reuse an existing server. `bun run test:e2e:public` adds Firefox/WebKit smoke coverage.
   `tests/e2e/live-chat.spec.ts` needs `MLAI_E2E_MODEL_URL` and `MLAI_E2E_MODEL_ID`.
 - **A 429 on `/api/auth/sign-up/email` is a rate limit, not a broken sign-up flow.** The binding
   limit is **not** the `rateLimit: { window: 60, max: 30 }` in `auth.ts`: Better Auth applies a
@@ -43,8 +44,8 @@ embedding model, and writes `.data/capabilities.json`.
   those paths. Fixture accounts across the suite share that budget. `tests/e2e/support/account.ts`
   is the only correct way to create one — it waits out a 429 and retries — and `wdbx-studio`
   creates a single account in `beforeAll` and replays its cookies rather than signing up per
-  width. Never raise the limit to make a run green; it protects a credential endpoint. Also
-  `rm -rf .data-e2e` between runs, since that database persists other counters.
+  width. Never raise the limit to make a run green; it protects a credential endpoint.
+  Each invocation now receives a fresh database; do not delete another run's fixture data.
 - Agent runs have their own suites: `tests/agent.test.ts` covers dispatch authority, proposal and
   confirmation, stale revisions, budgets, and lease fencing; `tests/worker-agent.test.ts` covers
   publication guards and restoring an interrupted run. The live gate is `bun run verify:agent`,
@@ -57,24 +58,21 @@ Three gate behaviors have already cost sessions time; `docs/IMPLEMENTATION.md` r
 - Run `bun run db:migrate` once, serially, against the isolated `MLAI_DATA_DIR` you intend to
   check with, before `bun run check`. The build stage otherwise races its own fresh-database
   migration and dies on `table user already exists` after TypeScript has already passed.
-- `bun run format:check` fails repo-wide on eleven pre-existing files carried in unformatted since
-  `e0f9907` (`agent-contracts.ts`, `agent-jobs.ts`, `documents.ts`, `embeddings.ts`, `models.ts`,
-  `worker.ts`, `restore.ts`, `verify-agent-restored.ts`, `agent-view.tsx`, `models.test.ts`,
-  `worker-agent.test.ts`). That red is not yours. A repo-wide `bunx prettier --write .` belongs in
-  its own commit, because reformatting `agent-contracts.ts` alone expands 41 lines to 216.
+- The formatting backlog was cleared in a dedicated formatting-only commit. Keep
+  `bun run format:check` green. The byte-pinned implementation snapshot is explicitly excluded
+  in `.prettierignore`; `bun run verify:research` validates its unchanged evidence digest instead.
 - `next build` sometimes rewrites `tsconfig.json` with generated dist-dir includes. Compare it
   before and after and revert before committing; it does not happen on every run.
 
 CI runs a subset of that gate: `.github/workflows/check.yml` does a frozen-lockfile install,
-then `typecheck`, `test`, `db:migrate` and `build`, on every push to `main` and every pull
-request. It does not deploy. Two omissions are deliberate — the worker's pytest suite, which
-would need uv, Python and the `setup` downloads on every run, and `format:check`, which is
-red repo-wide on the eleven files above and would pin CI red until that backlog is cleared.
+then `typecheck`, `format:check`, `verify:research`, `test`, `db:migrate` and `build`, on every
+push to `main` and every pull request. It does not deploy. The worker's pytest suite remains
+a local gate because it needs uv, Python and the `setup` downloads.
 Bun is pinned to 1.4.0 there to match `packageManager`: 1.3.x cannot parse this repo's
 `lockfileVersion: 2` and, rather than failing, rewrites the lockfile and resolves a different
 dependency tree — which locally produced one phantom test failure and six unrelated Turbopack
 errors. So CI green is narrower than `bun run check` green; it does not cover the parser
-suite, formatting, the browser suites, or `verify:agent`.
+suite, the browser suites, or `verify:agent`.
 
 Read the exit code from the command itself, never through a pipe — `bun run check | tail` reports
 tail's status. `docs/IMPLEMENTATION.md` records every gate result here as having been read directly
@@ -264,4 +262,3 @@ the corpus has diverged from the source it was imported from — editing the man
 copy defeats the check. `docs/research-merge/report-source.md` records the import decision and the
 26 pinned source files behind 66 article-source references; `source-verification.json` holds their
 hashes. Research copy is imported content, not house copy.
-

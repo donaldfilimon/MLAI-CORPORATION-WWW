@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-09-08T11:06:32.798Z",
+  "source": {
+    "baseCommit": "d988a218efe747f2adf1ee073ec72ee249d69d76",
+    "runtimeSourceSha256": "dd5c90cd3257517acc88bf18cc82b10ad9072966aa3ec642c7a48b3d9a87fdca"
+  },
+  "deterministic": {
+    "command": "MLAI_E2E_MODEL_URL=http://127.0.0.1:3112/v1 MLAI_E2E_MODEL_ID=agent-browser-fixture bunx playwright test --project=chromium --grep-invert 'real local|live local'",
+    "stats": {
+      "startTime": "2026-09-08T11:02:20.518Z",
+      "duration": 86080.428,
+      "expected": 20,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "realLocalAgent": {
+    "endpoint": "http://127.0.0.1:3102/v1",
+    "model": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+    "command": "bunx playwright test tests/e2e/agent-live.spec.ts",
+    "stats": {
+      "startTime": "2026-09-08T11:04:05.379Z",
+      "duration": 23887.738,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "researchCrossEngine": {
+    "passed": 11,
+    "durationSeconds": 36.5,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "evidence": "Observed tool exit 0; research/auth Chromium suite plus focused Firefox/WebKit smoke"
+  },
+  "screenshots": [
+    {
+      "file": "docs/verification/screenshots/research-first-viewport-390.png",
+      "sha256": "a91e9f89745c9123ab78ec7455f9f0d6149729f1ff1d7922a1131b0ea1c787a0"
+    },
+    {
+      "file": "docs/verification/screenshots/research-first-viewport-768.png",
+      "sha256": "8f73d186341b36d6390ac55ade95707ceb6f1edd0eccc946ecbef9f9402dfc8e"
+    },
+    {
+      "file": "docs/verification/screenshots/research-first-viewport-1440.png",
+      "sha256": "d174116c0e8c6586d30123d267464db433c63016896d2d2ede5f39949dc38e43"
+    }
+  ],
+  "noHostedCredentialsUsedOrConfigured": true,
+  "publication": "not performed; exporter edit authorization unresolved",
+  "activation": "not performed; operator approval required",
+  "manualAccessibility": {
+    "voiceOver": "not verified",
+    "browserZoom200And400Percent": "not verified",
+    "tokenContrastMinimum": 6.8,
+    "tokenContrastScope": "text/body/muted/cyan against bg/panel/panel-raised; not a full rendered-page audit"
+  }
+}

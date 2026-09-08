@@ -1,5 +1,28 @@
 # MLAI implementation and acceptance ledger
 
+## Research improvements candidate (2026-09-08)
+
+Native source checkpoint: `d988a218efe747f2adf1ee073ec72ee249d69d76`.
+Runtime SHA-256: `dd5c90cd3257517acc88bf18cc82b10ad9072966aa3ec642c7a48b3d9a87fdca`.
+The source changes improve unified research discovery, evidence labeling, reading navigation,
+shared auth accessibility, snapshot validation, and isolated browser acceptance. They preserve
+local-model selection and explicit-confirmation safeguards; no hosted credentials were used.
+
+The full application check passed with 106 TypeScript tests, 26 parser tests and the 64-page
+production build. Formatting now passes, with byte-pinned imported evidence deliberately
+preserved. The final deterministic browser sweep passed 20/20; research/auth and bounded
+Chromium/Firefox/WebKit acceptance passed 11/11. Real MLX recovery passed again at this runtime
+digest, and the final real MLX Agent browser check passed 1/1 in 23.9 seconds.
+Detailed evidence and remaining gaps are in `verification/research-improvements.md`
+and `verification/research-improvements-final-parity.json`.
+
+This is not a Site publication or local release activation. Port 3106 is an isolated
+development preview; port 3100's previously activated artifact is unchanged. The Site's
+generated pages require an authorized change to the separate `mlai` exporter, not hand edits
+to the export. That permission was requested and remains unresolved. Native VoiceOver and
+actual browser zoom remain unverified; no accessibility certification is claimed. The earlier
+activation and clean-install entries below remain historical evidence for their named sources.
+
 ## In-app Abbey Agent acceptance (2026-09-08)
 
 The remaining local Agent flows have passed using the explicitly selected
