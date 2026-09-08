@@ -10,9 +10,9 @@ study/PDF bytes while keeping the historical publication revision separate.
 
 ## Verification
 
-- Canonical source: 364 tests and a 104-page production build passed before the
-  narrow legacy-tag follow-up; the final follow-up passed lint and six focused
-  discovery/export tests.
+- Canonical source: all 365 tests passed on the final revision. A 104-page
+  production build passed before the narrow legacy-tag follow-up; that follow-up
+  passed lint and six focused discovery/export tests.
 - Packaging: 11 tests passed, including missing/extra files, corrupted bytes,
   dirty provenance and symlink rejection. Packaging verifies and copies bytes;
   it cannot repair hashes or reintroduce the retired filter controller.
