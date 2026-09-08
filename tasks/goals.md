@@ -597,3 +597,33 @@ Everything in the repository itself is green and pushed. `bun run check` at
 `c710619` exits 0 across all four gates, hosted CI run `34204092610` agrees,
 and Pages run `34204233040` published. GitHub Pages is the surface that is
 actually live; Cloud Run is the one that has never cut over.
+
+### Re-measured 2026-09-08 18:3x — the green-gate evidence above was 89 commits stale
+
+Appended rather than edited, because this section is append-ordered and the
+older text is still an accurate record of what was true when it was written.
+
+- **What was stale.** "What is not blocked" cites `bun run check` exiting 0 at
+  `c710619`. That commit is an ancestor of HEAD but sits **89 commits and 373
+  files** behind it (`git rev-list --count c710619..HEAD`). Read as current
+  evidence it overstates its own freshness. The newer top-of-file sections,
+  which claim gates green through `af58896`, were the accurate ones.
+- **What was measured.** `bun run check:web` at HEAD `cf8cefd` exits **0** —
+  `tsc --noEmit`, the Vitest suite, and a `next build` that emitted a full
+  route table. This corroborates the `af58896` claim one commit further along.
+- **How, so the method can be checked rather than trusted.** Run in this
+  checkout, which was verified clean, `0` ahead / `0` behind `origin/main`, and
+  unowned (no process cwd'd here; `.git/index` last written 09:55). The exit
+  code was read from the log's own `===CHECK_WEB_EXIT=0===` marker, not from a
+  wrapper's status and not through a pipe — per the `cmd | tail` trap recorded
+  in `~/CLAUDE.md`, a trailing command's status silently replaces the gate's.
+- **This does NOT unblock the goal.** Cloud Run still has zero of its two gate
+  variables at every scope, and the orphaned Vercel project still needs an
+  authorized dashboard session plus a confirmed destructive deletion. Both
+  remain authorization decisions for Donald. `status:` stays `blocked`.
+- **Unrelated hazard found while measuring, recorded here only because it would
+  otherwise be lost.** The sibling checkout `~/dev/active/mlai` has
+  `apps/web/.design-sync/NOTES.md` **staged by a third party** (verified with
+  `git --no-optional-locks diff --cached --name-only`). A bare `git commit`
+  there would sweep in another session's work. Not a defect in this repository
+  and not part of this goal.
