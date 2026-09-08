@@ -97,8 +97,19 @@ describe("ported docs in the search index", () => {
     }
   });
 
-  it("still indexes the existing docs-nav sections as hash hrefs", () => {
+  it("still indexes every existing docs-nav section as a hash href", () => {
     const index = buildDocsSearchIndex();
-    expect(index.some((r) => r.href.startsWith("/docs#"))).toBe(true);
+    const expectedCount = docNav.reduce(
+      (total, group) => total + group.items.length,
+      0,
+    );
+    const hashRecords = index.filter((r) => r.href.startsWith("/docs#"));
+    expect(hashRecords).toHaveLength(expectedCount);
+  });
+
+  it("keeps every indexed slug unique across docs-nav, research, and ported sources", () => {
+    const index = buildDocsSearchIndex();
+    const slugs = index.map((r) => r.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 });
