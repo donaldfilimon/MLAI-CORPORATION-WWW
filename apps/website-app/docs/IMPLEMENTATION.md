@@ -1,5 +1,21 @@
 # MLAI implementation and acceptance ledger
 
+## Integrated application acceptance (2026-09-08)
+
+Canonical checkout is `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`,
+with this app under `apps/website-app` alongside independent web/mobile/Quasar.
+Implementation `3ce1f0c` passed Node 24.20.0 / Bun 1.4.0 acceptance at runtime
+SHA-256 `77e2ed9dbd2bdef05869ef3491d633b53caa67e8d2b50c5888c326eb234d5de9`.
+See the [current integration record](../../../docs/integration-hardening.md)
+for commands, 123 unit / 26 parser tests, fresh installation, browser/live
+receipts, hosted CI, Pages and Cloud Run readiness-skip evidence. The first live
+chat run had a model citation error; its unchanged repeat passed, and the
+reliability limitation is retained. No local release was activated. Native
+screen-reader and actual browser-zoom acceptance remain unperformed.
+
+Everything below is historical evidence for its named source, not the current
+integration status.
+
 ## Research improvements candidate (2026-09-08)
 
 Native source checkpoint: `d988a218efe747f2adf1ee073ec72ee249d69d76`.

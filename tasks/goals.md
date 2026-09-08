@@ -1,3 +1,24 @@
+# Current integration completion — 2026-09-08
+
+Canonical checkout: `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`.
+The repository contains the production web app, mobile companion, Quasar, and
+`apps/website-app`. The previous consolidation sections below are historical;
+read the current integration record before treating their old paths, counts,
+or in-progress descriptions as current status.
+
+Status: implementation and bounded local acceptance complete at `3ce1f0c`.
+All four app gates, fresh installation, deterministic and cross-browser checks,
+local integration/recovery and the live browser repeat passed. Hosted CI passed
+all five jobs; Pages published; Cloud Run correctly skipped unconfigured deploy.
+The initial live chat model citation error remains an explicit reliability
+limitation. Final evidence-only commit delivery is verified in the task closeout.
+
+See [`docs/integration-hardening.md`](../docs/integration-hardening.md) for
+current evidence and external boundaries. Existing local installations and
+provider configuration remain operator-owned and unchanged.
+
+---
+
 # Downloads checkout consolidation
 
 This record replaces the stale pre-monorepo checklist imported from

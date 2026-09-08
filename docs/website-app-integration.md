@@ -1,5 +1,9 @@
 # Website application integration — 2026-09-08
 
+Current hardening, reproducible commands and acceptance evidence are in the
+[integration completion record](integration-hardening.md). The import details
+below are historical provenance.
+
 The local `mlai-website-app` main history through `d988a218efe747f2adf1ee073ec72ee249d69d76` is
 merged into this repository under `apps/website-app`. The import also includes
 its current uncommitted source, local lifecycle documentation, research receipts
