@@ -1,0 +1,90 @@
+import { spawn, type SpawnOptions } from "node:child_process";
+import { setTimeout as delay } from "node:timers/promises";
+
+export class VerificationCleanupError extends Error {}
+
+export function selectedLocalModel(
+  environment: Record<string, string | undefined>,
+) {
+  const url = environment.MLAI_LOCAL_MODEL_URL || environment.MLAI_MODEL_URL;
+  const model = environment.MLAI_LOCAL_MODEL_ID || environment.MLAI_MODEL_ID;
+  if (!url || !model?.trim())
+    throw new Error(
+      "Clean verification requires an explicitly selected local model URL and ID.",
+    );
+  for (const [local, live] of [
+    [environment.MLAI_LOCAL_MODEL_URL, environment.MLAI_MODEL_URL],
+    [environment.MLAI_LOCAL_MODEL_ID, environment.MLAI_MODEL_ID],
+  ])
+    if (local && live && local !== live)
+      throw new Error("Conflicting explicit local model selections.");
+  const parsed = new URL(url);
+  if (
+    !["127.0.0.1", "localhost", "[::1]"].includes(parsed.hostname) ||
+    !["http:", "https:"].includes(parsed.protocol) ||
+    parsed.username ||
+    parsed.password
+  )
+    throw new Error(
+      "Clean verification requires a credential-free loopback model URL.",
+    );
+  return { MLAI_LOCAL_MODEL_URL: url, MLAI_LOCAL_MODEL_ID: model };
+}
+
+/** Commands own a detached process group; never pass an unrelated process ID. */
+export async function runVerificationCommand(
+  command: string,
+  args: string[],
+  options: Pick<SpawnOptions, "cwd" | "env" | "stdio">,
+  timeoutMs = 600_000,
+  graceMs = 10_000,
+) {
+  if (process.platform === "win32")
+    throw new Error(
+      "Clean verification requires POSIX process-group ownership.",
+    );
+  const child = spawn(command, args, { ...options, detached: true });
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const finished = new Promise<void>((resolve, reject) => {
+    child.once("error", reject);
+    child.once("exit", (code, signal) => {
+      if (code === 0) resolve();
+      else reject(new Error(`${command} exited with ${signal || code}.`));
+    });
+    timer = setTimeout(
+      () => reject(new Error(`${command} timed out after ${timeoutMs}ms.`)),
+      timeoutMs,
+    );
+  });
+  const signalGroup = (signal: NodeJS.Signals | 0) => {
+    if (!child.pid) return false;
+    try {
+      process.kill(-child.pid, signal);
+      return true;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ESRCH") return false;
+      throw error;
+    }
+  };
+  try {
+    await finished;
+  } finally {
+    clearTimeout(timer);
+    try {
+      if (signalGroup("SIGTERM")) {
+        const deadline = Date.now() + graceMs;
+        while (signalGroup(0) && Date.now() < deadline) await delay(50);
+        if (signalGroup("SIGKILL")) {
+          const deadline = Date.now() + 5000;
+          while (signalGroup(0) && Date.now() < deadline) await delay(50);
+          if (signalGroup(0)) throw new Error("Process group still exists.");
+        }
+      }
+    } catch (cause) {
+      throw new VerificationCleanupError(
+        "Verifier command cleanup could not be confirmed; retain its working directory.",
+        { cause },
+      );
+    }
+  }
+}

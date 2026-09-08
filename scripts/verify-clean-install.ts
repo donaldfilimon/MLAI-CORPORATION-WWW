@@ -1,4 +1,4 @@
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import {
   mkdtempSync,
   mkdirSync,
@@ -12,8 +12,14 @@ import assert from "node:assert/strict";
 import { createServer } from "node:net";
 import { releaseSource } from "./release-source";
 import { portAvailable, stopProcessTree } from "./verification-process";
+import {
+  runVerificationCommand,
+  VerificationCleanupError,
+  selectedLocalModel,
+} from "./verification-command";
 const origin = process.cwd(),
   retain = process.env.MLAI_KEEP_RELEASE === "1";
+const model = selectedLocalModel(process.env);
 const source = releaseSource(origin);
 const parent = retain ? resolve(".data/releases") : tmpdir();
 mkdirSync(parent, { recursive: true });
@@ -30,13 +36,16 @@ await new Promise<void>((r) => socket.close(() => r()));
 const base = `http://127.0.0.1:${port}`,
   env = {
     ...process.env,
+    ...model,
     MLAI_DATA_DIR: join(clean, ".data"),
+    MLAI_CONNECTIONS_FILE: join(clean, ".data/connections.json"),
     APP_URL: base,
     MLAI_TIKA_JAR: resolve(".tools/tika-app-3.3.2.jar"),
     NEXT_DIST_DIR: ".next",
   };
 let server: ReturnType<typeof spawn> | undefined;
 let passed = false;
+let cleanupConfirmed = true;
 async function stopServer() {
   if (!server) return;
   await stopProcessTree(server, port);
@@ -83,11 +92,10 @@ try {
     ["run", "check"],
   ]) {
     console.log(`Clean install: bun ${args.join(" ")}`);
-    execFileSync("bun", args, {
+    await runVerificationCommand("bun", args, {
       cwd: clean,
       env,
       stdio: "inherit",
-      timeout: 600000,
     });
   }
   // Prove dev startup regenerates the package, rather than consuming a stale dist.
@@ -173,9 +181,14 @@ try {
     "PASS clean install, setup, check and production account workflow",
   );
   passed = true;
+} catch (error) {
+  if (error instanceof VerificationCleanupError) cleanupConfirmed = false;
+  throw error;
 } finally {
   await stopServer();
-  if (!retain || !passed) rmSync(clean, { recursive: true, force: true });
+  if (!cleanupConfirmed)
+    console.error("Retained artifact because command cleanup failed:", clean);
+  else if (!retain || !passed) rmSync(clean, { recursive: true, force: true });
   else
     console.log(
       "Retained verified source, locked runtime and production build:",
