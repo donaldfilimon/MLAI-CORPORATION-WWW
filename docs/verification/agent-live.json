@@ -1,8 +1,8 @@
 {
-  "checkedAt": "2026-09-08T09:59:57.098Z",
+  "checkedAt": "2026-09-08T10:16:54.507Z",
   "source": {
-    "baseCommit": "3d0c1e9f8fd68870f38a83138cb97408b4e21fad",
-    "runtimeSourceSha256": "b7a194efdf169cac3be768bedba376ca393db77acfaf8b47e25bf3c053db8b82",
+    "baseCommit": "551ec78e80ff1fda98d9454abaac1f27403bb76e",
+    "runtimeSourceSha256": "913761b67c3524963bb7920f1436f6e558ccfa0f56a12f2ac317458727ff1ac8",
     "files": [
       {
         "file": ".claude/agents/abbey.md",
@@ -46,7 +46,7 @@
       },
       {
         "file": "docs/IMPLEMENTATION.md",
-        "sha256": "4dc5cf244074f2f0dde0df760a2673d7b54b1595fcb9b5628b9ed0d0ff5a47ee"
+        "sha256": "084f8f84eaf0dea6b454934b85a7a8af59755c2f096c2a50d7f98338cc334af6"
       },
       {
         "file": "docs/README.md",
@@ -111,6 +111,10 @@
       {
         "file": "docs/verification/abbey-agent.json",
         "sha256": "7f423014860bc1b27cb1ac0db69206c19da6ea33bb29097838dc6b0760880af8"
+      },
+      {
+        "file": "docs/verification/agent-live.json",
+        "sha256": "2b564fd47d860d5e931bd10b3975c1060091d63de3d3243002feb337627feb5f"
       },
       {
         "file": "docs/verification/clean-install.json",
@@ -234,7 +238,7 @@
       },
       {
         "file": "mlai-website-agent/README.md",
-        "sha256": "61fae801ec261b5dcba3bc1dd6de1bff17d7061660dfc784f18d9c0d83e34d0b"
+        "sha256": "bdf8ca9283137f495388a8fa0219ca3da2096c6977ec3694ec4d36f19b35407b"
       },
       {
         "file": "mlai-website-agent/agent/agent.ts",
@@ -242,11 +246,11 @@
       },
       {
         "file": "mlai-website-agent/agent/channels/eve.ts",
-        "sha256": "36deec5727d115f13d9e1502c0edb76115358c2ff30e03a3fa7d67aee368ae81"
+        "sha256": "c7b4e3c806942c0cfc46ae9c2b1b2febf17973c3770a582ffff6ee1bf262455c"
       },
       {
         "file": "mlai-website-agent/agent/instructions.md",
-        "sha256": "519879201f667ef1b771495f824108c77779fe955deb90a7ee7488fbd7ea1785"
+        "sha256": "a518353e1bcaa3498b3b2fcbe1007b3f8fbf4c02884efbea47506072daa5b870"
       },
       {
         "file": "mlai-website-agent/package.json",
@@ -258,11 +262,11 @@
       },
       {
         "file": "mlai-website-agent/tests/policy.test.ts",
-        "sha256": "afada7b56b77106c929ae265008ae33647c85a5572206f7de25012284655bfca"
+        "sha256": "684c90f528e9a8af0d0a26590d594eaee18429f68039227d1eb9ebea912e16e3"
       },
       {
         "file": "mlai-website-agent/tsconfig.json",
-        "sha256": "504bd35b95645564f7ad5bbc1dd699ceeeda1e65656c8ba91dd276b3c0e7ae17"
+        "sha256": "f005c9a8c675677c699441e451e1ba099b2ac4175b92d3ef4506be3cb8832a74"
       },
       {
         "file": "next.config.ts",
@@ -466,7 +470,7 @@
       },
       {
         "file": "scripts/verify-agent.ts",
-        "sha256": "f37b88c1d60f1e92427a0d0cf7916d50e384f88811e427e15012361f4e51049c"
+        "sha256": "16c4ef0003d94f4f077e5d39990378f29f53ebc27a277332dd564c98b5a672f7"
       },
       {
         "file": "scripts/verify-clean-install.ts",
@@ -850,7 +854,7 @@
       },
       {
         "file": "tests/e2e/agent-live.spec.ts",
-        "sha256": "517b3218312e35b919fb1a82f98413fd666fd6cca78d63276a9ede2623dae8fb"
+        "sha256": "d4acf60ad3329b3e1f77ba97a29a3680a315c855d13727a38980442c143fe40d"
       },
       {
         "file": "tests/e2e/agent.spec.ts",
