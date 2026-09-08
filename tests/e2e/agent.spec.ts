@@ -102,6 +102,7 @@ test("persistent reviewed agent actions, source focus and queued interpretation"
   await page
     .getByRole("link", { name: /Ask Abbey about this document/ })
     .click();
+  await expect(page).toHaveURL(/\/app\/abbey\?.*document=/);
   const documentId = new URL(page.url()).searchParams.get("document");
   expect(documentId).toBeTruthy();
   await expect(
@@ -113,7 +114,7 @@ test("persistent reviewed agent actions, source focus and queued interpretation"
     {
       kind: "tool",
       tool: "search_documents",
-      input: { query: "architecture review" },
+      input: { query: "deadline Friday" },
     },
     {
       kind: "tool",

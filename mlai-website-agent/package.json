@@ -1,6 +1,7 @@
 {
   "name": "mlai-website-agent",
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "imports": {
     "#*": "./agent/*",
@@ -8,11 +9,13 @@
   },
   "scripts": {
     "build": "eve build",
-    "deploy": "eve deploy",
+    "deploy": "node ./scripts/refuse-deploy.mjs",
     "dev": "eve dev",
     "eval": "eve eval",
     "start": "eve start",
-    "typecheck": "tsc"
+    "test": "node --test tests/*.test.ts",
+    "typecheck": "tsc",
+    "verify": "bun run test && bun run typecheck && bun run build"
   },
   "dependencies": {
     "@vercel/connect": "1.0.0",

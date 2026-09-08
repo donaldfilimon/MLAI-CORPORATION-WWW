@@ -2,6 +2,12 @@
 
 This project uses the eve framework: an agent is a directory of files under `agent/`, and eve compiles and runs it.
 
+## MLAI deployment boundary
+
+This scaffold is intentionally non-deployable. Do not run `eve deploy`, replace the refusing `deploy` script, add a hosted or Gateway model, enable default tools, accept Vercel OIDC, or weaken the production `401` boundary. `README.md` records the application-owned authorization, durable-session ownership, model-consent, privacy, dependency, and verification prerequisites that must all be satisfied before this boundary can be reconsidered. A successful `eve build` is compilation evidence only.
+
+Do not create a second Better Auth instance here. A future integration must reuse the main application's existing session and workspace authorization on the same origin/runtime and reauthorize ownership on every Eve session route.
+
 For a content-only change to the root agent's identity, purpose, tone, or response guidelines, edit its existing authored instructions. Fresh projects use `agent/instructions.md`; a project may instead use `agent/instructions.ts` or files under `agent/instructions/`. You do not need to read the framework docs for a content-only instructions change. A fresh project already has its selected model in `agent/agent.ts`; preserve that file unless the user asks to change the model.
 
 ## Read the docs before writing code
@@ -38,6 +44,10 @@ eve add <item> --non-interactive
 ```
 
 Exit code 0 means setup completed, 1 failed, and 2 needs an answer or a prerequisite. On exit 2, run the `next.command` from the final NDJSON event. For a non-secret question, replace its `<JSON value>` answer placeholder with the answer you collected; string values need JSON quotes. Never pass a secret in `--answer`. See `docs/install-integrations.mdx` for setup prerequisites.
+
+## Eve deployment commands remain disabled for MLAI
+
+The generic Eve commands below describe framework mechanics only. They are prohibited for this scaffold while the MLAI deployment boundary above remains in force.
 
 ## Use eve for Vercel operations
 
