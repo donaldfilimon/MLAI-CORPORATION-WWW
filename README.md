@@ -2,7 +2,7 @@
 
 This repository is the local integration home for MLAI's active public
 surfaces. It preserves the independent history and verification boundaries of
-the production website, the Expo mobile companion, and Quasar while giving
+the production website, the Expo mobile companion, Quasar, and the local website application while giving
 them one discoverable layout and one coordination command.
 
 ## Repository map
@@ -12,6 +12,7 @@ them one discoverable layout and one coordination command.
 | `apps/web/` | Next.js 15 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
 | `apps/mobile/` | Expo SDK 53 mobile companion and native CloudKit module | `bun run check:mobile` |
 | `apps/quasar/` | Independent nested Bun workspace for the local AI site builder | `bun run check:quasar` |
+| `apps/website-app/` | Next.js local application, Abbey workspace, SQLite/Better Auth, Python worker, and agent package | `bun run check:website-app` |
 | `packages/contracts/` | Shared type vocabulary for product, persona, and claim provenance axes | `bun run check:topology` |
 | `packages/design-tokens/` | Raw cross-platform Lab colors; semantic UI tokens remain app-local | `bun run check:topology` |
 | `packages/tooling/` | Repository topology checks | `bun run check:topology` |
@@ -23,7 +24,7 @@ service, shared package, template, lockfile, and acceptance flow.
 
 ## Setup and verification
 
-Use Bun 1.4 or newer. Root tooling, web, mobile, and Quasar deliberately keep
+Use Bun 1.4 or newer. Root tooling, web, mobile, Quasar, and website-app deliberately keep
 separate lockfiles. This prevents Next's React 19.2 types from being hoisted
 over Expo SDK 53's React 19.0 types (or vice versa).
 
@@ -33,6 +34,7 @@ bun run check:topology
 bun run check:web
 bun run check:mobile
 bun run check:quasar
+bun run check:website-app
 # or run every gate in order
 bun run check
 ```
@@ -43,6 +45,7 @@ Development entry points:
 bun run dev:web
 bun run dev:mobile
 bun run dev:quasar
+bun run dev:website-app
 ```
 
 Read the app-local `README.md` and `AGENTS.md` before changing a surface. A
@@ -64,3 +67,20 @@ published on `main` through
 2026-08-24. The web, mobile, and Quasar verification boundaries above remain
 independent inside that published tree. Archiving any superseded local
 checkouts is still a separate operator decision.
+
+## Website application integration
+
+`mlai-website-app` is integrated with its Git history under `apps/website-app/`.
+Run its commands from that directory, or use the root wrappers above. It retains
+its own Bun workspace, shared UI, lockfile, SQLite migrations, Python worker,
+and non-deployable agent scaffold. `apps/web` remains the canonical production
+website with its existing deployment workflows.
+
+Before the full website-app gate, follow [its setup guide](apps/website-app/README.md):
+`bun run setup` installs Python/parser/model dependencies. The root gate migrates
+the database serially before checking to avoid concurrent build migration races.
+CI runs its separate TypeScript/format/research/unit/build subset; parser and
+browser acceptance remain local gates. Private databases, credentials, uploaded
+documents, model weights and generated output are not part of the import.
+See [the integration record](docs/website-app-integration.md) for source provenance
+and validation. The source checkout has been retained.

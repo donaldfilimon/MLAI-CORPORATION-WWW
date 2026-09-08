@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-09-08T10:30:11.450Z",
+  "artifact": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/releases/mlai-clean-bKPz2X",
+  "pid": 67561,
+  "url": "http://127.0.0.1:3100",
+  "runtimeSourceSha256": "af500e5be95aae0cd9f8b85a343269c2ed005d8576a73dfde96758a89d97980d",
+  "sourceCommit": "03a558f11180d0a189111ecca3be08f5801bfbee",
+  "log": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/local-release.log",
+  "previousArtifact": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/releases/mlai-clean-rG7B8J",
+  "webAndWorker": true,
+  "homepage": 200,
+  "signIn": 200,
+  "research": 200,
+  "unauthenticatedApp": 307,
+  "mainRecordsBefore": {
+    "user": 0,
+    "projects": 0,
+    "documents": 0,
+    "messages": 0,
+    "engagements": 0
+  },
+  "mainRecordsAfter": {
+    "user": 0,
+    "projects": 0,
+    "documents": 0,
+    "messages": 0,
+    "engagements": 0
+  },
+  "sessionIndependent": true,
+  "loginServiceInstalled": false,
+  "browser": {
+    "checks": [
+      {
+        "width": 1440,
+        "route": "/sign-in",
+        "status": 200,
+        "overflow": false,
+        "screenshot": "docs/verification/screenshots/agent-release-signin-1440.png"
+      },
+      {
+        "width": 768,
+        "route": "/sign-in",
+        "status": 200,
+        "overflow": false,
+        "screenshot": "docs/verification/screenshots/agent-release-signin-768.png"
+      },
+      {
+        "width": 390,
+        "route": "/sign-in",
+        "status": 200,
+        "overflow": false,
+        "screenshot": "docs/verification/screenshots/agent-release-signin-390.png"
+      }
+    ],
+    "researchImplementationLinks": true,
+    "unauthenticatedAbbeyRedirect": true,
+    "errors": []
+  }
+}

@@ -1,0 +1,52 @@
+# Verification only — this workflow never deploys and never writes to the repo.
+#
+# It runs the subset of `bun run check` that needs no `bun run setup`:
+# formatting, public research validation, typecheck, the Node test suite,
+# and the production build. One omission is deliberate:
+#   - the worker's pytest suite, because `setup` downloads a Tika jar and an
+#     embedding model; adding it means provisioning uv and Python here first.
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to match "packageManager" in package.json. Older Bun cannot parse
+      # this repo's lockfileVersion 2 and silently resolves a different tree.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.0"
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Formatting
+        run: bun run format:check
+
+      - name: Research evidence
+        run: bun run verify:research
+
+      - name: Test
+        run: bun run test
+
+      # Serial, before the build. db.ts runs migrate() as a top-level import
+      # side effect, and `next build` imports it from several workers at once,
+      # so an unmigrated database races itself and dies on
+      # "table user already exists" after TypeScript has already passed.
+      # CLAUDE.md records this as a gate behaviour that has cost sessions time.
+      - name: Migrate
+        run: bun run db:migrate
+
+      - name: Build
+        run: bun run build

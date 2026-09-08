@@ -1,0 +1,238 @@
+{
+  "docling": "2.126.0",
+  "testedAt": "2026-09-06T11:13:43.465173+00:00",
+  "extensions": [
+    "bmp",
+    "doc",
+    "docx",
+    "epub",
+    "jpeg",
+    "jpg",
+    "key",
+    "msg",
+    "numbers",
+    "odp",
+    "ods",
+    "odt",
+    "pages",
+    "pdf",
+    "png",
+    "ppt",
+    "pptx",
+    "rtf",
+    "tif",
+    "tiff",
+    "webp",
+    "xls",
+    "xlsx"
+  ],
+  "fixtures": [
+    {
+      "fixture": "scanned.bmp",
+      "extension": "bmp",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.odp",
+      "extension": "odp",
+      "parser": "docling",
+      "chunks": 2,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.tiff",
+      "extension": "tiff",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.xlsx",
+      "extension": "xlsx",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 1,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.jpeg",
+      "extension": "jpeg",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.pptx",
+      "extension": "pptx",
+      "parser": "docling",
+      "chunks": 2,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.pdf",
+      "extension": "pdf",
+      "parser": "docling",
+      "chunks": 2,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.jpg",
+      "extension": "jpg",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.png",
+      "extension": "png",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.pdf",
+      "extension": "pdf",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.tif",
+      "extension": "tif",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.epub",
+      "extension": "epub",
+      "parser": "docling",
+      "chunks": 2,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.docx",
+      "extension": "docx",
+      "parser": "docling",
+      "chunks": 3,
+      "tables": 1,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.ods",
+      "extension": "ods",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 1,
+      "warnings": []
+    },
+    {
+      "fixture": "scanned.webp",
+      "extension": "webp",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.odt",
+      "extension": "odt",
+      "parser": "docling",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": []
+    },
+    {
+      "fixture": "sample.rtf",
+      "extension": "rtf",
+      "parser": "tika",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": [
+        "Tika extraction preserves text and available tables; exact page and layout locations may be unavailable."
+      ]
+    },
+    {
+      "fixture": "testPages.pages",
+      "extension": "pages",
+      "parser": "docling",
+      "chunks": 11,
+      "tables": 1,
+      "warnings": []
+    },
+    {
+      "fixture": "testEXCEL.xls",
+      "extension": "xls",
+      "parser": "libreoffice+docling",
+      "chunks": 4,
+      "tables": 4,
+      "warnings": [
+        "Legacy Office conversion may change layout. Compare the extracted content with the original."
+      ]
+    },
+    {
+      "fixture": "testMultipleSheets.numbers",
+      "extension": "numbers",
+      "parser": "tika",
+      "chunks": 2,
+      "tables": 9,
+      "warnings": [
+        "Tika extraction preserves text and available tables; exact page and layout locations may be unavailable."
+      ]
+    },
+    {
+      "fixture": "testMSG.msg",
+      "extension": "msg",
+      "parser": "tika",
+      "chunks": 1,
+      "tables": 0,
+      "warnings": [
+        "Tika extraction preserves text and available tables; exact page and layout locations may be unavailable."
+      ]
+    },
+    {
+      "fixture": "testPPT.ppt",
+      "extension": "ppt",
+      "parser": "libreoffice+docling",
+      "chunks": 4,
+      "tables": 0,
+      "warnings": [
+        "Legacy Office conversion may change layout. Compare the extracted content with the original."
+      ]
+    },
+    {
+      "fixture": "testKeynote.key",
+      "extension": "key",
+      "parser": "tika",
+      "chunks": 1,
+      "tables": 1,
+      "warnings": [
+        "Tika extraction preserves text and available tables; exact page and layout locations may be unavailable."
+      ]
+    },
+    {
+      "fixture": "testWORD.doc",
+      "extension": "doc",
+      "parser": "libreoffice+docling",
+      "chunks": 24,
+      "tables": 2,
+      "warnings": [
+        "Legacy Office conversion may change layout. Compare the extracted content with the original."
+      ]
+    }
+  ],
+  "failures": {}
+}

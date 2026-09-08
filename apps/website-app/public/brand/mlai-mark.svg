@@ -1,0 +1,17 @@
+<svg width="256" height="256" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MLAI">
+  <defs>
+    <linearGradient id="g" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D4FF"/><stop offset="0.5" stop-color="#7C3AED"/><stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+  <rect x="4.5" y="4.5" width="39" height="39" rx="11" stroke="url(#g)" stroke-width="2.5"/>
+  <rect x="15" y="1.5" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+  <rect x="23" y="1.5" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+  <rect x="31" y="1.5" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+  <rect x="15" y="43" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+  <rect x="23" y="43" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+  <rect x="31" y="43" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+  <rect x="13" y="28" width="22" height="4.5" rx="2.25" fill="#00D4FF"/>
+  <rect x="13" y="21.75" width="22" height="4.5" rx="2.25" fill="#7C3AED"/>
+  <rect x="13" y="15.5" width="22" height="4.5" rx="2.25" fill="#10B981"/>
+</svg>

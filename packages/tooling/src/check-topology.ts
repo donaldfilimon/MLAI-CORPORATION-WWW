@@ -9,6 +9,12 @@ const required = [
   "apps/web/package.json",
   "apps/mobile/package.json",
   "apps/quasar/package.json",
+  "apps/website-app/package.json",
+  "apps/website-app/bun.lock",
+  "apps/website-app/packages/ui/package.json",
+  "apps/website-app/mlai-website-agent/package.json",
+  "apps/website-app/worker/pyproject.toml",
+  "apps/website-app/worker/uv.lock",
   "packages/contracts/package.json",
   "packages/design-tokens/package.json",
 ];

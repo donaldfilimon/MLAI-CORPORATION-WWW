@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 `AGENTS.md` is the canonical repository-wide map: the boundaries between the
-three apps, the root commands, and what each gate does and does not prove.
+four apps, the root commands, and what each gate does and does not prove.
 Read it first, then the guidance for the surface you are changing. Do not
 duplicate their detailed instructions here.
 
@@ -12,9 +12,11 @@ duplicate their detailed instructions here.
 | `apps/web` | `apps/web/AGENTS.md`, `apps/web/CLAUDE.md`, and `apps/web/infra/README.md` for OpenTofu |
 | `apps/mobile` | `apps/mobile/AGENTS.md`, `apps/mobile/CLAUDE.md` |
 | `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
+| `apps/website-app` | `apps/website-app/AGENTS.md`, `apps/website-app/CLAUDE.md`, and `apps/website-app/README.md` |
 | `packages/*` | that package's own `README.md` |
 
-`apps/web` is the only Next.js site named MLAI in this repository. Other trees
+`apps/web` is the canonical production Next.js website; `apps/website-app` is
+the independently configured local Next.js application. Other trees
 by that name exist elsewhere on this machine (`~/CLAUDE.md` maps them), so
 confirm which one a request means before editing.
 
@@ -25,13 +27,14 @@ specific belongs to an app and runs from that app's own directory. Use Bun
 1.4, never npm, pnpm, or yarn.
 
 ```bash
-bun run install:all      # root packages, then web, mobile, quasar (non-frozen)
-bun run check            # check:topology, then web, then mobile, then quasar
+bun run install:all      # root packages, then web, mobile, quasar, website-app (non-frozen)
+bun run check            # check:topology, then web, then mobile, then quasar, then website-app
 bun run check:topology   # bun packages/tooling/src/check-topology.ts
 bun run check:web        # cd apps/web && lint && test && build
 bun run check:mobile     # cd apps/mobile && typecheck && test && lint && expo export
 bun run check:quasar     # cd apps/quasar && typecheck && test && expo export
-bun run dev:web          # also dev:mobile, dev:quasar
+bun run check:website-app # cd apps/website-app && db:migrate && check
+bun run dev:web          # also dev:mobile, dev:quasar, dev:website-app
 ```
 
 `AGENTS.md` (*Gate boundaries*) records what each gate does and does not
@@ -63,7 +66,7 @@ rather than inside one app's docs.
   cross-platform Lab colors while semantic tokens stay app-local, so a change
   there does not reach a running app on its own.
 - **A green local `bun run check` does not prove CI's install step.**
-  `.github/workflows/ci.yml` runs topology, web, mobile, and quasar as four
+  `.github/workflows/ci.yml` runs topology, web, mobile, quasar, and website-app as five
   independent jobs, each doing `bun install --frozen-lockfile` from its own
   app directory, while `install:all` is deliberately non-frozen. Lockfile
   drift therefore surfaces in CI and not locally.

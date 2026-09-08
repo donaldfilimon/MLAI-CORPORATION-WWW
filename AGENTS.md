@@ -1,7 +1,7 @@
 # AGENTS.md
 
 This is the canonical MLAI integration guide; `CLAUDE.md` points here. Read the
-app-local `AGENTS.md` for web/mobile and `apps/quasar/README.md` for Quasar.
+app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for Quasar.
 
 ## Boundaries
 
@@ -11,13 +11,16 @@ app-local `AGENTS.md` for web/mobile and `apps/quasar/README.md` for Quasar.
   encrypted-local fallback distinction and its signed-device acceptance gap.
 - `apps/quasar` is an independent nested Bun workspace. Its service, Expo app,
   template, tests, and lockfile move together.
+- `apps/website-app` is the imported local Next.js application. Keep its own
+  workspace, shared UI, agent scaffold, SQLite/Better Auth, worker and lockfiles
+  together. Run commands from that app directory; never add it to root workspaces.
 - `packages/contracts` contains names and types, not publishable benchmark
   values. App content sources remain authoritative for copy and figures.
 - `packages/tooling` holds the topology gate: `check:topology` runs
   `bun packages/tooling/src/check-topology.ts`.
 - The root is orchestration only. Run app-native gates independently and report
   their results independently.
-- Do not add web or mobile to the root Bun workspace. Their React type graphs
+- Do not add web, mobile, or website-app to the root Bun workspace. Their React type graphs
   intentionally differ; each app owns its own lockfile and `node_modules`.
 
 ## Commands
@@ -26,14 +29,16 @@ Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn.
 
 ```bash
 bun run install:all
-bun run check            # aggregate gate: check:topology && check:web && check:mobile && check:quasar
+bun run check            # aggregate gate: check:topology && check:web && check:mobile && check:quasar && check:website-app
 bun run check:topology
 bun run check:web
 bun run check:mobile
 bun run check:quasar
+bun run check:website-app
 
 bun run dev:web          # cd apps/web && bun run dev
 bun run dev:mobile       # cd apps/mobile && bun run start
+bun run dev:website-app  # cd apps/website-app && bun run dev
 bun run dev:quasar       # cd apps/quasar/apps/quasar && bun run start
 ```
 
@@ -44,7 +49,7 @@ local build alone.
 ## Gate boundaries
 
 - `install:all` uses non-frozen installs; CI uses `bun install --frozen-lockfile`
-  separately in web, mobile, and Quasar. Root workspaces contain only `packages/*`.
+  separately in web, mobile, Quasar, and website-app. Root workspaces contain only `packages/*`.
 - `check:topology` only checks required paths exist; it does not compile contracts
   or validate content, lockfile drift, or app behavior.
 - `check:web`: `lint` is `tsc --noEmit`, then Node-only Vitest, then sitemap/llms
@@ -55,6 +60,11 @@ local build alone.
 - `check:quasar`: workspace typechecks, `bun test packages`, then Expo **web**
   export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
   `bun test packages/service/src/paths.test.ts` (Bun's runner, unlike web/mobile).
+- `check:website-app`: serial database migration, UI build, TypeScript, Vitest,
+  Python pytest and Next build. Run app setup first for parser/model dependencies.
+  CI covers formatting, research validation, TypeScript, Vitest, migration and
+  build; it does not cover pytest, Playwright, or live integrations. The nested
+  agent scaffold remains non-deployable under its own `AGENTS.md`.
 - Quasar workspace globs are `packages/*` and `apps/*`; `templates/next-site`
   has its own lockfile and is not built by that aggregate gate.
 - `dev:quasar` starts only the Expo app. Start the service separately from

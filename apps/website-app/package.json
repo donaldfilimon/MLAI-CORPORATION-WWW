@@ -1,0 +1,69 @@
+{
+  "name": "mlai-website-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.4.0",
+  "workspaces": [
+    "packages/*",
+    "mlai-website-agent"
+  ],
+  "scripts": {
+    "setup": "node --import tsx scripts/setup.ts",
+    "dev": "bun run build:ui && node --import tsx scripts/dev.ts",
+    "worker": "node --import tsx scripts/worker.ts",
+    "build": "bun run build:ui && next build",
+    "start": "node --import tsx scripts/dev.ts --production",
+    "typecheck": "bun run build:ui && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:public": "MLAI_E2E_CROSS_BROWSER=1 playwright test tests/e2e/public-cross-browser.spec.ts",
+    "check": "bun run typecheck && bun run test && uv run --project worker pytest worker/tests && next build",
+    "db:migrate": "node --import tsx scripts/migrate.ts",
+    "backup": "node --import tsx scripts/backup.ts",
+    "restore": "node --import tsx scripts/restore.ts",
+    "account:staff": "node --import tsx scripts/account.ts staff",
+    "account:reset": "node --import tsx scripts/account.ts reset",
+    "format": "prettier --write src scripts tests *.ts *.json",
+    "format:check": "prettier --check src scripts tests packages/ui/src packages/ui/build.mjs packages/ui/package.json packages/ui/tsconfig.json *.ts *.json",
+    "verify:formats": "uv run --project worker python worker/validate_formats.py",
+    "verify:research": "node --import tsx scripts/verify-research.ts",
+    "verify:integrations": "node --import tsx scripts/verify-integrations.ts",
+    "model": "uv run --with mlx-lm==0.31.3 python -m mlx_lm.server --model mlx-community/Llama-3.2-3B-Instruct-4bit --host 127.0.0.1 --port 3102",
+    "verify:clean-install": "node --import tsx scripts/verify-clean-install.ts",
+    "gateway": "node --import tsx scripts/gateway.ts",
+    "build:ui": "bun run --cwd packages/ui build",
+    "verify:agent": "node --import tsx scripts/verify-agent.ts"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.4",
+    "@grpc/proto-loader": "^0.8.1",
+    "@mlai/ui": "workspace:*",
+    "@next/env": "^16.3.4",
+    "better-auth": "^1.7.3",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.2",
+    "katex": "^0.18.7",
+    "lucide-react": "^1.41.0",
+    "next": "^16.3.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "drizzle-kit": "^0.31.10",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

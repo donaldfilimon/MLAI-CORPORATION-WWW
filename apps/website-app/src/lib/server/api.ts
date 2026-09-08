@@ -1,0 +1,101 @@
+import { openapi } from "../openapi";
+import { z } from "zod";
+import { all, run } from "./db";
+import { body, context, fail, handle, id, json, now, rateLimit } from "./http";
+import { workspaceRoutes } from "./workspace";
+import { documentRoutes } from "./documents";
+import { portalRoutes } from "./portal";
+import { consoleRoutes, mutationEvents } from "./console";
+import { agentRoutes } from "./agent-routes";
+import { chat } from "./chat";
+export async function dispatch(req: Request, path: string[]) {
+  return handle(req, async () => {
+    if (path[0] === "openapi.json" && req.method === "GET")
+      return json(openapi());
+    if (path[0] === "health" && req.method === "GET")
+      return json({ status: "ok", storage: "sqlite", mode: "local" });
+    if (path[0] === "inquiries" && req.method === "POST") {
+      rateLimit("public-inquiries", 10, 60000);
+      const data = await body(
+        req,
+        z.object({
+          name: z.string().trim().min(1).max(100),
+          email: z.string().email().max(200),
+          company: z.string().max(200).default(""),
+          message: z.string().trim().min(10).max(8000),
+        }),
+        16000,
+      );
+      const key = id();
+      run(
+        "INSERT INTO inquiries(id,name,email,company,message,created_at) VALUES(?,?,?,?,?,?)",
+        key,
+        data.name,
+        data.email,
+        data.company,
+        data.message,
+        now(),
+      );
+      return json(
+        {
+          id: key,
+          message: "Your inquiry was saved for MLAI staff to review.",
+        },
+        201,
+      );
+    }
+    if (path[0] === "agent" && req.headers.has("authorization"))
+      fail(
+        403,
+        "session_required",
+        "Agent operations require a browser session.",
+      );
+    const ctx = await context(req, scopeFor(req, path));
+    if (path[0] === "chat" && path[1] && req.method === "POST")
+      return chat(req, path[1], ctx);
+    if (
+      path[0] === "connections" &&
+      path[1] &&
+      path[2] === "events" &&
+      req.method === "GET"
+    )
+      return mutationEvents(req, path[1], ctx);
+    for (const route of [
+      agentRoutes,
+      workspaceRoutes,
+      documentRoutes,
+      portalRoutes,
+      consoleRoutes,
+    ]) {
+      const result = await route(req, path, ctx);
+      if (result) return result;
+    }
+    fail(404, "not_found", "API route not found.");
+  });
+}
+
+/**
+ * Required scope for a request. Two paths deliberately resolve to "read" even
+ * though they are not GETs, because a read-only viewer is allowed to perform
+ * them; context() gates every other non-read scope on membership role.
+ */
+function scopeFor(req: Request, path: string[]) {
+  // Agent endpoints are session-only and re-authorize per operation in
+  // agentRoutes: read tools run for viewers, write tools only ever produce
+  // proposals that an authorized requester must confirm.
+  if (path[0] === "agent") return "read";
+  // Starting an investigation creates its conversation first (agent-view's
+  // start()). Browser sessions only; a scoped Bearer key still needs "write".
+  if (
+    path[0] === "conversations" &&
+    !path[1] &&
+    req.method === "POST" &&
+    !req.headers.has("authorization")
+  )
+    return "read";
+  if (req.method === "GET") return "read";
+  if (path[0] === "chat") return "chat";
+  if (path[0] === "documents") return "documents";
+  if (["playground", "connections"].includes(path[0])) return "console";
+  return "write";
+}

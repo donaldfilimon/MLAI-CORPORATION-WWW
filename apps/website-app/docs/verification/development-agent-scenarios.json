@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-09-06T11:22:33.170323+00:00",
+  "agentFile": ".claude/agents/abbey.md",
+  "agentSha256": "a86d4cd6fd7b9b400db3dd3a6848ba8a6a895d340f4cfa6b115fdfb924b8bea2",
+  "modelSelection": "inherit, no CLI override",
+  "scenarios": [
+    {
+      "scenario": "repository-analysis",
+      "exitCode": 1,
+      "discovered": true,
+      "status": "blocked_account_session_limit",
+      "toolUses": 0
+    },
+    {
+      "scenario": "bounded-repair",
+      "exitCode": 1,
+      "discovered": true,
+      "status": "blocked_account_session_limit",
+      "toolUses": 0
+    },
+    {
+      "scenario": "privacy-boundary",
+      "exitCode": 1,
+      "discovered": true,
+      "status": "blocked_account_session_limit",
+      "toolUses": 0
+    }
+  ],
+  "fixtureChanged": false
+}

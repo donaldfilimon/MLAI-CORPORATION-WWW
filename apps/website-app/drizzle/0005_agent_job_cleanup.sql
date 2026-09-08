@@ -1,0 +1,1 @@
+CREATE TRIGGER cancel_deleted_agent_jobs BEFORE DELETE ON agent_runs BEGIN UPDATE jobs SET status='cancelled',lease_until=NULL WHERE id IN (SELECT job_id FROM agent_jobs WHERE run_id=old.id) AND status IN ('queued','running'); END;

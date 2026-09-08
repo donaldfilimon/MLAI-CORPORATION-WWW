@@ -1,0 +1,24 @@
+/* MLAI design system stylesheet.
+   Load order is significant: tokens define the custom properties the other two
+   layers read, base sets element defaults, components style the exported parts.
+   Consumers may load additional CSS after this file to override any of it. */
+/* Tailwind: preflight + theme + utilities. @source points at compiled package
+   sources so shadcn utility classes in components/ui are generated when the
+   stylesheet is processed by the app bundler. */
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "../**/*.{js,jsx,ts,tsx}";
+@import "@fontsource/geist-sans/400.css";
+@import "@fontsource/geist-sans/500.css";
+@import "@fontsource/geist-sans/600.css";
+@import "@fontsource/geist-sans/700.css";
+@import "@fontsource/spectral/500.css";
+@import "@fontsource/spectral/600.css";
+@import "@fontsource/spectral/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";

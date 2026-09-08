@@ -1,0 +1,126 @@
+:root {
+  color-scheme: dark;
+  /* Lab identity — revalued from handoff; no second token sheet. */
+  --bg: #05070d;
+  --panel: #0e1218;
+  --panel-raised: #171b21;
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #e6edf6;
+  --muted: #93a4ba;
+  --cyan: #22d3ee;
+  --purple: #a855f7;
+  --green: #34d399;
+  --warn: #fbbf24;
+  /* Text ramp. `--text` is for headings and anything that must read as
+     foreground; `--text-body` is running prose, which sat at four
+     near-identical literals (#c0c6cf, #c5ccd5, #b7c0cb, #b8c0cb) before this
+     token existed; `--muted` is supporting copy; `--text-faint` is the
+     footer-label tier. Four steps, so a fifth grey has to justify itself. */
+  --text-body: #c0c6cf;
+  --text-faint: #64748b;
+
+  --font-body: "Geist Sans", "Geist", system-ui, sans-serif;
+  --font-heading: "Spectral", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Radius scale. Was 15 distinct values with 4px and 5px used 29 times
+     between them for the same visual job; those collapse into `sm`.
+     `--radius` below is shadcn's and stays, since its primitives read it. */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  /* Type scale. The site had no size tokens at all and three conflicting h1
+     rules. Ratio is ~1.25 from the 14px body, with the display step set by
+     the hero clamp rather than the ratio. */
+  --size-1: 11px;
+  --size-2: 12px;
+  --size-3: 14px;
+  --size-4: 18px;
+  --size-5: 22px;
+  --size-6: 27px;
+  --size-7: clamp(28px, 3vw, 36px);
+  --size-display: clamp(40px, 4.8vw, 56px);
+  /* The home hero is deliberately larger than an inner page's. That is a size
+     decision and it stays; what does not stay is three different trackings on
+     one serif at display size (-0.035em base, -0.065em home, -0.015em
+     marketing). Spectral has open counters and crowds under heavy negative
+     tracking, so one display tracking governs every hero. */
+  --size-display-lg: clamp(40px, 4.6vw, 65px);
+  --tracking-display: -0.02em;
+  --leading-display: 1.08;
+
+  /* Spacing. The sheet carried 55 distinct padding/margin values, but they are
+     not all noise: 20px is the card gap in three separate grids, and 32/40/56/64
+     each set a real structural rhythm. Those stay as steps; the one-offs that
+     sat beside them for no recoverable reason (44, 55, 61, 72, 77) snap onto the
+     nearest, none moving more than 8px. Same rule as the colour and radius
+     sweeps — one authority per repeated value, not a scale imposed from
+     outside. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 56px;
+  --space-11: 64px;
+  --space-12: 80px;
+  /* Product accents. AGENTS.md fixes these three: WDBX cyan, ABI violet, Abbey emerald. */
+  --accent-wdbx: var(--cyan);
+  --accent-abi: var(--purple);
+  --accent-abbey: var(--green);
+
+  /* shadcn/ui CSS variables — mapped onto Lab tokens (cyan primary). */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--panel);
+  --card-foreground: var(--text);
+  --popover: var(--panel-raised);
+  --popover-foreground: var(--text);
+  --primary: var(--cyan);
+  --primary-foreground: #041016;
+  --secondary: var(--panel-raised);
+  --secondary-foreground: var(--text);
+  --muted-foreground: var(--muted);
+  --accent: color-mix(in srgb, var(--cyan) 14%, var(--panel));
+  --accent-foreground: var(--text);
+  --destructive: #f87171;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: color-mix(in srgb, var(--cyan) 55%, transparent);
+  --radius: 0.7rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--panel);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+}

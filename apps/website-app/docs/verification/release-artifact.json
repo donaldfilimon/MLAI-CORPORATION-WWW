@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-09-06T11:16:58.383099+00:00",
+  "runtimeSourceSha256": "2b8d27fddf74fa006df57088aea0b0c19adb489bac909fa6fddd64e1090abbba",
+  "sourceManifest": "clean-install.json#/source",
+  "baseCommit": "1d4b727df2a4daf0d799d80ea855e24a42dde6b8",
+  "productionArtifact": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/releases/mlai-clean-rG7B8J",
+  "productionBuildId": "GAYFAbZTo-GWQtbywXnAU",
+  "frozenBunLockSha256": "c663c5d670be4c146e78b088fc14b8dc1799c7401d224396431b59918c175fe4",
+  "checks": {
+    "format": {
+      "exitCode": 0
+    },
+    "cleanInstall": {
+      "exitCode": 0,
+      "vitest": 18,
+      "pytest": 26,
+      "productionBuild": true,
+      "developmentRebuildsUi": true,
+      "processTreeTeardown": true,
+      "productionRestartPersistence": true,
+      "formatFixtures": 24,
+      "advertisedExtensions": 23
+    },
+    "browser": {
+      "exitCode": 0,
+      "chromiumWorkflows": 5,
+      "viewports": [390, 768, 1440],
+      "keyboardAndReducedMotion": true,
+      "http5xxFailWorkflow": true
+    },
+    "localIntegrations": {
+      "exitCode": 0,
+      "receipt": "local-integrations.json"
+    },
+    "abbeyDevelopmentAgent": {
+      "structure": "passed",
+      "claudeDiscovery": "passed",
+      "responseSmoke": "blocked by Claude account session limit",
+      "receipt": "abbey-agent.json"
+    }
+  },
+  "localHandoff": {
+    "url": "http://127.0.0.1:3100",
+    "controlledRestart": true,
+    "mainRecordsPreserved": true,
+    "routes": {
+      "/": 200,
+      "/docs/api": 200,
+      "/api/v1/health": 200,
+      "/app": 307,
+      "/api/v1/bootstrap": 401
+    },
+    "log": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/local-release.log",
+    "processState": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/local-release.json"
+  },
+  "rollbackArtifact": "/Users/donaldfilimon/dev/active/mlai-website-app/.data/releases/verified-app",
+  "scope": "Combined local application, shared UI and project development agent. New in-app autonomous agent actions remain separate ongoing work.",
+  "sourceCommit": "1cbaed670cd4773c56f720775c2de21859613002",
+  "handoff": {
+    "sourceFreeze": "released",
+    "successorWork": "The separate task may resume its in-app agent feature using isolated data and new acceptance evidence.",
+    "taskMessage": "Automatic handoff delivery failed because the destination had no active turn id; this committed ledger is the handoff."
+  }
+}
