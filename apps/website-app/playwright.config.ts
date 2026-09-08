@@ -21,11 +21,18 @@ const baseURL = `http://127.0.0.1:${port}`;
 const crossBrowser = process.env.MLAI_E2E_CROSS_BROWSER === "1";
 export default defineConfig({
   testDir: "tests/e2e",
+  outputDir: `test-results/runs/${runId}`,
   timeout: 60000,
   fullyParallel: false,
   workers: 1,
   retries: 0,
-  reporter: [["list"], ["html", { open: "never" }]],
+  reporter: [
+    ["list"],
+    [
+      "html",
+      { open: "never", outputFolder: `playwright-report/runs/${runId}` },
+    ],
+  ],
   use: {
     baseURL,
     trace: "retain-on-failure",

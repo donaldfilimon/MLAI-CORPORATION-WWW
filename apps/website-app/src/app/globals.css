@@ -629,6 +629,7 @@
 
 .onboarding ol {
   display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   list-style: none;
   padding: 0;
@@ -644,6 +645,7 @@
 }
 
 .onboarding li > span {
+  flex-shrink: 0;
   border: 1px solid #305165;
   border-radius: 50%;
   width: 25px;
@@ -1095,6 +1097,16 @@
   color: #c5a6ef;
   font-size: 11px;
   overflow-wrap: anywhere;
+}
+
+.citation[aria-pressed="true"] {
+  border-color: #8adbba;
+  background: #8adbba18;
+  color: #8adbba;
+}
+
+.source-inspector > .button {
+  margin-top: 10px;
 }
 
 .composer-wrap {

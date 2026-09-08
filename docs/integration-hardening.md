@@ -62,7 +62,7 @@ Receipts:
 - [Local services](../apps/website-app/docs/verification/integration-3ce1f0c-local-services.json).
 - [Agent recovery](../apps/website-app/docs/verification/integration-3ce1f0c-agent-recovery.json).
 - [Browser acceptance](../apps/website-app/docs/verification/integration-3ce1f0c-browsers.json).
-  Raw reports/traces remain in ignored app-local `test-results/integration-3ce1f0c-*`.
+  Raw reports/traces were originally saved in ignored app-local `test-results/integration-3ce1f0c-*`. A later roadmap acceptance run replaced that ignored directory; see the [evidence handling incident](four-app-journeys.md#evidence-handling-incident). Committed receipts remain intact.
 
 Local model preflight advertised `mlx-community/Llama-3.2-3B-Instruct-4bit` at
 `http://127.0.0.1:3102/v1`. Verifiers used explicit existing ABI and WDBX gateway

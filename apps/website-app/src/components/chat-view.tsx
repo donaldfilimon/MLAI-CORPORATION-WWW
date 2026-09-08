@@ -1,5 +1,5 @@
 "use client";
-import { useDrawerFocus } from "./use-drawer-focus";
+import { CitationInspector } from "./citation-inspector";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
@@ -9,8 +9,6 @@ import {
   Copy,
   ExternalLink,
   FileText,
-  MessageCircle,
-  X,
   Download,
   Trash2,
   Pencil,
@@ -65,12 +63,14 @@ function AskView() {
     [error, setError] = useState(""),
     [project, setProject] = useState<string>(""),
     [source, setSource] = useState<Citation | null>(null),
-    [provider, setProvider] = useState("");
+    [provider, setProvider] = useState(""),
+    [documentId, setDocumentId] = useState<string | null>(null);
   const abort = useRef<AbortController | null>(null),
     bottom = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     setProject(q.get("project") || "");
+    setDocumentId(q.get("document"));
     if (q.get("conversation")) setSelected(q.get("conversation"));
   }, []);
   useEffect(() => {
@@ -96,31 +96,6 @@ function AskView() {
     bottom.current?.scrollIntoView({ behavior: "auto", block: "nearest" });
   }, [messages]);
   useEffect(() => () => abort.current?.abort(), []);
-  useDrawerFocus(!!source, ".source-inspector", () => setSource(null), 1000);
-  useEffect(() => {
-    if (!source || source.removed) return;
-    let live = true;
-    api<{ content: string }>(
-      `documents/${source.documentId}/source?chunk=${source.id}`,
-    )
-      .then((result) => {
-        if (live)
-          setSource((current) =>
-            current ? { ...current, content: result.content } : null,
-          );
-      })
-      .catch(() => {
-        if (live)
-          setSource((current) =>
-            current
-              ? { ...current, removed: true, content: "Source removed." }
-              : null,
-          );
-      });
-    return () => {
-      live = false;
-    };
-  }, [source?.id, api]);
   const selectedProvider =
     connections.data?.find((c) => c.id === boot.workspace.provider_id) ||
     connections.data?.find((c) => c.kind === "local");
@@ -213,6 +188,7 @@ function AskView() {
             );
           if (kind === "error") {
             setError(value.message);
+            setInput(text);
             setMessages((current) =>
               current.map((m) =>
                 m.id === localId
@@ -231,6 +207,7 @@ function AskView() {
     } catch (e) {
       const cancelled = (e as Error).name === "AbortError";
       setError(cancelled ? "Generation stopped." : (e as Error).message);
+      setInput(text);
       setMessages((current) =>
         current.map((m) =>
           m.id === localId
@@ -342,6 +319,15 @@ function AskView() {
             </div>
           )}
         </div>
+        {documentId && (
+          <p className="small muted">
+            Question scoped to{" "}
+            <Link href={`/app/documents?document=${documentId}`}>
+              this document
+            </Link>
+            . Start with “What are its key points? Cite the source locations.”
+          </p>
+        )}
         <div className="chat-messages">
           {!messages.length && (
             <div className="chat-welcome">
@@ -396,7 +382,7 @@ function AskView() {
                     <button
                       key={c.id}
                       className="citation"
-                      disabled={c.removed}
+                      aria-pressed={source?.id === c.id}
                       onClick={() => setSource(c)}
                     >
                       <FileText size={15} />[{c.number}] {c.name} ·{" "}
@@ -406,15 +392,17 @@ function AskView() {
                   ))}
                 </div>
               )}
-              {m.role === "assistant" && m.content && (
+              {m.role === "assistant" && (
                 <div className="message-actions">
-                  <button
-                    className="text-button"
-                    onClick={() => navigator.clipboard.writeText(m.content)}
-                  >
-                    <Copy size={14} />
-                    Copy
-                  </button>
+                  {m.content && (
+                    <button
+                      className="text-button"
+                      onClick={() => navigator.clipboard.writeText(m.content)}
+                    >
+                      <Copy size={14} />
+                      Copy
+                    </button>
+                  )}
                   {m.citations?.length > 0 && (
                     <button
                       className="text-button"
@@ -445,6 +433,15 @@ function AskView() {
         </div>
         <div className="composer-wrap">
           <ErrorMessage message={error} />
+          {error && (
+            <p className="small muted">
+              Your question is kept below.{" "}
+              <Link href="/app/settings">Review or test your provider</Link>,
+              then send it again.{" "}
+              <Link href="/app/documents">Read your documents</Link> while the
+              model is unavailable.
+            </p>
+          )}
           <form
             className="composer"
             onSubmit={(e) => {
@@ -457,7 +454,7 @@ function AskView() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask Abbey about this project…"
-              disabled={boot.role === "viewer"}
+              disabled={busy || boot.role === "viewer"}
               rows={2}
               maxLength={16000}
               onKeyDown={(e) => {
@@ -510,7 +507,12 @@ function AskView() {
                   type="button"
                   className="send-button"
                   aria-label="Stop generation"
-                  onClick={() => abort.current?.abort()}
+                  onClick={(event) => {
+                    // Aborting can turn this reused DOM button into Send before
+                    // the click default runs. Never submit the restored draft.
+                    event.preventDefault();
+                    abort.current?.abort();
+                  }}
                 >
                   <Square size={18} />
                 </button>
@@ -532,35 +534,14 @@ function AskView() {
               }
             />
             {provider ||
-              `${selectedProvider?.kind === "hosted" ? "Hosted" : "Local"} processing selected`}
+              (selectedProvider
+                ? `${selectedProvider.kind === "hosted" ? "Hosted" : "Local"} processing selected · reachability not checked here`
+                : "No model configured · documents remain available")}
           </p>
         </div>
       </div>
       {source && (
-        <aside className="source-inspector" aria-label="Source inspector">
-          <header>
-            <h3>Sources</h3>
-            <button
-              className="icon-button"
-              aria-label="Close source inspector"
-              onClick={() => setSource(null)}
-            >
-              <X size={18} />
-            </button>
-          </header>
-          <h4>
-            <FileText size={20} />
-            {source.name}
-          </h4>
-          <p className="muted">{locationLabel(source.location)}</p>
-          {source.content && <blockquote>{source.content}</blockquote>}
-          <Link
-            className="button secondary"
-            href={`/app/documents?document=${source.documentId}&chunk=${source.id}`}
-          >
-            Open document <ExternalLink size={16} />
-          </Link>
-        </aside>
+        <CitationInspector source={source} onClose={() => setSource(null)} />
       )}
     </div>
   );

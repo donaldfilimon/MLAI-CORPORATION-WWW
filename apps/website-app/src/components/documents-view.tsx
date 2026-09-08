@@ -1,4 +1,5 @@
 "use client";
+import { CitationInspector } from "./citation-inspector";
 import { useDrawerFocus } from "./use-drawer-focus";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -43,7 +44,8 @@ export function DocumentsView() {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [kind, setKind] = useState("summary"),
-    [compare, setCompare] = useState<string[]>([]);
+    [compare, setCompare] = useState<string[]>([]),
+    [source, setSource] = useState<Citation | null>(null);
   const focusedSource = useData<{
     id: string;
     content: string;
@@ -75,7 +77,9 @@ export function DocumentsView() {
         (!project || d.project_id === project) &&
         d.name.toLowerCase().includes(q.toLowerCase()),
     ) || [];
-  useDrawerFocus(!!selected, ".document-inspector", () => setSelected(null));
+  useDrawerFocus(!!selected && !source, ".document-inspector", () =>
+    setSelected(null),
+  );
   const doc = detail.data;
   async function action(name: string) {
     if (!selected) return;
@@ -292,6 +296,12 @@ export function DocumentsView() {
               <div className="processing-state">
                 <Status value={doc.status} />
                 <p>{doc.progress}</p>
+                {["failed", "cancelled"].includes(doc.status) && (
+                  <p>
+                    Your uploaded original is retained. Download it or retry
+                    processing without uploading again.
+                  </p>
+                )}
                 {["queued", "processing"].includes(doc.status) && (
                   <button
                     className="button secondary small"
@@ -315,6 +325,11 @@ export function DocumentsView() {
             )}
             {focusedSource.data && (
               <section className="focused-source" tabIndex={-1}>
+                <h4>{doc?.name}</h4>
+                <p className="small muted">
+                  A model citation is a reference, not independent verification.
+                  Compare the answer with the excerpt and original document.
+                </p>
                 <span className="eyebrow">
                   Cited source · {locationLabel(focusedSource.data.location)}
                 </span>
@@ -489,17 +504,17 @@ export function DocumentsView() {
                     <div className="citations">
                       {(JSON.parse(i.citations || "[]") as Citation[]).map(
                         (c) => (
-                          <Link
+                          <button
+                            className="citation"
                             key={c.id}
-                            href={`/app/documents?document=${c.documentId}&chunk=${c.id}`}
-                            onClick={() => {
-                              setSelected(c.documentId);
-                              setChunk(c.id);
-                              setTab("preview");
-                            }}
+                            aria-pressed={source?.id === c.id}
+                            onClick={() => setSource(c)}
                           >
-                            [{c.number}] {c.name} · {locationLabel(c.location)}
-                          </Link>
+                            [{c.number}] {c.name} ·{" "}
+                            {c.removed
+                              ? "Source removed"
+                              : locationLabel(c.location)}
+                          </button>
                         ),
                       )}
                     </div>
@@ -509,14 +524,41 @@ export function DocumentsView() {
             )}
           </div>
           <footer className="document-footer">
-            <Link
-              className="button secondary full"
-              href={`/app/abbey?document=${selected}${doc?.project_id ? `&project=${doc.project_id}` : ""}`}
-            >
-              Ask Abbey about this document <ArrowRight size={17} />
-            </Link>
+            {doc && ["ready", "partial"].includes(doc.status) ? (
+              <>
+                <p className="small muted">
+                  {doc.status === "partial"
+                    ? "Some content could not be extracted. Review the warnings before asking."
+                    : "Your source is ready."}{" "}
+                  Ask a scoped question and inspect the cited excerpts. A
+                  reachable model is needed only for the answer.
+                </p>
+                <Link
+                  className="button secondary full"
+                  href={`/app/abbey?document=${selected}${doc?.project_id ? `&project=${doc.project_id}` : ""}`}
+                >
+                  Ask Abbey about this document <ArrowRight size={17} />
+                </Link>
+              </>
+            ) : (
+              <p className="small muted">
+                Process this source before asking a question about its content.
+              </p>
+            )}
           </footer>
         </section>
+      )}
+      {source && (
+        <CitationInspector
+          source={source}
+          onClose={() => setSource(null)}
+          onOpenDocument={(citation) => {
+            setSelected(citation.documentId);
+            setChunk(citation.id);
+            setTab("preview");
+            setSource(null);
+          }}
+        />
       )}
     </div>
   );

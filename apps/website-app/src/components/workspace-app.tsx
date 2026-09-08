@@ -23,7 +23,14 @@ import {
 } from "lucide-react";
 import { Brand } from "./brand";
 import { AppContext, ErrorMessage, useApp, useData, date } from "./app-context";
-import type { Bootstrap, Project, Notification, Citation } from "@/lib/types";
+import type {
+  Bootstrap,
+  Project,
+  Notification,
+  Citation,
+  DocumentRecord,
+  Conversation,
+} from "@/lib/types";
 import { ChatView } from "./chat-view";
 import { DocumentsView } from "./documents-view";
 import { ConsoleView } from "./console-view";
@@ -282,6 +289,64 @@ export function WorkspaceApp({ view }: { view: string }) {
 }
 function Overview() {
   const { data, api, refresh } = useApp();
+  const documents = useData<DocumentRecord[]>("documents");
+  const conversations = useData<Conversation[]>("conversations");
+  const [answered, setAnswered] = useState<boolean | null>(null);
+  const [progressError, setProgressError] = useState("");
+  useEffect(() => {
+    let live = true;
+    const items = conversations.data;
+    if (!items) return;
+    setAnswered(null);
+    setProgressError("");
+    void (async () => {
+      try {
+        for (const conversation of items) {
+          const detail = await api<Conversation>(
+            `conversations/${conversation.id}`,
+          );
+          if (!live) return;
+          if (
+            detail.messages?.some(
+              (message) =>
+                message.role === "assistant" &&
+                message.status === "complete" &&
+                message.content.trim(),
+            )
+          ) {
+            setAnswered(true);
+            return;
+          }
+        }
+        if (live) setAnswered(false);
+      } catch (error) {
+        if (live) setProgressError((error as Error).message);
+      }
+    })();
+    return () => {
+      live = false;
+    };
+  }, [api, conversations.data]);
+  const steps = [
+    {
+      label: "Create a project",
+      href: "/app/projects",
+      done: data.projects.some((p) => !p.archived),
+    },
+    {
+      label: "Choose a model",
+      href: "/app/settings",
+      done: !!data.workspace.provider_id,
+    },
+    {
+      label: "Process a document",
+      href: "/app/documents",
+      done: documents.data
+        ? documents.data.some((d) => ["ready", "partial"].includes(d.status))
+        : null,
+    },
+    { label: "Complete a conversation", href: "/app/abbey", done: answered },
+  ];
   return (
     <div className="page-padding">
       <header className="view-intro">
@@ -292,18 +357,26 @@ function Overview() {
         <section className="onboarding">
           <div>
             <h3>Make this workspace yours.</h3>
-            <p>Start with a project, connect a model, and add a source.</p>
+            <p>
+              Create projects and read or search processed documents without a
+              model. Select and test a provider when you are ready to ask Abbey.
+            </p>
+            <p role="status">
+              {steps.filter((step) => step.done).length} of 4 steps complete
+            </p>
           </div>
+          <ErrorMessage
+            message={documents.error || conversations.error || progressError}
+          />
           <ol>
-            {[
-              ["Create a project", "/app/projects"],
-              ["Choose a model", "/app/settings"],
-              ["Upload a document", "/app/documents"],
-            ].map(([label, href], i) => (
+            {steps.map(({ label, href, done }, i) => (
               <li key={href}>
-                <span>{i + 1}</span>
+                <span aria-hidden="true">
+                  {done ? <Check size={16} /> : i + 1}
+                </span>
                 <Link href={href}>
-                  {label}
+                  {label} ·{" "}
+                  {done === null ? "Checking" : done ? "Complete" : "Next"}
                   <ArrowRight size={16} />
                 </Link>
               </li>

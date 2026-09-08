@@ -1,5 +1,24 @@
 # MLAI implementation and acceptance ledger
 
+## Four-app roadmap: Abbey milestone (2026-09-08)
+
+Derived onboarding, explicit provider reachability, recoverable questions and
+processing retries, and transparent citation inspection use existing APIs and
+storage. The real browser journey reaches 4/4 completion after reload, downloads
+original synthetic source bytes, and cancels without duplicate submission.
+
+Final runtime digest: `214149fbfd35ad7d94f1a9735572223604ea9b29e0bc1fc981c3bab1c289fc3f`.
+[Browser evidence](verification/journeys-abbey-browser-20260908.json) and
+[15-run local evaluation](verification/journeys-abbey-citations-final-20260908-0902.json)
+retain outcomes independently. The evaluation has zero retrieval/mapping/auth/
+execution failures, one source-selection annotation error, and zero insufficient-
+evidence errors. Raw synthetic streams are retained; the rubric requires human
+semantic review. The earlier 15-run receipt remains a separate pre-final snapshot.
+
+Current gates and hosted delivery are in the [four-app ledger](../../../docs/four-app-journeys.md).
+Native screen-reader and true browser zoom remain unperformed. No local release
+activation, schema/auth migration or provider configuration change occurred.
+
 ## Integrated application acceptance (2026-09-08)
 
 Canonical checkout is `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`,

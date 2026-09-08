@@ -33,7 +33,8 @@
     "verify:clean-install": "node --import tsx scripts/verify-clean-install.ts",
     "gateway": "node --import tsx scripts/gateway.ts",
     "build:ui": "bun run --cwd packages/ui build",
-    "verify:agent": "node --import tsx scripts/verify-agent.ts"
+    "verify:agent": "node --import tsx scripts/verify-agent.ts",
+    "verify:citations": "node --import tsx scripts/verify-citations.ts"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.4",

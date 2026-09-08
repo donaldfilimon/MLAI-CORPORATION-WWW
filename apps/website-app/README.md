@@ -37,6 +37,12 @@ An explicit destination must not already exist. Omit `--output` only when you
 intend to retain the command's legacy default receipt behavior. Fresh receipts
 record runtime source identity; older imported receipts remain historical.
 
+Browser artifacts default to UUID-specific subdirectories under `test-results/runs` and `playwright-report/runs`. Explicit `--output` paths must also be fresh; never point a run at the shared parent directory.
+
+## Citation quality evaluation
+
+Run `MLAI_MODEL_URL=http://127.0.0.1:3102/v1 MLAI_MODEL_ID=<advertised-local-model> bun run verify:citations --output docs/verification/<new-revision>-citations.json` after preflighting the selected local service. This uses isolated synthetic source records through the actual authenticated chat API, five repetitions of each of three annotated scenarios. Every answer is retained; source-selection and insufficient-evidence errors are separate from source-mapping, authorization, and execution failures. The rubric is bounded and requires human semantic review, not a certification of model accuracy. The script never silently switches provider or uses customer documents. Parser extraction is covered by the independent document acceptance gate.
+
 ## Commands
 
 | Command                                     | Purpose                                                                                                       |

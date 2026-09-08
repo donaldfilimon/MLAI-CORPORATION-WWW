@@ -1,3 +1,13 @@
+# Current four-app journeys roadmap — 2026-09-08
+
+The integration at `720b403` is the baseline. The approved next work is four
+independent milestones: Abbey onboarding/source review, public product discovery,
+mobile vault recovery, and Quasar connection/preview recovery. See
+[the current delivery ledger](../docs/four-app-journeys.md). Earlier sections are
+historical checkpoints, not evidence that this new roadmap is complete.
+
+---
+
 # Current integration completion — 2026-09-08
 
 Canonical checkout: `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`.

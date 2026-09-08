@@ -10,7 +10,17 @@ export function SettingsView() {
         "workspaces/members",
       );
   const [error, setError] = useState(""),
-    [notice, setNotice] = useState("");
+    [notice, setNotice] = useState(""),
+    [testing, setTesting] = useState(false),
+    [lastTest, setLastTest] = useState<{
+      id: string;
+      message: string;
+      time: string;
+    } | null>(null);
+  const selectedProvider =
+    connections.data?.find(
+      (connection) => connection.id === boot.workspace.provider_id,
+    ) || connections.data?.find((connection) => connection.kind === "local");
   async function save(fn: () => Promise<unknown>) {
     setError("");
     setNotice("");
@@ -186,6 +196,64 @@ export function SettingsView() {
                 Save workspace settings
               </button>
             </form>
+          </section>
+          <section className="settings-section">
+            <div>
+              <h3>Provider connectivity</h3>
+              <p>
+                A saved selection does not establish reachability. Tests run
+                only when you request them; a result is a point-in-time
+                connection check, not a successful generation.
+              </p>
+            </div>
+            <div>
+              <p>
+                {selectedProvider
+                  ? `${boot.workspace.provider_id ? "Selected" : "Default local"}: ${selectedProvider.name}`
+                  : "No model connection configured."}
+              </p>
+              <p className="small muted">
+                Projects, uploads, extracted text, and keyword search remain
+                usable without a model.
+              </p>
+              <button
+                className="button secondary small"
+                disabled={testing || !selectedProvider}
+                onClick={async () => {
+                  if (!selectedProvider || testing) return;
+                  const id = selectedProvider.id;
+                  setTesting(true);
+                  try {
+                    const result = await api<{
+                      connected: boolean;
+                      reason?: string;
+                    }>(`connections/${id}/probe`, "POST", {});
+                    setLastTest({
+                      id,
+                      message: result.connected
+                        ? "Connection reachable"
+                        : `Connection unavailable: ${result.reason || "Provider did not respond"}`,
+                      time: new Date().toLocaleTimeString(),
+                    });
+                  } catch (error) {
+                    setLastTest({
+                      id,
+                      message: `Connection test failed: ${(error as Error).message}`,
+                      time: new Date().toLocaleTimeString(),
+                    });
+                  } finally {
+                    setTesting(false);
+                  }
+                }}
+              >
+                {testing ? "Testing connection…" : "Test selected provider"}
+              </button>
+              <p role="status">
+                {lastTest && lastTest.id === selectedProvider?.id
+                  ? `Last test at ${lastTest.time}: ${lastTest.message}`
+                  : "Not tested in this visit."}
+              </p>
+            </div>
           </section>
           <section className="settings-section">
             <div>

@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-09-08T12:59:41.165065+00:00",
+  "baseline": "720b403",
+  "runtimeSourceSha256": "214149fbfd35ad7d94f1a9735572223604ea9b29e0bc1fc981c3bab1c289fc3f",
+  "node": "24.20.0",
+  "bun": "1.4.0",
+  "browser": {
+    "recoveryAndInspectorPlusOriginalWorkflowAndLive": {
+      "passed": 4,
+      "failed": 0,
+      "duration": "38.3s",
+      "artifacts": "test-results/journeys-abbey-20260908-final-cancel",
+      "note": "Precedes addition of final request-count assertion; production source is identical."
+    },
+    "finalLiveWithRequestCount": {
+      "passed": 1,
+      "failed": 0,
+      "duration": "29.5s",
+      "artifacts": "test-results/journeys-abbey-20260908-final-request-count",
+      "checks": [
+        "new account",
+        "project",
+        "explicit provider selection and probe",
+        "project document upload and processing",
+        "document-scoped answer",
+        "source excerpt and real original download bytes",
+        "390/768/1440 responsive inspector",
+        "4 of 4 overview and reload",
+        "cancellation retains draft with exactly one chat POST"
+      ]
+    }
+  },
+  "limitations": [
+    "Native screen-reader and actual browser zoom not performed.",
+    "Initial browser default output replaced older ignored reports; tracked historical receipts remain intact. See root delivery ledger.",
+    "Live model semantic correctness is not certified; final 15-run evaluation retains one source-selection annotation error."
+  ],
+  "earlierFailures": [
+    "Shared UI build:ui raced the browser server; serialized build/browser gates thereafter.",
+    "Stop click resubmitted restored draft through reused button; fixed preventDefault and request-count regression."
+  ]
+}
