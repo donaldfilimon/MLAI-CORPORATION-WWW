@@ -1,0 +1,108 @@
+{
+  "sourceSha256": "e09e4f54c52045cf380ec8db6c5ce65d8b6bd81d48b281607ff549abb6b08a26",
+  "checkedAt": "2026-09-08T13:22:17.746Z",
+  "baseCommit": "50ebcf168561c834d51ad922227b1097c95a7acc",
+  "base": "https://127.0.0.1:3132",
+  "staticBase": "http://127.0.0.1:3131",
+  "selfSignedLoopback": true,
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Successful navigation and visible heading: /products",
+        "Keyboard navigation reaches and opens Get started (Tab)",
+        "Successful navigation and visible heading: /get-started",
+        "Mobile menu contains all destinations and restores focus on Escape",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 abi \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 abbey \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 wdbx \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 quasar \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /research",
+        "Research filtering and documentation search retain results",
+        "Successful navigation and visible heading: /research/wdbx-weighted-backtrace-memory-store",
+        "Research product backlink and original PDF HTTP bytes verified",
+        "Standalone Pages navigation activated at 390/768/1440 with four source setup paths and no server-only links"
+      ],
+      "uncaughtErrors": [],
+      "passed": true
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Successful navigation and visible heading: /products",
+        "Keyboard navigation reaches and opens Get started (Tab)",
+        "Successful navigation and visible heading: /get-started",
+        "Mobile menu contains all destinations and restores focus on Escape",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 abi \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 abbey \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 wdbx \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 quasar \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /research",
+        "Research filtering and documentation search retain results",
+        "Successful navigation and visible heading: /research/wdbx-weighted-backtrace-memory-store",
+        "Research product backlink and original PDF HTTP bytes verified",
+        "Standalone Pages navigation activated at 390/768/1440 with four source setup paths and no server-only links"
+      ],
+      "uncaughtErrors": [],
+      "passed": true
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "Successful navigation and visible heading: /products",
+        "Keyboard navigation reaches and opens Get started (macOS Option-Tab includes links)",
+        "Successful navigation and visible heading: /get-started",
+        "Mobile menu contains all destinations and restores focus on Escape",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 abi \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 abbey \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 wdbx \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index \u2192 quasar \u2192 research \u2192 product links activated",
+        "Successful navigation and visible heading: /research",
+        "Research filtering and documentation search retain results",
+        "Successful navigation and visible heading: /research/wdbx-weighted-backtrace-memory-store",
+        "Research product backlink and original PDF HTTP bytes verified",
+        "Standalone Pages navigation activated at 390/768/1440 with four source setup paths and no server-only links"
+      ],
+      "uncaughtErrors": [],
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Native screen-reader and actual browser zoom are not evaluated by this harness."
+  ],
+  "stableSource": true,
+  "localGate": {
+    "tests": 396,
+    "files": 44,
+    "typecheck": "passed",
+    "productionBuild": "passed"
+  },
+  "artifacts": "output/playwright/journeys-web-20260908-i",
+  "visualReview": "Reviewed WebKit 390px heading and Chromium 1440px standalone layout; heading regression fixed.",
+  "crawl": {
+    "routes": 79,
+    "assets": 13,
+    "clickThroughs": 76,
+    "fragments": 2,
+    "result": "passed",
+    "expectedChallenge": "/console/workspace 401"
+  }
+}

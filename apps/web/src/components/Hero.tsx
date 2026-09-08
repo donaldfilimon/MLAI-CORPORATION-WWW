@@ -145,8 +145,8 @@ export const Hero = () => {
                   size="lg"
                   className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50"
                 >
-                  <Link to="/login">
-                    Enter Quesar
+                  <Link to="/get-started">
+                    Get started
                     <ArrowRight
                       className="h-4 w-4 transition-transform group-hover:translate-x-1"
                       aria-hidden="true"

@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { productJourneys } from "@/data/categories/product-journeys";
+import { Link, useParams } from "react-router-dom";
 import { research } from '@/data/categories/research';
 import { useUI } from "@/lib/ui-context";
 import { ArticleLayout, ArticleNotFound } from "@/components/article";
@@ -44,7 +45,11 @@ export function ResearchPaper() {
       lede={paper.practicalSummary}
       meta={paper.authors}
       body={paper.body}
-      beforeBody={<ResearchArticleEvidence publication={paper} />}
+      beforeBody={<><ResearchArticleEvidence publication={paper} />
+        <nav aria-label="Related products" className="my-8 flex flex-wrap gap-4">
+          {productJourneys.filter((product) => (product.researchSlugs as readonly string[]).includes(paper.slug)).map((product) => <Link key={product.slug} className="text-cyan-300 underline" to={`/products/${product.slug}`}>Explore {product.name}</Link>)}
+          <Link to="/products" className="text-cyan-300 underline">All products</Link>
+        </nav></>}
       renderedBody={<ResearchArticleBody body={paper.body} />}
       inquiryLabel="Work with our research team"
       onInquiry={openInquiry}

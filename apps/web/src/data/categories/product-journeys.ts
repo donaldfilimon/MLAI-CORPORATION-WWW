@@ -1,0 +1,20 @@
+/** Public entry points belong to the website; source setup remains authoritative. */
+export const primaryNavigation = [
+  { to: "/products", label: "Products" },
+  { to: "/research", label: "Research" },
+  { to: "/docs", label: "Docs" },
+  { to: "/about", label: "Company" },
+];
+const repository = "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main";
+export const productJourneys = [
+  { slug: "abi", name: "ABI", purpose: "Route assistant requests and assemble inspectable context.", availability: "Local developer framework", prerequisites: "A source checkout, nightly Rust and the sibling workspaces required by the ABI README.", limitation: "Local deterministic routing and template completion do not establish foundation-model quality. External providers need separate configuration.", setupHref: "/docs/getting-started", researchSlugs: ["ai-overview", "mcp-overview", "sea-overview"] },
+  { slug: "abbey", name: "Abbey", purpose: "Work with documents in the local Abbey workspace and explore its assistant context.", availability: "Local document workspace", prerequisites: "Node 24, Bun 1.4, uv with Python 3.11–3.13, Java 21+ and LibreOffice as documented by the website-app setup; a local model is optional.", limitation: "Assistant behavior depends on the selected backend. The public website does not provision an Abbey session or a shared product account.", setupHref: `${repository}/apps/website-app/README.md`, researchSlugs: ["ai-overview", "tui-overview"] },
+  { slug: "wdbx", name: "WDBX", purpose: "Store durable records and retrieve vectors with inspectable provenance.", availability: "Implemented Rust components for local integration", prerequisites: "Read the WDBX source README and prepare its Rust workspace before integrating persistence or retrieval.", limitation: "Storage integrity does not prove the truth of stored statements. The reference cluster protocol does not establish production multi-host operation or sharding.", setupHref: "https://github.com/donaldfilimon/wdbx/blob/main/README.md", researchSlugs: ["wdbx-overview", "wdbx-weighted-backtrace-memory-store", "wdbx-graph-weights-traceable-retrieval", "sea-overview"] },
+  { slug: "quasar", name: "Quasar", purpose: "Generate a Next.js website and preview it on your own machine.", availability: "Local v1 website builder", prerequisites: "Bun 1.4, the Quasar workspace, Anthropic credentials and a separately running local service plus Expo app.", limitation: "Generation requires an available provider. Hosting, deploy adapters and authentication are outside the local v1 scope; the service listens on the LAN without authentication.", setupHref: `${repository}/apps/quasar/README.md#how-to-run`, researchSlugs: ["mcp-overview"] },
+] as const;
+export const startJourneys = [
+  { id: "research", title: "Explore the research", description: "Read practical summaries, then inspect citations, attachments and implementation limits.", availability: "Public reading", prerequisites: "A browser; no account or local setup required.", href: "/research", label: "Browse research" },
+  { id: "abbey", title: "Run Abbey locally", description: productJourneys[1].purpose, availability: productJourneys[1].availability, prerequisites: productJourneys[1].prerequisites, href: productJourneys[1].setupHref, label: "Read local setup" },
+  { id: "mobile", title: "Explore the mobile companion", description: "Run the Expo companion from source. Native CloudKit and the encrypted-local fallback are distinct paths; signed-device acceptance remains separate from a web export.", availability: "Source-based Expo companion", prerequisites: "Bun 1.4 and Expo tooling; native platform tooling for device builds. CloudKit requires an appropriately signed Apple build.", href: `${repository}/apps/mobile/README.md`, label: "Read mobile setup" },
+  { id: "quasar", title: "Build a site with Quasar", description: productJourneys[3].purpose + " " + productJourneys[3].limitation, availability: productJourneys[3].availability, prerequisites: productJourneys[3].prerequisites, href: productJourneys[3].setupHref, label: "Read Quasar setup" },
+] as const;

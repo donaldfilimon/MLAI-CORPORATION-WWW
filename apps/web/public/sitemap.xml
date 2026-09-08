@@ -2,6 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://quesar.cloud/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
   <url><loc>https://quesar.cloud/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://quesar.cloud/products</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://quesar.cloud/get-started</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://quesar.cloud/research</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://quesar.cloud/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://quesar.cloud/team</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -23,6 +25,8 @@
   <url><loc>https://quesar.cloud/security</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
   <url><loc>https://quesar.cloud/products/abi</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://quesar.cloud/products/abbey</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://quesar.cloud/products/wdbx</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://quesar.cloud/products/quasar</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://quesar.cloud/research/ai-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/research/wdbx-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://quesar.cloud/research/sea-overview</loc><lastmod>2026-09-06</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>

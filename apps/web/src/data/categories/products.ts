@@ -1,10 +1,11 @@
 import type { Products } from '../schemas';
+import { productJourneys } from './product-journeys';
 
 // Product deep-dive narratives ported from the MLAI mega-site export.
 // Claims discipline: equations describe the DESIGN of the routing/persona
 // architecture (verifiable against the abi repo), not measured benchmarks.
 // Anything aspirational is framed as design intent, never as a result.
-export const products: Products = ([
+const narratives: Products = ([
   {
     slug: "abi",
     kicker: "Multi-Persona AI Framework",
@@ -42,7 +43,7 @@ export const products: Products = ([
       {
         eyebrow: "Try it",
         title: "Watch Abi route in real time",
-        sub: "Type a message — an illustrative keyword-sentiment heuristic scores the blend coefficient α. The production router uses a learned classifier; this demo shows the concept, not the model.",
+        sub: "Type a message — an illustrative keyword-sentiment heuristic scores the blend coefficient α. The inspected local router uses deterministic rules; this demo is illustrative, not evidence of a learned classifier.",
         paragraphs: [],
         demo: "persona-router",
       },
@@ -100,9 +101,9 @@ export const products: Products = ([
       {
         eyebrow: "Acceleration",
         title: "Hardware backends",
-        sub: "Compute targets of the Zig runtime. CPU/SIMD, Metal, CUDA, and Vulkan paths exist in the abi repo today; further backends are roadmap.",
+        sub: "The inspected Rust implementation provides CPU vector operations and optional macOS Metal DOT dispatch. CUDA and Vulkan dispatch are not linked in this implementation; device acceleration needs separate validation.",
         paragraphs: [],
-        chips: ["CPU / SIMD", "Metal", "CUDA", "Vulkan"],
+        chips: ["CPU vector operations", "Optional macOS Metal DOT"],
       },
     ],
   },
@@ -200,3 +201,15 @@ export const products: Products = ([
     ],
   },
 ]);
+
+// Preserve the design narratives while keeping implementation scope explicit.
+export const products: Products = productJourneys.map((product) => ({
+  slug: product.slug, kicker: product.availability, name: product.name, intro: product.purpose,
+  accent: product.slug === "abbey" ? "abbey" : product.slug === "abi" ? "aviva" : "abi",
+  sections: [
+    { eyebrow: "Availability", title: "What you can use today", paragraphs: [product.availability, product.limitation] },
+    { eyebrow: "Setup", title: "Prepare your environment", paragraphs: [product.prerequisites] },
+    ...(narratives.find((item) => item.slug === product.slug) ? [{ eyebrow: "Design context", title: "Read the design alongside the evidence", paragraphs: ["The following equations, persona descriptions and interactive demonstrations explain design intent. They do not establish trained-model quality, general safety, emotional understanding or implementation beyond the availability stated above. Follow the research links for source-backed status and limitations. The local Abbey document workspace and the ABI persona design are separate integration surfaces."] }] : []),
+    ...(narratives.find((item) => item.slug === product.slug)?.sections ?? []),
+  ],
+}));

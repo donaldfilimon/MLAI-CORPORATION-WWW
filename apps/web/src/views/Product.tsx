@@ -1,3 +1,5 @@
+import { research } from "@/data/categories/research";
+import { productJourneys } from "@/data/categories/product-journeys";
 import { useParams, Link } from "react-router-dom";
 import { m, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -86,7 +88,11 @@ export function Product() {
   // Cross-navigation derives from the content layer, so it can never point at
   // the page you are already on. Descriptions for the sibling products are the
   // products' own kickers rather than new copy.
+  const journey = productJourneys.find((item) => item.slug === product.slug)!;
   const nextUp: NextUpItem[] = [
+    { label: "Setup documentation", href: journey.setupHref, desc: journey.prerequisites, accent: pageAccent },
+    { label: "Get started", href: "/get-started", desc: "Choose your next step.", accent: pageAccent },
+    ...journey.researchSlugs.map((slug) => ({ label: research.publications.find((paper) => paper.slug === slug)?.title ?? slug, href: `/research/${slug}`, desc: "Read the supporting research and its limitations.", accent: pageAccent })),
     ...products
       .filter((p) => p.slug !== product.slug)
       .map((p) => ({

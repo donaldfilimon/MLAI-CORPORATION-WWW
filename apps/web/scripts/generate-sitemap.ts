@@ -33,6 +33,8 @@ type Entry = { path: string; changefreq: string; priority: string; lastmod?: str
 const staticEntries: Entry[] = [
   { path: "/", changefreq: "monthly", priority: "1.0" },
   { path: "/about", changefreq: "monthly", priority: "0.8" },
+  { path: "/products", changefreq: "monthly", priority: "0.9" },
+  { path: "/get-started", changefreq: "monthly", priority: "0.9" },
   { path: "/research", changefreq: "monthly", priority: "0.9" },
   { path: "/services", changefreq: "monthly", priority: "0.9" },
   { path: "/team", changefreq: "monthly", priority: "0.7" },
@@ -121,6 +123,8 @@ function link(path: string): LlmLink {
 
 const marketing: LlmLink[] = [
   link("/"),
+  link("/products"),
+  link("/get-started"),
   link("/about"),
   link("/services"),
   link("/docs"),

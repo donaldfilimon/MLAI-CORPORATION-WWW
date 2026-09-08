@@ -20,7 +20,7 @@ import {
 import { Magnetic } from "./Magnetic";
 import { Logo } from "./Logo";
 import { useAuth } from "@/lib/auth";
-import { useUI } from "@/lib/ui-context";
+import { primaryNavigation } from "@/data/categories/product-journeys";
 import { DocsSearch } from "@/components/DocsSearch";
 
 export const Navbar = () => {
@@ -29,7 +29,6 @@ export const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { openInquiry } = useUI();
   const [docsSearchOpen, setDocsSearchOpen] = useState(false);
 
   const openDocsSearch = () => {
@@ -46,13 +45,7 @@ export const Navbar = () => {
     navigate("/docs?search=1");
   };
 
-  const navItems = [
-    { to: "/#control-plane", label: "Product" },
-    { to: "/#request-path", label: "How it works" },
-    { to: "/docs", label: "Docs" },
-    { to: "/research", label: "Research" },
-    { to: "/about", label: "Company" },
-  ];
+  const navItems = primaryNavigation;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -166,7 +159,7 @@ export const Navbar = () => {
                 asChild
                 className="bg-white text-black hover:bg-cyan-50 transition-colors font-bold px-6"
               >
-                <Link to={user ? "/console" : "/login"}>{user ? "Open Console" : "Enter Quesar"}</Link>
+                <Link to="/get-started">Get started</Link>
               </Button>
             </Magnetic>
           </div>
@@ -246,14 +239,8 @@ export const Navbar = () => {
                       </Button>
                     </Link>
                   )}
-                  <Button
-                    onClick={() => {
-                      openInquiry();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full bg-white text-black font-bold h-12"
-                  >
-                    Start an inquiry
+                  <Button asChild className="w-full bg-white text-black font-bold h-12">
+                    <Link to="/get-started" onClick={() => setIsMobileMenuOpen(false)}>Get started</Link>
                   </Button>
                 </div>
               </div>

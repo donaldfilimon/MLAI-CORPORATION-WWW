@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { research } from '@/data/categories/research';
 import { PageHeader } from "@/components/PageHeader";
 import { ResearchAreaGrid } from "@/components/research";
@@ -27,6 +28,7 @@ export const Research = () => {
           subtitle="Explore six research areas, from AI assistance and durable memory to evidence selection and integration. Start with practical applications, then inspect the sources, implementation status, and limitations."
         />
 
+        <p className="mb-10 max-w-3xl text-text-dim">Put these ideas in context: <Link to="/products" className="text-cyan-300 underline">explore ABI, Abbey, WDBX and Quasar</Link>, or <Link to="/get-started" className="text-cyan-300 underline">choose a starting point</Link>.</p>
         <ResearchAreaGrid tracks={research.tracks} />
         <h2 className="text-3xl font-display text-white mb-6">Research collection</h2>
 

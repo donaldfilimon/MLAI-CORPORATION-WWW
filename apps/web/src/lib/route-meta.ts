@@ -89,6 +89,8 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "Learn how MLAI Corporation designs resilient AI systems for private deployment, retrieval provenance, safety evaluation, and operational control.",
   },
+  "/products": { title: "Products | MLAI", description: "Explore ABI, Abbey, WDBX and Quasar with explicit availability, setup requirements and supporting research." },
+  "/get-started": { title: "Get started | MLAI", description: "Choose research, local Abbey, the mobile companion or Quasar and read the prerequisites for your path." },
   "/research": {
     title: "MLAI Research | Quesar",
     description:

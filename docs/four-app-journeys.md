@@ -5,8 +5,8 @@ This record tracks the 2026-09-08 user-approved roadmap independently of histori
 
 | Milestone | Implementation | Local acceptance | Delivery |
 | --- | --- | --- | --- |
-| Abbey | Implemented: derived progress, explicit provider checks, recovery, source review | Passed: 127 unit + 26 parser tests, build, browser 4/4 plus final live 1/1; all 15 evaluation outcomes retained | Pending |
-| Public website | Pending | Pending | Pending |
+| Abbey | Implemented: derived progress, explicit provider checks, recovery, source review | Passed: 127 unit + 26 parser tests, build, browser 4/4 plus final live 1/1; all 15 evaluation outcomes retained | `50ebcf1`: CI 5/5, Pages published, Cloud Run deploy skipped |
+| Public website | Implemented: product navigation, intent setup, research links, standalone Pages | 396 tests/build; three engines passed; 79-route crawl passed | Delivery pending |
 | Mobile companion | Pending | Pending | Pending |
 | Quasar | Pending | Pending | Pending |
 
@@ -43,3 +43,25 @@ evidence errors. This is bounded synthetic evaluation, not semantic certificatio
 records recovery, responsive source inspection, real downloads, progress persistence
 and cancellation. A reproduced Stop-button default action was fixed so restoring
 a draft cannot submit it again during the same click.
+
+Abbey delivery `50ebcf168561c834d51ad922227b1097c95a7acc`:
+[CI 34229336665](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34229336665) passed all five jobs;
+[Pages 34229498990](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34229498990) published;
+[Cloud Run 34229499100](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34229499100) completed readiness and skipped deploy.
+Public `https://quesar.cloud/` returned HTTP 200 and matched the committed static index byte for byte.
+
+## Public website acceptance
+
+The [browser receipt](../apps/web/docs/verification/journeys-web-20260908.json) records
+Chromium, Firefox and WebKit navigation, research filtering/search, original PDF bytes,
+mobile menu focus, and standalone Pages at 390/768/1440 pixels. Production CSP stayed
+enabled through a temporary HTTPS loopback proxy; only its self-signed test certificate
+was accepted. WebKit uses macOS Option-Tab to include links in keyboard traversal.
+A reproduced reduced-motion hydration defect left headings transparent; explicit final
+animation targets and computed-opacity browser assertions now cover it. Historical failed
+harness runs remain under unique `output/playwright/journeys-web-20260908-*` directories.
+The app gate passed 396 tests across 44 files and built successfully on Node 24/Bun 1.4.
+Native screen-reader and actual browser zoom checks remain unperformed.
+
+Final crawl: 79 routes, 13/13 assets, 76/76 click-throughs and 2/2 fragment targets passed.
+The protected console returned its expected 401 challenge.

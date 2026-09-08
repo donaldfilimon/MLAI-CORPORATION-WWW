@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quesar by MLAI — Private AI Operations with an Audit Trail</title>
+    <title>MLAI — ABI, Abbey, WDBX and Quasar</title>
     <meta
       name="description"
-      content="Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed."
+      content="Explore ABI, Abbey, WDBX and Quasar with source setup, product availability and research evidence."
     />
     <link rel="canonical" href="https://quesar.cloud/" />
     <meta name="robots" content="noindex, follow" />
@@ -24,18 +24,12 @@
          the user-pages root and leaves the artifact entirely. -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Quesar by MLAI — Research"
-      href="https://quesar.cloud/feed.xml"
-    />
     <meta property="og:site_name" content="Quesar by MLAI" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="Quesar by MLAI" />
     <meta
       property="og:description"
-      content="Private generation with an audit trail you control. Invite-only WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits."
+      content="Explore four products, their source setup and supporting research."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://quesar.cloud/" />
@@ -44,13 +38,13 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Quesar by MLAI — private generation with an audit trail you control"
+      content="MLAI product family"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Quesar by MLAI" />
     <meta
       name="twitter:description"
-      content="Private generation with an audit trail you control. Invite-only WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits."
+      content="Explore four products, their source setup and supporting research."
     />
     <meta name="twitter:image" content="https://quesar.cloud/og-image.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -66,7 +60,7 @@
         "name": "Quesar by MLAI",
         "url": "https://quesar.cloud",
         "image": "https://quesar.cloud/og-image.png",
-        "description": "Quesar by MLAI is invite-only private AI operations: WorkOS access, a metadata-only Cloudflare gateway, and KMS-wrapped audits you control. Fail closed.",
+        "description": "Explore ABI, Abbey, WDBX and Quasar with source setup, product availability and research evidence.",
         "publisher": {
           "@type": "Organization",
           "name": "MLAI Corporation",
@@ -172,6 +166,12 @@
       .card { display:block; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); border-radius:1.25rem; padding:1.25rem; color:inherit; text-decoration:none; }
       .card h3 { margin:0 0 0.5rem; font-family:"Spectral",Georgia,serif; }
       .card p { margin:0; color:var(--dim); font-size:0.95rem; }
+      .product-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+      section[id] { padding:40px 0; scroll-margin-top:20px; }
+      .card a, section > p a { color:var(--primary); text-underline-offset:4px; }
+      a:focus-visible { outline:2px solid var(--primary); outline-offset:5px; }
+      header { flex-wrap:wrap; gap:20px; } nav { display:flex; flex-wrap:wrap; gap:16px; } nav a { margin-left:0; }
+      @media(max-width:640px) { .product-grid { grid-template-columns:1fr; } nav { display:flex; } }
     </style>
   </head>
   <body>
@@ -193,91 +193,29 @@
           </svg>
           <span>QUESAR <span class="corp">BY MLAI</span></span>
         </div>
-        <nav>
-          <a href="https://quesar.cloud/research">Research</a>
-          <a href="https://quesar.cloud/architecture">Architecture</a>
-          <a href="https://quesar.cloud/security">Security</a>
-          <a href="https://quesar.cloud/login">Enter Quesar</a>
+        <nav aria-label="Primary navigation">
+          <a href="#products">Products</a><a href="#research">Research</a><a href="#docs">Docs</a><a href="#company">Company</a><a href="#get-started">Get started</a>
         </nav>
       </header>
-
       <main>
-        <section class="hero">
-          <span class="tag">Invite-only private AI operations</span>
-          <h1>Private generation with <span class="grad">an audit trail you control.</span></h1>
-          <p class="lead">
-            Only invited WorkOS members can generate. Traffic crosses a metadata-only Cloudflare AI Gateway—no payload
-            logging, no user email to the provider—and becomes a KMS-wrapped audit you can consent to, export, or delete.
-            If any step fails, nothing returns.
-          </p>
-          <div class="cta">
-            <a class="btn btn-primary" href="https://quesar.cloud/login">Enter Quesar →</a>
-            <a class="btn btn-ghost" href="https://quesar.cloud/security">Review the trust boundary</a>
-          </div>
-        </section>
-
-        <section aria-label="Trust controls">
-          <div class="personas">
-            <div class="card" style="--accent: var(--abbey)">
-              <span class="role"><span class="dot"></span>Identity</span>
-              <h3>Invite-only organization access</h3>
-              <p>Membership is checked at sign-in and again before each protected request. Revocation fails closed.</p>
-            </div>
-            <div class="card" style="--accent: var(--aviva)">
-              <span class="role"><span class="dot"></span>Provider</span>
-              <h3>Metadata-only gateway</h3>
-              <p>Operational metadata only. Payload logging is off. User email is never sent to the provider.</p>
-            </div>
-            <div class="card" style="--accent: var(--abi)">
-              <span class="role"><span class="dot"></span>Audit</span>
-              <h3>Records you control</h3>
-              <p>Consent first. KMS-wrapped audit before response; inspect, export, or delete; one-year retention.</p>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 class="section-title">Three boundaries. One control plane.</h2>
-          <p class="muted">
-            Identity, provider, and audit are the same request—not settings an operator has to remember to align.
-            Authenticate → Consent → Generate → Encrypt → Commit. Fail closed.
-          </p>
-          <div class="pillars">
-            <div class="pillar"><strong>Identity</strong><span>Invite-only WorkOS organization membership; revocation fails closed.</span></div>
-            <div class="pillar"><strong>Provider</strong><span>Metadata-only Cloudflare AI Gateway; no user email to the provider.</span></div>
-            <div class="pillar"><strong>Audit</strong><span>KMS-wrapped records you can consent to, export, or delete.</span></div>
-          </div>
-        </section>
-
-        <div class="note">
-          This is a lightweight static companion hosted on GitHub Pages. The canonical Quesar
-          application, authentication, APIs, research, and security documentation live at
-          <a href="https://quesar.cloud/">quesar.cloud</a>.
-        </div>
+        <section class="hero"><h1>Intelligent assistance, with the source in view.</h1><p class="lead">Explore ABI, Abbey, WDBX and Quasar. Start with what each product does, what is available today and the setup it needs.</p><div class="cta"><a class="btn btn-primary" href="#products">Explore products</a><a class="btn btn-ghost" href="#get-started">Get started</a></div></section>
+        <section id="products"><h2 class="section-title">Choose your product</h2><div class="product-grid">
+          <article class="card" id="abi"><h3>ABI</h3><p>Local developer framework for routing assistant requests and assembling inspectable context.</p><p>Requires nightly Rust and the sibling workspaces documented upstream. Local template completion does not establish model quality.</p><a href="https://github.com/donaldfilimon/abi/blob/main/README.md">ABI source and setup</a> · <a href="#research">Supporting research</a></article>
+          <article class="card" id="abbey"><h3>Abbey</h3><p>A local document workspace with assistant context.</p><p>Requires Node 24, Bun 1.4, uv with Python 3.11–3.13, Java 21+ and LibreOffice. A local model is optional; this website does not provision an assistant session.</p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/website-app/README.md">Abbey local setup</a> · <a href="#research">Supporting research</a></article>
+          <article class="card" id="wdbx"><h3>WDBX</h3><p>Rust components for durable records, vector retrieval and inspectable provenance.</p><p>Prepare its source workspace before integration. Storage integrity does not establish truth; the reference cluster protocol does not establish production sharding.</p><a href="https://github.com/donaldfilimon/wdbx/blob/main/README.md">WDBX source and setup</a> · <a href="#research">Supporting research</a></article>
+          <article class="card" id="quasar"><h3>Quasar</h3><p>A local v1 website builder: generate a Next.js project and preview it on your own machine.</p><p>Requires Bun 1.4, Anthropic credentials, a local service and Expo app. Hosting, deploy adapters and authentication are outside this version.</p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/quasar/README.md#how-to-run">Quasar source and setup</a> · <a href="#research">Related research</a></article>
+        </div></section>
+        <section id="get-started"><h2 class="section-title">What would you like to do?</h2><div class="product-grid">
+          <article class="card"><h3>Explore the research</h3><p>Public reading; a browser is all you need. Read summaries, source references and limitations.</p><a href="#research">Browse research sources</a></article>
+          <article class="card"><h3>Run Abbey locally</h3><p>Prepare the website-app workspace with Node 24, Bun 1.4, uv with Python 3.11–3.13, Java 21+ and LibreOffice. A local model is optional. Follow this app’s own setup and account boundaries.</p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/website-app/README.md">Read local setup</a></article>
+          <article class="card"><h3>Explore the mobile companion</h3><p>Source-based Expo companion. Requires Bun and Expo tooling, with native platform tools for device builds. Native CloudKit and encrypted-local fallback are distinct; signed-device acceptance remains separate from web export.</p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/mobile/README.md">Read mobile setup</a></article>
+          <article class="card"><h3>Build a site with Quasar</h3><p>Run the Bun service and Expo app separately with Anthropic credentials. The service listens on the LAN without authentication; generation depends on the provider.</p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/quasar/README.md#how-to-run">Read Quasar setup</a></article>
+        </div></section>
+        <section id="research"><h2 class="section-title">Research, with its evidence attached.</h2><p class="lead">Explore assistant behavior, memory and retrieval, evidence selection, compute, integrations and local interfaces. The source collection preserves citations, attachment metadata, provenance and implementation limitations.</p><div class="cta"><a class="btn btn-ghost" href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/web/src/data/categories/research-records.ts">Read the research collection source</a><a class="btn btn-ghost" href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/web/docs/research-inventory.md">Review source revisions and evidence</a></div><p>See where these ideas apply: <a href="#abi">ABI</a>, <a href="#abbey">Abbey</a>, <a href="#wdbx">WDBX</a> and <a href="#quasar">Quasar</a>.</p></section>
+        <section id="docs"><h2 class="section-title">Start with the setup documentation.</h2><p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/README.md">Repository guide</a> · <a href="https://github.com/donaldfilimon/abi/blob/main/README.md">ABI</a> · <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/website-app/README.md">Local Abbey workspace</a> · <a href="https://github.com/donaldfilimon/wdbx/blob/main/README.md">WDBX</a> · <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/mobile/README.md">Mobile companion</a> · <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/main/apps/quasar/README.md">Quasar</a></p></section>
+        <section id="company"><h2 class="section-title">MLAI Corporation</h2><p class="lead">We build assistant workflows, memory systems and developer tools with inspectable sources and explicit implementation boundaries.</p><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">Explore our website repository</a></section>
+        <p class="note">This standalone GitHub Pages companion provides product orientation and source setup links. It does not host application sessions, generation or authentication.</p>
       </main>
-
-      
-        <section id="product-boundary" class="section">
-          <p class="eyebrow">PRODUCT BOUNDARY</p>
-          <h2 class="section-title">Invite-only operations. Not a public chatbot.</h2>
-          <p class="lead">Organization access, explicit consent, and encrypted records on one request path—not a free-for-all chat UI.</p>
-          <div class="grid-2">
-            <div class="card"><h3>What it is</h3><p>A governed generation path with WorkOS membership, consent gates, a metadata-only gateway, and user-controlled KMS-wrapped audits.</p></div>
-            <div class="card"><h3>What it is not</h3><p>A consumer chatbot or a compliance certificate wall. Lab evidence stays linked from the app host.</p></div>
-          </div>
-        </section>
-
-        <section id="docs-strip" class="section">
-          <p class="eyebrow">DOCS</p>
-          <h2 class="section-title">Start with the trust boundary.</h2>
-          <p class="lead">This Pages companion is a teaser. Deep docs stay on the app host—getting in, audits, and the runtime underneath.</p>
-          <div class="grid-3">
-            <a class="card" href="https://quesar.cloud/docs"><h3>Start</h3><p>Invite path and scoped evaluations.</p></a>
-            <a class="card" href="https://quesar.cloud/security"><h3>Security &amp; trust</h3><p>Org gate, gateway, consent, retention.</p></a>
-            <a class="card" href="https://quesar.cloud/docs"><h3>Architecture</h3><p>Control plane and inspectable substrate.</p></a>
-          </div>
-        </section>
-
       <footer>
         © MLAI Corporation · Quesar by MLAI ·
         <a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW">GitHub</a> ·

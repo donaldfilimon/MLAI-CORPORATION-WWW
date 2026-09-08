@@ -1,3 +1,4 @@
+import { productJourneys } from "@/data/categories/product-journeys";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -57,9 +58,12 @@ export const Footer = () => {
 
           <div>
             <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
-              Research
+              Products & research
             </h4>
             <ul className="space-y-3 text-sm text-text-dim">
+              <li><Link to="/products" className="hover:text-cyan-400">All products</Link></li>
+              {productJourneys.map((product) => <li key={product.slug}><Link to={`/products/${product.slug}`} className="hover:text-cyan-400">{product.name}</Link></li>)}
+              <li><Link to="/get-started" className="hover:text-cyan-400">Get started</Link></li>
               <li>
                 <Link
                   to="/research"
