@@ -78,6 +78,11 @@ const dynamicEntries: Entry[] = [
       changefreq: "monthly",
       priority: "0.6",
     })),
+  ...content.docs.map((d) => ({
+    path: `/docs/${d.slug}`,
+    changefreq: "monthly",
+    priority: "0.6",
+  })),
 ];
 
 const entries = [...staticEntries, ...dynamicEntries];

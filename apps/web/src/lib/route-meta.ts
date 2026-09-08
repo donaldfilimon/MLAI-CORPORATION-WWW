@@ -274,6 +274,16 @@ export function productMeta(slug: string): RouteMeta {
   return { title: `${product.name} | MLAI ${product.kicker}`, description: product.intro };
 }
 
+export function docMeta(slug: string): RouteMeta {
+  const doc = content.docs.find((d) => d.slug === slug);
+  if (!doc) return NOT_FOUND_META;
+  return {
+    title: `${doc.title} | Quesar Documentation`,
+    description: doc.description,
+    ogType: "article",
+  };
+}
+
 /**
  * Build a Next Metadata object from a RouteMeta + canonical path.
  *
