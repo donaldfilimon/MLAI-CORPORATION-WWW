@@ -18,9 +18,10 @@ import { ProjectsSchema, type Projects } from '../schemas';
  * Ruling B — `source`: the vendored `source` field was a key into a separate
  * `sources` lookup map (`vendor/mlai-review/lib/content.ts`'s `sources`).
  * Resolved and inlined here as `{ title, url }` rather than porting a second
- * module — unlike the docs corpus's bare-string `sources` (no URLs, so
- * nothing to link), these ARE real repository URLs and are rendered as
- * links.
+ * module. The docs corpus resolves the same vendored map — see `DOC_SOURCES`
+ * in `docs.ts` — so both surfaces now render real links; an earlier version of
+ * this comment described the docs sources as unlinkable bare strings, which
+ * stopped being true when that map was ported.
  *
  * Ruling C — `wdbx.limit`: the vendored text read "This website is not a
  * connected database and shows no live retrieval results," written about

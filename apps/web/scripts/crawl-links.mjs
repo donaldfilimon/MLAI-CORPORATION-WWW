@@ -62,7 +62,7 @@ async function loadPlaywright() {
 const SEEDS = [
   "/", "/about", "/research", "/services", "/team", "/blog", "/docs",
   "/benchmarks", "/links", "/showcase", "/privacy", "/terms", "/security",
-  "/login", "/signup", "/console", "/profile", "/changelog", "/demo",
+  "/login", "/signup", "/console", "/console/workspace", "/profile", "/changelog", "/demo",
   // The ported /docs/:slug and /projects surfaces. Without these the crawl
   // never reaches a single new route and its "no dead links" result says
   // nothing about them.
