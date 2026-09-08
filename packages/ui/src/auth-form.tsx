@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Brand } from "./brand.js";
 import { Anchor, type LinkComponent } from "./link.js";
@@ -36,16 +36,15 @@ export function AuthForm({
 }: AuthFormProps) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const formId = useId();
   return (
     <main id="main" className="auth-page">
       <div className="auth-story">
         <Brand mark={brandMark} Link={Link} />
         <div>
           <h1>
-            Intelligence,
-            <br />
-            with a place
-            <br />
+            Intelligence, <br />
+            with a place <br />
             to work.
           </h1>
           <p>
@@ -61,6 +60,9 @@ export function AuthForm({
       <div className="auth-form-wrap">
         <form
           className="auth-form"
+          aria-labelledby={`${formId}-heading`}
+          aria-describedby={error ? `${formId}-error` : undefined}
+          aria-busy={busy}
           onSubmit={async (e) => {
             e.preventDefault();
             setBusy(true);
@@ -71,13 +73,19 @@ export function AuthForm({
             try {
               await onSubmit(fields);
             } catch (e) {
-              setError((e as Error).message);
+              setError(
+                e instanceof Error && e.message
+                  ? e.message
+                  : "Authentication could not be completed. Please try again.",
+              );
             } finally {
               setBusy(false);
             }
           }}
         >
-          <h2>{signup ? "Create your workspace" : "Welcome back"}</h2>
+          <h2 id={`${formId}-heading`}>
+            {signup ? "Create your workspace" : "Welcome back"}
+          </h2>
           <p className="muted">
             {signup
               ? "A local account. A private place to begin."
@@ -91,8 +99,20 @@ export function AuthForm({
           )}
           <label>
             Email
-            <input type="email" name="email" autoComplete="email" required />
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              aria-describedby={signup ? `${formId}-email-hint` : undefined}
+              required
+            />
           </label>
+          {signup && (
+            <p id={`${formId}-email-hint`} className="small muted">
+              Email is a local account identifier and is not automatically
+              verified.
+            </p>
+          )}
           <label>
             Password
             <input
@@ -100,18 +120,18 @@ export function AuthForm({
               type="password"
               autoComplete={signup ? "new-password" : "current-password"}
               minLength={signup ? 12 : undefined}
+              aria-describedby={signup ? `${formId}-password-hint` : undefined}
               required
               maxLength={128}
             />
           </label>
           {signup && (
-            <p className="small muted">
-              Use at least 12 characters. Email is a local account identifier
-              and is not automatically verified.
+            <p id={`${formId}-password-hint`} className="small muted">
+              Use at least 12 characters.
             </p>
           )}
           {error && (
-            <p className="error" role="alert">
+            <p id={`${formId}-error`} className="error" role="alert">
               {error}
             </p>
           )}

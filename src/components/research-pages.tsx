@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
@@ -14,20 +15,66 @@ import {
 import { ResearchIndex } from "./research-index";
 import styles from "./research.module.css";
 
+function ReadingNavigation({ children }: { children: ReactNode }) {
+  return (
+    <div className={styles.readingNavigation}>
+      <nav className={styles.desktopContents} aria-label="On this page">
+        <strong>On this page</strong>
+        {children}
+      </nav>
+      <details className={styles.mobileContents}>
+        <summary>On this page</summary>
+        <nav aria-label="On this page">{children}</nav>
+      </details>
+    </div>
+  );
+}
+
 export function ResearchLanding() {
   return (
     <div className={`public-container marketing-page ${styles.research}`}>
       <section className={styles.researchHero}>
-        <span className="eyeline abbey">MLAI Research</span>
-        <h1>Research you can build on.</h1>
+        <span className="eyeline abbey">
+          Evidence, methods, and applications
+        </span>
+        <h1>MLAI Research</h1>
         <p className="hero-description">
           Explore the ideas behind MLAI&apos;s AI systems, memory, evidence
           selection, and developer tools. Start with the practical application,
           then examine the research and its limits.
         </p>
+        <nav className={styles.sectionLinks} aria-label="Research sections">
+          <a href="#research-library">Collection</a>
+          <a href="#research-areas">Research areas</a>
+          <a href="#implementation-studies">Implementation studies</a>
+        </nav>
       </section>
 
-      <nav className={styles.areaGrid} aria-label="Research areas">
+      <section
+        id="research-library"
+        className={`system-section marketing-section ${styles.collection}`}
+        aria-labelledby="publications-heading"
+      >
+        <div className="section-intro">
+          <h2 id="publications-heading">The research collection</h2>
+          <p className="muted">
+            {publications.length} articles and guides,{" "}
+            {implementationStudies.length} implementation studies, and three
+            application notes. Reference-project snapshots and local application
+            capabilities have distinct evidence and limits.
+          </p>
+        </div>
+        <ResearchIndex
+          items={researchItems}
+          topics={researchTracks.map(({ id, name }) => ({ id, name }))}
+        />
+      </section>
+
+      <nav
+        id="research-areas"
+        className={styles.areaGrid}
+        aria-label="Research areas"
+      >
         {researchTracks.map((track) => (
           <Link
             key={track.id}
@@ -45,12 +92,13 @@ export function ResearchLanding() {
                 <dd>{track.application}</dd>
               </div>
               <div>
-                <dt>Availability</dt>
+                <dt>Reference snapshot availability</dt>
                 <dd>{track.availability}</dd>
               </div>
             </dl>
             <span>
-              Explore research and limitations <ArrowRight size={15} />
+              Explore research and limitations{" "}
+              <ArrowRight size={15} aria-hidden="true" />
             </span>
           </Link>
         ))}
@@ -92,27 +140,6 @@ export function ResearchLanding() {
           ))}
         </div>
       </section>
-
-      <section
-        id="research-library"
-        className="system-section marketing-section"
-        aria-labelledby="publications-heading"
-      >
-        <div className="section-intro">
-          <span className="eyeline abbey">The research collection</span>
-          <h2 id="publications-heading">The research collection</h2>
-          <p className="muted">
-            {publications.length} articles and guides, plus three application
-            notes. Filter by research area or document type. Source material,
-            application notes, and generated workspace interpretation remain
-            distinct.
-          </p>
-        </div>
-        <ResearchIndex
-          items={researchItems}
-          topics={researchTracks.map(({ id, name }) => ({ id, name }))}
-        />
-      </section>
     </div>
   );
 }
@@ -142,8 +169,7 @@ export function ImplementationStudyArticle({
         </div>
       </header>
       <div className="article-body">
-        <aside aria-label="On this page">
-          <strong>On this page</strong>
+        <ReadingNavigation>
           {study.sections.map((section, index) => (
             <a key={section.heading} href={`#study-section-${index}`}>
               {section.heading}
@@ -152,7 +178,7 @@ export function ImplementationStudyArticle({
           <a href="#operating-boundaries">Operating boundaries</a>
           <a href="#source-evidence">Source evidence</a>
           <a href="#related-research">Related research</a>
-        </aside>
+        </ReadingNavigation>
         <div className={styles.body}>
           <aside className={styles.sourceBoundary}>
             This page summarizes revision-pinned source material. It is not a
@@ -248,8 +274,7 @@ export function ResearchArticle({
         </div>
       </header>
       <div className="article-body">
-        <aside aria-label="On this page">
-          <strong>On this page</strong>
+        <ReadingNavigation>
           <a href="#evidence">Evidence & limitations</a>
           {p.body.map((section, i) => (
             <a key={i} href={`#research-section-${i}`}>
@@ -259,7 +284,7 @@ export function ResearchArticle({
           <a href="#sources">Supporting sources</a>
           {p.attachments.length > 0 && <a href="#downloads">Downloads</a>}
           <Link href="/research">All research</Link>
-        </aside>
+        </ReadingNavigation>
         <div className={styles.body}>
           <section
             id="evidence"
@@ -297,6 +322,9 @@ export function ResearchArticle({
                 <div
                   key={tex}
                   className={styles.math}
+                  tabIndex={0}
+                  role="region"
+                  aria-label={`${section.heading || "Research"} equation`}
                   dangerouslySetInnerHTML={{
                     __html: katex.renderToString(tex, {
                       displayMode: true,
@@ -310,7 +338,11 @@ export function ResearchArticle({
               {section.code?.map((block, j) => (
                 <figure key={j}>
                   {block.file && <figcaption>{block.file}</figcaption>}
-                  <pre tabIndex={0} aria-label={block.file || "Code example"}>
+                  <pre
+                    tabIndex={0}
+                    role="region"
+                    aria-label={block.file || "Code example"}
+                  >
                     <code>{block.code}</code>
                   </pre>
                 </figure>
@@ -362,7 +394,9 @@ export function ResearchArticle({
             <p>
               These publications document the reference projects. Use the
               application guides to see the integrations and boundaries
-              available in this workspace.
+              documented for the local application. A reference snapshot does
+              not establish which integrations are configured or running on your
+              machine.
             </p>
             {guide && (
               <Link className="text-link" href={guide.href}>

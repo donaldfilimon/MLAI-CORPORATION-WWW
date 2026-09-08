@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   agentRules: false,
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  typescript: {
+    tsconfigPath: process.env.MLAI_NEXT_TSCONFIG || "tsconfig.json",
+  },
   serverExternalPackages: [
     "better-sqlite3",
     "@grpc/grpc-js",

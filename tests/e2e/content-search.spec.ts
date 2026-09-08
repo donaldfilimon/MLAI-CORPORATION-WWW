@@ -86,7 +86,9 @@ test("research search is correctly labelled and fits supported viewports", async
     }
     await page.getByRole("searchbox").fill("x".repeat(300));
     await expect(
-      page.getByText("Try fewer words or clear your search."),
+      page.getByText(
+        "Try another research area, document type, or search term.",
+      ),
     ).toBeVisible();
     expect(
       await page.evaluate(

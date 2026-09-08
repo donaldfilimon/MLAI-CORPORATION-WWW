@@ -69,6 +69,7 @@ export function PublicNav({
         </button>
         <nav
           id="public-nav"
+          aria-label="Primary navigation"
           className={open ? "public-nav open" : "public-nav"}
         >
           {items.map(([label, href]) => (

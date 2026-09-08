@@ -17,6 +17,7 @@ backups/
 .data-e2e/
 
 .next-e2e/
+.tsconfig-e2e-*.json
 
 .next-*/
 packages/*/dist/

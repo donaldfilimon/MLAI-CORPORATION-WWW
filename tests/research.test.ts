@@ -42,6 +42,37 @@ const publishedImplementationPaths = [
 ];
 
 describe("consolidated research collection", () => {
+  it("indexes every implementation study under all of its research areas", () => {
+    expect(researchItems).toHaveLength(31);
+    for (const study of implementationStudies) {
+      const item = researchItems.find(
+        (entry) => entry.href === `/research/implementations/${study.slug}`,
+      );
+      expect(item).toMatchObject({
+        kind: "implementation-study",
+        topics: study.relatedTopics,
+        evidenceScope: "Reference snapshot",
+      });
+      expect(item).not.toHaveProperty("reviewedAt");
+    }
+  });
+  it("retains real publication review metadata and labels local notes separately", () => {
+    for (const publication of publications) {
+      expect(
+        researchItems.find(
+          (item) => item.href === `/research/${publication.slug}`,
+        ),
+      ).toMatchObject({
+        reviewedAt: publication.reviewedAt,
+        evidenceScope: "Reference snapshot",
+      });
+    }
+    for (const path of researchPaths) {
+      const item = researchItems.find((entry) => entry.href === `/${path}`);
+      expect(item).toMatchObject({ evidenceScope: "Local application note" });
+      expect(item).not.toHaveProperty("reviewedAt");
+    }
+  });
   it("preserves the published implementation-study snapshot and its pinned evidence", () => {
     const bytes = readFileSync("src/content/implementation-data.json");
     expect(hash(bytes)).toBe(publishedReviewManifest.implementationDataSha256);

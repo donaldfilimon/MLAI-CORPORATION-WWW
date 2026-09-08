@@ -1,13 +1,10 @@
 # Verification only — this workflow never deploys and never writes to the repo.
 #
 # It runs the subset of `bun run check` that needs no `bun run setup`:
-# typecheck, the Node test suite, and the production build. Two omissions are
-# deliberate, not oversights:
+# formatting, public research validation, typecheck, the Node test suite,
+# and the production build. One omission is deliberate:
 #   - the worker's pytest suite, because `setup` downloads a Tika jar and an
 #     embedding model; adding it means provisioning uv and Python here first.
-#   - `format:check`, which fails repo-wide on eleven files carried in
-#     unformatted since e0f9907. Adding it makes this workflow permanently red
-#     until that backlog is cleared in its own commit. See CLAUDE.md.
 name: check
 
 on:
@@ -33,6 +30,12 @@ jobs:
 
       - name: Typecheck
         run: bun run typecheck
+
+      - name: Formatting
+        run: bun run format:check
+
+      - name: Research evidence
+        run: bun run verify:research
 
       - name: Test
         run: bun run test

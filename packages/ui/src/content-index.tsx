@@ -1,5 +1,5 @@
 "use client";
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, Search, X } from "lucide-react";
 import { Anchor, type LinkComponent } from "./link.js";
 export interface ContentIndexItem {
@@ -8,22 +8,30 @@ export interface ContentIndexItem {
   description: string;
   category: string;
 }
-export interface ContentIndexProps {
-  items: ContentIndexItem[];
+export interface ContentIndexProps<
+  T extends ContentIndexItem = ContentIndexItem,
+> {
+  items: T[];
   searchLabel?: string;
   placeholder?: string;
   query?: string;
   onQueryChange?: (query: string) => void;
   Link?: LinkComponent;
+  emptyState?: ReactNode;
+  renderMetadata?: (item: T) => ReactNode;
+  searchDisabled?: boolean;
 }
-export function ContentIndex({
+export function ContentIndex<T extends ContentIndexItem>({
   items,
   searchLabel = "Search documentation",
   placeholder = "Search articles and guides…",
   query,
   onQueryChange,
   Link = Anchor,
-}: ContentIndexProps) {
+  emptyState,
+  renderMetadata,
+  searchDisabled = false,
+}: ContentIndexProps<T>) {
   const [localQuery, setLocalQuery] = useState("");
   const q = query ?? localQuery;
   const input = useRef<HTMLInputElement>(null);
@@ -44,6 +52,9 @@ export function ContentIndex({
         <input
           ref={input}
           type="search"
+          disabled={searchDisabled}
+          name="q"
+          autoComplete="off"
           aria-label={searchLabel}
           aria-controls={resultsId}
           placeholder={placeholder}
@@ -53,6 +64,7 @@ export function ContentIndex({
         {q && (
           <button
             type="button"
+            disabled={searchDisabled}
             className="content-search-clear"
             aria-label="Clear search"
             onClick={() => {
@@ -73,15 +85,20 @@ export function ContentIndex({
             <span className="eyeline">{i.category}</span>
             <h2>
               {i.title}
-              <ArrowRight size={20} />
+              <ArrowRight size={20} aria-hidden="true" />
             </h2>
             <p>{i.description}</p>
+            {renderMetadata?.(i)}
           </Link>
         ))}
         {!filtered.length && (
           <div className="empty">
-            <p>No articles match “{q}”.</p>
-            <p>Try fewer words or clear your search.</p>
+            {emptyState ?? (
+              <>
+                <p>No articles match “{q}”.</p>
+                <p>Try fewer words or clear your search.</p>
+              </>
+            )}
           </div>
         )}
       </div>

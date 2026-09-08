@@ -66,22 +66,50 @@ export function findImplementationStudy(path: string) {
     (study) => `research/implementations/${study.slug}` === path,
   );
 }
-export const researchItems = [
+export type ResearchKind =
+  | "overview"
+  | "research-note"
+  | "implementation-guide"
+  | "implementation-study"
+  | "application-note";
+export interface ResearchIndexItem {
+  href: string;
+  title: string;
+  description: string;
+  category: string;
+  topics: string[];
+  kind: ResearchKind;
+  evidenceScope: "Reference snapshot" | "Local application note";
+  reviewedAt?: string;
+}
+export const researchItems: ResearchIndexItem[] = [
   ...publications.map((p) => ({
     href: `/research/${p.slug}`,
     title: p.title,
     description: p.abstract,
     category: `${p.topic.toUpperCase()} · ${p.documentType.replaceAll("-", " ")}`,
-    topic: p.topic,
-    kind: p.documentType,
+    topics: [p.topic],
+    kind: p.documentType as ResearchKind,
+    evidenceScope: "Reference snapshot" as const,
+    reviewedAt: p.reviewedAt,
+  })),
+  ...implementationStudies.map((study) => ({
+    href: `/research/implementations/${study.slug}`,
+    title: study.title,
+    description: study.summary,
+    category: `${study.relatedTopics.map((topic) => topic.toUpperCase()).join(" / ")} · implementation study`,
+    topics: study.relatedTopics,
+    kind: "implementation-study" as const,
+    evidenceScope: "Reference snapshot" as const,
   })),
   ...researchPaths.map((path) => ({
     href: `/${path}`,
     title: pages[path].title,
     description: pages[path].description,
     category: pages[path].category,
-    topic: "application",
-    kind: "application-note",
+    topics: ["application"],
+    kind: "application-note" as const,
+    evidenceScope: "Local application note" as const,
   })),
 ];
 export const researchGuideLinks: Record<

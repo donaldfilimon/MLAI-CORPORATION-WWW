@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { createServer, type Server } from "node:http";
 import type { AgentRunDetail } from "../../src/lib/agent-contracts";
 import type { Conversation } from "../../src/lib/types";
+import { signUpFixture } from "./support/account";
 
 // This fixture replaces only the configured model endpoint. Every application
 // request, approval, persisted result and worker operation uses the real backend.
@@ -79,15 +80,11 @@ test("persistent reviewed agent actions, source focus and queued interpretation"
   page.on("pageerror", (error) => errors.push(error.message));
   await page.setViewportSize({ width: 1440, height: 960 });
   const base = "http://127.0.0.1:3101";
-  const account = await page.request.post(`${base}/api/auth/sign-up/email`, {
-    headers: { Origin: base },
-    data: {
-      name: "Agent browser fixture",
-      email: `agent-${Date.now()}@example.test`,
-      password: randomBytes(24).toString("base64url"),
-    },
+  await signUpFixture(page.request, base, {
+    name: "Agent browser fixture",
+    email: `agent-${Date.now()}@example.test`,
+    password: randomBytes(24).toString("base64url"),
   });
-  expect(account.ok()).toBe(true);
   await page.goto("/app/documents");
   await page.getByLabel("Upload documents", { exact: true }).setInputFiles({
     name: "agent-review.md",
@@ -147,18 +144,11 @@ test("persistent reviewed agent actions, source focus and queued interpretation"
   expect(new URL(runUrl).searchParams.get("run")).toBeTruthy();
   const viewer = await browser.newContext();
   const viewerEmail = `agent-viewer-${Date.now()}@example.test`;
-  expect(
-    (
-      await viewer.request.post(`${base}/api/auth/sign-up/email`, {
-        headers: { Origin: base },
-        data: {
-          name: "Agent viewer fixture",
-          email: viewerEmail,
-          password: randomBytes(24).toString("base64url"),
-        },
-      })
-    ).ok(),
-  ).toBe(true);
+  await signUpFixture(viewer.request, base, {
+    name: "Agent viewer fixture",
+    email: viewerEmail,
+    password: randomBytes(24).toString("base64url"),
+  });
   expect(
     (
       await page.request.post(`${base}/api/v1/workspaces/members`, {
@@ -362,18 +352,11 @@ test("late conversation responses cannot replace the selected run history", asyn
   );
   test.setTimeout(90000);
   const base = "http://127.0.0.1:3101";
-  expect(
-    (
-      await page.request.post(`${base}/api/auth/sign-up/email`, {
-        headers: { Origin: base },
-        data: {
-          name: "Agent selection fixture",
-          email: `agent-selection-${Date.now()}@example.test`,
-          password: randomBytes(24).toString("base64url"),
-        },
-      })
-    ).ok(),
-  ).toBe(true);
+  await signUpFixture(page.request, base, {
+    name: "Agent selection fixture",
+    email: `agent-selection-${Date.now()}@example.test`,
+    password: randomBytes(24).toString("base64url"),
+  });
   const saved: {
     conversation: string;
     run: string;

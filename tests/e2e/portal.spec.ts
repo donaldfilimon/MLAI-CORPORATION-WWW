@@ -7,6 +7,12 @@ test("customer request, assigned staff, milestones, replacement and exact-versio
   browser,
 }) => {
   test.setTimeout(90000);
+  const dataDir = process.env.MLAI_E2E_DATA_DIR;
+  if (!dataDir || !/^\.data-e2e\/runs\/[a-zA-Z0-9-]+$/.test(dataDir)) {
+    throw new Error(
+      "Portal fixture requires the isolated Playwright data directory",
+    );
+  }
   const customerContext = await browser.newContext(),
     staffContext = await browser.newContext();
   const base = "http://127.0.0.1:3101",
@@ -26,7 +32,13 @@ test("customer request, assigned staff, milestones, replacement and exact-versio
   execFileSync(
     process.execPath,
     ["--import", "tsx", "scripts/account.ts", "staff", staffEmail],
-    { env: { ...process.env, MLAI_DATA_DIR: ".data-e2e", APP_URL: base } },
+    {
+      env: {
+        ...process.env,
+        MLAI_DATA_DIR: dataDir,
+        APP_URL: base,
+      },
+    },
   );
   const customer = await customerContext.newPage(),
     staff = await staffContext.newPage();
