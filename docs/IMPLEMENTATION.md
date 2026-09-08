@@ -1,5 +1,43 @@
 # MLAI implementation and acceptance ledger
 
+## Research and release preparation completion (2026-09-08)
+
+This completion supersedes the earlier exporter-authorization gap below. The
+authorized canonical exporter work is committed on `mlai/main` at
+`2718e0cc61dfa969cb7d30ade1af1fd826652b22`. The generated Site candidate is on its
+local `main` at `a45d20f`. Shared-content parity covers all 21 publications, seven
+studies and four PDFs without importing native-only notes or rewriting historical
+publication evidence. The canonical source passed 365 tests and its 104-page
+production build; Site packaging passed 11 tests and nine cross-engine/width runs.
+
+Native runtime source: `a8bac5cc6fd4f0417be89076654eb07065fdf903`.
+Runtime SHA-256: `fd4ea9e43941f27f98163e8102fac0b1910afc1fdf37c3f2213f1deab80406ff`.
+The retained `.data/releases/mlai-clean-YTXxce` candidate passed clean installation,
+all 23 advertised formats, shared-UI/types, 116 unit tests, 26 parser tests and the
+64-page production build, followed by development startup, production restart
+persistence and complete process cleanup. Formatting passed. Deterministic
+Chromium acceptance passed 21/21; focused research/auth cross-engine checks passed
+11/11. Real MLX integration/recovery, Agent/restored authorization and the final
+real-model Agent browser flow (1/1) passed at that same runtime digest.
+
+The selected endpoint remains `http://127.0.0.1:3102/v1`, model
+`mlx-community/Llama-3.2-3B-Instruct-4bit`. No hosted credentials were used or
+configured. Authorization, proposal-before-write, confirmation, cancellation,
+stale-revision and exactly-once receipt safeguards remain enforced.
+
+Detailed evidence, rejected attempts, candidate identity, screenshots, exact
+proposed targets and rollback instructions are in
+[the completion report](verification/research-completion.md) and
+[the source-bound acceptance receipt](verification/research-completion-acceptance.json).
+Candidate-specific receipt filenames preserve the prior activated-release receipts.
+
+All implementation is committed on canonical local `main`; nothing was pushed,
+published or activated in this pass. Pushes have publication effects and remain
+withheld. Hosted CI is green only for earlier pushed `b787f27`. Actual full-workflow
+200%/400% zoom, VoiceOver and unmeasured rendered-contrast cases remain operator
+gates. Publication-ready and activation-ready are therefore both false. Published
+Site version 2 and the healthy port-3100 `mlai-clean-bKPz2X` artifact are unchanged.
+
 ## Research improvements candidate (2026-09-08)
 
 Native source checkpoint: `d988a218efe747f2adf1ee073ec72ee249d69d76`.
