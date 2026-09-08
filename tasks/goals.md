@@ -418,3 +418,98 @@ its readiness check and skipped the deploy job because the required production
 WIF/project variables are absent. The orphaned Vercel `mlai-web` project still
 requires authorized dashboard access and a separately confirmed destructive
 deletion; neither provider gap is a repository-code failure.
+
+## Make invalid dynamic routes and in-page anchors behave correctly
+status: done
+
+Captured retroactively 2026-09-08 04:3x. The work landed as `abbf485`
+("fix(web): handle invalid dynamic routes and hash navigation", 12 files,
++368/-67) with a bare one-line commit message and no ledger section, so this
+records what it actually did and the evidence that it holds. Verified by
+artefact rather than by prose: `git show --stat`, the diffs named below, and a
+full local gate run, not the commit subject.
+
+- **Six dynamic-slug families now refuse unknown slugs instead of rendering a
+  half-page.** `blog`, `docs`, `products`, `projects`, `research`, and `team`
+  each gained `export const dynamicParams = false` plus a
+  `generateStaticParams()` over the in-repo content, and their `page.tsx` now
+  calls `notFound()` when the slug misses. Previously the JSON-LD block was
+  conditionally skipped for a missing record while the view still rendered, so
+  an unknown slug produced a page rather than a 404.
+- **The measurable consequence:** `next build` now emits **143 static pages**,
+  up from the 104 recorded in this ledger's previous closure, because every
+  slug in the six families is prerendered rather than resolved at request time.
+  The sitemap is unchanged in kind (69 URLs, `llms.txt` 56 links).
+- **`NotFound.tsx` became section-aware.** A `SECTION_RECOVERY` map gives each
+  family its own eyebrow, title, body, and back-link ("All documentation",
+  "All notes", "Research archive", "All products", and so on) instead of one
+  generic 404, so the recovery path leads back into the section the user was
+  already in.
+- **`ScrollToTop` no longer destroys in-page anchors.** It reset scroll to the
+  top on every pathname change, including navigations carrying a `#fragment`.
+  It now scrolls to the fragment's element and, because App Router can publish
+  the new pathname before the route's client content mounts, retries across up
+  to 120 animation frames before giving up, cancelling the frame on cleanup.
+- **The link crawler gained a third phase that can actually catch this.**
+  `crawl-links.mjs` collects cross-route `href#fragment` links, then clicks each
+  one and verifies the target element's rendered position, because `norm()`
+  deliberately strips hashes for route discovery and a URL-only check cannot
+  tell whether the destination section ended up below the viewport.
+- **Two new suites pin the behaviour:** `dynamic-route-not-found.test.tsx` and
+  `not-found-recovery.test.tsx`.
+
+**Verification, read from the gate's own exit code and not from a wrapper.**
+`bun run check` was run at `c710619` (the current `origin/main` tip, which
+contains `abbf485`) redirected to a log with `echo "EXIT: $?"` appended; the
+log's own **`EXIT: 0`** is the evidence, corroborated by every stage appearing
+in it rather than an early exit:
+
+- topology: `MLAI topology OK (8 required paths)`
+- web: `tsc --noEmit`, **43 test files / 391 tests passed**, sitemap 69 URLs
+  and `llms.txt` 56 links, `next build` compiled and generated 143 pages
+- mobile: **7 suites / 41 tests passed**, `expo lint`, `Exported: dist`
+- quasar: three workspaces typecheck at exit 0, **60 pass / 0 fail / 160
+  expect() calls across 10 files**, `Exported: dist`
+
+Hosted CI agrees on the same commit: run `34204092610` reports topology, web,
+mobile, and quasar all `success`, and Pages run `34204233040` published.
+
+**Still open and unchanged by this work, re-measured rather than restated.**
+Cloud Run run `34204233028` on `c710619` shows `readiness: success` but
+`deploy: skipped`, so the provider gap recorded in the previous goal's closure
+holds: the deploy job is still gated on production WIF/project variables that
+are absent. That is a credentials decision, not a repository-code failure, and
+nothing in this goal touched it.
+
+## Give the root CLAUDE.md the cross-app facts an agent cannot get from one file
+status: done
+
+Closed 2026-09-08. Merged as **PR #69** (`5934a2d`, one file, +56/-0), now in
+`main` at the merge commit `c710619`.
+
+- The root `CLAUDE.md` was a routing index only, so a fresh agent had to open
+  `AGENTS.md` for the orchestration commands and could not learn the cross-app
+  invariants from any single file. Added a **Root commands** block (the six
+  scripts the root actually owns, linking to `AGENTS.md` *Gate boundaries*
+  rather than copying per-app detail, per this repo's own rule) and a
+  **Cross-app facts** section holding five things that each take several files
+  to reconstruct.
+- Those five: the test runner differs per app and a bare `bun test` silently
+  runs the wrong runner in web and mobile while being correct in quasar;
+  `check-topology.ts` lists root `CLAUDE.md` among its required paths, so
+  renaming this file fails the first gate in `bun run check`;
+  `@mlai/contracts` reaches web and mobile only as `import type` while
+  `@mlai/design-tokens` is imported by no app source at all; CI installs
+  `--frozen-lockfile` per app while `install:all` is non-frozen, so lockfile
+  drift surfaces in CI and not locally; and `apps/web/site/` is a separately
+  published Pages artifact whose duplicated brand assets the `public/`
+  regeneration script does not touch.
+- Each claim was verified against source before it was written: the package
+  manifests for the runners, `check-topology.ts` for the required paths, a
+  `grep` across `apps/` for the `@mlai/*` import sites, `ci.yml` for the frozen
+  installs, and a directory listing for the duplicated `site/` assets. Nothing
+  in the existing file was stale, so the change is purely additive and no
+  pointer was rewritten.
+- Merged with all four CI checks green. Per the machine git policy the topic
+  branch was merged back and then deleted both locally and on `origin`, so this
+  checkout is on `main`, clean, and in sync.
