@@ -81,7 +81,7 @@ try {
   console.log("PASS isolated fixture extraction through actual worker");
   const investigation = await startFixtureRun(
     requester,
-    "Search the selected source for architecture review. Then answer who owns the review and its deadline, citing the source. Use search_documents to obtain evidence before answering.",
+    "Search the selected source for deadline Friday. Then answer who owns the architecture review and its deadline, citing the source. Use search_documents to obtain evidence before answering.",
     [docId],
   );
   const answer = await waitRun(requester, investigation.id, "completed");
@@ -89,9 +89,19 @@ try {
   assert.ok(sourced);
   assert.match(sourced.content, /Friday/i);
   assert.match(sourced.content, /Morgan/i);
-  assert.ok(
-    sourced.citations.some((c) => c.documentId === docId && !c.removed),
+  const cited = sourced.citations.find(
+    (citation) => citation.documentId === docId && !citation.removed,
   );
+  assert.ok(cited);
+  const citedChunk = one<{ content: string }>(
+    "SELECT content FROM chunks WHERE id=? AND document_id=? AND workspace_id=?",
+    cited.id,
+    docId,
+    requester.workspace,
+  );
+  assert.ok(citedChunk);
+  assert.match(citedChunk.content, /Friday/i);
+  assert.match(citedChunk.content, /Morgan/i);
   console.log("PASS real local investigation and authorized citations");
   const name = `Verified agent ${randomBytes(6).toString("hex")}`;
   const proposed = await startFixtureRun(

@@ -61,7 +61,7 @@ test("real local Agent investigation, confirmation, recovery and cancellation", 
   await page.getByRole("button", { name: "Agent", exact: true }).click();
 
   const investigation =
-    "Search the selected source for architecture review, then answer who owns it and the deadline with a numbered citation.";
+    "Search the selected source for deadline Friday, then answer who owns the architecture review and its deadline with a numbered citation.";
   await page.getByLabel("Agent objective").fill(investigation);
   await page.getByRole("button", { name: "Start agent run" }).click();
   await expect(
