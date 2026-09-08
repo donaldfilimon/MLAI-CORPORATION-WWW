@@ -5,6 +5,8 @@ surfaces. It preserves the independent history and verification boundaries of
 the production website, the Expo mobile companion, Quasar, and the local website application while giving
 them one discoverable layout and one coordination command.
 
+Current journey delivery and acceptance limits: [four-app delivery ledger](docs/four-app-journeys.md).
+
 ## Repository map
 
 | Path | Purpose | Native gate |

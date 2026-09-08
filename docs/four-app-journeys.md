@@ -8,10 +8,10 @@ This record tracks the 2026-09-08 user-approved roadmap independently of histori
 | Abbey | Implemented: derived progress, explicit provider checks, recovery, source review | Passed: 127 unit + 26 parser tests, build, browser 4/4 plus final live 1/1; all 15 evaluation outcomes retained | `50ebcf1`: CI 5/5, Pages published, Cloud Run deploy skipped |
 | Public website | Implemented: product navigation, intent setup, research links, standalone Pages | 396 tests/build; three engines passed; 79-route crawl passed | `9a67562`: CI 5/5; Pages published; Cloud Run deploy skipped |
 | Mobile companion | Implemented: fail-closed vault, serialized writes, retained drafts, stale-refresh guards | 59 tests/7 suites; TypeScript, lint, web export passed | `04bd7e8`: CI 5/5, Pages published, Cloud Run deploy skipped |
-| Quasar | Implemented: persistent origin, bounded requests, cancellation and recovery | 69 tests, three typechecks, export/template build; isolated service + Chromium passed | Delivery pending |
+| Quasar | Implemented: persistent origin, bounded requests, cancellation and recovery | 69 tests, three typechecks, export/template build; isolated service + Chromium passed | `9ddb023`, delivered through `af58896`: CI 5/5, Pages published, Cloud Run deploy skipped |
 
 Each milestone receives a scoped commit, affected-app gate, all-five-job hosted CI check,
-and observed automatic Pages / Cloud Run outcomes. The final pass reruns all four app gates.
+and observed automatic Pages / Cloud Run outcomes. The final pass reran all four app gates.
 Workspaces, lockfiles, authentication and storage stay independent. The active local installation
 and provider settings are preserved. No cutover, provisioning, Vercel removal or agent deployment.
 
@@ -127,4 +127,27 @@ installed async-act event helper and asserts exact retry call counts, without
 changing app code or increasing timeouts. Six focused CI-environment repeats and
 the full 59-test mobile gate passed. The specific Linux schedule was not reproduced
 locally; the [repair receipt](../apps/mobile/docs/verification/journeys-mobile-ci-sync-20260908.json)
-records that limit. Delivery remains subject to the follow-up hosted result.
+records that limit. The follow-up hosted result is recorded below.
+
+## Delivered implementation set
+
+All four milestones are committed on canonical `main`. The final implementation/test
+set is `af5889640876421e21aad667967046d65ad69859`, incorporating Quasar `9ddb023`.
+[CI 34234516796](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34234516796) passed all five jobs;
+[Pages 34234656663](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34234656663) published;
+[Cloud Run 34234656690](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34234656690) completed readiness and skipped deploy.
+The public static page returned HTTP 200 and matched the committed index. The
+full Next application was built and tested locally; an unconfigured Cloud Run
+skip is not a production release of its routes.
+
+[Consolidated receipt](verification/four-app-journeys-20260908.json) records all
+delivered milestones, local gates and remaining acceptance boundaries. Subsequent
+closeout changes only update documentation/evidence; their hosted run is visible
+in GitHub Actions for that commit. The active local app at port 3100 and model at
+3102 remained available, and all verification-owned listeners were stopped.
+
+Remaining acceptance: live Anthropic generation (no credentials/profile), signed
+CloudKit/device execution, native screen-reader and actual browser zoom. The
+local 15-run citation evaluation retains one source-selection annotation error,
+with no retrieval, mapping or authorization failure. Historical raw report loss
+is documented above; current receipt and screenshot paths are distinct.

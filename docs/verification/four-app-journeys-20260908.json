@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-09-08T13:54:19.534647+00:00",
+  "canonicalCheckout": "/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW",
+  "branch": "main",
+  "baseline": "720b403",
+  "implementationSet": "af5889640876421e21aad667967046d65ad69859",
+  "milestones": [
+    {
+      "app": "Abbey",
+      "commit": "50ebcf168561c834d51ad922227b1097c95a7acc",
+      "ci": 34229336665,
+      "jobsPassed": 5,
+      "pages": 34229498990,
+      "cloudRun": 34229499100
+    },
+    {
+      "app": "Web",
+      "commit": "9a675621143998dd71e0542e95740de04564ad31",
+      "ci": 34231715002,
+      "jobsPassed": 5,
+      "pages": 34231890848,
+      "cloudRun": 34231890893
+    },
+    {
+      "app": "Mobile",
+      "commit": "04bd7e848e155c69b1bc2b588064d5ec6f76d455",
+      "ci": 34232333027,
+      "jobsPassed": 5,
+      "pages": 34232497919,
+      "cloudRun": 34232497824
+    },
+    {
+      "app": "Quasar",
+      "commit": "9ddb023227ba819514e61668a27281db03384b00",
+      "deliveredWithTestRepair": "af5889640876421e21aad667967046d65ad69859",
+      "ci": 34234516796,
+      "jobsPassed": 5,
+      "pages": 34234656663,
+      "cloudRun": 34234656690
+    }
+  ],
+  "deploymentOutcome": {
+    "pages": "published; HTTP200 byte-identical static index",
+    "cloudRun": "readiness passed, deploy skipped; unconfigured"
+  },
+  "finalLocalGates": {
+    "workflowValidation": "Actionlint1.7.12 passed",
+    "topology": "passed",
+    "toolingTests": 5,
+    "abbeyUnitTests": 127,
+    "abbeyParserTests": 26,
+    "abbeyBuildFormattingResearch": "passed",
+    "webTests": 396,
+    "webBuild": "passed",
+    "mobileTests": 59,
+    "mobileTypecheckLintExport": "passed",
+    "quasarTests": 69,
+    "quasarWorkspaceTypechecks": 3,
+    "quasarExpoExport": "passed",
+    "quasarTemplateFrozenInstallBuild": "passed"
+  },
+  "remainingAcceptance": [
+    "Live Anthropic: API key/auth token/SDK profile absent",
+    "Signed native CloudKit/device acceptance unperformed",
+    "Native screen-reader acceptance unperformed",
+    "Actual browser zoom acceptance unperformed"
+  ],
+  "modelEvaluation": {
+    "runs": 15,
+    "sourceSelectionAnnotationErrors": 1,
+    "retrievalMappingAuthorizationFailures": 0,
+    "receipt": "apps/website-app/docs/verification/journeys-abbey-citations-final-20260908-0902.json"
+  },
+  "preservedServices": {
+    "localAppPort": 3100,
+    "localModelPort": 3102,
+    "advertisedModel": "mlx-community/Llama-3.2-3B-Instruct-4bit"
+  },
+  "historicalEvidenceIncident": "Earlier ignored raw integration browser reports were replaced by initial default-output runs; committed historical receipts remain. See delivery ledger. Current reports use unique paths."
+}
