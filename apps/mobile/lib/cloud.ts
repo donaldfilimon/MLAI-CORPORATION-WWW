@@ -45,7 +45,7 @@ export function describeStatus(s: VaultStatus): { label: string; ok: boolean } {
   if (s.backend === "local") return { label: "Local only — build a dev client for iCloud sync", ok: false };
   switch (s.account) {
     case "available":
-      return { label: "Synced to your private iCloud", ok: true };
+      return { label: "Private iCloud account available", ok: true };
     case "noAccount":
       return { label: "No iCloud account — sign in to iCloud in Settings", ok: false };
     case "restricted":
@@ -58,20 +58,59 @@ export function describeStatus(s: VaultStatus): { label: string; ok: boolean } {
 }
 
 // ── local fallback helpers ──────────────────────────────────────────────────
-async function readLocal(): Promise<VaultItem[]> {
-  const raw = await SecureStore.getItemAsync(FALLBACK_KEY).catch(() => null);
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    // A corrupt or unexpectedly-shaped blob must not brick every Vault load —
-    // treat it as empty; the next write self-heals by overwriting it.
-    return Array.isArray(parsed) ? (parsed as VaultItem[]) : [];
-  } catch {
-    return [];
+export type VaultStorageErrorCode = "read" | "malformed-json" | "invalid-records" | "write" | "missing-record";
+
+export class VaultStorageError extends Error {
+  constructor(public readonly code: VaultStorageErrorCode, message: string) {
+    super(message);
+    this.name = "VaultStorageError";
   }
 }
+
+async function readLocal(): Promise<VaultItem[]> {
+  let raw: string | null;
+  try {
+    raw = await SecureStore.getItemAsync(FALLBACK_KEY);
+  } catch {
+    throw new VaultStorageError("read", "Could not read local vault storage. Retry when device storage is available.");
+  }
+  if (raw === null) return [];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new VaultStorageError("malformed-json", "Local vault data is unreadable JSON. Saved data has been preserved; retry after storage recovery.");
+  }
+  const names = new Set<string>();
+  if (!Array.isArray(parsed) || !parsed.every((item: unknown) => {
+    if (typeof item !== "object" || item === null) return false;
+    const r = item as Record<string, unknown>;
+    if (typeof r.recordName !== "string" || !r.recordName.trim() || names.has(r.recordName) ||
+        typeof r.title !== "string" || typeof r.body !== "string" ||
+        typeof r.createdAt !== "number" || !Number.isFinite(r.createdAt)) return false;
+    names.add(r.recordName);
+    return true;
+  })) {
+    throw new VaultStorageError("invalid-records", "Local vault records have an invalid format. Saved data has been preserved; retry after storage recovery.");
+  }
+  return parsed as VaultItem[];
+}
 async function writeLocal(items: VaultItem[]): Promise<void> {
-  await SecureStore.setItemAsync(FALLBACK_KEY, JSON.stringify(items));
+  try {
+    await SecureStore.setItemAsync(FALLBACK_KEY, JSON.stringify(items));
+  } catch {
+    throw new VaultStorageError("write", "Could not write local vault storage. Your draft is available to retry.");
+  }
+}
+
+// Serialize the complete read/validate/write transaction within this JS runtime.
+// A rejected operation releases the queue without allowing a later writer to
+// bypass validation. SecureStore offers no cross-process transaction primitive.
+let localMutation: Promise<unknown> = Promise.resolve();
+function mutateLocal<T>(operation: () => Promise<T>): Promise<T> {
+  const result = localMutation.then(operation);
+  localMutation = result.catch(() => undefined);
+  return result;
 }
 
 // ── pure helpers ────────────────────────────────────────────────────────────
@@ -125,9 +164,11 @@ export async function addItem(title: string, body: string): Promise<VaultItem> {
     return { recordName: rec.recordName, title, body, createdAt };
   }
   const item: VaultItem = { recordName: `local-${createdAt}-${localSeq++}`, title, body, createdAt };
-  const items = await readLocal();
-  await writeLocal([item, ...items]);
-  return item;
+  return mutateLocal(async () => {
+    const items = await readLocal();
+    await writeLocal([item, ...items]);
+    return item;
+  });
 }
 
 export async function updateItem(
@@ -143,9 +184,13 @@ export async function updateItem(
     const rec = await ck.save(RECORD_TYPE, recordName, { title, body, createdAt });
     return { recordName: rec.recordName, title, body, createdAt };
   }
-  const items = await readLocal();
-  await writeLocal(applyEdit(items, recordName, title, body));
-  return { recordName, title, body, createdAt };
+  return mutateLocal(async () => {
+    const items = await readLocal();
+    const existing = items.find((item) => item.recordName === recordName);
+    if (!existing) throw new VaultStorageError("missing-record", "This note is no longer stored. Keep your draft and retry after refreshing.");
+    await writeLocal(applyEdit(items, recordName, title, body));
+    return { ...existing, title, body };
+  });
 }
 
 export async function removeItem(recordName: string): Promise<void> {
@@ -154,6 +199,8 @@ export async function removeItem(recordName: string): Promise<void> {
     await ck.remove(recordName);
     return;
   }
-  const items = await readLocal();
-  await writeLocal(items.filter((i) => i.recordName !== recordName));
+  await mutateLocal(async () => {
+    const items = await readLocal();
+    await writeLocal(items.filter((i) => i.recordName !== recordName));
+  });
 }

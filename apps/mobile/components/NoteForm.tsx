@@ -14,6 +14,7 @@ export function NoteForm({
   onSubmit,
   submitLabel,
   busy,
+  disabled = false,
   onCancel,
   autoFocus,
   titleLabel,
@@ -26,6 +27,7 @@ export function NoteForm({
   onSubmit: () => void;
   submitLabel: string;
   busy: boolean;
+  disabled?: boolean;
   onCancel?: () => void;
   autoFocus?: boolean;
   titleLabel: string;
@@ -34,6 +36,8 @@ export function NoteForm({
   const submit = (
     <PressableScale
       onPress={onSubmit}
+      disabled={disabled || busy || !title.trim()}
+      accessibilityState={{ disabled: disabled || busy || !title.trim(), busy }}
       style={[onCancel ? styles.updateBtn : styles.addBtn, { opacity: title.trim() ? 1 : 0.4 }]}
       accessibilityLabel={onCancel ? "Save changes" : undefined}
     >
@@ -43,6 +47,7 @@ export function NoteForm({
   return (
     <>
       <TextInput
+        editable={!busy}
         value={title}
         onChangeText={onChangeTitle}
         placeholder="Title"
@@ -53,6 +58,7 @@ export function NoteForm({
       />
       <View style={styles.inputDivider} />
       <TextInput
+        editable={!busy}
         value={body}
         onChangeText={onChangeBody}
         placeholder="Anything you want kept private…"
@@ -63,7 +69,7 @@ export function NoteForm({
       />
       {onCancel ? (
         <View style={styles.editActions}>
-          <PressableScale onPress={onCancel} haptic={false} style={styles.cancelBtn} accessibilityLabel="Cancel editing">
+          <PressableScale disabled={busy} onPress={onCancel} haptic={false} style={styles.cancelBtn} accessibilityLabel="Cancel editing">
             <Txt variant="mono" color={color.textDim}>CANCEL</Txt>
           </PressableScale>
           {submit}

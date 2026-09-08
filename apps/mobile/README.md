@@ -162,3 +162,27 @@ bunx eas build --profile development --platform ios
   final visual pass is yours: `bun run ios` / `bun run android`. On native, the
   gradient hero text and iOS blur render fully (react-native-web approximates
   both).
+
+### Vault recovery
+
+The encrypted local vault retains the existing `mlai.vault.local.v1` key and
+JSON array format. Only a missing SecureStore record is an empty vault. Read
+failures, malformed JSON, invalid records (including duplicate identifiers), and
+write failures surface explicit errors. Reads and mutations never reset or
+replace corrupt data; recovery requires restoring valid storage externally and
+retrying. Error messages do not include stored note contents.
+
+Local add, edit, and delete operations validate the stored records and serialize
+the complete read/modify/write operation within one JavaScript runtime.
+SecureStore has no cross-process compare-and-swap primitive; this queue does not
+coordinate multiple app processes. The native CloudKit path remains separate:
+a native error never switches to local storage. An available iCloud account is
+reported as account availability, not proof of synchronization.
+
+Failed refreshes retain visible notes and unsaved drafts. Use **Retry load** to
+read again, or retry the existing Save, Update, or Delete action after a write
+failure. Successful refreshes and search keep an active edit draft reachable,
+even if the record is absent from the refreshed list. An update to a missing
+local record fails explicitly and retains that draft. Older refresh responses
+cannot overwrite newer successful edits. These recovery tests exercise mocked
+storage; signed-device CloudKit acceptance remains a separate gate.

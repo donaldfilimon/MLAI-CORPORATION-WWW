@@ -6,8 +6,8 @@ This record tracks the 2026-09-08 user-approved roadmap independently of histori
 | Milestone | Implementation | Local acceptance | Delivery |
 | --- | --- | --- | --- |
 | Abbey | Implemented: derived progress, explicit provider checks, recovery, source review | Passed: 127 unit + 26 parser tests, build, browser 4/4 plus final live 1/1; all 15 evaluation outcomes retained | `50ebcf1`: CI 5/5, Pages published, Cloud Run deploy skipped |
-| Public website | Implemented: product navigation, intent setup, research links, standalone Pages | 396 tests/build; three engines passed; 79-route crawl passed | Delivery pending |
-| Mobile companion | Pending | Pending | Pending |
+| Public website | Implemented: product navigation, intent setup, research links, standalone Pages | 396 tests/build; three engines passed; 79-route crawl passed | `9a67562`: CI 5/5; Pages published; Cloud Run deploy skipped |
+| Mobile companion | Implemented: fail-closed vault, serialized writes, retained drafts, stale-refresh guards | 59 tests/7 suites; TypeScript, lint, web export passed | Delivery pending |
 | Quasar | Pending | Pending | Pending |
 
 Each milestone receives a scoped commit, affected-app gate, all-five-job hosted CI check,
@@ -65,3 +65,23 @@ Native screen-reader and actual browser zoom checks remain unperformed.
 
 Final crawl: 79 routes, 13/13 assets, 76/76 click-throughs and 2/2 fragment targets passed.
 The protected console returned its expected 401 challenge.
+
+Website delivery `9a675621143998dd71e0542e95740de04564ad31`:
+[CI 34231715002](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34231715002) passed all five jobs.
+[Cloud Run 34231890893](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34231890893) completed readiness and skipped deploy.
+
+[Pages 34231890848](https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/actions/runs/34231890848) published successfully.
+
+Published website verification: `https://quesar.cloud/` returned HTTP 200 and matched
+static index SHA-256 `defa90f7ba9592c52c86b9e2721fee896f1b23da19ba6ea3c230c2c74f96c8ad`.
+
+## Mobile acceptance
+
+[Mobile receipt](../apps/mobile/docs/verification/journeys-mobile-20260908.json) records
+59 tests across seven suites, TypeScript, lint and Expo web export on stable source.
+Storage faults preserve bytes; concurrent local changes serialize; refresh and save
+failures retain drafts and notes. Review caught and fixed an early-save/initial-load
+race, now covered by a deferred-load regression. Native CloudKit errors cannot
+silently select local storage. Account availability is labeled without claiming sync.
+The unchanged storage format/key and native CloudKit record definitions remain in use.
+Signed-device CloudKit acceptance is unperformed; the local queue spans one JS runtime.

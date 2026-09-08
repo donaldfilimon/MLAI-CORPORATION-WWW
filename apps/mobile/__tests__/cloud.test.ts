@@ -1,11 +1,17 @@
+import * as nativeCloud from "@/modules/mlai-cloudkit";
 import * as SecureStore from "expo-secure-store";
-import { backend, describeStatus, listItems, addItem, removeItem, updateItem, reinsertSorted, applyEdit, filterItems, type VaultStatus, type VaultItem } from "@/lib/cloud";
+import { backend, getStatus, describeStatus, listItems, addItem, removeItem, updateItem, reinsertSorted, applyEdit, filterItems, type VaultStatus, type VaultItem } from "@/lib/cloud";
 
 // The manual mock (__mocks__/expo-secure-store.js) exposes these test helpers.
-const mock = SecureStore as unknown as { __reset: () => void; __seed: (k: string, v: string) => void };
+const mock = SecureStore as unknown as { __reset: () => void; __seed: (k: string, v: string) => void; __store: Map<string, string> };
 const FALLBACK_KEY = "mlai.vault.local.v1";
 
-beforeEach(() => mock.__reset());
+beforeEach(() => {
+  mock.__reset(); jest.clearAllMocks();
+  jest.mocked(SecureStore.getItemAsync).mockImplementation(async (key) => mock.__store.get(key) ?? null);
+  jest.mocked(SecureStore.setItemAsync).mockImplementation(async (key, value) => { mock.__store.set(key, value); });
+});
+afterEach(() => jest.restoreAllMocks());
 
 describe("backend selection", () => {
   it("falls back to 'local' when the native CloudKit module is absent (test env)", () => {
@@ -22,21 +28,71 @@ describe("describeStatus", () => {
   });
 
   it("maps CloudKit account states to ok/labels", () => {
-    expect(describeStatus({ backend: "cloudkit", account: "available" }).ok).toBe(true);
+    expect(describeStatus({ backend: "cloudkit", account: "available" })).toEqual({ ok: true, label: "Private iCloud account available" });
     expect(describeStatus({ backend: "cloudkit", account: "noAccount" }).ok).toBe(false);
     expect(describeStatus({ backend: "cloudkit", account: "restricted" }).ok).toBe(false);
   });
 });
 
 describe("local fallback repository", () => {
-  it("returns [] for a corrupt SecureStore blob instead of throwing", async () => {
-    mock.__seed(FALLBACK_KEY, "{ not valid json");
+  it("only treats an absent record as empty", async () => {
     await expect(listItems()).resolves.toEqual([]);
+    mock.__seed(FALLBACK_KEY, "");
+    await expect(listItems()).rejects.toMatchObject({ code: "malformed-json" });
   });
 
-  it("returns [] for a non-array JSON value", async () => {
-    mock.__seed(FALLBACK_KEY, JSON.stringify({ rogue: true }));
-    await expect(listItems()).resolves.toEqual([]);
+  it.each([
+    ["{ invalid", "malformed-json"],
+    ['{"rogue":true}', "invalid-records"],
+    ['[null]', "invalid-records"],
+    ['[{"recordName":"a","title":1,"body":"","createdAt":1}]', "invalid-records"],
+    ['[{"recordName":"a","title":"","body":"","createdAt":1e400}]', "invalid-records"],
+    ['[{"recordName":"a","title":"","body":"","createdAt":1},{"recordName":"a","title":"","body":"","createdAt":1}]', "invalid-records"],
+  ])("preserves corrupt bytes through reads and every mutation: %s", async (raw, code) => {
+    mock.__seed(FALLBACK_KEY, raw);
+    await expect(listItems()).rejects.toMatchObject({ code });
+    await expect(addItem("new", "")).rejects.toMatchObject({ code });
+    await expect(updateItem("a", "new", "", 1)).rejects.toMatchObject({ code });
+    await expect(removeItem("a")).rejects.toMatchObject({ code });
+    expect(SecureStore.setItemAsync).not.toHaveBeenCalled();
+    expect(await SecureStore.getItemAsync(FALLBACK_KEY)).toBe(raw);
+  });
+
+  it("does not overwrite storage when reads fail", async () => {
+    const read = jest.spyOn(SecureStore, "getItemAsync").mockRejectedValue(new Error("locked"));
+    await expect(listItems()).rejects.toMatchObject({ code: "read" });
+    await expect(addItem("A", "")).rejects.toMatchObject({ code: "read" });
+    await expect(updateItem("a", "A", "", 1)).rejects.toMatchObject({ code: "read" });
+    await expect(removeItem("a")).rejects.toMatchObject({ code: "read" });
+    expect(SecureStore.setItemAsync).not.toHaveBeenCalled();
+    read.mockRestore();
+  });
+
+  it("reports write failure and releases the queue for a retry", async () => {
+    const original = await addItem("original", "");
+    const bytes = await SecureStore.getItemAsync(FALLBACK_KEY);
+    jest.spyOn(SecureStore, "setItemAsync").mockRejectedValueOnce(new Error("full"));
+    await expect(updateItem(original.recordName, "changed", "", original.createdAt)).rejects.toMatchObject({ code: "write" });
+    expect(await SecureStore.getItemAsync(FALLBACK_KEY)).toBe(bytes);
+    await addItem("retry", "");
+    expect((await listItems()).map((i) => i.title)).toEqual(expect.arrayContaining(["original", "retry"]));
+  });
+
+  it("serializes concurrent adds, edits and deletes without losing unrelated notes", async () => {
+    const [a, b] = await Promise.all([addItem("A", ""), addItem("B", "")]);
+    await Promise.all([
+      updateItem(a.recordName, "A edited", "body", a.createdAt),
+      removeItem(b.recordName),
+      addItem("C", ""),
+      addItem("D", ""),
+    ]);
+    expect((await listItems()).map((i) => i.title).sort()).toEqual(["A edited", "C", "D"]);
+  });
+
+  it("does not claim an edit succeeded when its record was removed", async () => {
+    mock.__seed(FALLBACK_KEY, "[]");
+    await expect(updateItem("missing", "draft", "body", 1)).rejects.toMatchObject({ code: "missing-record" });
+    expect(SecureStore.setItemAsync).not.toHaveBeenCalled();
   });
 
   it("round-trips add -> list -> remove", async () => {
@@ -139,5 +195,25 @@ describe("filterItems", () => {
 
   it("returns [] when nothing matches", () => {
     expect(filterItems(items, "zzz")).toEqual([]);
+  });
+});
+
+
+describe("native failures never fall back to local storage", () => {
+  it("propagates CloudKit read/write/delete/account errors without touching SecureStore", async () => {
+    const failure = new Error("Native unavailable");
+    jest.spyOn(nativeCloud, "getCloudKit").mockReturnValue({
+      getAccountStatus: jest.fn().mockRejectedValue(failure),
+      query: jest.fn().mockRejectedValue(failure),
+      save: jest.fn().mockRejectedValue(failure),
+      remove: jest.fn().mockRejectedValue(failure),
+    });
+    await expect(getStatus()).rejects.toBe(failure);
+    await expect(listItems()).rejects.toBe(failure);
+    await expect(addItem("a", "b")).rejects.toBe(failure);
+    await expect(updateItem("a", "b", "c", 1)).rejects.toBe(failure);
+    await expect(removeItem("a")).rejects.toBe(failure);
+    expect(SecureStore.getItemAsync).not.toHaveBeenCalled();
+    expect(SecureStore.setItemAsync).not.toHaveBeenCalled();
   });
 });

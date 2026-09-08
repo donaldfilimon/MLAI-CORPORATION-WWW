@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-09-08T13:29:56.706601+00:00",
+  "baseCommit": "9a675621143998dd71e0542e95740de04564ad31",
+  "sourceSha256": "0fddfaed1331b59fd69221261e248f4c04498f34f8959c153123db470d2d2403",
+  "digestScope": "git-listed app files excluding markdown and docs; paths plus NUL plus bytes, sorted",
+  "stableSource": true,
+  "runtime": {
+    "node": "24.20.0",
+    "bun": "1.4.0"
+  },
+  "gate": {
+    "tests": 59,
+    "suites": 7,
+    "typescript": "passed",
+    "lint": "passed",
+    "expoWebExport": "passed"
+  },
+  "coverage": [
+    "absent record only is empty",
+    "malformed JSON and invalid shapes preserve original bytes for every mutation",
+    "storage read and write failures with retry",
+    "mixed concurrent add edit delete preserves other records",
+    "native errors do not touch fallback",
+    "failed refresh retains notes and both drafts",
+    "failed writes and deletion retain visible notes and recover",
+    "stale refresh cannot replace newer edit or newer refresh",
+    "initial load guards premature writes without losing draft",
+    "active editor survives search and refresh omission"
+  ],
+  "limitations": [
+    "Native signed-device CloudKit acceptance unperformed",
+    "SecureStore queue serializes one JavaScript runtime, not multiple processes",
+    "Fault injection proves application behavior, not device storage hardware reliability"
+  ]
+}

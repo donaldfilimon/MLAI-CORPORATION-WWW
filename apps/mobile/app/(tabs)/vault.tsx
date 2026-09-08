@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,7 +21,6 @@ import {
   addItem,
   removeItem,
   updateItem,
-  reinsertSorted,
   applyEdit,
   filterItems,
   getStatus,
@@ -48,39 +47,54 @@ export default function Vault() {
   const [editBody, setEditBody] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
   const [query, setQuery] = useState("");
+  const lifecycle = useRef({ mounted: true });
+  const revision = useRef(0);
+  const request = useRef(0);
+  const mutations = useRef(new Set<string>());
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [editSnapshot, setEditSnapshot] = useState<VaultItem | null>(null);
 
   const load = useCallback(async () => {
-    const [s, list] = await Promise.all([getStatus(), listItems()]);
-    setStatus(s);
-    setItems(list);
+    const id = ++request.current;
+    const version = revision.current;
+    const canApply = () => lifecycle.current.mounted && id === request.current && version === revision.current && mutations.current.size === 0;
+    try {
+      const [s, list] = await Promise.all([getStatus(), listItems()]);
+      if (canApply()) {
+        setStatus(s);
+        setItems(list);
+        setLoadFailed(false);
+        setError(null);
+      }
+    } catch (e) {
+      if (canApply()) {
+        setLoadFailed(true);
+        setError(e instanceof Error ? e.message : "Could not load your vault.");
+      }
+    } finally {
+      if (id === request.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    }
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await load();
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not load your vault.");
-      } finally {
-        setLoading(false);
-      }
-    })();
+    const state = lifecycle.current;
+    state.mounted = true;
+    void load();
+    return () => { state.mounted = false; };
   }, [load]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setError(null);
-    try {
-      await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not refresh your vault.");
-    } finally {
-      setRefreshing(false);
-    }
+    await load();
   }, [load]);
 
   const onAdd = useCallback(async () => {
-    if (!title.trim()) return;
+    if (loading || !title.trim() || mutations.current.has("add")) return;
+    mutations.current.add("add");
+    revision.current++;
     setSaving(true);
     setError(null);
     try {
@@ -91,72 +105,71 @@ export default function Vault() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save to your vault.");
     } finally {
+      revision.current++;
+      mutations.current.delete("add");
       setSaving(false);
     }
-  }, [title, body]);
+  }, [title, body, loading]);
 
   const onDelete = useCallback(async (recordName: string) => {
-    // Capture just the removed item inside the updater (not a whole-list
-    // snapshot), so a failed delete rolls back by re-inserting that one item
-    // into the *current* list — preserving any notes added during the in-flight
-    // delete. Keeps the callback referentially stable (no `items` dependency).
-    let removed: VaultItem | undefined;
-    setItems((cur) => {
-      removed = cur.find((i) => i.recordName === recordName);
-      return cur.filter((i) => i.recordName !== recordName);
-    });
+    if (mutations.current.has(recordName)) return;
+    mutations.current.add(recordName);
+    revision.current++;
+    setError(null);
     try {
       await removeItem(recordName);
+      setItems((cur) => cur.filter((i) => i.recordName !== recordName));
     } catch (e) {
-      if (removed) setItems((cur) => reinsertSorted(cur, removed!));
-      setError(e instanceof Error ? e.message : "Could not delete that item.");
+      setError(e instanceof Error ? e.message : "Could not delete that item. Retry using its Delete action.");
+    } finally {
+      revision.current++;
+      mutations.current.delete(recordName);
     }
   }, []);
 
   const startEdit = useCallback((item: VaultItem) => {
+    if (mutations.current.size || editingId) return;
+    setEditSnapshot(item);
     setEditingId(item.recordName);
     setEditTitle(item.title);
     setEditBody(item.body);
     setError(null);
-  }, []);
+  }, [editingId]);
 
   const cancelEdit = useCallback(() => setEditingId(null), []);
 
   const onSaveEdit = useCallback(
     async (item: VaultItem) => {
       const title = editTitle.trim();
-      if (!title) return;
+      if (!title || mutations.current.has(item.recordName)) return;
+      mutations.current.add(item.recordName);
+      revision.current++;
       const body = editBody.trim();
       setSavingEdit(true);
       setError(null);
-      setItems((cur) => applyEdit(cur, item.recordName, title, body));
       try {
-        await updateItem(item.recordName, title, body, item.createdAt);
+        const updated = await updateItem(item.recordName, title, body, item.createdAt);
+        setItems((cur) => cur.some((i) => i.recordName === item.recordName)
+          ? applyEdit(cur, item.recordName, updated.title, updated.body) : [updated, ...cur]);
         setEditingId(null); // close only on success — keep the form (and spinner) up during the save
       } catch (e) {
-        // Revert just this item's fields in the current list (not a whole-list
-        // snapshot), so notes touched meanwhile are preserved. Leave the form
-        // open, pre-filled with the attempted text, so the user can retry.
-        setItems((cur) => applyEdit(cur, item.recordName, item.title, item.body));
         setError(e instanceof Error ? e.message : "Could not update that item.");
       } finally {
+        revision.current++;
+        mutations.current.delete(item.recordName);
         setSavingEdit(false);
       }
     },
     [editTitle, editBody],
   );
 
-  // If a search query filters out the note currently being edited, close the
-  // edit form rather than leaving it stranded off-screen with unsaved text.
-  useEffect(() => {
-    if (editingId && query.trim() && !filterItems(items, query).some((i) => i.recordName === editingId)) {
-      setEditingId(null);
-    }
-  }, [editingId, query, items]);
-
   const desc = status ? describeStatus(status) : null;
   const initials = initialsFor(user);
-  const visible = filterItems(items, query);
+  const visible = [...filterItems(items, query)];
+  // Keep the active editor reachable even when a refresh or search omits it.
+  if (editingId && !visible.some((item) => item.recordName === editingId) && editSnapshot) {
+    visible.unshift(editSnapshot);
+  }
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
@@ -190,7 +203,7 @@ export default function Vault() {
 
         <Txt variant="h1" color={color.white}>Private by storage</Txt>
         <Txt variant="small" color={color.textDim} style={{ marginTop: 6 }}>
-          Notes saved here are written to your own iCloud — proof of the thesis, not a demo of it.
+          Notes use your private iCloud when available in a native build, or encrypted local storage. Check the active storage status below.
         </Txt>
 
         {/* status banner */}
@@ -211,6 +224,7 @@ export default function Vault() {
             onSubmit={onAdd}
             submitLabel="SAVE TO VAULT →"
             busy={saving}
+            disabled={loading}
             titleLabel="Note title"
             bodyLabel="Note body"
           />
@@ -220,6 +234,9 @@ export default function Vault() {
           <Animated.View entering={FadeIn.duration(240)} style={styles.errorRow}>
             <View style={[styles.dot, { backgroundColor: color.warn }]} />
             <Txt variant="small" color={color.warn} style={{ flex: 1 }}>{error}</Txt>
+            <PressableScale onPress={onRefresh} disabled={refreshing} accessibilityLabel="Retry loading vault">
+              <Txt variant="small" color={color.warn}>Retry load</Txt>
+            </PressableScale>
           </Animated.View>
         ) : null}
 
@@ -250,9 +267,9 @@ export default function Vault() {
         <View style={{ marginTop: space.lg, gap: space.md }}>
           {loading ? (
             <ActivityIndicator color={color.wdbx} style={{ marginTop: space.xl }} />
-          ) : items.length === 0 ? (
+          ) : items.length === 0 && !editingId ? (
             <Txt variant="small" color={color.textMute} style={{ marginTop: space.md }}>
-              Nothing saved yet. Add your first private note above.
+              {loadFailed ? "Vault could not be loaded. Retry to recover your notes." : "Nothing saved yet. Add your first private note above."}
             </Txt>
           ) : visible.length === 0 ? (
             <Txt variant="small" color={color.textMute} style={{ marginTop: space.md }}>
