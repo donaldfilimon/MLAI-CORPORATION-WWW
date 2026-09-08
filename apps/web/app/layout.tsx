@@ -89,19 +89,22 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth dark" suppressHydrationWarning>
       <head>
-        {/* Display (Spectral serif — the Lab signature) + mono (JetBrains Mono)
-            load from Google Fonts; body font (Geist) is self-hosted via
-            @fontsource (imported above). */}
+        {/* Display (Spectral serif — the Lab signature), the design-system and
+            film display face (Outfit), and mono (JetBrains Mono) load from
+            Google Fonts; body font (Geist) is self-hosted via @fontsource
+            (imported above). Outfit is not optional decoration: it is the
+            declared face for the whole board type scale, the hero headline and
+            the wordmark, and nothing else in the app loads it. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Spectral:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         />
         <noscript>
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Spectral:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
           />
         </noscript>
         <link rel="mask-icon" href="/favicon.svg" color="#22d3ee" />

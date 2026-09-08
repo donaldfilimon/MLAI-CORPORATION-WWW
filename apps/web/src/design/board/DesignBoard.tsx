@@ -40,7 +40,7 @@ const BOARD_CSS = `
   position: relative;
   min-height: 100vh;
   color: #fafafa;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Inter", "Geist Variable", system-ui, sans-serif;
   background:
     radial-gradient(130% 80% at 50% -10%, #0a1226 0%, #050813 46%, #030307 100%) fixed,
     var(--ds-canvas);
@@ -163,7 +163,7 @@ function Sidebar({ active }: { active: string }): ReactNode {
         ))}
       </nav>
       <div className="mt-auto pt-6 border-t border-white/6">
-        <Mono className="text-[10px] text-slate-600 leading-relaxed block">Outfit · Inter · JetBrains Mono</Mono>
+        <Mono className="text-[10px] text-slate-600 leading-relaxed block">Outfit · Geist · JetBrains Mono</Mono>
         <Mono className="text-[10px] text-slate-700 mt-1 block">© 2026 MLAI Corporation</Mono>
       </div>
     </aside>

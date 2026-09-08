@@ -50,7 +50,7 @@ export function Sprite({ start = 0, end = Infinity, children, keepMounted = fals
 /* ── text / rect sprites (handy primitives) ───────────────────── */
 
 export function TextSprite({ text, x = 0, y = 0, size = 48, color = "#fff",
-  font = "Inter, system-ui, sans-serif", weight = 600, entryDur = 0.45, exitDur = 0.35,
+  font = "Inter, 'Geist Variable', system-ui, sans-serif", weight = 600, entryDur = 0.45, exitDur = 0.35,
   align = "left", letterSpacing = "-0.01em" }: {
   text: string; x?: number; y?: number; size?: number; color?: string; font?: string;
   weight?: number; entryDur?: number; exitDur?: number; align?: "left" | "center" | "right"; letterSpacing?: string;
@@ -170,7 +170,7 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
 
   return (
     <div ref={stageRef} style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column",
-      alignItems: "center", background: "#0a0a0a", fontFamily: "Inter, system-ui, sans-serif" }}>
+      alignItems: "center", background: "#0a0a0a", fontFamily: "Inter, 'Geist Variable', system-ui, sans-serif" }}>
       <div style={{ flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 0 }}>
         <div style={{ width, height, background, position: "relative", transform: `scale(${scale})`, transformOrigin: "center",
           flexShrink: 0, boxShadow: "0 20px 60px rgba(0,0,0,0.4)", overflow: "hidden" }}>

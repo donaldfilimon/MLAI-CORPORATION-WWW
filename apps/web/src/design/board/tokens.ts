@@ -149,7 +149,7 @@ export const CSS_TABS: Readonly<Record<string, string>> = {
 --space-stack:   1.5rem;   --space-inline:.75rem;`,
 
   Type: `--font-display:'Outfit',sans-serif;
---font-sans:'Inter',system-ui,sans-serif;
+--font-sans:'Inter','Geist Variable',system-ui,sans-serif;
 --font-mono:'JetBrains Mono',ui-monospace,monospace;
 
 /* Major-Third scale (1.25) */
