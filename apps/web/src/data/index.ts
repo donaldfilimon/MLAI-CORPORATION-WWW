@@ -10,6 +10,7 @@ import { faq } from './categories/faq';
 import { products } from './categories/products';
 import { changelog } from './categories/changelog';
 import { docNav } from './categories/docs-nav';
+import { docs } from './categories/docs';
 
 export * from './schemas';
 export * from './categories/about';
@@ -24,6 +25,7 @@ export * from './categories/faq';
 export * from './categories/products';
 export * from './categories/changelog';
 export * from './categories/docs-nav';
+export * from './categories/docs';
 
 export const content = {
   about,
@@ -39,4 +41,5 @@ export const content = {
   faq,
   products,
   changelog,
+  docs,
 } as const;

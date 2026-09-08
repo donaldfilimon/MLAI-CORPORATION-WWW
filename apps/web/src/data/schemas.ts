@@ -132,6 +132,24 @@ export const BlogSchema = z.array(z.object({
   body: z.array(BlogSectionSchema).default([]),
 }));
 
+export const DocSectionSchema = BlogSectionSchema.extend({
+  /** Vendored Section.note — an aside the blog shape has no home for. */
+  note: z.string().optional(),
+});
+
+export const DocsSchema = z.array(z.object({
+  slug: z.string(),
+  title: z.string(),
+  description: z.string(),
+  group: z.string(),
+  body: z.array(DocSectionSchema).default([]),
+  sources: z.array(z.string()).default([]),
+}));
+
+export type DocSection = z.infer<typeof DocSectionSchema>;
+export type Docs = z.infer<typeof DocsSchema>;
+export type Doc = Docs[number];
+
 export const TeamSchema = z.array(z.object({
   name: z.string(),
   role: z.string(),
