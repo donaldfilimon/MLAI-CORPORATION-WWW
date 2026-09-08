@@ -298,7 +298,11 @@ export function readResearchSnapshot(root = process.cwd()) {
   };
 }
 
-export function verifySiteParity(siteRoot: string, root = process.cwd()) {
+export function verifySiteParity(
+  siteRoot: string,
+  root = process.cwd(),
+  expectedSiteRevision?: string,
+) {
   requireMatch(isAbsolute(siteRoot), "site root must be absolute");
   const site = realpathSync(siteRoot);
   const input = readResearchSnapshot(root);
@@ -315,8 +319,12 @@ export function verifySiteParity(siteRoot: string, root = process.cwd()) {
     JSON.parse(readFileSync(resolve(site, "research-manifest.json"), "utf8")),
   );
   const review = reviewSchema.parse(input.review);
+  const expectedRevision =
+    expectedSiteRevision !== undefined
+      ? revision.parse(expectedSiteRevision)
+      : review.sourceRevision;
   requireMatch(
-    sourceManifest.sourceRevision === review.sourceRevision,
+    sourceManifest.sourceRevision === expectedRevision,
     "site source revision parity",
   );
   requireMatch(
@@ -350,6 +358,11 @@ export function verifySiteParity(siteRoot: string, root = process.cwd()) {
   }
   return {
     sourceRevision: sourceManifest.sourceRevision,
+    reviewedContentRevision: review.sourceRevision,
+    revisionBasis:
+      expectedSiteRevision !== undefined
+        ? "explicit candidate revision; publication not asserted"
+        : "published review revision",
     sourceDirty: sourceManifest.sourceDirty,
     contentSha256: review.contentSha256,
     implementationDataSha256: review.implementationDataSha256,

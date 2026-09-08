@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { spawnSync } from "node:child_process";
 import {
   readResearchSnapshot,
   validateResearchSnapshot,
@@ -17,6 +18,22 @@ function syncStudyFixture(input: ReturnType<typeof readResearchSnapshot>) {
 }
 
 describe("public research snapshot validation", () => {
+  it("rejects a supplied candidate revision without a site root, including empty", () => {
+    for (const value of ["", "a".repeat(40)]) {
+      const result = spawnSync(
+        process.execPath,
+        [
+          "--import",
+          "tsx",
+          "scripts/verify-research.ts",
+          `--site-revision=${value}`,
+        ],
+        { encoding: "utf8" },
+      );
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("--site-revision requires --site-root");
+    }
+  });
   it("checks export parity and rejects a changed export without a sibling dependency", () => {
     const input = readResearchSnapshot();
     const dir = mkdtempSync(join(tmpdir(), "mlai-public-parity-"));
@@ -54,13 +71,46 @@ describe("public research snapshot validation", () => {
         researchParity: "semantic",
         attachmentParity: "byte-identical",
       });
+      expect(() => verifySiteParity(dir, process.cwd(), "")).toThrow();
+      const candidateRevision = "a".repeat(40);
+      manifest.sourceRevision = candidateRevision;
+      writeFileSync(
+        join(dir, "research-manifest.json"),
+        JSON.stringify(manifest),
+      );
+      expect(() => verifySiteParity(dir)).toThrow(
+        /site source revision parity/,
+      );
+      expect(
+        verifySiteParity(dir, process.cwd(), candidateRevision),
+      ).toMatchObject({
+        sourceRevision: candidateRevision,
+        reviewedContentRevision: review.sourceRevision,
+        revisionBasis: "explicit candidate revision; publication not asserted",
+      });
+      expect(() => verifySiteParity(dir, process.cwd(), "main")).toThrow();
+      expect(() =>
+        verifySiteParity(dir, process.cwd(), "b".repeat(40)),
+      ).toThrow(/site source revision parity/);
+      const checkCandidate = () =>
+        verifySiteParity(dir, process.cwd(), candidateRevision);
+      writeFileSync(join(dir, "research-data.json"), "{}");
+      expect(checkCandidate).toThrow(/site research semantic parity/);
+      writeFileSync(join(dir, "research-data.json"), input.researchBytes);
+      const attachment = research.publications.flatMap((p) => p.attachments)[0];
+      const attachmentPath = join(dir, attachment.url.slice(1));
+      writeFileSync(attachmentPath, "corrupted PDF");
+      expect(checkCandidate).toThrow(/site attachment byte parity/);
+      rmSync(attachmentPath);
+      expect(checkCandidate).toThrow();
+      writeFileSync(attachmentPath, input.readAttachment(attachment.url));
       writeFileSync(
         join(dir, "implementation-data.json"),
         `${input.studyBytes}\n`,
       );
-      expect(() => verifySiteParity(dir)).toThrow(
-        /site implementation byte parity/,
-      );
+      expect(() =>
+        verifySiteParity(dir, process.cwd(), candidateRevision),
+      ).toThrow(/site implementation byte parity/);
       expect(() => verifySiteParity("relative/public")).toThrow(
         /must be absolute/,
       );

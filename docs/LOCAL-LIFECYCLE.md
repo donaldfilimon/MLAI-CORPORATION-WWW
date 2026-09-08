@@ -38,6 +38,14 @@ are never overwritten; use a distinct name for each run. Public source links may
 still require separate availability or permission checks; matching their pinned
 revision syntax does not establish anonymous access.
 
+For an unpublished presentation-only export, also supply `--site-revision`
+with the exact committed 40-character canonical revision. This pins the candidate
+without overwriting historical publication evidence. The receipt records both
+the candidate export revision and the reviewed content revision, while requiring
+unchanged research content, exact implementation bytes, and matching PDF bytes.
+An empty, malformed, or mismatched revision fails. Omission retains the stricter
+published-review revision comparison; it does not automatically accept a new export.
+
 Real Agent acceptance additionally requires explicitly supplied
 `MLAI_E2E_MODEL_URL` and `MLAI_E2E_MODEL_ID`. Never reuse canonical private data or
 configure hosted credentials to make a local test pass. Keep model/provider
