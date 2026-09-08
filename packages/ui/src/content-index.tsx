@@ -20,6 +20,7 @@ export interface ContentIndexProps<
   emptyState?: ReactNode;
   renderMetadata?: (item: T) => ReactNode;
   searchDisabled?: boolean;
+  controls?: ReactNode;
 }
 export function ContentIndex<T extends ContentIndexItem>({
   items,
@@ -31,6 +32,7 @@ export function ContentIndex<T extends ContentIndexItem>({
   emptyState,
   renderMetadata,
   searchDisabled = false,
+  controls,
 }: ContentIndexProps<T>) {
   const [localQuery, setLocalQuery] = useState("");
   const q = query ?? localQuery;
@@ -76,6 +78,7 @@ export function ContentIndex<T extends ContentIndexItem>({
           </button>
         )}
       </div>
+      {controls}
       <p className="small muted" role="status" aria-atomic="true">
         {filtered.length} {filtered.length === 1 ? "article" : "articles"} found
       </p>

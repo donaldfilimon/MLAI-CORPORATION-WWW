@@ -3,6 +3,27 @@ import { describe, expect, it } from "vitest";
 import { ContentIndex } from "../packages/ui/src/content-index";
 
 describe("shared content index", () => {
+  it("places optional filter controls after search in reading and focus order", () => {
+    const html = renderToStaticMarkup(
+      <ContentIndex
+        items={[]}
+        controls={
+          <label>
+            Area
+            <select name="area">
+              <option>All</option>
+            </select>
+          </label>
+        }
+      />,
+    );
+    expect(html.indexOf('type="search"')).toBeLessThan(
+      html.indexOf('name="area"'),
+    );
+    expect(html.indexOf('name="area"')).toBeLessThan(
+      html.indexOf('role="status"'),
+    );
+  });
   it("does not accept search input in an unhydrated research fallback", () => {
     const html = renderToStaticMarkup(
       <ContentIndex items={[]} searchDisabled />,

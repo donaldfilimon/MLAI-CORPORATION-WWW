@@ -9,13 +9,17 @@ for (const width of [390, 768, 1440]) {
     page,
   }) => {
     await page.setViewportSize({ width, height: 720 });
-    await page.goto("/research?source=bookmark#main");
+    await page.goto("/research?source=bookmark");
     const search = page.getByRole("searchbox", { name: "Search research" });
     const cards = page.locator(".article-index > a");
     const study = implementationStudies.find(
       (item) => item.relatedTopics.length > 1,
     )!;
-    await expect(search).toBeInViewport();
+    await expect(search).toBeEnabled();
+    await expect(
+      page.getByRole("combobox", { name: "Research area" }),
+    ).toBeVisible();
+    await expect(search).toBeInViewport({ ratio: 1 });
     await search.fill(study.title);
     await expect(cards).toHaveCount(1);
     await expect(cards.first()).toContainText("Reference snapshot");

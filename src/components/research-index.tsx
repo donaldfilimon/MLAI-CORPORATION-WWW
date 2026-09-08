@@ -35,63 +35,66 @@ function SearchableResearchIndex({ items, topics }: Props) {
     (item) =>
       (!topic || item.topics.includes(topic)) && (!kind || kind === item.kind),
   );
+  const filters = (
+    <div className={styles.filters}>
+      <label>
+        Research area
+        <select
+          name="topic"
+          value={topic}
+          onChange={(event) => update("topic", event.target.value, true)}
+        >
+          <option value="">All areas</option>
+          {topics.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+          <option value="application">Application notes</option>
+          {topic &&
+            ![...topics.map((t) => t.id), "application"].includes(topic) && (
+              <option value={topic}>Unknown area</option>
+            )}
+        </select>
+      </label>
+      <label>
+        Document type
+        <select
+          name="type"
+          value={kind}
+          onChange={(event) => update("type", event.target.value, true)}
+        >
+          <option value="">All types</option>
+          <option value="overview">Overviews</option>
+          <option value="research-note">Research notes</option>
+          <option value="implementation-guide">Implementation guides</option>
+          <option value="implementation-study">Implementation studies</option>
+          <option value="application-note">Application notes</option>
+          {kind &&
+            ![
+              "overview",
+              "research-note",
+              "implementation-guide",
+              "implementation-study",
+              "application-note",
+            ].includes(kind) && <option value={kind}>Unknown type</option>}
+        </select>
+      </label>
+      {(topic || kind) && (
+        <button
+          type="button"
+          className="button secondary"
+          onClick={() => clear()}
+        >
+          Reset filters
+        </button>
+      )}
+    </div>
+  );
   return (
     <div ref={index}>
-      <div className={styles.filters}>
-        <label>
-          Research area
-          <select
-            name="topic"
-            value={topic}
-            onChange={(event) => update("topic", event.target.value, true)}
-          >
-            <option value="">All areas</option>
-            {topics.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-            <option value="application">Application notes</option>
-            {topic &&
-              ![...topics.map((t) => t.id), "application"].includes(topic) && (
-                <option value={topic}>Unknown area</option>
-              )}
-          </select>
-        </label>
-        <label>
-          Document type
-          <select
-            name="type"
-            value={kind}
-            onChange={(event) => update("type", event.target.value, true)}
-          >
-            <option value="">All types</option>
-            <option value="overview">Overviews</option>
-            <option value="research-note">Research notes</option>
-            <option value="implementation-guide">Implementation guides</option>
-            <option value="implementation-study">Implementation studies</option>
-            <option value="application-note">Application notes</option>
-            {kind &&
-              ![
-                "overview",
-                "research-note",
-                "implementation-guide",
-                "implementation-study",
-                "application-note",
-              ].includes(kind) && <option value={kind}>Unknown type</option>}
-          </select>
-        </label>
-        {(topic || kind) && (
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() => clear()}
-          >
-            Reset filters
-          </button>
-        )}
-      </div>
       <ContentIndex
+        controls={filters}
         Link={Link}
         items={filtered}
         searchLabel="Search research"
@@ -119,9 +122,8 @@ function SearchableResearchIndex({ items, topics }: Props) {
           <>
             <p>
               {topic || kind
-                ? "No research matches these filters"
-                : "No research matches this search"}
-              {query.trim() ? ` and “${query.trim()}”.` : "."}
+                ? `No research matches these filters${query.trim() ? ` and “${query.trim()}”` : ""}.`
+                : `No research matches “${query.trim()}”.`}
             </p>
             <p>Try another research area, document type, or search term.</p>
             <button
