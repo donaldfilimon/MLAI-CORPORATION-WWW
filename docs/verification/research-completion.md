@@ -143,6 +143,17 @@ Publication and local activation require separate later approvals and passing
 manual gates. Neither the unpublished Site preview on port 3110 nor the isolated
 native preview on port 3106 is an activation or installed login service.
 
+The final handoff probe found that the older port-3106 development preview still
+cached the earlier missing-`tokens.css` error. After confirming its recorded
+supervisor PID 28551, process group, cwd and listener ownership, only that preview
+was stopped. Port 3106 now serves the retained `mlai-clean-YTXxce` production
+artifact under supervisor PID 29242, with the same isolated
+`.data/research-preview-20260908` data and explicit MLX registry. Research and
+sign-in return 200; health reports local/SQLite mode. Private process state and
+logs remain in that preview directory. Port 3100 remains unchanged at PID 67722.
+This preview uses neither the artifact's synthetic clean-install database nor
+canonical live data, and does not depend on mutable shared development output.
+
 ## Proposed targets and recovery
 
 These are later operator-approved actions, not commands executed in this pass.
