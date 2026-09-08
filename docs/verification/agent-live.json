@@ -1,8 +1,8 @@
 {
-  "checkedAt": "2026-09-08T10:16:54.507Z",
+  "checkedAt": "2026-09-08T10:21:20.196Z",
   "source": {
-    "baseCommit": "551ec78e80ff1fda98d9454abaac1f27403bb76e",
-    "runtimeSourceSha256": "913761b67c3524963bb7920f1436f6e558ccfa0f56a12f2ac317458727ff1ac8",
+    "baseCommit": "03a558f11180d0a189111ecca3be08f5801bfbee",
+    "runtimeSourceSha256": "af500e5be95aae0cd9f8b85a343269c2ed005d8576a73dfde96758a89d97980d",
     "files": [
       {
         "file": ".claude/agents/abbey.md",
@@ -114,7 +114,7 @@
       },
       {
         "file": "docs/verification/agent-live.json",
-        "sha256": "2b564fd47d860d5e931bd10b3975c1060091d63de3d3243002feb337627feb5f"
+        "sha256": "d7dfabff313e3e2e6e2b531deec03ec04cbae5d21dc279e3fad01079356bf84c"
       },
       {
         "file": "docs/verification/clean-install.json",
@@ -858,7 +858,7 @@
       },
       {
         "file": "tests/e2e/agent.spec.ts",
-        "sha256": "6f4c6bb554f5ec5352c286b4d12b6d331c863dbc21b3434e0df65c89a97e34c1"
+        "sha256": "3e391e307fda95b099ea3132ce9dcb909b3f4959f91affaa4d42fc243dbd80f6"
       },
       {
         "file": "tests/e2e/content-search.spec.ts",

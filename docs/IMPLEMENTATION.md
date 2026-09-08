@@ -1,5 +1,92 @@
 # MLAI implementation and acceptance ledger
 
+## In-app Abbey Agent acceptance (2026-09-08)
+
+The remaining local Agent flows have passed using the explicitly selected
+`http://127.0.0.1:3102/v1` endpoint and
+`mlx-community/Llama-3.2-3B-Instruct-4bit`. No hosted credentials were used or
+configured. The local provider selection, stored hosted-consent boundary, and
+initiating-user confirmation requirements remain enforced.
+
+Two real-model defects were repaired: a source answer must contain an authorized
+inline citation, with one bounded strict-schema correction allowed before failure;
+and an identical already-completed write proposal terminates against its saved
+receipt instead of asking for another confirmation. Different writes still need
+their own proposals and confirmations. The Agent unit suite passed 26/26.
+
+`bun run verify:agent` passed on the final source after the browser test corrections.
+`docs/verification/agent-live.json` records the source fingerprint and separate
+proofs for real worker extraction, semantically supported citations, investigation,
+proposal without a write, exactly-once confirmed creation, queued interpretation
+completion, backup/restore, restored requester authorization, restored idempotency,
+source download, and the restored customer workflow. Hosted live acceptance remains
+explicitly unverified.
+
+Browser acceptance used repository Playwright because the Browser plugin was
+unavailable. `agent-live.spec.ts` passed 1/1 in 42.7 seconds against the real MLX
+endpoint: upload, document handoff, investigation, citation/source inspection at
+1440/768/390 pixels, confirmation, exactly one persisted project after refresh,
+and cancellation surviving refresh with no project created. Console/page errors
+and HTTP 5xx responses were absent in that passing run. The three
+`docs/verification/screenshots/agent-live-source-*.png` images were inspected.
+`agent.spec.ts` passed 2/2 in 48.6 seconds with its deterministic local model fixture,
+including pending-action refresh, viewer restrictions, rejection, queued worker
+completion, source dialog focus containment, Escape/focus restoration, all three
+viewport widths, and the late-conversation-response race.
+
+Browser harness corrections wait for Next.js navigation, target the cited body
+chunk rather than a heading-only chunk, scope restored-action assertions to the
+visible action card, and wait for the asynchronous interpretation receipt. An
+invalid initial model decision failed closed during a diagnostic run; acceptance
+uses an explicit source-search objective and does not claim arbitrary-prompt
+reliability. A corrupted generated Turbopack cache was preserved outside the
+checkout and regenerated. The earlier apparent document URL loss was a test
+synchronization error, not a product navigation defect.
+
+Changed-file Prettier checks and `git diff --check` passed. The broader
+`bun run format:check` still reports 25 pre-existing formatting differences in
+unrelated site/shared-UI files. The release process tests passed 3/3; the earlier
+concurrent `kill EPERM` result did not reproduce. Local release activation is
+recorded separately below after the retained installation gate.
+
+## Abbey local release activation (2026-09-08)
+
+`MLAI_KEEP_RELEASE=1 bun run verify:clean-install` exited 0 against source commit
+`03a558f11180d0a189111ecca3be08f5801bfbee`. The retained source, locked dependencies,
+and production build are `.data/releases/mlai-clean-bKPz2X`. The gate passed frozen
+Bun/Python installation, all 23 advertised document formats, shared-UI compilation
+and declarations, strict TypeScript, 83/83 application tests across eight suites,
+26/26 Python parser tests, and the optimized production build generating 64 pages.
+Development rebuilt the UI from source; production account/project creation,
+restart persistence, unauthenticated redirects, and full process-tree cleanup
+also passed. Dependencies and model assets were installed or reused locally;
+this is not an offline distribution bundle.
+
+The clean-install and Agent recovery receipts share runtime source SHA-256
+`af500e5be95aae0cd9f8b85a343269c2ed005d8576a73dfde96758a89d97980d`.
+Documentation and evidence updates after that source commit do not alter the
+runtime hash. `docs/verification/agent-browser.json` records the separate real
+and deterministic browser results.
+
+At `2026-09-08T10:30:11.450Z`, the retained production artifact was activated on
+`http://127.0.0.1:3100`, using canonical `.data` and its existing operator-owned
+connection configuration. Supervisor PID `67561` started both web and worker;
+homepage, sign-in and research returned 200, and unauthenticated application
+access returned 307. Before/after counts for users, projects, documents, messages
+and engagements remained zero, proving that acceptance fixture accounts did not
+enter canonical data. The older `.data/releases/mlai-clean-rG7B8J` remains a
+rollback artifact and was not running when activation began.
+
+Post-activation Chromium checks passed responsive sign-in at 1440/768/390,
+seven implementation-study links, the Abbey sign-in redirect, and zero page or
+console errors. The sign-in screenshots were inspected. Exact launch and browser
+evidence is `docs/verification/abbey-local-activation.json`; private launch state
+and logs are `.data/local-release.json` and `.data/local-release.log`.
+The selected MLX endpoint at `127.0.0.1:3102` also runs independently of the task,
+loading the existing model cache with `HF_HUB_OFFLINE=1`. Both processes are local
+session-independent launches, not installed login services. Hosted credentials,
+hosted fallback, and standalone Eve deployment remain disabled.
+
 ## Standalone agent scaffold validation (2026-09-08)
 
 `mlai-website-agent` remains intentionally non-deployable. Abbey instructions
