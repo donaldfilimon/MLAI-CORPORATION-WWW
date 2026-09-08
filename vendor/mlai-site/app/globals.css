@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "./site.css";
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-muted: var(--muted);
+  --color-border: var(--line);
+  --color-primary: var(--accent);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

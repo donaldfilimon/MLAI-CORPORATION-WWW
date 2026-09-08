@@ -1,0 +1,23 @@
+PASS: Original hero and visual identity retained on desktop and mobile
+PASS: Contextual code/body search highlights text and jumps to the exact heading
+PASS: Arrow selection is exposed with aria-activedescendant and aria-selected
+PASS: No-results and Clear remove stale selection and restore suggestions
+PASS: Article copy uses canonical Markdown; actual downloaded file matches exactly
+PASS: Denied article clipboard exposes real selectable Markdown, not fake success
+PASS: Reading progress and active section update from actual scroll position
+PASS: Heading navigation preserves the article DOM instead of re-rendering the entire page
+PASS: Mobile table of contents opens, navigates and closes cleanly
+PASS: Print action invokes printing; print media removes chrome and retains readable content
+PASS: Evidence query and type compose, restore from URL, show empty state and reset
+PASS: Multi-word project searches match regardless of word order
+PASS: System theme follows OS changes; explicit preferences override them
+PASS: Documentation topic tabs support arrows, Home/End and selected semantics
+PASS: Brief draft and prepared state survive review navigation in memory only
+PASS: Actual brief download escapes embedded HTML and uses a safe filename
+PASS: Programmatic over-limit form values cannot bypass validation
+PASS: Repeated enhancement setup and stale cleanup do not duplicate or remove active handlers
+PASS: Malformed portable routes recover to 404 without a JavaScript exception
+PASS: Server-rendered brief fields and submit button are disabled when JavaScript is absent
+PASS: All 18 views fit five viewport widths with one visible primary heading
+PASS: No uncaught page errors or external network requests during portable-site interactions
+22 improvement browser groups passed.

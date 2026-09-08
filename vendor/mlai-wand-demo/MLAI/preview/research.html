@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research — scoring and audit</title>
+  <meta name="description" content="Four-term retrieval score.">
+  <link rel="stylesheet" href="../Public/css/theme.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap nav-bar">
+      <a class="logo" href="index.html" aria-label="MLAI home"><span>MLAI</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="wdbx.html">WDBX</a>
+        <a href="abi.html">ABI</a>
+        <a href="abbey.html">Abbey</a>
+        <a href="platform.html">Platform</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="company.html">Company</a>
+        <a href="investors.html">Investors</a>
+        <a href="research.html" aria-current="page">Research</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html" class="contact-btn">Contact</a>
+      </nav>
+      <details class="nav-toggle">
+        <summary>Menu</summary>
+        <nav class="nav-sheet" aria-label="Mobile">
+        <a href="index.html">Home</a>
+        <a href="wdbx.html">WDBX</a>
+        <a href="abi.html">ABI</a>
+        <a href="abbey.html">Abbey</a>
+        <a href="platform.html">Platform</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="company.html">Company</a>
+        <a href="investors.html">Investors</a>
+        <a href="research.html" aria-current="page">Research</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html" class="contact-btn">Contact</a>
+        </nav>
+      </details>
+    </div>
+  </header>
+  <main id="main" style="--accent:#00D4FF">
+    <section class="section">
+      <div class="wrap">
+        <p class="eyebrow"><span class="tick"></span>Research</p>
+        <h1>A score with four terms</h1>
+        <p class="lead">Retrieval is scored, not hoped. Similarity, recency, causal hop, and source authority multiply.</p>
+      </div>
+    </section>
+    <section class="section"><div class="wrap"><div class="grid-2"><article class="card surface surface-hover"><h3>σ similarity</h3><p>Cosine over HNSW.</p></article>
+        <article class="card surface surface-hover"><h3>τ recency</h3><p>Temporal half-life decay.</p></article>
+        <article class="card surface surface-hover"><h3>γ causal hop</h3><p>max(0.25, 0.6^h).</p></article>
+        <article class="card surface surface-hover"><h3>π authority</h3><p>Inferred 0.30 through system-pinned 1.00.</p></article></div></div></section>
+    
+    <section class="section">
+      <div class="wrap">
+        <p class="eyebrow"><span class="tick"></span>Next</p>
+        <h2>Keep going</h2>
+        <div class="grid-2">
+        <a class="card surface surface-hover accent-edge next-card" href="architecture.html"><h3>Architecture</h3><p>Where the formulas land.</p></a>
+        <a class="card surface surface-hover accent-edge next-card" href="platform.html"><h3>Platform</h3><p>Evaluation mesh.</p></a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <hr class="brand-seam">
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <p>MLAI</p>
+      <p>Privacy-first AI infrastructure for Apple Silicon.</p>
+      <p>Built on Apple's public frameworks — Metal, Accelerate, Core ML.</p>
+      <p>Machine Learning Advanced Innovations, Inc. · Orlando, FL · Apache-2.0 · Zig 0.17-dev</p>
+    </div>
+  </footer>
+</body>
+</html>

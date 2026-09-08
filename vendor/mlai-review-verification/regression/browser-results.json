@@ -1,0 +1,46 @@
+{
+  "result": "passed",
+  "browser": "144.0.7559.96",
+  "rendering": "Chromium page.set_content of generated standalone HTML",
+  "reason": "No Browser plugin; managed Chromium blocks loopback URL navigation. No browser policy was changed.",
+  "viewports": [
+    360,
+    390,
+    768,
+    1440
+  ],
+  "views": 18,
+  "checks": [
+    "Home identity, meaningful content, and a single primary heading",
+    "Architecture diagram nodes do not overlap at four viewport widths",
+    "All 18 views: single visible H1 and no page overflow at 360/390/768/1440px",
+    "Project filters compose with search, update URL/counts, and reset the empty state",
+    "Direct project query URL restores search and category state",
+    "Home topic switching updates content and opens the correct guide",
+    "Ctrl+K \u2192 body-text search \u2192 Enter opens a real guide and closes search",
+    "Search arrows, suggestions, literal untrusted input, empty results, Escape and focus return",
+    "Search dialog contains keyboard focus while modal",
+    "Evidence filter changes real table rows and accurate counts",
+    "Code copy exact text with mocked success; denied permission selects actual code and reports failure",
+    "Documentation TOC deep link lands below the sticky header",
+    "Transient clipboard feedback is cleared on navigation",
+    "Theme changes remain readable and persist across review routes even with storage unavailable",
+    "Mobile menu Escape/focus, navigation closure, and desktop-breakpoint cleanup",
+    "Mobile documentation disclosure opens and navigates to the selected guide",
+    "Local brief validation, escaped user content, generated summary and success focus",
+    "Brief copies exact text and downloads a real Markdown file with a sanitized filename",
+    "Editing preserves the in-memory draft",
+    "Search shortcut does not hijack form input",
+    "Unknown routes have a usable 404 recovery path",
+    "Reduced-motion preference removes smooth scrolling and transition dependence",
+    "All internal page links and section anchors resolve in rendered views",
+    "No JavaScript runtime errors during the complete interaction sequence",
+    "No external network requests from the review site"
+  ],
+  "console_errors": [],
+  "limitations": [
+    "Not a React/Next.js/Fumadocs build or hydration test",
+    "Clipboard permission outcomes mocked; actual Markdown download checked",
+    "No Safari/Firefox test, automated axe audit, production deployment, or upstream ABI/Gama runtime validation"
+  ]
+}

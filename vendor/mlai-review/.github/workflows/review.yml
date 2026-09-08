@@ -1,0 +1,26 @@
+name: Review and framework candidate
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+      # The first local install must establish a reviewed lockfile before enabling
+      # this workflow. Never let CI silently invent the production dependency graph.
+      - name: Require a reviewed lockfile
+        run: test -f bun.lock
+      - run: bun install --frozen-lockfile
+      - run: bun run check:review
+      - run: bun run check:framework
+      - name: Review browser smoke
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+          python tests/browser_review.py
+          python tests/improvements_browser.py

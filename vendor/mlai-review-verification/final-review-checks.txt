@@ -1,0 +1,236 @@
+
+> mlai-marketing-docs-review@0.2.0 check:review
+> npm run typecheck:core && npm run check:syntax && npm run docs:generate && npm run preview:build && npm run test && node scripts/check-links.cjs
+
+
+> mlai-marketing-docs-review@0.2.0 typecheck:core
+> tsc --noEmit --strict --target ES2022 --module commonjs --lib ES2022,DOM lib/content.ts lib/search.ts lib/reading.ts lib/dom.ts lib/chrome-ui.ts lib/search-ui.ts lib/filter-ui.ts lib/reading-ui.ts lib/brief-ui.ts lib/interactions.ts
+
+
+> mlai-marketing-docs-review@0.2.0 check:syntax
+> node scripts/check-syntax.cjs
+
+Syntax-transpiled 29 TS/TSX source files; 0 syntax errors. This does not resolve framework types or verify the Next build.
+
+> mlai-marketing-docs-review@0.2.0 docs:generate
+> node scripts/generate-mdx.cjs
+
+Generated 8 MDX documents from canonical typed content. MDX compilation is a separate framework build step.
+
+> mlai-marketing-docs-review@0.2.0 preview:build
+> node scripts/build-preview.cjs
+
+Rendered 18 independent review pages; single-file review 334 KB. This is not a Next.js or React build.
+
+> mlai-marketing-docs-review@0.2.0 test
+> node --test tests/contracts.cjs tests/improvements.cjs tests/http.cjs
+
+TAP version 13
+# Subtest: implementation includes typed content
+ok 1 - implementation includes typed content
+  ---
+  duration_ms: 0.897351
+  type: 'test'
+  ...
+# Subtest: all route identifiers are unique and local
+ok 2 - all route identifiers are unique and local
+  ---
+  duration_ms: 0.271158
+  type: 'test'
+  ...
+# Subtest: all sources resolve to declared HTTPS references
+ok 3 - all sources resolve to declared HTTPS references
+  ---
+  duration_ms: 0.240482
+  type: 'test'
+  ...
+# Subtest: articles contain substantial distinct content and stable heading IDs
+ok 4 - articles contain substantial distinct content and stable heading IDs
+  ---
+  duration_ms: 0.220182
+  type: 'test'
+  ...
+# Subtest: search handles case and whitespace
+ok 5 - search handles case and whitespace
+  ---
+  duration_ms: 4.713577
+  type: 'test'
+  ...
+# Subtest: search matches body content and multi-term queries
+ok 6 - search matches body content and multi-term queries
+  ---
+  duration_ms: 1.320468
+  type: 'test'
+  ...
+# Subtest: search has deterministic empty and no-result states
+ok 7 - search has deterministic empty and no-result states
+  ---
+  duration_ms: 1.840411
+  type: 'test'
+  ...
+# Subtest: title match ranks above body match
+ok 8 - title match ranks above body match
+  ---
+  duration_ms: 0.202595
+  type: 'test'
+  ...
+# Subtest: project filters compose category and text without mutation
+ok 9 - project filters compose category and text without mutation
+  ---
+  duration_ms: 0.422667
+  type: 'test'
+  ...
+# Subtest: every source view renders a single primary heading
+ok 10 - every source view renders a single primary heading
+  ---
+  duration_ms: 12.381992
+  type: 'test'
+  ...
+# Subtest: unsafe strings are escaped by the review renderer
+ok 11 - unsafe strings are escaped by the review renderer
+  ---
+  duration_ms: 0.140982
+  type: 'test'
+  ...
+# Subtest: unknown views render recovery navigation
+ok 12 - unknown views render recovery navigation
+  ---
+  duration_ms: 0.281284
+  type: 'test'
+  ...
+# Subtest: real HTTP review routes, no-write policy, and scoped security headers
+ok 13 - real HTTP review routes, no-write policy, and scoped security headers
+  ---
+  duration_ms: 91.138301
+  type: 'test'
+  ...
+# Subtest: search normalizes both query and indexed Unicode text
+ok 14 - search normalizes both query and indexed Unicode text
+  ---
+  duration_ms: 2.785945
+  type: 'test'
+  ...
+# Subtest: search supports multiple words in project query
+ok 15 - search supports multiple words in project query
+  ---
+  duration_ms: 0.267733
+  type: 'test'
+  ...
+# Subtest: heading/body hits open the matching section
+ok 16 - heading/body hits open the matching section
+  ---
+  duration_ms: 0.402026
+  type: 'test'
+  ...
+# Subtest: title hits keep the main project or guide destination
+ok 17 - title hits keep the main project or guide destination
+  ---
+  duration_ms: 0.217607
+  type: 'test'
+  ...
+# Subtest: search gives total count separately from visible result limit
+ok 18 - search gives total count separately from visible result limit
+  ---
+  duration_ms: 0.676739
+  type: 'test'
+  ...
+# Subtest: search safely bounds input and result limits without mutating records
+ok 19 - search safely bounds input and result limits without mutating records
+  ---
+  duration_ms: 0.323227
+  type: 'test'
+  ...
+# Subtest: literal search punctuation cannot become a regex or HTML expression
+ok 20 - literal search punctuation cannot become a regex or HTML expression
+  ---
+  duration_ms: 1.207638
+  type: 'test'
+  ...
+# Subtest: context excerpts show a deep body match instead of unrelated summary
+ok 21 - context excerpts show a deep body match instead of unrelated summary
+  ---
+  duration_ms: 0.396307
+  type: 'test'
+  ...
+# Subtest: empty queries return intentional suggestions with no phantom matches
+ok 22 - empty queries return intentional suggestions with no phantom matches
+  ---
+  duration_ms: 0.443538
+  type: 'test'
+  ...
+# Subtest: unsafe URL records are never returned by local search
+ok 23 - unsafe URL records are never returned by local search
+  ---
+  duration_ms: 0.552732
+  type: 'test'
+  ...
+# Subtest: search index includes code and section metadata for each guide
+ok 24 - search index includes code and section metadata for each guide
+  ---
+  duration_ms: 0.235685
+  type: 'test'
+  ...
+# Subtest: reading estimate is explicit, deterministic, and never zero
+ok 25 - reading estimate is explicit, deterministic, and never zero
+  ---
+  duration_ms: 0.208263
+  type: 'test'
+  ...
+# Subtest: article Markdown preserves actual code and source references
+ok 26 - article Markdown preserves actual code and source references
+  ---
+  duration_ms: 0.392541
+  type: 'test'
+  ...
+# Subtest: docs render toolbar, progress, and a real mobile TOC
+ok 27 - docs render toolbar, progress, and a real mobile TOC
+  ---
+  duration_ms: 3.890118
+  type: 'test'
+  ...
+# Subtest: search declares active-descendant navigation through a listbox
+ok 28 - search declares active-descendant navigation through a listbox
+  ---
+  duration_ms: 0.783249
+  type: 'test'
+  ...
+# Subtest: brief is disabled in server HTML until submit handler is attached
+ok 29 - brief is disabled in server HTML until submit handler is attached
+  ---
+  duration_ms: 1.007116
+  type: 'test'
+  ...
+# Subtest: evidence ledger exposes search and reset with searchable records
+ok 30 - evidence ledger exposes search and reset with searchable records
+  ---
+  duration_ms: 1.312125
+  type: 'test'
+  ...
+# Subtest: theme has an explicit system preference path
+ok 31 - theme has an explicit system preference path
+  ---
+  duration_ms: 0.549216
+  type: 'test'
+  ...
+# Subtest: framework declares MDX types required by upstream setup
+ok 32 - framework declares MDX types required by upstream setup
+  ---
+  duration_ms: 14.32026
+  type: 'test'
+  ...
+1..32
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 622.134894
+{
+  "pages": 18,
+  "links": 593,
+  "fragments": 98,
+  "assets": 54,
+  "errors": []
+}

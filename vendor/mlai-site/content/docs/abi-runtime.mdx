@@ -1,0 +1,36 @@
+---
+title: "ABI runtime"
+description: "Local orchestration, observable capabilities, and the limits of a runtime description."
+---
+
+import { CodeBlock } from '../../components/ui';
+
+<section className="doc-section">
+
+<h2 id="runtime-foundations"><a href="#runtime-foundations">Runtime foundations</a></h2>
+
+The reviewed README describes ABI as a nightly Rust framework for local AI service orchestration, WDBX semantic storage, and runtime primitives. It explicitly says that the older Zig tree was removed.
+
+CLI and MCP surfaces are documented alongside local inspection commands. Their presence does not independently establish successful live-provider dispatch, general model quality, or every transport integration. Use the relevant contract and current source when evaluating one of those behaviors.
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="capability-is-not-execution"><a href="#capability-is-not-execution">Capability is not execution</a></h2>
+
+A capability table can identify a preferred backend without proving that its native kernels are linked. ABI’s README requires honest accelerated=false reporting in that situation and describes deterministic CPU SIMD fallback.
+
+Do not turn that fallback into a GPU speedup claim. CUDA, Vulkan, and ANE native-kernel claims require their own evidence. Hardware availability, linking, execution, correctness, and performance are separate questions.
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="demos-have-boundaries"><a href="#demos-have-boundaries">Demos have boundaries</a></h2>
+
+The project’s benchmark dashboard renders synthetic sample data. It can demonstrate a presentation format, but those charts are not measured throughput, latency, or accuracy. The small neural demonstration is not a production LLM.
+
+The README also distinguishes local browser planning from actual autonomous browser execution. Treat plans and reference surfaces as what they are, and follow the documented external-integration boundary rather than claiming an embedded browser.
+
+</section>

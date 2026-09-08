@@ -1,0 +1,537 @@
+TAP version 13
+# Subtest: search normalizes both query and indexed Unicode text
+not ok 1 - search normalizes both query and indexed Unicode text
+  ---
+  duration_ms: 2.103139
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:19:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:20:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: search supports multiple words in project query
+not ok 2 - search supports multiple words in project query
+  ---
+  duration_ms: 0.310448
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:24:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: heading/body hits open the matching section
+not ok 3 - heading/body hits open the matching section
+  ---
+  duration_ms: 0.48448
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:26:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:27:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: title hits keep the main project or guide destination
+not ok 4 - title hits keep the main project or guide destination
+  ---
+  duration_ms: 0.197698
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:31:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:32:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: search gives total count separately from visible result limit
+not ok 5 - search gives total count separately from visible result limit
+  ---
+  duration_ms: 0.199551
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:35:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:37:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: search safely bounds input and result limits without mutating records
+not ok 6 - search safely bounds input and result limits without mutating records
+  ---
+  duration_ms: 0.412481
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:41:52)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: literal search punctuation cannot become a regex or HTML expression
+not ok 7 - literal search punctuation cannot become a regex or HTML expression
+  ---
+  duration_ms: 0.145389
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:44:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:45:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: context excerpts show a deep body match instead of unrelated summary
+not ok 8 - context excerpts show a deep body match instead of unrelated summary
+  ---
+  duration_ms: 0.160242
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:51:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:52:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: empty queries return intentional suggestions with no phantom matches
+not ok 9 - empty queries return intentional suggestions with no phantom matches
+  ---
+  duration_ms: 0.4314
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:55:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:56:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unsafe URL records are never returned by local search
+not ok 10 - unsafe URL records are never returned by local search
+  ---
+  duration_ms: 0.556259
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:59:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    searchPageResults must exist
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    api (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:14:27)
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:60:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: search index includes code and section metadata for each guide
+not ok 11 - search index includes code and section metadata for each guide
+  ---
+  duration_ms: 6.044047
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(entry.sections?.length)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:65:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reading estimate is explicit, deterministic, and never zero
+not ok 12 - reading estimate is explicit, deterministic, and never zero
+  ---
+  duration_ms: 0.20571
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:67:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:68:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: article Markdown preserves actual code and source references
+not ok 13 - article Markdown preserves actual code and source references
+  ---
+  duration_ms: 0.155795
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:72:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:73:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: docs render toolbar, progress, and a real mobile TOC
+not ok 14 - docs render toolbar, progress, and a real mobile TOC
+  ---
+  duration_ms: 2.487898
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:78:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /data-copy-article/. Input:
+    
+    '<div class="container docs-container"><aside class="docs-sidebar"><div class="sidebar-sticky"><button class="docs-search-trigger" data-search-open="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><span>Search the docs</span><kbd>⌘ K</kbd></button><div class="doc-nav-group"><span class="overline">Start here</span><nav aria-label="Start here"><a href="/docs/">Overview</a><a href="/docs/getting-started/" aria-current="page">Getting started</a><a href="/docs/architecture/">Project architecture</a></nav></div><div class="doc-nav-group"><span class="overline">Systems</span><nav aria-label="Systems"><a href="/docs/runtime/">ABI runtime</a><a href="/docs/wdbx/">WDBX storage</a><a href="/docs/identity/">Abbey &amp; identity</a><a href="/docs/gama/">Gama framework</a></nav></div><div class="doc-nav-group"><span class="overline">Principles</span><nav aria-label="Principles"><a href="/docs/evidence/">Claims &amp; evidence</a></nav></div><a class="sidebar-back" href="/projects/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"></path></svg>Back to projects<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></div></aside><div class="docs-main"><details class="mobile-docs-nav"><summary>Browse documentation<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></summary><button class="docs-search-trigger" data-search-open="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><span>Search the docs</span><kbd>⌘ K</kbd></button><div class="doc-nav-group"><span class="overline">Start here</span><nav aria-label="Start here"><a href="/docs/">Overview</a><a href="/docs/getting-started/" aria-current="page">Getting started</a><a href="/docs/architecture/">Project architecture</a></nav></div><div class="doc-nav-group"><span class="overline">Systems</span><nav aria-label="Systems"><a href="/docs/runtime/">ABI runtime</a><a href="/docs/wdbx/">WDBX storage</a><a href="/docs/identity/">Abbey &amp; identity</a><a href="/docs/gama/">Gama framework</a></nav></div><div class="doc-nav-group"><span class="overline">Principles</span><nav aria-label="Principles"><a href="/docs/evidence/">Claims &amp; evidence</a></nav></div><a class="sidebar-back" href="/projects/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"></path></svg>Back to projects<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></details><div class="breadcrumbs"><a href="/docs/">Documentation</a><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg><span>Start here</span></div><div class="doc-title"><span class="section-index">START HERE</span><h1>Start with the source.</h1><p>Prepare an ABI checkout and follow its own validation workflow.</p></div><article class="article-prose"><section class="article-section"><h2 id="prepare-your-checkout"><a href="#prepare-your-checkout">Prepare your checkout<span class="heading-hash" aria-hidden="true">#</span></a></h2><p>Begin with the current ABI README and its toolchain and sibling-workspace prerequisites. The project uses nightly Rust and a checked-in Cargo wrapper. Do not treat a copied command as proof that every dependency is present on your machine.</p><p>Clone the public repository into your own development workspace, then finish the upstream setup instructions before building. This website does not execute these commands or provision a runtime.</p><div class="code-block"><div class="code-heading"><span>Shell commands</span><button type="button" class="copy-button" data-copy-code="true" aria-label="Copy Shell commands"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg><span>Copy</span></button></div><pre tabindex="0"><code>git clone https://github.com/donaldfilimon/abi.git\n' +
+      'cd abi</code></pre><span class="copy-status sr-only" role="status" aria-live="polite"></span></div> <aside class="callout"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>The repository may require additional sibling-workspace setup. Follow its current README before running the gate.</p></aside></section><section class="article-section"><h2 id="run-the-project-gate"><a href="#run-the-project-gate">Use the project’s validation gate<span class="heading-hash" aria-hidden="true">#</span></a></h2><p>The README identifies tools/check.sh as the primary validation gate and tools/cargo.sh as the wrapper for nightly Cargo. Use the wrapper rather than assuming bare cargo selects the intended toolchain.</p><p>A successful gate is evidence for that checkout and environment. Record the commit, toolchain and actual output when you share results. The commands below come from documentation; they were not executed as part of this website build.</p><div class="code-block"><div class="code-heading"><span>Shell commands</span><button type="button" class="copy-button" data-copy-code="true" aria-label="Copy Shell commands"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg><span>Copy</span></button></div><pre tabindex="0"><code>./tools/cargo.sh --version\n' +
+      './tools/check.sh\n' +
+      './tools/cargo.sh build -p abi-cli</code></pre><span class="copy-status sr-only" role="status" aria-live="polite"></span></div> </section><section class="article-section"><h2 id="inspect-local-behavior"><a href="#inspect-local-behavior">Inspect local behavior<span class="heading-hash" aria-hidden="true">#</span></a></h2><p>Once the CLI has built, the README provides local inspection entry points. Start with backend and scheduler information before enabling an external provider. Check what your process actually reports instead of inferring capabilities from a product label.</p><p>Live transports require their own configuration and explicit authorization. This guide does not ask for credentials, activate a cloud backend, or turn a local demonstration into a production service.</p><div class="code-block"><div class="code-heading"><span>Shell commands</span><button type="button" class="copy-button" data-copy-code="true" aria-label="Copy Shell commands"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg><span>Copy</span></button></div><pre tabindex="0"><code>./target/debug/abi backends\n' +
+      './target/debug/abi scheduler status</code></pre><span class="copy-status sr-only" role="status" aria-live="polite"></span></div> </section><section class="source-references" aria-labelledby="references-heading"><h2 id="references-heading">Follow the source</h2><p class="source-review-date">Review context: September 7, 2026. Linked branches can change. Documentation review is not runtime testing.</p><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer"><div><strong>ABI README</strong><span>Source description, tool commands and stated limitations; not a reproduced test run.</span></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></section></article><nav class="docs-pagination" aria-label="Adjacent guides"><a href="/docs/"><span>Previous guide</span><strong>A good place to begin.</strong></a><a href="/docs/architecture/"><span>Next guide</span><strong>D'... 1074 more characters
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    <div class="container docs-container"><aside class="docs-sidebar"><div class="sidebar-sticky"><button class="docs-search-trigger" data-search-open="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><span>Search the docs</span><kbd>⌘ K</kbd></button><div class="doc-nav-group"><span class="overline">Start here</span><nav aria-label="Start here"><a href="/docs/">Overview</a><a href="/docs/getting-started/" aria-current="page">Getting started</a><a href="/docs/architecture/">Project architecture</a></nav></div><div class="doc-nav-group"><span class="overline">Systems</span><nav aria-label="Systems"><a href="/docs/runtime/">ABI runtime</a><a href="/docs/wdbx/">WDBX storage</a><a href="/docs/identity/">Abbey &amp; identity</a><a href="/docs/gama/">Gama framework</a></nav></div><div class="doc-nav-group"><span class="overline">Principles</span><nav aria-label="Principles"><a href="/docs/evidence/">Claims &amp; evidence</a></nav></div><a class="sidebar-back" href="/projects/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"></path></svg>Back to projects<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></div></aside><div class="docs-main"><details class="mobile-docs-nav"><summary>Browse documentation<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></summary><button class="docs-search-trigger" data-search-open="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><span>Search the docs</span><kbd>⌘ K</kbd></button><div class="doc-nav-group"><span class="overline">Start here</span><nav aria-label="Start here"><a href="/docs/">Overview</a><a href="/docs/getting-started/" aria-current="page">Getting started</a><a href="/docs/architecture/">Project architecture</a></nav></div><div class="doc-nav-group"><span class="overline">Systems</span><nav aria-label="Systems"><a href="/docs/runtime/">ABI runtime</a><a href="/docs/wdbx/">WDBX storage</a><a href="/docs/identity/">Abbey &amp; identity</a><a href="/docs/gama/">Gama framework</a></nav></div><div class="doc-nav-group"><span class="overline">Principles</span><nav aria-label="Principles"><a href="/docs/evidence/">Claims &amp; evidence</a></nav></div><a class="sidebar-back" href="/projects/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"></path></svg>Back to projects<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></details><div class="breadcrumbs"><a href="/docs/">Documentation</a><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg><span>Start here</span></div><div class="doc-title"><span class="section-index">START HERE</span><h1>Start with the source.</h1><p>Prepare an ABI checkout and follow its own validation workflow.</p></div><article class="article-prose"><section class="article-section"><h2 id="prepare-your-checkout"><a href="#prepare-your-checkout">Prepare your checkout<span class="heading-hash" aria-hidden="true">#</span></a></h2><p>Begin with the current ABI README and its toolchain and sibling-workspace prerequisites. The project uses nightly Rust and a checked-in Cargo wrapper. Do not treat a copied command as proof that every dependency is present on your machine.</p><p>Clone the public repository into your own development workspace, then finish the upstream setup instructions before building. This website does not execute these commands or provision a runtime.</p><div class="code-block"><div class="code-heading"><span>Shell commands</span><button type="button" class="copy-button" data-copy-code="true" aria-label="Copy Shell commands"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg><span>Copy</span></button></div><pre tabindex="0"><code>git clone https://github.com/donaldfilimon/abi.git
+    cd abi</code></pre><span class="copy-status sr-only" role="status" aria-live="polite"></span></div> <aside class="callout"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>The repository may require additional sibling-workspace setup. Follow its current README before running the gate.</p></aside></section><section class="article-section"><h2 id="run-the-project-gate"><a href="#run-the-project-gate">Use the project’s validation gate<span class="heading-hash" aria-hidden="true">#</span></a></h2><p>The README identifies tools/check.sh as the primary validation gate and tools/cargo.sh as the wrapper for nightly Cargo. Use the wrapper rather than assuming bare cargo selects the intended toolchain.</p><p>A successful gate is evidence for that checkout and environment. Record the commit, toolchain and actual output when you share results. The commands below come from documentation; they were not executed as part of this website build.</p><div class="code-block"><div class="code-heading"><span>Shell commands</span><button type="button" class="copy-button" data-copy-code="true" aria-label="Copy Shell commands"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg><span>Copy</span></button></div><pre tabindex="0"><code>./tools/cargo.sh --version
+    ./tools/check.sh
+    ./tools/cargo.sh build -p abi-cli</code></pre><span class="copy-status sr-only" role="status" aria-live="polite"></span></div> </section><section class="article-section"><h2 id="inspect-local-behavior"><a href="#inspect-local-behavior">Inspect local behavior<span class="heading-hash" aria-hidden="true">#</span></a></h2><p>Once the CLI has built, the README provides local inspection entry points. Start with backend and scheduler information before enabling an external provider. Check what your process actually reports instead of inferring capabilities from a product label.</p><p>Live transports require their own configuration and explicit authorization. This guide does not ask for credentials, activate a cloud backend, or turn a local demonstration into a production service.</p><div class="code-block"><div class="code-heading"><span>Shell commands</span><button type="button" class="copy-button" data-copy-code="true" aria-label="Copy Shell commands"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg><span>Copy</span></button></div><pre tabindex="0"><code>./target/debug/abi backends
+    ./target/debug/abi scheduler status</code></pre><span class="copy-status sr-only" role="status" aria-live="polite"></span></div> </section><section class="source-references" aria-labelledby="references-heading"><h2 id="references-heading">Follow the source</h2><p class="source-review-date">Review context: September 7, 2026. Linked branches can change. Documentation review is not runtime testing.</p><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer"><div><strong>ABI README</strong><span>Source description, tool commands and stated limitations; not a reproduced test run.</span></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></section></article><nav class="docs-pagination" aria-label="Adjacent guides"><a href="/docs/"><span>Previous guide</span><strong>A good place to begin.</strong></a><a href="/docs/architecture/"><span>Next guide</span><strong>Different tools. Clear roles.<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></strong></a></nav></div><aside class="toc"><div class="sidebar-sticky"><span class="overline">On this page</span><nav aria-label="On this page"><a href="#prepare-your-checkout">Prepare your checkout</a><a href="#run-the-project-gate">Use the project’s validation gate</a><a href="#inspect-local-behavior">Inspect local behavior</a><a href="#references-heading">Follow the source</a></nav><div class="toc-note"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>A reading guide.<br>Not a live runtime.</p></div></div></aside></div>
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:80:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: search declares active-descendant navigation through a listbox
+not ok 15 - search declares active-descendant navigation through a listbox
+  ---
+  duration_ms: 0.592583
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:83:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /role="combobox"/. Input:
+    
+    '<dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title"><div class="search-heading"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><h2 id="search-title" class="sr-only">Search documentation and projects</h2><label class="sr-only" for="search-input">Search documentation and projects</label><input id="search-input" autocomplete="off" placeholder="Search the documentation…" maxlength="160" autofocus><button class="icon-button" data-search-close="true" aria-label="Close search"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"></path></svg></button></div><div class="search-meta"><span id="search-count" role="status" aria-live="polite">Suggested reading</span><span>Local search · No AI calls</span></div><div id="search-results" class="search-results"></div><div class="search-help"><span><kbd>↑</kbd><kbd>↓</kbd> Navigate <kbd>Enter</kbd> Open</span><span><kbd>Esc</kbd> Close</span></div></dialog><script type="application/json" id="search-index">[{"url":"/docs/","title":"A good place to begin.","description":"Understand the projects, follow the source, and know what each claim rests on.","body":"Choose a direction MLAI brings together work in local AI systems, semantic storage, companion interaction, and application frameworks. Start with the project that matches the problem you are exploring, rather than assuming the entire ecosystem is a single package. ABI is the runtime track. WDBX is the associated storage work. Abbey describes the companion and identity direction. Gama is a separate Swift framework for application interfaces. The project directory explains these roles and links to their public source. Read the boundaries These guides summarize source descriptions. They do not replace upstream API documentation, execute the projects, or establish production readiness. A repository’s reported tests are useful context, but are different from a test run reproduced in your environment. Read the evidence guide alongside capability descriptions. No latency, accuracy, throughput, certification, or availability figure is asserted on this site. The conceptual project map is an explanation, not a deployment topology. An existing platform, not a blank slate The MLAI-CORPORATION-WWW repository already contains an active website in apps/web, a mobile companion in apps/mobile, and a separate Quasar workspace in apps/quasar. Their validation and deployment boundaries remain distinct. This review site is a separate design and implementation candidate. It does not replace those applications, connect to their private console, run an AI model, or submit information to them. Use the source links to reach the current implementation.","group":"Documentation"},{"url":"/docs/getting-started/","title":"Start with the source.","description":"Prepare an ABI checkout and follow its own validation workflow.","body":"Prepare your checkout Begin with the current ABI README and its toolchain and sibling-workspace prerequisites. The project uses nightly Rust and a checked-in Cargo wrapper. Do not treat a copied command as proof that every dependency is present on your machine. Clone the public repository into your own development workspace, then finish the upstream setup instructions before building. This website does not execute these commands or provision a runtime. Use the project’s validation gate The README identifies tools/check.sh as the primary validation gate and tools/cargo.sh as the wrapper for nightly Cargo. Use the wrapper rather than assuming bare cargo selects the intended toolchain. A successful gate is evidence for that checkout and environment. Record the commit, toolchain and actual output when you share results. The commands below come from documentation; they were not executed as part of this website build. Inspect local behavior Once the CLI has built, the README provides local inspection entry points. Start with backend and scheduler information before enabling an external provider. Check what your process actually reports instead of inferring capabilities from a product label. Live transports require their own configuration and explicit authorization. This guide does not ask for credentials, activate a cloud backend, or turn a local demonstration into a production service.","group":"Documentation"},{"url":"/docs/architecture/","title":"Different tools. Clear roles.","description":"Separate runtime, storage, interface, and application framework responsibilities.","body":"Runtime and storage ABI’s README describes local orchestration, runtime primitives and WDBX integration. WDBX addresses the storage and retrieval side of that work. Their relationship does not imply that every operation is persistent or that a production cluster is deployed. The README explicitly allows persistence to be disabled or unavailable, and requires those conditions to be reported rather than presented as successful writes. A diagram cannot establish operational behavior; the relevant source and tests must do that. Interface and identity Abbey is the primary companion profile described by the source. Aviva is a direct expert mode, while ABI also names the orchestration/governance layer. These identity roles should not be mistaken for separate, independently verified models or repositories. The existing MLAI platform also separates product and persona visual identities. For example, an ABI product accent does not define the color of an Abi persona. The distinction matters in content models as well as interface design. A separate framework track Gama’s README describes Swift scenes and a retained render tree driving different interface backends. This is an application-framework track, not a required component of the conceptual Abbey–ABI–WDBX relationship. Keep project-specific build instructions and evidence separate. A passing web build does not prove a Swift target works; a local runtime test does not validate a mobile app, a hosted deployment, or a live provider integration.","group":"Documentation"},{"url":"/docs/runtime/","title":"Capability is a runtime question.","description":"Read ABI’s reported capabilities without turning fallback behavior into a promise.","body":"Local foundations The current README describes ABI as a nightly Rust framework for local AI service orchestration, semantic storage and runtime primitives. The former Zig tree has been removed. The CLI and MCP surfaces are documented entry points into that work. The scope of those interfaces is important. Source-reported contract coverage establishes a specific type of evidence, not an unrestricted guarantee of model quality, performance, or deployment readiness. Acceleration and fallback A preferred accelerator backend is not evidence that native kernels are linked. The README requires accelerated=false when the native path is absent and describes deterministic CPU SIMD fallback. Do not convert that fallback into a CUDA, Vulkan or ANE claim. A performance statement needs a reproducible artifact: checked-out revision, hardware, configuration, workload, method, measurements and limitations. None is published in this review site. Plans are not actions ABI’s documented browser command provides a reviewed local plan. The README says browser autonomy is not Current; actual navigation remains an external integration step. A plan displayed on screen is not evidence that a browser was controlled. Likewise, the small neural demonstration is not described as a production LLM. Preserve those boundaries in product copy, screenshots and examples. A compelling explanation should not require removing a material limitation.","group":"Documentation"},{"url":"/docs/wdbx/","title":"Retrieval with its scope intact.","description":"Read storage behavior and repository-reported contracts as distinct evidence.","body":"Representations and retrieval In a vector-retrieval system, stored representations make it possible to rank candidate matches to a query. Similarity is a retrieval signal; it is not, by itself, proof that a result is correct or appropriate for a downstream task. ABI’s README associates WDBX with semantic storage and hybrid ranking. For exact interfaces and the Current/Partial/Proposed mapping, use the upstream source and specification rather than treating this overview as an SDK reference. Persistence is not implicit The README describes code paths that attempt configured storage and notes that persistence can be disabled, skipped, unavailable or unsuccessful. A system must distinguish those outcomes instead of fabricating a successful write. For example, the documented environment values ABI_WDBX_PERSIST=0 and ABI_WDBX_PATH=:memory: opt out of durable persistence for relevant paths. Check the source for the exact command behavior before applying an override to your application. What reported coverage means The README reports contract coverage for ordered search results, metadata round trips, segment/WAL recovery and compaction, temporal graph snapshot restoration, and MCP hybrid ranking. That is an upstream report; these tests were not rerun for this website. It does not establish arbitrary scale, deployment topology, compliance, encryption guarantees or throughput. This review includes no connected database and no simulated query results presented as live output.","group":"Documentation"},{"url":"/docs/identity/","title":"A companion, not a capability claim.","description":"Understand Abbey, Aviva and ABI without confusing identity with implementation.","body":"The described roles The ABI README describes Abbey as the primary em'... 6343 more characters
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title"><div class="search-heading"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><h2 id="search-title" class="sr-only">Search documentation and projects</h2><label class="sr-only" for="search-input">Search documentation and projects</label><input id="search-input" autocomplete="off" placeholder="Search the documentation…" maxlength="160" autofocus><button class="icon-button" data-search-close="true" aria-label="Close search"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"></path></svg></button></div><div class="search-meta"><span id="search-count" role="status" aria-live="polite">Suggested reading</span><span>Local search · No AI calls</span></div><div id="search-results" class="search-results"></div><div class="search-help"><span><kbd>↑</kbd><kbd>↓</kbd> Navigate <kbd>Enter</kbd> Open</span><span><kbd>Esc</kbd> Close</span></div></dialog><script type="application/json" id="search-index">[{"url":"/docs/","title":"A good place to begin.","description":"Understand the projects, follow the source, and know what each claim rests on.","body":"Choose a direction MLAI brings together work in local AI systems, semantic storage, companion interaction, and application frameworks. Start with the project that matches the problem you are exploring, rather than assuming the entire ecosystem is a single package. ABI is the runtime track. WDBX is the associated storage work. Abbey describes the companion and identity direction. Gama is a separate Swift framework for application interfaces. The project directory explains these roles and links to their public source. Read the boundaries These guides summarize source descriptions. They do not replace upstream API documentation, execute the projects, or establish production readiness. A repository’s reported tests are useful context, but are different from a test run reproduced in your environment. Read the evidence guide alongside capability descriptions. No latency, accuracy, throughput, certification, or availability figure is asserted on this site. The conceptual project map is an explanation, not a deployment topology. An existing platform, not a blank slate The MLAI-CORPORATION-WWW repository already contains an active website in apps/web, a mobile companion in apps/mobile, and a separate Quasar workspace in apps/quasar. Their validation and deployment boundaries remain distinct. This review site is a separate design and implementation candidate. It does not replace those applications, connect to their private console, run an AI model, or submit information to them. Use the source links to reach the current implementation.","group":"Documentation"},{"url":"/docs/getting-started/","title":"Start with the source.","description":"Prepare an ABI checkout and follow its own validation workflow.","body":"Prepare your checkout Begin with the current ABI README and its toolchain and sibling-workspace prerequisites. The project uses nightly Rust and a checked-in Cargo wrapper. Do not treat a copied command as proof that every dependency is present on your machine. Clone the public repository into your own development workspace, then finish the upstream setup instructions before building. This website does not execute these commands or provision a runtime. Use the project’s validation gate The README identifies tools/check.sh as the primary validation gate and tools/cargo.sh as the wrapper for nightly Cargo. Use the wrapper rather than assuming bare cargo selects the intended toolchain. A successful gate is evidence for that checkout and environment. Record the commit, toolchain and actual output when you share results. The commands below come from documentation; they were not executed as part of this website build. Inspect local behavior Once the CLI has built, the README provides local inspection entry points. Start with backend and scheduler information before enabling an external provider. Check what your process actually reports instead of inferring capabilities from a product label. Live transports require their own configuration and explicit authorization. This guide does not ask for credentials, activate a cloud backend, or turn a local demonstration into a production service.","group":"Documentation"},{"url":"/docs/architecture/","title":"Different tools. Clear roles.","description":"Separate runtime, storage, interface, and application framework responsibilities.","body":"Runtime and storage ABI’s README describes local orchestration, runtime primitives and WDBX integration. WDBX addresses the storage and retrieval side of that work. Their relationship does not imply that every operation is persistent or that a production cluster is deployed. The README explicitly allows persistence to be disabled or unavailable, and requires those conditions to be reported rather than presented as successful writes. A diagram cannot establish operational behavior; the relevant source and tests must do that. Interface and identity Abbey is the primary companion profile described by the source. Aviva is a direct expert mode, while ABI also names the orchestration/governance layer. These identity roles should not be mistaken for separate, independently verified models or repositories. The existing MLAI platform also separates product and persona visual identities. For example, an ABI product accent does not define the color of an Abi persona. The distinction matters in content models as well as interface design. A separate framework track Gama’s README describes Swift scenes and a retained render tree driving different interface backends. This is an application-framework track, not a required component of the conceptual Abbey–ABI–WDBX relationship. Keep project-specific build instructions and evidence separate. A passing web build does not prove a Swift target works; a local runtime test does not validate a mobile app, a hosted deployment, or a live provider integration.","group":"Documentation"},{"url":"/docs/runtime/","title":"Capability is a runtime question.","description":"Read ABI’s reported capabilities without turning fallback behavior into a promise.","body":"Local foundations The current README describes ABI as a nightly Rust framework for local AI service orchestration, semantic storage and runtime primitives. The former Zig tree has been removed. The CLI and MCP surfaces are documented entry points into that work. The scope of those interfaces is important. Source-reported contract coverage establishes a specific type of evidence, not an unrestricted guarantee of model quality, performance, or deployment readiness. Acceleration and fallback A preferred accelerator backend is not evidence that native kernels are linked. The README requires accelerated=false when the native path is absent and describes deterministic CPU SIMD fallback. Do not convert that fallback into a CUDA, Vulkan or ANE claim. A performance statement needs a reproducible artifact: checked-out revision, hardware, configuration, workload, method, measurements and limitations. None is published in this review site. Plans are not actions ABI’s documented browser command provides a reviewed local plan. The README says browser autonomy is not Current; actual navigation remains an external integration step. A plan displayed on screen is not evidence that a browser was controlled. Likewise, the small neural demonstration is not described as a production LLM. Preserve those boundaries in product copy, screenshots and examples. A compelling explanation should not require removing a material limitation.","group":"Documentation"},{"url":"/docs/wdbx/","title":"Retrieval with its scope intact.","description":"Read storage behavior and repository-reported contracts as distinct evidence.","body":"Representations and retrieval In a vector-retrieval system, stored representations make it possible to rank candidate matches to a query. Similarity is a retrieval signal; it is not, by itself, proof that a result is correct or appropriate for a downstream task. ABI’s README associates WDBX with semantic storage and hybrid ranking. For exact interfaces and the Current/Partial/Proposed mapping, use the upstream source and specification rather than treating this overview as an SDK reference. Persistence is not implicit The README describes code paths that attempt configured storage and notes that persistence can be disabled, skipped, unavailable or unsuccessful. A system must distinguish those outcomes instead of fabricating a successful write. For example, the documented environment values ABI_WDBX_PERSIST=0 and ABI_WDBX_PATH=:memory: opt out of durable persistence for relevant paths. Check the source for the exact command behavior before applying an override to your application. What reported coverage means The README reports contract coverage for ordered search results, metadata round trips, segment/WAL recovery and compaction, temporal graph snapshot restoration, and MCP hybrid ranking. That is an upstream report; these tests were not rerun for this website. It does not establish arbitrary scale, deployment topology, compliance, encryption guarantees or throughput. This review includes no connected database and no simulated query results presented as live output.","group":"Documentation"},{"url":"/docs/identity/","title":"A companion, not a capability claim.","description":"Understand Abbey, Aviva and ABI without confusing identity with implementation.","body":"The described roles The ABI README describes Abbey as the primary em'... 6343 more characters
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:85:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: brief is disabled in server HTML until submit handler is attached
+not ok 16 - brief is disabled in server HTML until submit handler is attached
+  ---
+  duration_ms: 0.712363
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:88:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /<fieldset[^>]*disabled[^>]*data-brief-fields|<fieldset[^>]*data-brief-fields[^>]*disabled/. Input:
+    
+    '<div class="container brief-page"><div class="brief-intro"><a class="back-link" href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="reverse" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg>Our approach</a><h1>Give your idea<br>a clearer shape.</h1><p>A few thoughtful details make a better starting point. Prepare a brief, then take it with you.</p><div class="brief-privacy"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>Prepared locally in your browser.<br><strong>Nothing is sent or saved remotely.</strong><br>Use Copy or Download to keep your draft.</p></div><a class="text-link" href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW" target="_blank" rel="noopener noreferrer">Explore the existing platform<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></div><div class="brief-workspace"><form id="brief-form" novalidate><span class="section-index">YOUR PROJECT BRIEF</span><label for="brief-title">Project title <span>Required</span></label><input id="brief-title" name="title" maxlength="120" placeholder="A name for the idea" required aria-describedby="brief-title-error"><p class="field-error" id="brief-title-error" hidden>Please add a project title.</p><label for="brief-area">Area of interest</label><select id="brief-area" name="area"><option>Not sure yet</option><option>ABI runtime</option><option>WDBX storage</option><option>Abbey companion</option><option>Gama framework</option><option>Something else</option></select><label for="brief-problem">What problem are you solving? <span>Required</span></label><textarea id="brief-problem" name="problem" rows="4" maxlength="2000" placeholder="Who is this for, and what is difficult today?" required aria-describedby="brief-problem-error"></textarea><p class="field-error" id="brief-problem-error" hidden>Describe the problem in at least 10 characters.</p><label for="brief-outcome">What would success look like? <span>Optional</span></label><textarea id="brief-outcome" name="outcome" rows="3" maxlength="1500" placeholder="The outcome you’re aiming for—not a promise."></textarea><label for="brief-constraints">Constraints <span>Optional</span></label><input id="brief-constraints" name="constraints" maxlength="500" placeholder="Platform, timeline, scope, or other boundaries"><button class="button" type="submit">Prepare my brief<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></button></form><section id="brief-result" hidden aria-labelledby="brief-result-title"><span class="section-index">READY TO TAKE WITH YOU</span><h2 id="brief-result-title" tabindex="-1">Your project brief.</h2><p class="brief-result-note">Prepared locally. Nothing has been submitted.</p><pre id="brief-text" tabindex="0"></pre><div class="brief-result-actions"><button class="button" data-brief-download="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"></path></svg>Download Markdown</button><button class="button button-secondary" data-brief-copy="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg>Copy brief</button></div><button class="text-link plain-button" data-brief-edit="true">Edit your brief<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></button><p id="brief-action-status" role="status" aria-live="polite"></p></section></div></div>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<div class="container brief-page"><div class="brief-intro"><a class="back-link" href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="reverse" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg>Our approach</a><h1>Give your idea<br>a clearer shape.</h1><p>A few thoughtful details make a better starting point. Prepare a brief, then take it with you.</p><div class="brief-privacy"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>Prepared locally in your browser.<br><strong>Nothing is sent or saved remotely.</strong><br>Use Copy or Download to keep your draft.</p></div><a class="text-link" href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW" target="_blank" rel="noopener noreferrer">Explore the existing platform<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></div><div class="brief-workspace"><form id="brief-form" novalidate><span class="section-index">YOUR PROJECT BRIEF</span><label for="brief-title">Project title <span>Required</span></label><input id="brief-title" name="title" maxlength="120" placeholder="A name for the idea" required aria-describedby="brief-title-error"><p class="field-error" id="brief-title-error" hidden>Please add a project title.</p><label for="brief-area">Area of interest</label><select id="brief-area" name="area"><option>Not sure yet</option><option>ABI runtime</option><option>WDBX storage</option><option>Abbey companion</option><option>Gama framework</option><option>Something else</option></select><label for="brief-problem">What problem are you solving? <span>Required</span></label><textarea id="brief-problem" name="problem" rows="4" maxlength="2000" placeholder="Who is this for, and what is difficult today?" required aria-describedby="brief-problem-error"></textarea><p class="field-error" id="brief-problem-error" hidden>Describe the problem in at least 10 characters.</p><label for="brief-outcome">What would success look like? <span>Optional</span></label><textarea id="brief-outcome" name="outcome" rows="3" maxlength="1500" placeholder="The outcome you’re aiming for—not a promise."></textarea><label for="brief-constraints">Constraints <span>Optional</span></label><input id="brief-constraints" name="constraints" maxlength="500" placeholder="Platform, timeline, scope, or other boundaries"><button class="button" type="submit">Prepare my brief<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></button></form><section id="brief-result" hidden aria-labelledby="brief-result-title"><span class="section-index">READY TO TAKE WITH YOU</span><h2 id="brief-result-title" tabindex="-1">Your project brief.</h2><p class="brief-result-note">Prepared locally. Nothing has been submitted.</p><pre id="brief-text" tabindex="0"></pre><div class="brief-result-actions"><button class="button" data-brief-download="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"></path></svg>Download Markdown</button><button class="button button-secondary" data-brief-copy="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"></path></svg>Copy brief</button></div><button class="text-link plain-button" data-brief-edit="true">Edit your brief<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></button><p id="brief-action-status" role="status" aria-live="polite"></p></section></div></div>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:90:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: evidence ledger exposes search and reset with searchable records
+not ok 17 - evidence ledger exposes search and reset with searchable records
+  ---
+  duration_ms: 0.949912
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:93:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /data-evidence-search/. Input:
+    
+    '<div class="container trust-page"><div class="page-intro"><span class="section-index">THE EVIDENCE LEDGER</span><h1>Know what<br>a claim rests on.</h1><p>Source descriptions, test reports, and measurements answer different questions. Keep the distinction visible.</p></div><aside class="callout wide-callout"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>This is an editorial ledger based on linked source documentation, not a live CI feed or independent backend audit. Review context: September 7, 2026.</p></aside><div class="ledger-tools"><span class="overline" data-evidence-count="true" role="status" aria-live="polite">6 source-backed entries</span><label>Evidence type<select data-evidence-filter="true"><option value="all">All entries</option><option value="Documented">Documented</option><option value="Reported coverage">Reported coverage</option><option value="Conditional">Conditional</option><option value="Synthetic">Synthetic</option><option value="Not current">Not current</option></select></label></div><div class="table-scroll"><table class="evidence-table"><caption class="sr-only">Capability evidence and scope</caption><thead><tr><th>Capability</th><th>Evidence type</th><th>Scope &amp; limitation</th><th>Source</th></tr></thead><tbody><tr data-evidence="Documented"><th scope="row">Nightly Rust runtime</th><td><span class="evidence-tag documented">Documented</span></td><td>ABI’s README describes the Rust rewrite and local orchestration. No runtime build was executed for this review.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Nightly Rust runtime"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Reported coverage"><th scope="row">Storage and retrieval contracts</th><td><span class="evidence-tag reported-coverage">Reported coverage</span></td><td>Upstream reports search, recovery, compaction and snapshot contracts. The suites were not rerun here.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Storage and retrieval contracts"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Documented"><th scope="row">Gama rendering integrations</th><td><span class="evidence-tag documented">Documented</span></td><td>The README describes its scene/render-tree architecture and modules; per-platform acceptance is separate.</td><td><a href="https://github.com/donaldfilimon/gama/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Gama rendering integrations"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Conditional"><th scope="row">Native GPU acceleration</th><td><span class="evidence-tag conditional">Conditional</span></td><td>The README requires accelerated=false when native kernels are absent. No universal acceleration claim.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Native GPU acceleration"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Synthetic"><th scope="row">Benchmark dashboard</th><td><span class="evidence-tag synthetic">Synthetic</span></td><td>The ABI project-site dashboard uses synthetic sample data, not measured performance evidence.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Benchmark dashboard"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Not current"><th scope="row">Autonomous browser execution</th><td><span class="evidence-tag not-current">Not current</span></td><td>The source distinguishes a reviewed local browser plan from real browser control.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Autonomous browser execution"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr></tbody></table></div><section class="evidence-bottom"><div><h2>A target is not a result.</h2><p>No runtime performance figures, production-scaling guarantees, compliance certifications, or model-quality comparisons are asserted here.</p></div><a href="/docs/evidence/" class="button button-secondary">Read the evidence policy<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></a></section></div>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<div class="container trust-page"><div class="page-intro"><span class="section-index">THE EVIDENCE LEDGER</span><h1>Know what<br>a claim rests on.</h1><p>Source descriptions, test reports, and measurements answer different questions. Keep the distinction visible.</p></div><aside class="callout wide-callout"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"></path></svg><p>This is an editorial ledger based on linked source documentation, not a live CI feed or independent backend audit. Review context: September 7, 2026.</p></aside><div class="ledger-tools"><span class="overline" data-evidence-count="true" role="status" aria-live="polite">6 source-backed entries</span><label>Evidence type<select data-evidence-filter="true"><option value="all">All entries</option><option value="Documented">Documented</option><option value="Reported coverage">Reported coverage</option><option value="Conditional">Conditional</option><option value="Synthetic">Synthetic</option><option value="Not current">Not current</option></select></label></div><div class="table-scroll"><table class="evidence-table"><caption class="sr-only">Capability evidence and scope</caption><thead><tr><th>Capability</th><th>Evidence type</th><th>Scope &amp; limitation</th><th>Source</th></tr></thead><tbody><tr data-evidence="Documented"><th scope="row">Nightly Rust runtime</th><td><span class="evidence-tag documented">Documented</span></td><td>ABI’s README describes the Rust rewrite and local orchestration. No runtime build was executed for this review.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Nightly Rust runtime"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Reported coverage"><th scope="row">Storage and retrieval contracts</th><td><span class="evidence-tag reported-coverage">Reported coverage</span></td><td>Upstream reports search, recovery, compaction and snapshot contracts. The suites were not rerun here.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Storage and retrieval contracts"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Documented"><th scope="row">Gama rendering integrations</th><td><span class="evidence-tag documented">Documented</span></td><td>The README describes its scene/render-tree architecture and modules; per-platform acceptance is separate.</td><td><a href="https://github.com/donaldfilimon/gama/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Gama rendering integrations"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Conditional"><th scope="row">Native GPU acceleration</th><td><span class="evidence-tag conditional">Conditional</span></td><td>The README requires accelerated=false when native kernels are absent. No universal acceleration claim.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Native GPU acceleration"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Synthetic"><th scope="row">Benchmark dashboard</th><td><span class="evidence-tag synthetic">Synthetic</span></td><td>The ABI project-site dashboard uses synthetic sample data, not measured performance evidence.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Benchmark dashboard"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr><tr data-evidence="Not current"><th scope="row">Autonomous browser execution</th><td><span class="evidence-tag not-current">Not current</span></td><td>The source distinguishes a reviewed local browser plan from real browser control.</td><td><a href="https://github.com/donaldfilimon/abi/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Read source for Autonomous browser execution"><span>Read</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></td></tr></tbody></table></div><section class="evidence-bottom"><div><h2>A target is not a result.</h2><p>No runtime performance figures, production-scaling guarantees, compliance certifications, or model-quality comparisons are asserted here.</p></div><a href="/docs/evidence/" class="button button-secondary">Read the evidence policy<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></a></section></div>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:95:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: theme has an explicit system preference path
+not ok 18 - theme has an explicit system preference path
+  ---
+  duration_ms: 0.412552
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:98:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /data-theme-system/. Input:
+    
+    '<footer class="footer"><div class="container footer-top"><div><a class="brand" href="/" aria-label="MLAI home"><span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M3 19V5l9 9 9-9v14M8 19v-5m8 5v-5"></path></svg></span><span>MLAI<span class="brand-sub">Corporation</span></span></a><p>Thoughtful tools.<br>Inspectable work.</p></div><div class="footer-links"><div><span class="overline">Explore</span><a href="/projects/">Project directory</a><a href="/docs/">Documentation</a><a href="/trust/">Evidence ledger</a></div><div><span class="overline">Connect</span><a href="/about/">Our approach</a><a href="/brief/">Prepare a project brief</a><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW" target="_blank" rel="noopener noreferrer">GitHub<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></div></div></div><div class="container footer-bottom"><span>Independent review · Not the production site</span><span>Source review: September 7, 2026</span></div></footer>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<footer class="footer"><div class="container footer-top"><div><a class="brand" href="/" aria-label="MLAI home"><span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M3 19V5l9 9 9-9v14M8 19v-5m8 5v-5"></path></svg></span><span>MLAI<span class="brand-sub">Corporation</span></span></a><p>Thoughtful tools.<br>Inspectable work.</p></div><div class="footer-links"><div><span class="overline">Explore</span><a href="/projects/">Project directory</a><a href="/docs/">Documentation</a><a href="/trust/">Evidence ledger</a></div><div><span class="overline">Connect</span><a href="/about/">Our approach</a><a href="/brief/">Prepare a project brief</a><a href="https://github.com/donaldfilimon/MLAI-CORPORATION-WWW" target="_blank" rel="noopener noreferrer">GitHub<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></a></div></div></div><div class="container footer-bottom"><span>Independent review · Not the production site</span><span>Source review: September 7, 2026</span></div></footer>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:98:64)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: framework declares MDX types required by upstream setup
+not ok 19 - framework declares MDX types required by upstream setup
+  ---
+  duration_ms: 1.044564
+  type: 'test'
+  location: '/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:99:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(pkg.devDependencies['@types/mdx'])
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/mlai-improved/mlai-review/tests/improvements.cjs:101:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 0
+# fail 19
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 427.483177

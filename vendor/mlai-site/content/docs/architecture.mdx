@@ -1,0 +1,36 @@
+---
+title: "Project architecture"
+description: "Understand the boundaries between runtime, memory, interaction, and application UI."
+---
+
+import { CodeBlock } from '../../components/ui';
+
+<section className="doc-section">
+
+<h2 id="a-map-not-a-deployment"><a href="#a-map-not-a-deployment">A map, not a deployment</a></h2>
+
+The homepage diagram explains relationships: Abbey is a companion direction; ABI provides orchestration and runtime foundations; WDBX supplies semantic storage associated with that runtime. Selecting a layer changes an explanation, not a running system.
+
+Cloud backends are optional according to the ABI README. The diagram does not imply that all integrations are configured, that every data path is implemented, or that a production cluster has been verified.
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="products-and-personas"><a href="#products-and-personas">Products and personas</a></h2>
+
+ABI as a software product and Abi as a governance persona are different axes. Likewise, Aviva is described as a direct expert mode, not an independently verified standalone repository. Keep those distinctions visible in copy, APIs, and UI labels.
+
+The existing MLAI contracts distinguish product accents from persona colors. This design uses violet for the ABI product and does not use that color to assert a persona identity.
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="gama-is-a-separate-track"><a href="#gama-is-a-separate-track">Gama is a separate track</a></h2>
+
+Gama focuses on declarative application UI in Swift. Its retained-tree and scene model addresses application rendering, not the Rust runtime’s backend selection or WDBX persistence.
+
+An integration may be an interesting future idea, but an attractive diagram is not evidence that it already exists. Proposed relationships should remain labeled until a concrete implementation and appropriate verification support them.
+
+</section>
