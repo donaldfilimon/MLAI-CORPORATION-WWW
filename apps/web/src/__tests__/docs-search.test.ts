@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { searchDocuments, type SearchRecord } from "../lib/docs-search";
 import { buildDocsSearchIndex } from "../lib/docs-index";
 import { docNav } from "../data/categories/docs-nav";
+import { docs } from "@/data/categories/docs";
 
 const sample: SearchRecord[] = [
   {
@@ -83,5 +84,21 @@ describe("docs search index grounding", () => {
         expect(docsView).toContain(`id="${item.id}"`);
       }
     }
+  });
+});
+
+describe("ported docs in the search index", () => {
+  it("indexes every ported doc with a path href", () => {
+    const index = buildDocsSearchIndex();
+    for (const doc of docs) {
+      const record = index.find((r) => r.href === `/docs/${doc.slug}`);
+      expect(record, doc.slug).toBeTruthy();
+      expect(record!.title).toBe(doc.title);
+    }
+  });
+
+  it("still indexes the existing docs-nav sections as hash hrefs", () => {
+    const index = buildDocsSearchIndex();
+    expect(index.some((r) => r.href.startsWith("/docs#"))).toBe(true);
   });
 });
