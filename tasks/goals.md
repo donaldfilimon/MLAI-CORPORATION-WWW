@@ -385,3 +385,36 @@ misbehaves, nobody can tell which half caused it. The shallow alternative
 7 wrappers that the deeper fix then deletes. Ship the copy pass; do this as its
 own change. Free deletion when it happens: `getInquiries` (`api.ts:137`) has
 zero callers.
+
+## Close the deferred API and account UX follow-ups
+status: done
+
+Closed 2026-09-08 in `165e591`, pushed directly to `origin/main` as a separate
+change from the copy pass:
+
+- `apiJson` now throws a typed `ApiError` carrying status, parsed body, error
+  text, and the structured-body distinction. `apiJsonGated` shares that decoder,
+  and Console no longer reparses JSON serialized into `Error.message`.
+- Consent withdrawal, audit export, and audit deletion now surface structured
+  route errors or safe infrastructure fallbacks instead of rejecting silently.
+- The profile use-case field enforces the route's 240-character limit. A
+  successful save followed by a failed session refresh is reported as a saved
+  profile that needs a page refresh, not as a failed save.
+- The primary login actions now say **Sign in to Quesar**. WorkOS and AuthKit
+  remain named in the architecture, trust, security, and privacy copy where the
+  provider disclosure is intentional.
+- The callerless `getInquiries` wrapper and its private response type were
+  removed.
+
+TDD evidence: the focused API and server-rendered product-form suite passed 19
+tests after each new assertion first failed against the old behavior. Hosted CI
+run `34198095485` passed topology, web, mobile, and Quasar on the exact commit;
+web reported 41 files / 365 tests and a successful Next production build. Pages
+run `34198221383` then published successfully, and `https://quesar.cloud/`
+returned HTTP 200 with the new publish timestamp.
+
+Provider boundaries are unchanged: Cloud Run run `34198221398` completed only
+its readiness check and skipped the deploy job because the required production
+WIF/project variables are absent. The orphaned Vercel `mlai-web` project still
+requires authorized dashboard access and a separately confirmed destructive
+deletion; neither provider gap is a repository-code failure.
