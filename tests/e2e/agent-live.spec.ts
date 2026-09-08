@@ -137,7 +137,7 @@ test("real local Agent investigation, confirmation, recovery and cancellation", 
     .toBe(1);
   await expect(card.getByRole("button", { name: "Confirm" })).toHaveCount(0);
   await page.reload();
-  await expect(page.getByText(projectName).first()).toBeVisible();
+  await expect(card).toContainText(projectName);
   projects = (await (
     await page.request.get(`${base}/api/v1/projects`)
   ).json()) as { name: string }[];
