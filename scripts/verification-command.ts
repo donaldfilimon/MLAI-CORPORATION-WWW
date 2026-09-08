@@ -3,6 +3,17 @@ import { setTimeout as delay } from "node:timers/promises";
 
 export class VerificationCleanupError extends Error {}
 
+export function verificationCommandEnvironment(
+  args: readonly string[],
+  environment: NodeJS.ProcessEnv,
+) {
+  const env = { ...environment };
+  // Model tests own their registries through per-test MLAI_DATA_DIR values.
+  if (args[0] === "run" && args[1] === "check")
+    delete env.MLAI_CONNECTIONS_FILE;
+  return env;
+}
+
 export function selectedLocalModel(
   environment: Record<string, string | undefined>,
 ) {

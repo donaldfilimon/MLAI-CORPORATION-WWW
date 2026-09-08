@@ -16,6 +16,7 @@ import {
   runVerificationCommand,
   VerificationCleanupError,
   selectedLocalModel,
+  verificationCommandEnvironment,
 } from "./verification-command";
 const origin = process.cwd(),
   retain = process.env.MLAI_KEEP_RELEASE === "1";
@@ -94,7 +95,7 @@ try {
     console.log(`Clean install: bun ${args.join(" ")}`);
     await runVerificationCommand("bun", args, {
       cwd: clean,
-      env,
+      env: verificationCommandEnvironment(args, env),
       stdio: "inherit",
     });
   }

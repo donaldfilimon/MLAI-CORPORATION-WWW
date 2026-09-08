@@ -5,9 +5,29 @@ import { join } from "node:path";
 import {
   runVerificationCommand,
   selectedLocalModel,
+  verificationCommandEnvironment,
 } from "../scripts/verification-command";
 
 describe("owned verification commands", () => {
+  it("lets check fixtures own their registries without changing setup selection", () => {
+    const env = {
+      ...process.env,
+      MLAI_CONNECTIONS_FILE: "/isolated/clean/connections.json",
+      MLAI_DATA_DIR: "/isolated/clean",
+      MLAI_LOCAL_MODEL_URL: "http://127.0.0.1:3102/v1",
+      MLAI_LOCAL_MODEL_ID: "selected-model",
+    };
+    const check = verificationCommandEnvironment(["run", "check"], env);
+    expect(check).not.toHaveProperty("MLAI_CONNECTIONS_FILE");
+    expect(check.MLAI_DATA_DIR).toBe(env.MLAI_DATA_DIR);
+    expect(check.MLAI_LOCAL_MODEL_URL).toBe(env.MLAI_LOCAL_MODEL_URL);
+    expect(check.MLAI_LOCAL_MODEL_ID).toBe(env.MLAI_LOCAL_MODEL_ID);
+    expect(verificationCommandEnvironment(["run", "setup"], env)).toEqual(env);
+    expect(
+      verificationCommandEnvironment(["install", "--frozen-lockfile"], env),
+    ).toEqual(env);
+    expect(env.MLAI_CONNECTIONS_FILE).toBe("/isolated/clean/connections.json");
+  });
   it("stops the restarted server before writing a successful clean receipt", () => {
     const source = readFileSync("scripts/verify-clean-install.ts", "utf8");
     const persistenceCheck = source.indexOf("const projects = await fetch");
