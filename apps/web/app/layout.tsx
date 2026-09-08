@@ -87,7 +87,12 @@ const WEBSITE_JSON_LD = JSON.stringify({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="scroll-smooth dark"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
         {/* Display (Spectral serif — the Lab signature), the design-system and
             film display face (Outfit), and mono (JetBrains Mono) load from

@@ -2,6 +2,9 @@ import { ProjectPage } from "./client";
 import { projectMeta, toNextMetadata } from "@/lib/route-meta";
 import { projectLd } from "@/lib/structured-data";
 import { content } from "@/data";
+import { notFound } from "next/navigation";
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return content.projects.map((project) => ({ slug: project.slug }));
@@ -23,17 +26,17 @@ export default async function Page({
 }) {
   const { slug } = await params;
   const record = content.projects.find((p) => p.slug === slug);
+  if (!record) notFound();
+
   return (
     <>
-      {record ? (
-        <script
-          type="application/ld+json"
-          // Safe only because the payload is in-repo content validated by the
-          // Zod schema in src/data/schemas (see content.test.ts) — JSON.stringify
-          // does NOT escape "</script>", so never widen this to user input.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(projectLd(record)) }}
-        />
-      ) : null}
+      <script
+        type="application/ld+json"
+        // Safe only because the payload is in-repo content validated by the
+        // Zod schema in src/data/schemas (see content.test.ts) — JSON.stringify
+        // does NOT escape "</script>", so never widen this to user input.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectLd(record)) }}
+      />
       <ProjectPage slug={slug} />
     </>
   );

@@ -137,6 +137,7 @@ async function main() {
   const navFails = []; // [route, why] — could not be reached at all
   const assetLinks = new Map(); // asset href -> a route that links it
   const firstSeen = new Map(); // route href -> a route where an anchor exists
+  const fragmentLinks = new Map(); // cross-route href#fragment -> source route
 
   while (queue.length) {
     const route = queue.shift();
@@ -157,6 +158,10 @@ async function main() {
       if (isAsset(n)) {
         if (!assetLinks.has(n)) assetLinks.set(n, route);
         continue;
+      }
+      const fragment = new URL(href, BASE).hash;
+      if (fragment && n !== route && !fragmentLinks.has(`${n}${fragment}`)) {
+        fragmentLinks.set(`${n}${fragment}`, route);
       }
       if (!firstSeen.has(n)) firstSeen.set(n, route);
       if (!seen.has(n)) {
@@ -222,6 +227,42 @@ async function main() {
     else clickFails.push([target, source, r]);
   }
 
+  // ── Phase 3 — cross-route fragments must reveal their target ────────────
+  // `norm()` intentionally removes hashes for route discovery, but URL-only
+  // click checks cannot tell whether App Router left the destination section
+  // below the viewport. Verify the fragment's rendered position separately.
+  const fragmentFails = [];
+  let fragmentOk = 0;
+
+  for (const [target, source] of [...fragmentLinks.entries()].sort()) {
+    try {
+      await page.goto(BASE + source, { waitUntil: "networkidle", timeout: 30_000 });
+      const link = page.locator(`a[href=${JSON.stringify(target)}]`).first();
+      if ((await link.count()) === 0) throw new Error("anchor vanished");
+
+      await link.click({ timeout: 10_000 });
+      await page.waitForURL(
+        (u) => `${norm(u.href)}${u.hash}` === target,
+        { timeout: 20_000 },
+      );
+
+      const id = decodeURIComponent(new URL(target, BASE).hash.slice(1));
+      await page.waitForFunction(
+        (targetId) => {
+          const element = document.getElementById(targetId);
+          if (!element) return false;
+          const { top, bottom } = element.getBoundingClientRect();
+          return top >= 0 && top < window.innerHeight && bottom > 0;
+        },
+        id,
+        { timeout: 5_000 },
+      );
+      fragmentOk += 1;
+    } catch (e) {
+      fragmentFails.push([target, source, e.message.slice(0, 80)]);
+    }
+  }
+
   await browser.close();
 
   // ── Report ───────────────────────────────────────────────────────────────
@@ -231,6 +272,7 @@ async function main() {
   console.log(`\nRoutes crawled : ${results.length}${navFails.length ? ` (+${navFails.length} unreachable)` : ""}`);
   console.log(`Asset links    : ${assetLinks.size - badAssets.length}/${assetLinks.size} OK`);
   console.log(`Click-throughs : ${clickOk}/${firstSeen.size} landed correctly`);
+  console.log(`Fragment links : ${fragmentOk}/${fragmentLinks.size} revealed their target`);
 
   for (const [p, why] of navFails) console.log(`  x  unreachable: ${p} — ${why}`);
   for (const p of broken) console.log(`  x  404 or unresolved: ${p}`);
@@ -239,9 +281,13 @@ async function main() {
   for (const [t, s, r] of clickFails) {
     console.log(`  x  click ${t} (from ${s}) landed on ${r.landed ?? "nowhere"}${r.why ? ` — ${r.why}` : ""}`);
   }
+  for (const [t, s, why] of fragmentFails) {
+    console.log(`  x  fragment ${t} (from ${s}) did not reveal its target — ${why}`);
+  }
 
   const failed =
-    navFails.length + broken.length + badAssets.length + clickFails.length + errored.length;
+    navFails.length + broken.length + badAssets.length + clickFails.length +
+    fragmentFails.length + errored.length;
   if (failed) {
     console.log(`\n${failed} problem(s) found.`);
     process.exit(1);

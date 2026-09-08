@@ -2,6 +2,13 @@ import { ResearchPaper } from "./client";
 import { researchMeta, toNextMetadata } from "@/lib/route-meta";
 import { researchArticleLd } from "@/lib/structured-data";
 import { content } from "@/data";
+import { notFound } from "next/navigation";
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return content.research.publications.map((paper) => ({ slug: paper.slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -19,17 +26,17 @@ export default async function Page({
 }) {
   const { slug } = await params;
   const paper = content.research.publications.find((p) => p.slug === slug);
+  if (!paper) notFound();
+
   return (
     <>
-      {paper ? (
-        <script
-          type="application/ld+json"
-          // Safe only because the payload is in-repo content validated by the
-          // Zod schema in src/data/schemas (see content.test.ts) — JSON.stringify
-          // does NOT escape "</script>", so never widen this to user input.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(researchArticleLd(paper)) }}
-        />
-      ) : null}
+      <script
+        type="application/ld+json"
+        // Safe only because the payload is in-repo content validated by the
+        // Zod schema in src/data/schemas (see content.test.ts) — JSON.stringify
+        // does NOT escape "</script>", so never widen this to user input.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(researchArticleLd(paper)) }}
+      />
       <ResearchPaper />
     </>
   );
