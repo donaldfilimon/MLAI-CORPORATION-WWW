@@ -1,3 +1,4 @@
+import { writeVerificationReceipt } from "./verification-receipt";
 import {
   mkdtempSync,
   writeFileSync,
@@ -608,15 +609,14 @@ try {
     actualRequests: all("SELECT id FROM traces").length,
     promptFree: true,
   };
-  mkdirSync("docs/verification", { recursive: true });
   assert.equal(
     releaseSource().runtimeSourceSha256,
     (results.source as ReturnType<typeof releaseSource>).runtimeSourceSha256,
     "Source changed during integration verification; rerun against the final source.",
   );
-  writeFileSync(
+  writeVerificationReceipt(
     "docs/verification/local-integrations.json",
-    JSON.stringify(results, null, 2) + "\n",
+    results,
   );
 } finally {
   for (const socket of fixtureSockets) socket.destroy();

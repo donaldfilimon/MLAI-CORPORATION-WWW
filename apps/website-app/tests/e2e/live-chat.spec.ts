@@ -1,15 +1,16 @@
 import { test, expect } from "@playwright/test";
 import { randomBytes } from "node:crypto";
 test("real local chat, source inspector, streaming cancellation and conversation controls", async ({
+  baseURL,
   page,
-}) => {
+}, testInfo) => {
   test.skip(
     !process.env.MLAI_E2E_MODEL_URL,
     "Set MLAI_E2E_MODEL_URL to an explicitly selected local model endpoint.",
   );
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 960 });
-  const base = "http://127.0.0.1:3101";
+  const base = baseURL!;
   const response = await page.request.post(`${base}/api/auth/sign-up/email`, {
     headers: { Origin: base },
     data: {
@@ -48,7 +49,7 @@ test("real local chat, source inspector, streaming cancellation and conversation
   await page.locator(".citations button").first().click();
   await expect(page.locator(".source-inspector")).toContainText("Friday");
   await page.screenshot({
-    path: "docs/verification/screenshots/abbey-grounded-1440.png",
+    path: testInfo.outputPath("abbey-grounded-1440.png"),
     fullPage: true,
     animations: "disabled",
   });
@@ -61,7 +62,7 @@ test("real local chat, source inspector, streaming cancellation and conversation
       ),
     ).toBe(true);
     await page.screenshot({
-      path: `docs/verification/screenshots/abbey-grounded-${width}.png`,
+      path: testInfo.outputPath(`abbey-grounded-${width}.png`),
       fullPage: true,
       animations: "disabled",
     });

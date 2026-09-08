@@ -16,6 +16,7 @@ const localModel = (() => {
 })();
 
 test("real local Agent investigation, confirmation, recovery and cancellation", async ({
+  baseURL,
   page,
 }, testInfo) => {
   test.skip(
@@ -23,7 +24,7 @@ test("real local Agent investigation, confirmation, recovery and cancellation", 
     "Set MLAI_E2E_MODEL_URL to an explicitly selected loopback model endpoint.",
   );
   test.setTimeout(360_000);
-  const base = "http://127.0.0.1:3101";
+  const base = baseURL!;
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => {

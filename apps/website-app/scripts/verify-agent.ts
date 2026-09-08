@@ -1,3 +1,4 @@
+import { writeVerificationReceipt } from "./verification-receipt";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -255,11 +256,7 @@ try {
     restoredCustomerWorkflow: true,
     hostedLive: "unverified: no hosted credentials supplied",
   };
-  mkdirSync(resolve("docs/verification"), { recursive: true });
-  writeFileSync(
-    resolve("docs/verification/agent-live.json"),
-    JSON.stringify(receipt, null, 2) + "\n",
-  );
+  writeVerificationReceipt("docs/verification/agent-live.json", receipt);
   console.log("PASS live agent and separate restored-installation acceptance");
 } finally {
   if (worker) await stopFixtureWorker(worker);

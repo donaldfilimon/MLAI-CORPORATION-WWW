@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
-import { mkdirSync } from "node:fs";
 import { signUpFixture } from "./support/account";
 test("customer request, assigned staff, milestones, replacement and exact-version review", async ({
+  baseURL,
   browser,
-}) => {
+}, testInfo) => {
   test.setTimeout(90000);
   const dataDir = process.env.MLAI_E2E_DATA_DIR;
   if (!dataDir || !/^\.data-e2e\/runs\/[a-zA-Z0-9-]+$/.test(dataDir)) {
@@ -15,7 +15,7 @@ test("customer request, assigned staff, milestones, replacement and exact-versio
   }
   const customerContext = await browser.newContext(),
     staffContext = await browser.newContext();
-  const base = "http://127.0.0.1:3101",
+  const base = baseURL!,
     suffix = Date.now(),
     staffEmail = `staff-${suffix}@example.test`;
   for (const [context, email, name] of [
@@ -124,10 +124,9 @@ test("customer request, assigned staff, milestones, replacement and exact-versio
       exact: true,
     }),
   ).toBeVisible();
-  mkdirSync("docs/verification/screenshots", { recursive: true });
   await customer.setViewportSize({ width: 1440, height: 960 });
   await customer.screenshot({
-    path: "docs/verification/screenshots/customer-1440.png",
+    path: testInfo.outputPath("customer-1440.png"),
     fullPage: true,
     animations: "disabled",
   });
@@ -137,7 +136,7 @@ test("customer request, assigned staff, milestones, replacement and exact-versio
   ).toBeVisible();
   await staff.setViewportSize({ width: 1440, height: 960 });
   await staff.screenshot({
-    path: "docs/verification/screenshots/staff-1440.png",
+    path: testInfo.outputPath("staff-1440.png"),
     fullPage: true,
     animations: "disabled",
   });

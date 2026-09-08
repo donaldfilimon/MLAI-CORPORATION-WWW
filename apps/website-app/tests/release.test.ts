@@ -110,3 +110,69 @@ it("stops a wrapper and its listening grandchild before reusing the verification
   }
   expect(await portAvailable(port)).toBe(true);
 });
+
+it("packages a nested application without sibling sources or private/generated state", () => {
+  const root = mkdtempSync(join(tmpdir(), "mlai-nested-release-"));
+  const app = join(root, "apps/website-app");
+  const git = (...args: string[]) =>
+    execFileSync("git", args, { cwd: root, stdio: "pipe" });
+  try {
+    git("init");
+    mkdirSync(app, { recursive: true });
+    writeFileSync(
+      join(root, ".gitignore"),
+      "node_modules/\n.data/\n.next/\n.env.local\n.venv/\n",
+    );
+    writeFileSync(join(app, ".gitignore"), "packages/*/dist/\nnext-env.d.ts\n");
+    const sources = [
+      "package.json",
+      "bun.lock",
+      "src/app/page.tsx",
+      "packages/ui/src/index.ts",
+      "packages/ui/package.json",
+      "mlai-website-agent/package.json",
+      "worker/pyproject.toml",
+      "worker/uv.lock",
+      "drizzle/0000.sql",
+    ];
+    const ignored = [
+      ".data/customer.txt",
+      ".env.local",
+      "node_modules/module.js",
+      ".next/output.js",
+      "packages/ui/dist/index.js",
+      "worker/.venv/runtime",
+      "next-env.d.ts",
+    ];
+    for (const file of [...sources, ...ignored]) {
+      mkdirSync(join(app, file, ".."), { recursive: true });
+      writeFileSync(join(app, file), file);
+    }
+    mkdirSync(join(root, "apps/web"), { recursive: true });
+    writeFileSync(join(root, "apps/web/sibling.ts"), "sibling");
+    git("add", ".");
+    git(
+      "-c",
+      "user.name=Test",
+      "-c",
+      "user.email=test@example.test",
+      "commit",
+      "-m",
+      "fixture",
+    );
+    const before = releaseSource(app);
+    expect(before.files.map(({ file }) => file)).toEqual(
+      [".gitignore", ...sources].sort(),
+    );
+    writeFileSync(join(root, "apps/web/sibling.ts"), "changed sibling");
+    expect(releaseSource(app).runtimeSourceSha256).toBe(
+      before.runtimeSourceSha256,
+    );
+    writeFileSync(join(app, "packages/ui/src/new.ts"), "new untracked source");
+    expect(releaseSource(app).files.map(({ file }) => file)).toContain(
+      "packages/ui/src/new.ts",
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

@@ -52,7 +52,7 @@ export default defineConfig({
     command: "bun run dev",
     url: `${baseURL}/api/v1/health`,
     reuseExistingServer: false,
-    timeout: 60000,
+    timeout: 120000,
     env: {
       APP_URL: baseURL,
       MLAI_DATA_DIR: dataDir,

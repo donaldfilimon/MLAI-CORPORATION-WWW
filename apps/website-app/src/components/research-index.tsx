@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ContentIndex } from "@mlai/ui";
 import type { researchItems } from "@/content/research";
 import styles from "./research.module.css";
@@ -14,7 +14,15 @@ function SearchableResearchIndex({ items, topics }: Props) {
   const params = useSearchParams();
   const topic = params.get("topic") ?? "";
   const kind = params.get("type") ?? "";
-  const query = params.get("q") ?? "";
+  const urlQuery = params.get("q") ?? "";
+  const [query, setQuery] = useState(urlQuery);
+  useEffect(() => {
+    // Next can publish an older URL snapshot after a newer input event. Only
+    // synchronize the draft when that snapshot still represents the browser URL.
+    const currentQuery =
+      new URL(window.location.href).searchParams.get("q") ?? "";
+    if (urlQuery === currentQuery) setQuery(urlQuery);
+  }, [urlQuery]);
   const index = useRef<HTMLDivElement>(null);
   function update(key: string, value: string, push = false) {
     const url = new URL(window.location.href);
@@ -100,7 +108,10 @@ function SearchableResearchIndex({ items, topics }: Props) {
         searchLabel="Search research"
         placeholder="Search titles, descriptions, and areas…"
         query={query}
-        onQueryChange={(q) => update("q", q)}
+        onQueryChange={(q) => {
+          setQuery(q);
+          update("q", q);
+        }}
         renderMetadata={(item) => (
           <p className="small muted">
             {item.evidenceScope}

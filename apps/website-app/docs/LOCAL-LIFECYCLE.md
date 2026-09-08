@@ -7,13 +7,22 @@ nor hosted credentials.
 
 ## Repeatable browser checks
 
-Run `bun run test:e2e` from the repository root. Each invocation allocates an
+Run `bun run test:e2e` from `apps/website-app`. Each invocation allocates an
 independent UUID under `.data-e2e/runs/` and `.next-e2e/runs/`, keeping application
 data and generated Next output separate from canonical `.data`. Workers inherit
-the same run ID. `MLAI_E2E_RUN_ID` can name a deliberate recovery/reproduction run;
+the same run ID. Screenshots use Playwright’s per-test output paths; supply
+`--output test-results/<revision>-<gate>` to retain a distinct acceptance receipt
+without overwriting imported historical screenshots. `MLAI_E2E_RUN_ID` can name
+a deliberate recovery/reproduction run;
 use only letters, numbers, and hyphens, and never share that ID concurrently.
 
-Port 3101 is reserved for acceptance. Existing listeners cause the run to fail
+Browser acceptance defaults to port 3101; set `MLAI_E2E_PORT` to an unused
+application port when another owned process uses it. All application requests
+and authentication origins follow Playwright’s configured `baseURL`. The
+deterministic Agent provider defaults to port 3112; `MLAI_E2E_FIXTURE_PORT`
+selects another unused provider port and must match `MLAI_E2E_MODEL_URL`.
+It requires explicit fixture model environment settings. Existing listeners
+cause the run to fail
 rather than reuse an unknown server. Inspect the listener and its owner before
 stopping anything. Production credential rate limits are unchanged; fixture
 account creation uses the bounded retry helper. Retained fixture stores are

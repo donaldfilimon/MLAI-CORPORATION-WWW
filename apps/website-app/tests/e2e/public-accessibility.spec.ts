@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("shared navigation restores focus, respects reduced motion, and serves public routes", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -35,7 +35,7 @@ test("shared navigation restores focus, respects reduced motion, and serves publ
         .evaluate((element) => getComputedStyle(element).transitionDuration),
     ).toBe("0s");
     await page.screenshot({
-      path: `docs/verification/screenshots/home-${width}.png`,
+      path: testInfo.outputPath(`home-${width}.png`),
       fullPage: true,
       animations: "disabled",
     });
@@ -59,7 +59,7 @@ test("shared navigation restores focus, respects reduced motion, and serves publ
   // Provenance chips must reach the reader, not just the markup.
   await expect(page.locator(".prov-tag").first()).toBeVisible();
   await page.screenshot({
-    path: "docs/verification/screenshots/architecture-390.png",
+    path: testInfo.outputPath("architecture-390.png"),
     fullPage: true,
     animations: "disabled",
   });

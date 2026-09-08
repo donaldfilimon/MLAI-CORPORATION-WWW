@@ -57,21 +57,50 @@ export async function retrieve(
   documentIds?: string[],
   limit = 8,
   signal?: AbortSignal,
+  options: { semanticTimeoutMs?: number } = {},
 ) {
   signal?.throwIfAborted();
   const keyword = search(workspaceId, query, projectId, documentIds, limit);
   if (!query.trim())
     return { mode: "keyword", results: [], reason: "Enter a search query." };
+  const controller = new AbortController();
+  const cancel = () => controller.abort(signal?.reason);
+  signal?.addEventListener("abort", cancel, { once: true });
+  if (signal?.aborted) cancel();
+  let timedOut = false;
+  const timer =
+    options.semanticTimeoutMs === undefined
+      ? undefined
+      : setTimeout(() => {
+          timedOut = true;
+          controller.abort(
+            new DOMException("Semantic search timed out.", "TimeoutError"),
+          );
+        }, options.semanticTimeoutMs);
+  let onAbort: () => void = () => {};
+  const cancelled = new Promise<never>((_, reject) => {
+    onAbort = () => reject(controller.signal.reason);
+    controller.signal.addEventListener("abort", onAbort, { once: true });
+    if (controller.signal.aborted) onAbort();
+  });
   try {
-    const { semanticSearch } = await import("./embeddings");
-    const semantic = await semanticSearch(
-      workspaceId,
-      query,
-      projectId,
-      documentIds,
-      limit,
-      signal,
-    );
+    // Bound the response as well as cancelling the owned embedding process.
+    const semantic = await Promise.race([
+      (async () => {
+        const { semanticSearch } = await import("./embeddings");
+        controller.signal.throwIfAborted();
+        return semanticSearch(
+          workspaceId,
+          query,
+          projectId,
+          documentIds,
+          limit,
+          controller.signal,
+        );
+      })(),
+      cancelled,
+    ]);
+    signal?.throwIfAborted();
     const merged = new Map<string, Source>();
     for (const source of [...semantic, ...keyword])
       merged.set(source.id, source);
@@ -81,8 +110,13 @@ export async function retrieve(
     return {
       mode: "keyword",
       results: keyword,
-      reason:
-        "Local semantic embeddings are unavailable or indexing is incomplete.",
+      reason: timedOut
+        ? "Semantic search timed out. Showing keyword matches; try again for semantic results."
+        : "Local semantic embeddings are unavailable or indexing is incomplete.",
     };
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", cancel);
+    controller.signal.removeEventListener("abort", onAbort);
   }
 }

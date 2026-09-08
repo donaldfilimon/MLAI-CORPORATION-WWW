@@ -7,7 +7,17 @@ import { signUpFixture } from "./support/account";
 
 // This fixture replaces only the configured model endpoint. Every application
 // request, approval, persisted result and worker operation uses the real backend.
-const fixtureUrl = "http://127.0.0.1:3112/v1";
+const fixturePort = Number(process.env.MLAI_E2E_FIXTURE_PORT || 3112);
+if (
+  !Number.isInteger(fixturePort) ||
+  fixturePort < 1024 ||
+  fixturePort > 65535
+) {
+  throw new Error(
+    "MLAI_E2E_FIXTURE_PORT must be an integer from 1024 to 65535",
+  );
+}
+const fixtureUrl = `http://127.0.0.1:${fixturePort}/v1`;
 const responses: unknown[] = [];
 let provider: Server | undefined;
 let releaseInterpretation: (() => void) | undefined;
@@ -49,7 +59,7 @@ test.beforeAll(async () => {
   });
   await new Promise<void>((resolve, reject) => {
     provider!.once("error", reject);
-    provider!.listen(3112, "127.0.0.1", resolve);
+    provider!.listen(fixturePort, "127.0.0.1", resolve);
   });
 });
 
@@ -68,18 +78,19 @@ async function start(page: Page, objective: string) {
 }
 
 test("persistent reviewed agent actions, source focus and queued interpretation", async ({
+  baseURL,
   page,
   browser,
 }, testInfo) => {
   test.skip(
     process.env.MLAI_E2E_MODEL_URL !== fixtureUrl,
-    "Start the coordinated 3101 server with MLAI_E2E_MODEL_URL=http://127.0.0.1:3112/v1 and MLAI_E2E_MODEL_ID=agent-browser-fixture.",
+    `Run the coordinated browser fixture with MLAI_E2E_MODEL_URL=${fixtureUrl} and MLAI_E2E_MODEL_ID=agent-browser-fixture.`,
   );
   test.setTimeout(180000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.setViewportSize({ width: 1440, height: 960 });
-  const base = "http://127.0.0.1:3101";
+  const base = baseURL!;
   await signUpFixture(page.request, base, {
     name: "Agent browser fixture",
     email: `agent-${Date.now()}@example.test`,
@@ -344,6 +355,7 @@ test("persistent reviewed agent actions, source focus and queued interpretation"
 });
 
 test("late conversation responses cannot replace the selected run history", async ({
+  baseURL,
   page,
 }) => {
   test.skip(
@@ -351,7 +363,7 @@ test("late conversation responses cannot replace the selected run history", asyn
     "Use the coordinated agent browser fixture server.",
   );
   test.setTimeout(90000);
-  const base = "http://127.0.0.1:3101";
+  const base = baseURL!;
   await signUpFixture(page.request, base, {
     name: "Agent selection fixture",
     email: `agent-selection-${Date.now()}@example.test`,

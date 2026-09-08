@@ -1,11 +1,6 @@
+import { writeVerificationReceipt } from "./verification-receipt";
 import { execFileSync, spawn } from "node:child_process";
-import {
-  mkdtempSync,
-  mkdirSync,
-  copyFileSync,
-  writeFileSync,
-  rmSync,
-} from "node:fs";
+import { mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import assert from "node:assert/strict";
@@ -144,30 +139,25 @@ try {
     source.runtimeSourceSha256,
     "Source changed during clean-install verification; rerun against the final source.",
   );
-  mkdirSync(join(origin, "docs/verification"), { recursive: true });
-  writeFileSync(
+  writeVerificationReceipt(
     join(origin, "docs/verification/clean-install.json"),
-    JSON.stringify(
-      {
-        checkedAt: new Date().toISOString(),
-        source,
-        freshSourceCopy: true,
-        frozenBunInstall: true,
-        frozenPythonInstall: true,
-        setupAndFormatValidation: true,
-        allChecks: true,
-        productionServer: true,
-        accountAndProject: true,
-        developmentRebuildsUi: true,
-        productionRestartPersistence: true,
-        processTreeStoppedAndPortReleased: true,
-        unauthenticatedAppRedirect: true,
-        dependencyModelCachesReused: true,
-        productionArtifact: retain ? clean : null,
-      },
-      null,
-      2,
-    ) + "\n",
+    {
+      checkedAt: new Date().toISOString(),
+      source,
+      freshSourceCopy: true,
+      frozenBunInstall: true,
+      frozenPythonInstall: true,
+      setupAndFormatValidation: true,
+      allChecks: true,
+      productionServer: true,
+      accountAndProject: true,
+      developmentRebuildsUi: true,
+      productionRestartPersistence: true,
+      processTreeStoppedAndPortReleased: true,
+      unauthenticatedAppRedirect: true,
+      dependencyModelCachesReused: true,
+      productionArtifact: retain ? clean : null,
+    },
   );
   console.log(
     "PASS clean install, setup, check and production account workflow",

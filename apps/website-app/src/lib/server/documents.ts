@@ -124,6 +124,8 @@ export async function documentRoutes(
         url.searchParams.get("project") || undefined,
         undefined,
         30,
+        req.signal,
+        { semanticTimeoutMs: 10_000 },
       ),
     );
   }

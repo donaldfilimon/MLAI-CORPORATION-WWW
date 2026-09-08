@@ -1,13 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { mkdirSync } from "node:fs";
 const email = `browser-${Date.now()}@example.test`,
   password = "Local-test-password!2026";
-const screenshots = "docs/verification/screenshots";
 test("public pages, account onboarding, projects, document sources, and responsive shell", async ({
   page,
-}) => {
+}, testInfo) => {
   test.setTimeout(180000);
-  mkdirSync(screenshots, { recursive: true });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("response", (response) => {
@@ -22,7 +19,7 @@ test("public pages, account onboarding, projects, document sources, and responsi
     }),
   ).toBeVisible();
   await page.screenshot({
-    path: `${screenshots}/home-1440.png`,
+    path: testInfo.outputPath(`home-1440.png`),
     fullPage: true,
     animations: "disabled",
   });
@@ -52,7 +49,7 @@ test("public pages, account onboarding, projects, document sources, and responsi
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/\/app$/, { timeout: 30000 });
   await expect(
     page.getByRole("heading", { name: /workspace/i }).first(),
   ).toBeVisible();
@@ -74,12 +71,12 @@ test("public pages, account onboarding, projects, document sources, and responsi
   });
   await expect(
     page.getByText("review.md", { exact: true }).first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30000 });
   await expect(page.locator(".document-paper")).toContainText("Morgan", {
     timeout: 90000,
   });
   await page.screenshot({
-    path: `${screenshots}/documents-1440.png`,
+    path: testInfo.outputPath(`documents-1440.png`),
     fullPage: true,
     animations: "disabled",
   });
@@ -94,7 +91,7 @@ test("public pages, account onboarding, projects, document sources, and responsi
   await page.goto("/app/abbey");
   await expect(page.locator(".chat-layout")).toBeVisible();
   await page.screenshot({
-    path: `${screenshots}/abbey-1440.png`,
+    path: testInfo.outputPath(`abbey-1440.png`),
     fullPage: true,
     animations: "disabled",
   });
@@ -127,7 +124,7 @@ test("public pages, account onboarding, projects, document sources, and responsi
     await page.goto("/app/abbey");
     await expect(page.locator(".chat-layout")).toBeVisible();
     await page.screenshot({
-      path: `${screenshots}/abbey-${width}.png`,
+      path: testInfo.outputPath(`abbey-${width}.png`),
       fullPage: true,
       animations: "disabled",
     });

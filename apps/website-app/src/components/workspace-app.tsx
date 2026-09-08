@@ -1,7 +1,7 @@
 "use client";
 import { useDrawerFocus } from "./use-drawer-focus";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
@@ -530,10 +530,13 @@ function ProjectsView() {
 }
 function SearchView() {
   const { api } = useApp();
+  const pending = useRef(false);
   const [q, setQ] = useState(""),
     [results, setResults] = useState<Citation[]>([]),
     [searchMode, setSearchMode] = useState("keyword"),
     [searched, setSearched] = useState(false),
+    [loading, setLoading] = useState(false),
+    [reason, setReason] = useState(""),
     [error, setError] = useState("");
   return (
     <div className="page-padding">
@@ -545,22 +548,36 @@ function SearchView() {
         className="search-form"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (pending.current || !q.trim()) return;
+          pending.current = true;
+          setLoading(true);
+          setSearched(false);
+          setResults([]);
+          setError("");
+          setReason("");
           try {
-            const result = await api<{ mode: string; results: Citation[] }>(
-              `search?q=${encodeURIComponent(q)}`,
-            );
+            const result = await api<{
+              mode: string;
+              results: Citation[];
+              reason?: string;
+            }>(`search?q=${encodeURIComponent(q)}`);
             setResults(result.results);
             setSearchMode(result.mode);
+            setReason(result.reason || "");
             setSearched(true);
             setError("");
           } catch (e) {
             setError((e as Error).message);
+          } finally {
+            pending.current = false;
+            setLoading(false);
           }
         }}
       >
         <label className="search-input">
           <Search size={20} />
           <input
+            disabled={loading}
             autoFocus
             aria-label="Search workspace documents"
             value={q}
@@ -568,14 +585,19 @@ function SearchView() {
             placeholder="Search your documents…"
           />
         </label>
-        <button className="button primary">Search</button>
+        <button className="button primary" disabled={loading || !q.trim()}>
+          {loading ? "Searching…" : "Search"}
+        </button>
       </form>
       <p className="small muted">
         {searchMode === "hybrid" ? "Local semantic + keyword" : "Keyword"}{" "}
         retrieval · sources stay within this workspace
       </p>
+      <p role="status" aria-live="polite" className="small muted">
+        {loading ? "Searching workspace documents…" : reason}
+      </p>
       <ErrorMessage message={error} />
-      <div className="search-results">
+      <div className="search-results" aria-busy={loading}>
         {results.map((r) => (
           <Link
             href={`/app/documents?document=${r.documentId}&chunk=${r.id}`}

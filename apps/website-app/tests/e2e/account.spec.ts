@@ -2,10 +2,11 @@ import { test, expect } from "@playwright/test";
 import { randomBytes } from "node:crypto";
 import { signUpFixture } from "./support/account";
 test("profile, password, session revocation and keyboard drawer", async ({
+  baseURL,
   browser,
   page,
 }) => {
-  const base = "http://127.0.0.1:3101",
+  const base = baseURL!,
     email = `account-${Date.now()}@example.test`,
     password = randomBytes(24).toString("base64url"),
     next = randomBytes(24).toString("base64url");

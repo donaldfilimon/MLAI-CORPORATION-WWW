@@ -28,7 +28,7 @@ run from this app directory (`apps/website-app` in the integration repository).
 `worker/.venv`, downloads and SHA-512 verifies the Tika jar into `.tools/`, downloads the pinned
 embedding model, and writes `.data/capabilities.json`.
 
-- `bun run check` = shared UI build/declarations + application `typecheck` + `vitest run` + `uv run --project worker pytest worker/tests` +
+- `bun run check` = shared UI build/declarations + application `typecheck` + `vitest run` + `uv run --frozen --no-sync --project worker pytest worker/tests` +
   `next build`. There is no linter; use `bun run format:check` for read-only formatting validation.
 - One unit test: `bunx vitest run tests/api.test.ts -t "partial name"`.
 - One parser test: `uv run --project worker pytest worker/tests/test_extract.py -k archive`.
@@ -264,3 +264,17 @@ the corpus has diverged from the source it was imported from — editing the man
 copy defeats the check. `docs/research-merge/report-source.md` records the import decision and the
 26 pinned source files behind 66 article-source references; `source-verification.json` holds their
 hashes. Research copy is imported content, not house copy.
+
+## Integration verification entry points
+
+From the repository root, `bun run check:website-app` owns a temporary synthetic
+store by default; an explicit `MLAI_DATA_DIR` override remains caller-owned.
+Application commands still run from `apps/website-app`. Run setup explicitly
+before parser checks; the check command uses frozen no-sync Python execution.
+
+Use `--output docs/verification/<new-revision>.json` with clean-install, Agent,
+and integration verifiers to preserve historical evidence. Explicit outputs
+are exclusively created; legacy default paths keep their previous semantics.
+Interactive workspace search gives semantic enrichment ten seconds before
+returning authorized keyword results with an explanation. Chat and Agent
+retrieval budgets and document indexing timeouts are unchanged.

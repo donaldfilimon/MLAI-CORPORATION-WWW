@@ -42,3 +42,40 @@ test("public research keyboard navigation, evidence, and narrow reflow", async (
   expect(response.headers()["content-type"]).toContain("application/pdf");
   expect(errors).toEqual([]);
 });
+
+test("rapid research typing preserves every character and browser history", async ({
+  page,
+}) => {
+  await page.goto("/research?source=keyboard");
+  const search = page.getByRole("searchbox", { name: "Search research" });
+  await expect(search).toBeEnabled();
+  await search.focus();
+  const query = "memory graph retrieval";
+  await page.keyboard.type(query);
+  await expect(search).toHaveValue(query);
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get("q"))
+    .toBe(query);
+  await page
+    .getByRole("combobox", { name: "Research area" })
+    .selectOption("ai");
+  await expect(search).toHaveValue(query);
+  await page.getByRole("button", { name: "Clear search", exact: true }).click();
+  await expect(search).toHaveValue("");
+  await page.goBack();
+  await expect(search).toHaveValue(query);
+  await expect(
+    page.getByRole("combobox", { name: "Research area" }),
+  ).toHaveValue("");
+  await page.goForward();
+  await expect(search).toHaveValue("");
+  await expect(
+    page.getByRole("combobox", { name: "Research area" }),
+  ).toHaveValue("ai");
+  await search.focus();
+  await page.keyboard.type(query);
+  await expect(search).toHaveValue(query);
+  await page.reload();
+  await expect(search).toHaveValue(query);
+  expect(new URL(page.url()).searchParams.get("source")).toBe("keyboard");
+});

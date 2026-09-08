@@ -9,7 +9,7 @@ The original verification receipts below predate this import; see
 
 ## Start locally
 
-Requirements: Node 22.18+ (verified with Node 26.8), Bun 1.4, uv, Python 3.11–3.13, LibreOffice (`soffice` on PATH), and Java 21+. On Apple silicon, `bun run model` can start a dedicated MLX runtime. Existing MLX Core or another local OpenAI-compatible runtime can also be used.
+Requirements: Node 24.x (the CI and release-verification runtime), Bun 1.4.0, uv, Python 3.11–3.13, LibreOffice (`soffice` on PATH), and Java 21+. On Apple silicon, `bun run model` can start a dedicated MLX runtime. Existing MLX Core or another local OpenAI-compatible runtime can also be used.
 
 ```sh
 bun install --frozen-lockfile
@@ -22,6 +22,20 @@ Open **http://127.0.0.1:3100** and register your own account. No sample accounts
 `setup` migrates the database, installs the locked Python environment, verifies Apache Tika's SHA-512 checksum, downloads parser/embedding assets, and processes the supplied test fixtures. These setup downloads contain no customer content. Capabilities are advertised only after their fixtures pass. Missing dependencies produce an actionable setup error.
 
 Development first builds the private `@mlai/ui` workspace package, then the launcher starts the web server and worker on loopback. Production uses `bun run build` followed by `bun start`. Keep the launcher running while using the application. `Ctrl-C` stops both. Restarting preserves records and recovers expired job leases.
+
+The root `bun run check:website-app` uses temporary synthetic data unless you
+explicitly set `MLAI_DATA_DIR`. It migrates that store before checking and removes
+only its owned temporary directory. Run `bun run setup` first: Python tests use
+the frozen installed environment with `--no-sync`, so checking does not install
+missing parser dependencies. CI runs TypeScript, formatting, public research
+verification, unit tests, migration and build; parser/model and browser acceptance
+are separate local gates.
+
+Verification commands `verify:clean-install`, `verify:integrations`, and
+`verify:agent` accept `--output docs/verification/<new-revision-receipt>.json`.
+An explicit destination must not already exist. Omit `--output` only when you
+intend to retain the command's legacy default receipt behavior. Fresh receipts
+record runtime source identity; older imported receipts remain historical.
 
 ## Commands
 
