@@ -1,0 +1,36 @@
+---
+title: "Gama framework"
+description: "A modular Swift UI framework organized around a retained render tree and explicit scenes."
+---
+
+import { CodeBlock } from '../../components/ui';
+
+<section className="doc-section">
+
+<h2 id="one-tree-several-hosts"><a href="#one-tree-several-hosts">One tree, several hosts</a></h2>
+
+The Gama README describes a modular declarative UI framework written in Swift. A retained render tree connects application state and views to layout, drawing, and platform integrations.
+
+The documented integrations include terminal, Apple, WebAssembly, C/Android, MLIR, and Embedded Swift surfaces. That list describes the project’s architecture; it is not a statement that this review ran every platform acceptance test.
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="modules-with-clear-jobs"><a href="#modules-with-clear-jobs">Modules with clear jobs</a></h2>
+
+GamaCore contains scene, view, identity, state, layout, event, and FrameHost concepts. GamaTUI supplies a terminal backend, while GamaAppleUI provides an Apple host view. GamaWASM, GamaEmbed, and GamaMLIR cover other integration boundaries.
+
+The README describes an explicit primary scene with optional auxiliary surfaces. Read its current migration notes before applying an older application example; a declarative API can change between project revisions.
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="verify-your-target"><a href="#verify-your-target">Verify your target</a></h2>
+
+Choose the host you need, read the actual module instructions, and run the relevant acceptance flow with the supported toolchain. Do not substitute a generic cross-platform claim for evidence on your target.
+
+No installation command or language-version requirement is invented here. The upstream source is authoritative for setup. Keep measurements attached to their environment rather than treating a measurement harness as a performance guarantee.
+
+</section>

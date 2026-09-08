@@ -1,0 +1,32 @@
+{
+  "method": "portable HTML loaded in memory",
+  "checks": [
+    "Original hero and visual identity retained on desktop and mobile",
+    "Contextual code/body search highlights text and jumps to the exact heading",
+    "Arrow selection is exposed with aria-activedescendant and aria-selected",
+    "No-results and Clear remove stale selection and restore suggestions",
+    "Article copy uses canonical Markdown; actual downloaded file matches exactly",
+    "Denied article clipboard exposes real selectable Markdown, not fake success",
+    "Reading progress and active section update from actual scroll position",
+    "Heading navigation preserves the article DOM instead of re-rendering the entire page",
+    "Mobile table of contents opens, navigates and closes cleanly",
+    "Print action invokes printing; print media removes chrome and retains readable content",
+    "Evidence query and type compose, restore from URL, show empty state and reset",
+    "Multi-word project searches match regardless of word order",
+    "System theme follows OS changes; explicit preferences override them",
+    "Documentation topic tabs support arrows, Home/End and selected semantics",
+    "Brief draft and prepared state survive review navigation in memory only",
+    "Actual brief download escapes embedded HTML and uses a safe filename",
+    "Programmatic over-limit form values cannot bypass validation",
+    "Repeated enhancement setup and stale cleanup do not duplicate or remove active handlers",
+    "Malformed portable routes recover to 404 without a JavaScript exception",
+    "Server-rendered brief fields and submit button are disabled when JavaScript is absent",
+    "All 18 views fit five viewport widths with one visible primary heading",
+    "No uncaught page errors or external network requests during portable-site interactions"
+  ],
+  "browser": "144.0.7559.96",
+  "loopback_navigation": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:4197/",
+  "responsive_combinations": 90,
+  "page_errors": [],
+  "requests": []
+}

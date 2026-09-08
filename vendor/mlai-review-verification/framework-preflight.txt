@@ -1,0 +1,7 @@
+
+> mlai-marketing-docs-review@0.2.0 check:framework
+> node scripts/framework-preflight.cjs && npm run typecheck && npm run build
+
+FRAMEWORK VERIFICATION BLOCKED
+- No resolved lockfile is present. Install the declared dependencies and review the real lockfile before release.
+- Dependencies not installed: next/package.json, react/package.json, react-dom/package.json, fumadocs-core/source, fumadocs-mdx/macro, fumadocs-mdx/next, @types/mdx/package.json

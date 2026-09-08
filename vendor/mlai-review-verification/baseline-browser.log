@@ -1,0 +1,27 @@
+PASS: Home identity, meaningful content, and a single primary heading
+PASS: Architecture diagram nodes do not overlap at four viewport widths
+PASS: All 18 views: single visible H1 and no page overflow at 360/390/768/1440px
+PASS: Project filters compose with search, update URL/counts, and reset the empty state
+PASS: Direct project query URL restores search and category state
+PASS: Home topic switching updates content and opens the correct guide
+PASS: Ctrl+K → body-text search → Enter opens a real guide and closes search
+PASS: Search arrows, suggestions, literal untrusted input, empty results, Escape and focus return
+PASS: Search dialog contains keyboard focus while modal
+PASS: Evidence filter changes real table rows and accurate counts
+PASS: Code copy exact text with mocked success; denied permission selects actual code and reports failure
+PASS: Documentation TOC deep link lands below the sticky header
+PASS: Transient clipboard feedback is cleared on navigation
+PASS: Theme changes remain readable and persist across review routes even with storage unavailable
+PASS: Mobile menu Escape/focus, navigation closure, and desktop-breakpoint cleanup
+PASS: Mobile documentation disclosure opens and navigates to the selected guide
+PASS: Local brief validation, escaped user content, generated summary and success focus
+PASS: Brief copies exact text and downloads a real Markdown file with a sanitized filename
+PASS: Editing preserves the in-memory draft
+PASS: Search shortcut does not hijack form input
+PASS: Unknown routes have a usable 404 recovery path
+PASS: Reduced-motion preference removes smooth scrolling and transition dependence
+PASS: All internal page links and section anchors resolve in rendered views
+PASS: No JavaScript runtime errors during the complete interaction sequence
+PASS: No external network requests from the review site
+
+25 browser check groups passed. Evidence: /mnt/data/mlai-v2-qa/baseline

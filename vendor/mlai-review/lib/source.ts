@@ -1,0 +1,7 @@
+// Headless Fumadocs setup from its official Next.js manual-installation guide.
+// This integration needs validation after dependency installation; the review
+// exporter does not invoke MDX compilation or masquerade as that validation.
+import { defineDocs } from 'fumadocs-mdx/macro';
+import { loader } from 'fumadocs-core/source';
+const docs = defineDocs({ dir: 'content/docs' });
+export const source = loader({ baseUrl: '/docs', source: docs.toFumadocsSource() });

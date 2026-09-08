@@ -1,0 +1,40 @@
+{
+  "name": "mlai-marketing-docs-review",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "bun@1.4.0",
+  "engines": { "node": ">=22.16.0" },
+  "scripts": {
+    "postinstall": "node scripts/generate-mdx.cjs && fumadocs-mdx",
+    "predev": "node scripts/generate-mdx.cjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/generate-mdx.cjs",
+    "build": "next build",
+    "start": "next start",
+    "content:generate": "node scripts/generate-mdx.cjs",
+    "content:check": "node scripts/generate-mdx.cjs --check",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --test tests/contracts.cjs",
+    "lint": "eslint app components lib source.config.ts",
+    "review:build": "node scripts/build-preview.cjs",
+    "review:serve": "node scripts/serve-review.cjs"
+  },
+  "dependencies": {
+    "next": "16.3.4",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "fumadocs-core": "16.11.4",
+    "fumadocs-mdx": "15.0.7",
+    "@tailwindcss/postcss": "4.3.3",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "16.3.4",
+    "typescript": "6.0.3"
+  }
+}

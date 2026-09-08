@@ -1,0 +1,48 @@
+---
+title: "Getting started"
+description: "Choose a project, prepare its checkout, and validate the actual revision you will use."
+---
+
+import { CodeBlock } from '../../components/ui';
+
+<section className="doc-section">
+
+<h2 id="start-with-a-checkout"><a href="#start-with-a-checkout">Start with a checkout</a></h2>
+
+The source repository is the starting point, not a download button that promises a working runtime on every machine. Read the current README, toolchain requirements, and workspace setup before running project commands.
+
+For ABI, a checkout is a useful first step. The repository may have sibling-workspace or environment requirements, so cloning alone is not a guarantee that a build will succeed.
+
+<CodeBlock code={"git clone https://github.com/donaldfilimon/abi.git\ncd abi"} />
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="use-the-project-wrapper"><a href="#use-the-project-wrapper">Use the project wrapper</a></h2>
+
+ABI documents a nightly Rust workflow through its tools/cargo.sh wrapper. Use the wrapper rather than substituting a different local Cargo toolchain. Its check script is the primary validation gate described by the README.
+
+<CodeBlock code={"./tools/cargo.sh --version\n./tools/check.sh\n./tools/cargo.sh build -p abi-cli"} note={"Documentation commands, not executed results. Prepare the upstream toolchain and workspace first."} />
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="inspect-before-connecting"><a href="#inspect-before-connecting">Inspect before connecting</a></h2>
+
+Once your own build succeeds, the README describes local inspection commands for available backends and scheduler state. A backend name is not proof that hardware acceleration is active. Read the capability flags and their limitations.
+
+<CodeBlock code={"./target/debug/abi backends\n./target/debug/abi scheduler status"} />
+
+</section>
+
+<section className="doc-section">
+
+<h2 id="keep-checks-scoped"><a href="#keep-checks-scoped">Keep checks scoped</a></h2>
+
+Record the revision, machine, toolchain, command, and result when you verify a behavior. A passing local build does not establish production latency, cross-host behavior, or another platform’s acceptance.
+
+Gama and the existing MLAI website have their own build instructions. Do not run ABI commands inside those projects. This preview neither creates credentials nor starts a live provider connection.
+
+</section>

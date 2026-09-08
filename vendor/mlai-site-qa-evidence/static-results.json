@@ -1,0 +1,17 @@
+{
+  "routes": 18,
+  "links_inspected": 703,
+  "issues": [],
+  "checks": [
+    "Unique ids",
+    "One H1",
+    "No-index metadata",
+    "Labelled fields",
+    "Named links/buttons",
+    "Internal link and anchor resolution",
+    "External link rel",
+    "All route HTTP 200 responses",
+    "Branded HTTP 404"
+  ],
+  "external_link_health_checked": false
+}

@@ -1,0 +1,40 @@
+{
+  "name": "mlai-marketing-docs-review",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Isolated MLAI marketing/docs review and Next.js source candidate; not a production migration.",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "node scripts/generate-mdx.cjs && next dev",
+    "build": "node scripts/generate-mdx.cjs && next build",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck:core": "tsc --noEmit --strict --target ES2022 --module commonjs --lib ES2022,DOM lib/content.ts lib/search.ts lib/reading.ts lib/dom.ts lib/chrome-ui.ts lib/search-ui.ts lib/filter-ui.ts lib/reading-ui.ts lib/brief-ui.ts lib/interactions.ts",
+    "test": "node --test tests/contracts.cjs tests/improvements.cjs tests/http.cjs",
+    "check:syntax": "node scripts/check-syntax.cjs",
+    "preview:build": "node scripts/build-preview.cjs",
+    "preview:serve": "node scripts/serve-preview.cjs",
+    "docs:generate": "node scripts/generate-mdx.cjs",
+    "check:review": "npm run typecheck:core && npm run check:syntax && npm run docs:generate && npm run preview:build && npm run test && node scripts/check-links.cjs",
+    "check:framework": "node scripts/framework-preflight.cjs && npm run typecheck && npm run build",
+    "test:browser": "python tests/browser_review.py && python tests/improvements_browser.py"
+  },
+  "dependencies": {
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "fumadocs-core": "^16.9.1",
+    "fumadocs-mdx": "^15.0.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.8.3",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/mdx": "^2.0.13"
+  }
+}
