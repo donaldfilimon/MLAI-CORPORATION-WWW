@@ -87,6 +87,30 @@ app architecture and commands. Avoid copying long app instructions into the
 root; link to the authoritative file so the copies cannot drift.
 
 <!-- machine-git-policy -->
+## Two permanent checkouts of this repository exist
+
+`~/dev/active/mlai` and `~/dev/active/MLAI-CORPORATION-WWW` are **two full
+checkouts of this same repository**, both tracking `origin/main`. The second was
+created deliberately, on Donald's explicit choice; it is not a worktree and not a
+mistake to clean up. `~/dev/active/mlai` stays the canonical one for ordinary work.
+
+The consequences are easy to get wrong and expensive:
+
+- A commit made in one checkout is **invisible to the other until it is pushed and
+  fetched**. Always `git fetch` in the other before trusting any ahead/behind
+  count, and never compare them without doing so.
+- **Never edit the same file in both.** There is no shared index and no warning;
+  the two simply diverge and the second push conflicts.
+- The directory name matches the repository name, which is exactly why it is the
+  tree most easily confused with `dev/active/mlai`. Confirm which one a request
+  means before editing.
+
+Note also that `apps/website-app` was imported from the separate repository
+`donaldfilimon/mlai-website-app`, which **still exists and has kept moving**, so a
+fix made in the standalone checkout is absent here until re-imported or
+cherry-picked, and vice versa. Provenance is in
+`docs/website-app-import-manifest.json`.
+
 ## Git workflow (machine policy, 2026-08-27)
 
 Work on the default branch in this canonical checkout. Do not create
