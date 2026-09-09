@@ -130,7 +130,7 @@ export const routeMetadata: Record<string, RouteMeta> = {
   "/benchmarks": {
     title: "WDBX Architecture & Evidence | Quesar by MLAI",
     description:
-      "How WDBX is built and what has actually been measured on MLAI hardware — architectural properties, and GPU figures labeled measured or target. No head-to-head comparisons against other products.",
+      "How WDBX is built and what its architecture guarantees — source-backed properties and interactive models. Performance figures stay unpublished until a reproducible harness exists. No head-to-head comparisons.",
   },
   "/demo": {
     title: "Live Demo | WDBX In-Browser Miniature",

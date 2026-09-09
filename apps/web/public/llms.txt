@@ -18,7 +18,7 @@ the linked repositories for implementation detail.
 - [About MLAI Corporation](https://quesar.cloud/about): Learn how MLAI Corporation designs resilient AI systems for private deployment, retrieval provenance, safety evaluation, and operational control.
 - [MLAI Engineering Services](https://quesar.cloud/services): Audit, design, build, and harden AI systems that need traceability, private deployment paths, evaluation gates, and operational reliability.
 - [Quesar Architecture](https://quesar.cloud/docs): Review MLAI platform concepts, deployment modes, protected API surfaces, retrieval workflows, and safety evaluation guidance.
-- [WDBX Architecture & Evidence](https://quesar.cloud/benchmarks): How WDBX is built and what has actually been measured on MLAI hardware — architectural properties, and GPU figures labeled measured or target. No head-to-head comparisons against other products.
+- [WDBX Architecture & Evidence](https://quesar.cloud/benchmarks): How WDBX is built and what its architecture guarantees — source-backed properties and interactive models. Performance figures stay unpublished until a reproducible harness exists. No head-to-head comparisons.
 - [Quesar Security](https://quesar.cloud/security): Review MLAI security principles for authentication, private deployment, auditability, protected APIs, and production AI controls.
 
 ## Documentation
