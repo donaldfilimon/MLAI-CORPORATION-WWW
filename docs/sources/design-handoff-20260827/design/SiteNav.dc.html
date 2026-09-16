@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+</helmet>
+<div style="position:sticky;top:0;z-index:50;background:rgba(5,7,13,0.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.08)">
+  <div style="max-width:80rem;margin:0 auto;padding:16px 40px;display:flex;align-items:center;gap:32px;box-sizing:border-box">
+    <a href="Site Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <x-import component-from-global-scope="MlaiLab.LogoMark" size="sm" hint-size="28px,28px"></x-import>
+      <span style="font-family:Spectral,Georgia,serif;font-size:19px;letter-spacing:-0.01em;color:#fff">MLAI</span>
+    </a>
+    <nav style="display:flex;gap:22px;margin-left:auto;align-items:center;flex-wrap:wrap">
+      <sc-for list="{{ links }}" as="l" hint-placeholder-count="7">
+        <a href="{{ l.href }}" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:{{ l.c }}" style-hover="color:#fff">{{ l.label }}</a>
+      </sc-for>
+      <a href="Site Contact.dc.html" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:#05070d;background:#22d3ee;border-radius:999px;padding:8px 16px" style-hover="background:#06b6d4">Contact</a>
+    </nav>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280, &quot;height&quot;: 64}, &quot;active&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;&quot;, &quot;wdbx&quot;, &quot;abi&quot;, &quot;abbey&quot;, &quot;platform&quot;, &quot;research&quot;, &quot;company&quot;, &quot;investors&quot;], &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const active = this.props.active ?? "";
+    const pages = [
+      ["wdbx", "WDBX", "Site WDBX.dc.html"],
+      ["abi", "ABI", "Site ABI.dc.html"],
+      ["abbey", "Abbey", "Site Abbey.dc.html"],
+      ["platform", "Platform", "Site Platform.dc.html"],
+      ["research", "Research", "Site Research.dc.html"],
+      ["company", "Company", "Site Company.dc.html"],
+      ["investors", "Investors", "Site Investors.dc.html"],
+      ["docs", "Docs", "Site Docs.dc.html"],
+      ["console", "Console", "Site Console.dc.html"],
+    ];
+    return { links: pages.map(([id, label, href]) => ({ label, href, c: id === active ? "#22d3ee" : "#94a3b8" })) };
+  }
+}
+</script>
+</body>
+</html>

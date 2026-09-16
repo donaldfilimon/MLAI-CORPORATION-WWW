@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="wdbx" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="WDBX hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="wdbx" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 72px;box-sizing:border-box;position:relative">
+    <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#22d3ee">Storage · Zig · local-first</div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance;max-width:40rem">The fastest vector database alive.</h1>
+    <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:38rem">Zig-built vector storage with HNSW indexing, MVCC transactions, and Metal / CUDA / Vulkan backends. Runs where the data lives.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px">
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ s1 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ s2 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ s3 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ s4 }}" hint-size="100%,150px"></x-import>
+    </div>
+    <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+      <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+    </div>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="What's inside" title="Six decisions, one store." lead="Every property below is an architecture decision, not a setting." hint-size="100%,640px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="HNSW index architecture" desc="Hierarchical Navigable Small World graphs. O(log n) search. 95% recall at 8.2ms on 1M vectors." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="Memory-mapped persistence" desc="Zero-copy I/O with WAL journaling. Instant cold starts." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="Scalar & product quantization" desc="Up to 32× compression with minimal recall loss. 10B vectors addressable in 2GB RAM." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="Metal GPU acceleration" desc="Distance calculations on Apple GPU via the ABI Framework. First App Store-ready vector database." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="MVCC transactions" desc="Multiversion concurrency control. Readers never block writers; writers never block readers." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="Hash-chained WAL" desc="Tamper-evident audit trail at the log level — integrity without taxing search latency." hint-size="100%,180px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="Scale benchmark" title="Measured, at three sizes." lead="Single Apple Silicon node; harness in repo." hint-size="100%,480px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Engineering harness, single M-series node — ● measured." dc-props="{{ scaleBench }}" hint-size="100%,280px"></x-import>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="The field" title="WDBX vs the field." lead="On-device is not a deployment option for the others — it is the whole design here." hint-size="100%,640px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" highlight-col="{{ 1 }}" caption="Comparison against managed vector databases." dc-props="{{ competitive }}" hint-size="100%,340px"></x-import>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px">
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ c1 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ c2 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ c3 }}" hint-size="100%,150px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.SplitSection" accent="wdbx" kicker="How it works" title="One job, done where the data is." hint-size="100%,360px">
+  <p>A vector database has one job: given a query vector, find the nearest stored vectors fast, and keep doing it correctly as the data grows. Most systems solve this in the cloud. WDBX solves it on the device.</p>
+  <p>Written in Zig for control without a runtime — no garbage collector in the hot path, SIMD as a language feature, and a single static binary. The same distance kernel compiles to AVX-512 on a server and NEON on Apple Silicon.</p>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      s1: { value: "2.3ms", label: "p50 search latency", tag: "measured" },
+      s2: { value: "98.2%", label: "Recall@10", tag: "measured" },
+      s3: { value: "16.5K", label: "QPS — stress-test objective", tag: "target" },
+      s4: { value: "0.8ms", label: "p50 @ 1M vectors", tag: "target" },
+      scaleBench: {
+        cols: ["Metric", "100K", "1M", "10M"],
+        rows: [
+          ["Insert throughput", "6,667/s", "6,579/s", "6,500/s"],
+          ["Search latency (k=10)", "2.5ms", "8.2ms", "15.3ms"],
+          ["Memory usage", "150MB", "1.5GB", "15GB"],
+          ["With quantization", "20MB", "200MB", "2GB"],
+        ],
+      },
+      competitive: {
+        cols: ["", "WDBX", "Pinecone", "Qdrant", "Chroma"],
+        rows: [
+          ["100% on-device privacy", "Yes", "—", "Partial", "Partial"],
+          ["Apple Silicon optimized", "Native Metal", "—", "—", "—"],
+          ["iOS / macOS native SDK", "Swift 6", "REST only", "REST only", "Python"],
+          ["Search latency (1M vectors)", "8.2ms", "50–100ms", "25ms", "30ms"],
+          ["Memory (1M vectors, quantized)", "200MB", "Cloud only", "1.5GB", "1.8GB"],
+          ["Integrated ML acceleration", "ABI Framework", "—", "—", "—"],
+        ],
+      },
+      c1: { value: "6–12×", label: "Faster search vs cloud competitors — zero network latency", tag: "measured" },
+      c2: { value: "8×", label: "Lower memory footprint with product quantization", tag: "measured" },
+      c3: { value: "Only", label: "App Store-ready vector DB with native Swift/Metal integration", tag: "measured" },
+      nextProps: {
+        items: [
+          { label: "ABI Framework", href: "Site ABI.dc.html", desc: "The compute layer that runs WDBX's distance math on the GPU.", accent: "abi" },
+          { label: "Abbey", href: "Site Abbey.dc.html", desc: "The assistant whose memory is a WDBX store on your hardware.", accent: "abbey" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

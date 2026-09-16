@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="research" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Research hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="abbey" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 64px;box-sizing:border-box;position:relative">
+    <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#34d399">Research</div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance;max-width:44rem">Figures with their receipts.</h1>
+    <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:44rem">Two technical analyses of the WDBX architecture and the Abbey–Aviva–Abi multi-persona framework. Figures below are reported from those documents and tagged accordingly; where a claim conflicts with our measured benchmarks, the measured number wins everywhere else on this site.</p>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Tracks" title="Three lines of work." lead="" hint-size="100%,380px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="WDBX Core" desc="Backtrace-aware retrieval, graph weighting, chunk provenance, and high-throughput vector search for production AI systems." hint-size="100%,170px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Agent Safety" desc="Permissioning, policy locks, prompt-injection resistance, role separation, and human escalation protocols." hint-size="100%,170px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Runtime Performance" desc="GPU acceleration, memory layout, low-latency search, edge deployment, and repeatable benchmark design." hint-size="100%,170px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Publications" title="The index." lead="Filter by track." hint-size="100%,900px">
+  <div style="max-width:52rem">
+    <x-import component-from-global-scope="MlaiLab.PublicationIndex" dc-props="{{ pubProps }}" hint-size="100%,800px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="The formal model" title="Composite retrieval score." lead="From the WDBX paper: where the design names a target it is labelled as such; none of the equations encode measured benchmark results." hint-size="100%,560px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+    <div>
+      <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:20px;color:#22d3ee;margin-bottom:18px">sᵢⱼ = σⱼ · τⱼ · γⱼ · πⱼ</div>
+      <x-import component-from-global-scope="MlaiLab.SpecList" dc-props="{{ scoring }}" hint-size="100%,220px"></x-import>
+    </div>
+    <div>
+      <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Authority-weighted records — an inferred guess is never treated like a system-pinned fact." dc-props="{{ authority }}" hint-size="100%,260px"></x-import>
+    </div>
+  </div>
+  <div style="margin-top:32px">
+    <x-import component-from-global-scope="MlaiLab.Callout" accent="wdbx" label="Hash-chained audit log" hint-size="100%,110px">Hᵢ = SHA-256(Hᵢ₋₁ ‖ tᵢ ‖ seqᵢ ‖ pᵢ ‖ mᵢ), H₀ = 0 — every write lands in a re-verifiable chain. That property makes retrieval explainable to an auditor, not just a developer.</x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Reported figures" title="From the comparative study." lead="Conditions and baselines as documented there — ◆ reported, not reproduced on MLAI hardware." hint-size="100%,560px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="abbey" highlight-col="{{ 1 }}" caption="Framework benchmarks — comparative study, ◆ reported." dc-props="{{ benchTable }}" hint-size="100%,340px"></x-import>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px">
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ e1 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ e2 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ e3 }}" hint-size="100%,150px"></x-import>
+  </div>
+  <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+    <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+  </div>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      pubProps: {
+        items: [
+          { slug: "wdbx-weighted-backtrace", title: "WDBX: A Weighted-Backtrace Memory Store for Traceable Retrieval", summary: "The formal data model and scoring math — hierarchical vector search, temporal–causal reranking, authority-weighted records, and a hash-chained audit log.", date: "Jun 2026", tags: ["Core Architecture"] },
+          { slug: "sparse-evidence-attention", title: "Sparse Evidence Attention for Bounded Context Assembly", summary: "Scoring each candidate across eight independent criteria, then packing greedily under a hard token budget and a diversity constraint.", date: "Jun 2026", tags: ["Research"] },
+          { slug: "wdbx-graph-weights", title: "WDBX Graph Weights for Traceable Neural Retrieval", summary: "Storing retrieval context as weighted directed paths so answers preserve provenance, confidence, and rollback points.", date: "May 2026", tags: ["Core Architecture"] },
+          { slug: "policy-locked-tool-use", title: "Policy-Locked Tool Use in Multi-Agent Systems", summary: "Separating creative planning, compliance review, and execution so agents collaborate without inheriting unrestricted tool authority.", date: "Apr 2026", tags: ["Safety"] },
+          { slug: "latency-budgets", title: "Latency Budgets for Real-Time AI Orchestration", summary: "Allocating milliseconds across retrieval, model calls, safety checks, and UI feedback.", date: "Mar 2026", tags: ["Engineering"] },
+          { slug: "backtrace-confidence", title: "Backtrace Confidence Signals for Hallucination Reduction", summary: "Combining source coverage, graph distance, contradiction checks, and model uncertainty into operator-visible confidence signals.", date: "Feb 2026", tags: ["Research"] },
+          { slug: "index-maintenance", title: "Vector Index Maintenance Under Continuous Ingestion", summary: "Keeping high-volume indexes fresh while protecting recall quality, write latency, and audit history.", date: "Jan 2026", tags: ["Scalability"] },
+          { slug: "approval-gates", title: "Human Approval Gates That Operators Actually Use", summary: "Approval flows that reduce risk without alert fatigue, rubber-stamping, or invisible escalation paths.", date: "Dec 2025", tags: ["Safety"] },
+          { slug: "chunk-provenance", title: "Chunk Provenance in Long-Context Retrieval Systems", summary: "Source segmentation, citation persistence, and drift detection for large private corpora in regulated environments.", date: "Nov 2025", tags: ["Core Architecture"] },
+          { slug: "offline-first-workflows", title: "Offline-First AI Workflows for Sensitive Data", summary: "Packaging retrieval, inference, and audit services where cloud egress is limited or prohibited by policy.", date: "Oct 2025", tags: ["Engineering"] },
+          { slug: "prompt-injection-drills", title: "Prompt Injection Drills for Agentic Systems", summary: "A repeatable drill catalog for testing tool permission boundaries and confused-deputy failure modes.", date: "Sep 2025", tags: ["Safety"] },
+        ],
+      },
+      scoring: {
+        rows: [
+          { k: "σⱼ", v: "cosine similarity over the HNSW index" },
+          { k: "τⱼ", v: "temporal recency — exponential half-life decay" },
+          { k: "γⱼ", v: "causal-hop weight, γⱼ = max(0.25, 0.6^hⱼ)" },
+          { k: "πⱼ", v: "source authority from the trust table" },
+        ],
+      },
+      authority: {
+        cols: ["Source class", "Trust"],
+        rows: [
+          ["inferred", "0.30"],
+          ["user_stated", "0.78"],
+          ["tool_verified", "0.86"],
+          ["file_verified", "0.90"],
+          ["system_pinned", "1.00"],
+        ],
+      },
+      benchTable: {
+        cols: ["Metric", "This system", "GPT-4", "Claude", "PaLM"],
+        rows: [
+          ["Latency", "110ms", "180ms", "170ms", "200ms"],
+          ["Throughput", "90 req/s", "60", "62", "55"],
+          ["Empathy score", "0.95", "0.78", "0.81", "0.75"],
+          ["Factual accuracy", "91.0%", "88.0%", "87.5%", "88.0%"],
+          ["GLUE", "86.0", "82.5", "—", "—"],
+          ["SQuAD 1.1 (F1)", "90.7", "85.0", "—", "88.0"],
+        ],
+      },
+      e1: { value: "15 Wh", label: "Per agentic task", tag: "reported", note: "vs ~0.34 Wh for a simple chat query" },
+      e2: { value: "~25%", label: "Efficiency gain vs comparable agentic stacks", tag: "reported" },
+      e3: { value: "≈9.9", label: "Steady-state concurrency (L = λW)", tag: "reported", note: "110ms · 90 req/s" },
+      nextProps: {
+        items: [
+          { label: "WDBX", href: "Site WDBX.dc.html", desc: "Where the measured numbers live.", accent: "wdbx" },
+          { label: "Platform", href: "Site Platform.dc.html", desc: "The layers these papers inform.", accent: "abi" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  /* Base — pure black, developer-native */
+  --color-void: #000000;
+  --color-surface: #0a0c10;
+  --color-raised: #10141b;
+  --color-hairline: #1c222c;
+
+  --color-ink: #e8ecf2;
+  --color-ink-dim: #9aa4b2;
+  --color-ink-faint: #6b7480;
+
+  /* Persona tokens — from stored brand values.
+     PROVISIONAL: conflicts with the mlai-website ink-and-paper palette
+     (teal-cyan / periwinkle / amber). Unresolved, awaiting Donald's call. */
+  --color-abbey: #34d399;
+  --color-aviva: #a855f7;
+  --color-abi: #22d3ee;
+  /* PROVISIONAL: no stored hex for WDBX; mlai-website records only "blue". */
+  --color-wdbx: #60a5fa;
+
+  /* Provenance marks */
+  --color-prov-measured: #34d399;
+  --color-prov-target: #f5b840;
+  --color-prov-reported: #a855f7;
+
+  --font-display: var(--font-sora);
+  --font-body: var(--font-manrope);
+  --font-mono: var(--font-jetbrains);
+}
+
+html {
+  background: var(--color-void);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-abi) 30%, transparent);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-abi);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

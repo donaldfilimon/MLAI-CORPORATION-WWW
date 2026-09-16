@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="platform" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Platform hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="abi" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 72px;box-sizing:border-box;display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:center;position:relative">
+    <div>
+      <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#a78bfa">Platform · bounded autonomy</div>
+      <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance">Autonomy you can answer for.</h1>
+      <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:34rem">The MLAI platform wraps orchestration in four layers that make autonomy inspectable: what the agent saw, what it was allowed to do, how it was tested, and where it runs.</p>
+    </div>
+    <x-import component-from-global-scope="MlaiLab.HeroBench" prompt="trace ❯" dc-props="{{ traceProps }}" hint-size="100%,260px"></x-import>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="The four layers" title="Each with one job." lead="An agent that plans, calls tools, and acts is useful exactly to the degree you can see what it did and constrain what it may do." hint-size="100%,560px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="01 — Trace Layer" desc="Captures retrieval paths, policy checks, model decisions, tool calls, and operator interventions as inspectable events. What the agent saw." hint-size="100%,170px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="02 — Control Plane" desc="Defines which agents can plan, review, execute, escalate, or abstain under each workflow condition. What it was allowed to do." hint-size="100%,170px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="03 — Evaluation Mesh" desc="Runs regression scenarios across retrieval faithfulness, latency, safety behavior, and prompt injection. How it was tested." hint-size="100%,170px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="04 — Private Runtime" desc="Packages orchestration, retrieval, audit logs, and controls for cloud, VPC, on-premise, and offline-first deployments. Where it runs." hint-size="100%,170px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="Operating principles" title="Four refusals, standing." lead="" hint-size="100%,420px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <x-import component-from-global-scope="MlaiLab.Callout" accent="abi" label="No unbounded writes" hint-size="100%,100px">No autonomous write action without an observable policy boundary.</x-import>
+    <x-import component-from-global-scope="MlaiLab.Callout" accent="wdbx" label="No untraceable claims" hint-size="100%,100px">No retrieval claim without a traceable source or confidence signal.</x-import>
+    <x-import component-from-global-scope="MlaiLab.Callout" accent="abbey" label="No context-free benchmarks" hint-size="100%,100px">No benchmark without environment notes, workload shape, and reproducibility context.</x-import>
+    <x-import component-from-global-scope="MlaiLab.Callout" accent="abi" label="No plan without rollback" hint-size="100%,100px">No deployment plan that ignores rollback, incident review, and human escalation.</x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="Who it's for" title="Built for constrained contexts." lead="" hint-size="100%,420px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Regulated software teams" desc="Shipping AI copilots into customer workflows with audit obligations." hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Research organizations" desc="Private retrieval over sensitive technical corpora." hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Security & compliance teams" desc="Evaluating tool-using autonomous agents before they touch production." hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Infrastructure teams" desc="Deploying AI near edge devices, private clouds, or constrained networks." hint-size="100%,150px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="FAQ" title="Asked and answered." lead="" hint-size="100%,560px">
+  <div style="max-width:52rem">
+    <x-import component-from-global-scope="MlaiLab.FAQList" accent="wdbx" dc-props="{{ faqProps }}" hint-size="100%,420px"></x-import>
+  </div>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      traceProps: {
+        lines: [
+          "retrieve · hnsw · k=10 · sources pinned",
+          "policy gate · write blocked → escalate",
+          "operator approval · granted",
+          "execute · persona=aviva",
+          "evaluate · appended to chain",
+          "",
+          "labeled illustrative — event shape, not data",
+        ],
+      },
+      faqProps: {
+        items: [
+          { q: "What is the WDBX Engine?", a: "The Weighted Directed Backtrace eXecution engine is a retrieval and orchestration pattern that keeps context as weighted paths. It is designed to help teams inspect why a result was produced, which sources were used, and where confidence dropped." },
+          { q: "How does the Abbey–Aviva–Abi framework differ from traditional agents?", a: "Instead of giving one agent every responsibility, the framework separates creative planning, safety review, and technical execution. That separation makes permissions easier to reason about and gives operators clearer intervention points." },
+          { q: "Can MLAI systems run in private infrastructure?", a: "Yes. We design for VPC, on-premise, hybrid, and offline-first deployment paths when data residency, network isolation, or customer policy requires it." },
+          { q: "Do you replace existing LLMs?", a: "Usually no. MLAI focuses on orchestration, retrieval, evaluation, and safety layers that can sit around existing model providers or self-hosted models." },
+          { q: "How do you test safety behavior?", a: "We build scenario suites for prompt injection, source poisoning, permission escalation, contradictory context, low-confidence retrieval, and human-approval bypass attempts." },
+        ],
+      },
+      nextProps: {
+        items: [
+          { label: "Research", href: "Site Research.dc.html", desc: "The publications and formal model behind these layers.", accent: "abbey" },
+          { label: "Contact", href: "Site Contact.dc.html", desc: "Most teams begin with a readiness audit.", accent: "wdbx" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

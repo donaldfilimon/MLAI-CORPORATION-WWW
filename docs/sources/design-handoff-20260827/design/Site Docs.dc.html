@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Docs shell" style="max-width:80rem;margin:0 auto;padding:40px 40px 96px;box-sizing:border-box;display:grid;grid-template-columns:230px 1fr;gap:48px;align-items:start">
+
+  <aside style="position:sticky;top:96px">
+    <div onClick="{{ openPalette }}" style="display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.03);border-radius:11px;padding:9px 12px;cursor:pointer;margin-bottom:28px">
+      <span style="font-size:13px;color:#64748b;flex:1">Search docs…</span>
+      <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:#64748b;border:1px solid rgba(255,255,255,0.12);border-radius:5px;padding:2px 6px">⌘K</span>
+    </div>
+    <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="3">
+      <div style="margin-bottom:24px">
+        <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#64748b;margin-bottom:10px">{{ g.group }}</div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+            <div onClick="{{ it.on }}" style="font-size:13.5px;line-height:1.4;padding:6px 10px;border-radius:8px;cursor:pointer;color:{{ it.c }};background:{{ it.bg }};border-left:2px solid {{ it.edge }}">{{ it.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;display:flex;flex-direction:column;gap:8px">
+      <a href="Site Console.dc.html" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:#94a3b8">Console →</a>
+      <a href="https://github.com/donaldfilimon/abi" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:#94a3b8">GitHub ↗</a>
+    </div>
+  </aside>
+
+  <main style="min-width:0;max-width:52rem">
+    <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(34,211,238,0.25);background:rgba(34,211,238,0.06);border-radius:999px;padding:5px 12px;margin-bottom:20px">
+      <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#22d3ee">{{ pageGroup }}</span>
+    </div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:40px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:0 0 14px;text-wrap:balance">{{ pageTitle }}</h1>
+    <p style="font-size:15.5px;line-height:1.65;color:#94a3b8;margin:0 0 36px;max-width:42rem">{{ pageLead }}</p>
+
+    <sc-if value="{{ pgQuickstart }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#0D1117;border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;line-height:1.9;overflow-x:auto">
+        <div style="display:flex;gap:6px;margin-bottom:12px"><div style="width:11px;height:11px;border-radius:6px;background:#ef4444"></div><div style="width:11px;height:11px;border-radius:6px;background:#eab308"></div><div style="width:11px;height:11px;border-radius:6px;background:#22c55e"></div></div>
+        <div><span style="color:#6b7280"># Primary validation gate (build, tests, lint, mod/stub parity)</span></div>
+        <div><span style="color:#22d3ee">./build.sh</span> <span style="color:#fff">check</span></div>
+        <div><span style="color:#6b7280"># Build the CLI and MCP server binaries</span></div>
+        <div><span style="color:#22d3ee">./build.sh</span> <span style="color:#fff">cli</span>&nbsp;&nbsp;&nbsp;<span style="color:#6b7280"># → zig-out/bin/abi</span></div>
+        <div><span style="color:#22d3ee">./build.sh</span> <span style="color:#fff">mcp</span>&nbsp;&nbsp;&nbsp;<span style="color:#6b7280"># → zig-out/bin/abi-mcp</span></div>
+        <div style="margin-top:10px"><span style="color:#6b7280"># Run a completion, plan an agent, open the dashboard TUI</span></div>
+        <div><span style="color:#22d3ee">abi</span> <span style="color:#fff">complete "summarize the incident trace"</span></div>
+        <div><span style="color:#22d3ee">abi</span> <span style="color:#fff">agent plan</span></div>
+        <div><span style="color:#22d3ee">abi</span> <span style="color:#fff">agent os execute --confirm</span></div>
+      </div>
+      <div style="margin-top:28px">
+        <x-import component-from-global-scope="MlaiLab.StepList" accent="wdbx" dc-props="{{ quickSteps }}" hint-size="100%,280px"></x-import>
+      </div>
+      <div style="margin-top:28px">
+        <x-import component-from-global-scope="MlaiLab.Callout" accent="wdbx" label="Fail closed" hint-size="100%,90px">Disabled builds fail closed with explicit errors rather than degrading silently.</x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pgWdbx }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="MlaiLab.SpecList" dc-props="{{ mcpSpec }}" hint-size="100%,240px"></x-import>
+      <div style="margin-top:32px">
+        <h3 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:20px;color:#fff;margin:0 0 16px">MCP tools</h3>
+        <x-import component-from-global-scope="MlaiLab.Glossary" dc-props="{{ mcpTools }}" hint-size="100%,420px"></x-import>
+      </div>
+      <div style="margin-top:32px">
+        <x-import component-from-global-scope="MlaiLab.Callout" accent="wdbx" label="Opt-in persistence" hint-size="100%,90px">Completions persist only when store_result is set on the request. Snapshots are JSONL with SHA-256 integrity checks and tamper rejection.</x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pgAbi }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="N-dimensional tensors" desc="Automatic differentiation, SIMD-optimized CPU paths, Metal GPU kernels." hint-size="100%,140px"></x-import>
+        <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Zero-copy pipelines" desc="Unified memory means no host↔device copy between stages — by construction." hint-size="100%,140px"></x-import>
+        <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Neural-network layers" desc="Dense, Conv2D, LSTM, Attention with full backpropagation." hint-size="100%,140px"></x-import>
+        <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Comptime specialization" desc="Zig comptime pre-computes lookup tables and kernels for the exact target ISA." hint-size="100%,140px"></x-import>
+      </div>
+      <div style="margin-top:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ t1 }}" hint-size="100%,140px"></x-import>
+        <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ t2 }}" hint-size="100%,140px"></x-import>
+        <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ t3 }}" hint-size="100%,140px"></x-import>
+        <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ t4 }}" hint-size="100%,140px"></x-import>
+      </div>
+      <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+        <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pgPersonas }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="MlaiLab.PersonaCard" title="The three profiles" dc-props="{{ personaProps }}" hint-size="100%,260px"></x-import>
+      <div style="margin-top:32px">
+        <h3 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:20px;color:#fff;margin:0 0 16px">How a profile is selected</h3>
+        <p style="font-size:14.5px;line-height:1.65;color:#94a3b8;margin:0 0 20px">Routing starts from a baseline weight per profile, then adjusts it from inspectable input signals. The adjusted weights normalize to a distribution; the largest becomes primary and its share is the routing confidence.</p>
+        <x-import component-from-global-scope="MlaiLab.StepList" accent="abbey" dc-props="{{ routingSteps }}" hint-size="100%,240px"></x-import>
+      </div>
+      <div style="margin-top:28px">
+        <x-import component-from-global-scope="MlaiLab.Callout" accent="abbey" label="Authority boundary" hint-size="100%,100px">Aviva plans and proposes; she holds no autonomous write or execute authority — that boundary belongs to Abi, and only on plans that have cleared review.</x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pgArch }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:32px">
+        <sc-for list="{{ archLayers }}" as="l" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:14px;border:1px solid rgba(255,255,255,0.08);border-left:2px solid {{ l.c }};background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));border-radius:12px;padding:14px 18px">
+            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#64748b;width:28px">{{ l.num }}</span>
+            <span style="font-size:15px;font-weight:600;color:#fff;width:200px">{{ l.name }}</span>
+            <span style="font-size:13px;color:#94a3b8;flex:1">{{ l.desc }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <h3 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:20px;color:#fff;margin:0 0 16px">Serving itself: pure-Zig HTTP options</h3>
+      <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Server options — throughput figures ◆ reported from each project's own documentation." dc-props="{{ serverTable }}" hint-size="100%,240px"></x-import>
+      <div style="margin-top:28px">
+        <x-import component-from-global-scope="MlaiLab.Callout" accent="abi" label="TLS at the edge" hint-size="100%,100px">Zig's std TLS server is still pending upstream (ziglang #14171), so deployments terminate TLS at a reverse proxy by design rather than shipping an unvetted stack.</x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pgProv }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
+        <div style="border:1px solid rgba(52,211,153,0.25);background:rgba(52,211,153,0.05);border-radius:16px;padding:20px">
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:22px;color:#34d399">●</div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-top:8px">measured</div>
+          <div style="font-size:13px;line-height:1.6;color:#94a3b8;margin-top:6px">Reproduced on MLAI hardware; benchmark harness in repo.</div>
+        </div>
+        <div style="border:1px solid rgba(251,191,36,0.25);background:rgba(251,191,36,0.05);border-radius:16px;padding:20px">
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:22px;color:#fbbf24">○</div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-top:8px">target</div>
+          <div style="font-size:13px;line-height:1.6;color:#94a3b8;margin-top:6px">An engineering goal, not yet achieved. Always labeled; never rounded into an achievement.</div>
+        </div>
+        <div style="border:1px solid rgba(168,85,247,0.25);background:rgba(168,85,247,0.05);border-radius:16px;padding:20px">
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:22px;color:#a855f7">◆</div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-top:8px">reported</div>
+          <div style="font-size:13px;line-height:1.6;color:#94a3b8;margin-top:6px">A figure from a cited research document; methodology noted inline.</div>
+        </div>
+      </div>
+      <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Source authority — the πⱼ term in the composite retrieval score." dc-props="{{ authority }}" hint-size="100%,260px"></x-import>
+      <div style="margin-top:28px">
+        <x-import component-from-global-scope="MlaiLab.Callout" accent="wdbx" label="The rule" hint-size="100%,100px">The three classes are never conflated. A target presented as an achievement is a violation of the claims contract, everywhere — site, app, deck, or doc.</x-import>
+      </div>
+    </sc-if>
+
+    <div style="margin-top:48px;display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.08);padding-top:20px">
+      <div onClick="{{ prevPage }}" style="cursor:pointer;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:#94a3b8">← {{ prevLabel }}</div>
+      <div onClick="{{ nextPage }}" style="cursor:pointer;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:#22d3ee">{{ nextLabel }} →</div>
+    </div>
+  </main>
+</div>
+
+<sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closePalette }}" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:100;display:flex;justify-content:center;padding-top:15vh">
+  <div onClick="{{ stopClick }}" style="width:560px;height:fit-content;background:#0a0e16;border:1px solid rgba(255,255,255,0.12);border-radius:16px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.6)">
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.08)">
+      <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;color:#22d3ee">⌘K</span>
+      <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Jump to a page…" style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14.5px;font-family:Geist,system-ui,sans-serif">
+      <span onClick="{{ closePalette }}" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:#64748b;border:1px solid rgba(255,255,255,0.12);border-radius:5px;padding:2px 6px;cursor:pointer">ESC</span>
+    </div>
+    <div style="max-height:320px;overflow-y:auto;padding:8px">
+      <sc-for list="{{ paletteResults }}" as="r" hint-placeholder-count="6">
+        <div onClick="{{ r.on }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;background:{{ r.bg }}" style-hover="background:rgba(34,211,238,0.08)">
+          <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#64748b;width:110px">{{ r.group }}</span>
+          <span style="font-size:14px;color:#e2e8f0">{{ r.label }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px;text-align:center;font-size:13px;color:#64748b">recall@10 = 0.000 — nothing matches.</div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { page: "quickstart", paletteOpen: false, query: "" };
+
+  componentDidMount() {
+    this._onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); this.setState({ paletteOpen: !this.state.paletteOpen, query: "" }); }
+      else if (e.key === "Escape" && this.state.paletteOpen) this.setState({ paletteOpen: false });
+    };
+    window.addEventListener("keydown", this._onKey);
+  }
+  componentWillUnmount() { window.removeEventListener("keydown", this._onKey); }
+
+  renderVals() {
+    const s = this.state;
+    const PAGES = [
+      { id: "quickstart", group: "Getting started", label: "Quickstart", title: "Install, build, first query.", lead: "ABI is a Zig framework for local AI orchestration, semantic vector storage, and GPU capability reporting. Build the CLI and MCP server from a pinned toolchain; on macOS use the ./build.sh wrapper." },
+      { id: "arch", group: "Getting started", label: "Architecture overview", title: "Five layers, each with one job.", lead: "From the metal up: Apple Silicon, Apple's public frameworks, the store, the runtime, and the assistant. The trace layer spans all five." },
+      { id: "wdbx", group: "Platform", label: "WDBX API reference", title: "The store, as a tool surface.", lead: "The abi-mcp server speaks JSON-RPC 2.0 over stdio, with an optional local HTTP transport. Everything an operator can run at the terminal, an agent can call as a tool." },
+      { id: "abi", group: "Platform", label: "ABI tensor guide", title: "Tensors on unified memory.", lead: "ABI spends the GPU to make WDBX's distance math and Abbey's inference fast. Pipelines are zero-copy by construction because CPU and GPU share one pool of memory." },
+      { id: "personas", group: "Platform", label: "Persona routing guide", title: "Deterministic routing, inspectable weights.", lead: "The Abbey–Aviva–Abi framework answers one question: how do you get advanced capability without giving up governance? Routing is a trace event, not a hidden model call." },
+      { id: "prov", group: "Policy", label: "Provenance & claims", title: "Every number carries its proof.", lead: "Every published metric carries one of three classes — measured, target, or reported — and they are never conflated. This page is the standing contract." },
+    ];
+    const idx = PAGES.findIndex((p) => p.id === s.page);
+    const page = PAGES[idx];
+    const go = (id) => () => this.setState({ page: id, paletteOpen: false });
+    const groups = [
+      { group: "Getting started", ids: ["quickstart", "arch"] },
+      { group: "Platform", ids: ["wdbx", "abi", "personas"] },
+      { group: "Policy", ids: ["prov"] },
+    ];
+    const q = s.query.trim().toLowerCase();
+    const results = PAGES.filter((p) => !q || (p.label + " " + p.title + " " + p.group).toLowerCase().includes(q))
+      .map((p, i) => ({ group: p.group, label: p.label, on: go(p.id), bg: i === 0 && q ? "rgba(34,211,238,0.08)" : "transparent" }));
+    const prev = PAGES[(idx + PAGES.length - 1) % PAGES.length];
+    const next = PAGES[(idx + 1) % PAGES.length];
+
+    return {
+      navGroups: groups.map((g) => ({
+        group: g.group,
+        items: g.ids.map((id) => {
+          const p = PAGES.find((x) => x.id === id);
+          const active = id === s.page;
+          return { label: p.label, on: go(id), c: active ? "#fff" : "#94a3b8", bg: active ? "rgba(34,211,238,0.08)" : "transparent", edge: active ? "#22d3ee" : "transparent" };
+        }),
+      })),
+      pageGroup: page.group, pageTitle: page.title, pageLead: page.lead,
+      pgQuickstart: s.page === "quickstart", pgWdbx: s.page === "wdbx", pgAbi: s.page === "abi",
+      pgPersonas: s.page === "personas", pgArch: s.page === "arch", pgProv: s.page === "prov",
+      prevLabel: prev.label, nextLabel: next.label, prevPage: go(prev.id), nextPage: go(next.id),
+      paletteOpen: s.paletteOpen,
+      openPalette: () => this.setState({ paletteOpen: true, query: "" }),
+      closePalette: () => this.setState({ paletteOpen: false }),
+      stopClick: (e) => e.stopPropagation(),
+      query: s.query,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      paletteResults: results,
+      noResults: results.length === 0,
+
+      quickSteps: { steps: [
+        { title: "Open a store", body: "The abi CLI creates or attaches a WDBX store on local disk; segments and the manifest live beside each other in one directory." },
+        { title: "Register the tools", body: "abi-mcp exposes the same runtime over MCP, so an editor or agent host calls the store through the tool surface rather than a network API." },
+        { title: "Attach a persona profile", body: "The profile declares which skills and plugins load, which bounds what any persona is able to call." },
+      ] },
+      mcpSpec: { rows: [
+        { k: "Transport", v: "JSON-RPC 2.0 over stdio" },
+        { k: "Request cap", v: "64 KB" },
+        { k: "Optional HTTP transport", v: "127.0.0.1:8080" },
+        { k: "Port override", v: "ABI_MCP_HTTP_PORT" },
+        { k: "SSE stream", v: "GET /sse" },
+        { k: "Message endpoint", v: "POST /message" },
+      ] },
+      mcpTools: { items: [
+        { term: "ai_complete", def: "Run a single completion through the selected persona profile." },
+        { term: "ai_run", def: "Execute an agent workflow with routing, retrieval, and tool calls." },
+        { term: "ai_train", def: "Update routing weights for a persona profile or all profiles." },
+        { term: "wdbx_query", def: "Vector / block retrieval against the WDBX store with ordered results." },
+        { term: "wdbx_stats", def: "Report store size, index health, and snapshot metadata." },
+        { term: "gpu_status", def: "Report GPU capability and backend, with deterministic CPU fallback." },
+        { term: "plugin_list", def: "Enumerate registered plugins and their target features." },
+        { term: "plugin_run", def: "Invoke a registered plugin entry point." },
+      ] },
+      t1: { value: "5×", label: "MatMul 128×128", tag: "measured" },
+      t2: { value: "84×", label: "MatMul 1024×1024", tag: "measured" },
+      t3: { value: "295×", label: "MatMul 4096×4096", tag: "target" },
+      t4: { value: "13×", label: "10-layer neural net", tag: "measured" },
+      personaProps: { personas: [
+        { key: "abbey", name: "Abbey", role: "Warm, precise, scaffolded — structured explanation and safety-oriented review. Says \"I'm not sure\" instead of bluffing." },
+        { key: "aviva", name: "Aviva", role: "Direct, dense, exploratory — plans and proposes; never executes on her own." },
+        { key: "abi", name: "Abi", role: "Concise, policy-aware — mediates, routes, and executes only once a plan clears review." },
+      ] },
+      routingSteps: { steps: [
+        { title: "Observe", body: "The router reads the request and the retrieved context together." },
+        { title: "Weigh", body: "Cues like debug, fix, urgent, concise raise Aviva's weight; policy flags shift weight hard toward Abi." },
+        { title: "Select & trace", body: "The largest normalized weight becomes primary; the decision is written to the audit chain as an inspectable event." },
+      ] },
+      archLayers: [
+        { num: "L5", name: "Abbey", desc: "The assistant surface — three personas over one core.", c: "#34d399" },
+        { num: "L4", name: "ABI runtime", desc: "Routing, orchestration, tensor math, policy gates.", c: "#a855f7" },
+        { num: "L3", name: "WDBX", desc: "Vector + block memory with the hash-chained audit log.", c: "#22d3ee" },
+        { num: "L2", name: "Metal · Accelerate · Core ML", desc: "Apple's public frameworks — the only Apple framing permitted.", c: "#60a5fa" },
+        { num: "L1", name: "Apple Silicon", desc: "Unified memory; the chip the whole bet is priced on.", c: "#94a3b8" },
+      ],
+      serverTable: { cols: ["Server", "Throughput", "Note"], rows: [
+        ["std.http.Server", "~32K req/s", "Post-Writergate std.Io interfaces; the baseline."],
+        ["http.zig", "~140K req/s", "Pure Zig HTTP/1.1 with routing, JSON, WebSockets."],
+        ["Jetzig", "http.zig core", "Rails-like batteries: file routing, sessions, jobs."],
+        ["zzz", "within 2% of gnet", "io_uring / epoll / kqueue. Native TLS. Alpha quality."],
+      ] },
+      authority: { cols: ["Source class", "Trust"], rows: [
+        ["inferred", "0.30"], ["user_stated", "0.78"], ["tool_verified", "0.86"], ["file_verified", "0.90"], ["system_pinned", "1.00"],
+      ] },
+    };
+  }
+}
+</script>
+</body>
+</html>

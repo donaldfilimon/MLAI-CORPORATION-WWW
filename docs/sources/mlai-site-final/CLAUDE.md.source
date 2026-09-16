@@ -1,0 +1,118 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+The MLAI corporate marketing site — a fully static, content-heavy brochure for three
+products (WDBX vector DB, ABI framework, Abbey assistant). Bun + Next.js 15 App Router +
+React 19 + TypeScript (strict) + Tailwind 3.4. No backend, no database, no API routes:
+all content is compiled into static HTML at build time.
+
+## Commands
+
+Use **Bun**, not npm/pnpm/node. Scripts are pinned to `bun --bun` so the Bun runtime
+(not Node) executes the toolchain.
+
+```bash
+bun install            # install deps (bun.lock is authoritative)
+bun run dev            # next dev — local development
+bun run build          # next build → static export into ./out
+bun run start          # serve a production build
+bun run typecheck      # tsc --noEmit (strict) — the primary correctness gate
+bun test               # run bun:test suites in tests/
+bun test tests/brand.test.ts   # run a single test file
+```
+
+There is no separate lint step; `bun run typecheck` plus `bun test` are the gates.
+A change is "verified" when both pass and `bun run build` produces a clean static export.
+
+## Hard constraint: static export
+
+`next.config.ts` sets `output: "export"` and `trailingSlash: true`. This is load-bearing:
+
+- **No** API routes, Route Handlers, middleware, `next/server`, ISR, `revalidate`,
+  cookies/headers reads, or runtime server code. Everything renders at build time.
+- Dynamic/interactive behavior must be a Client Component (`"use client"`) doing work
+  in the browser — there is no server to call.
+- Prefer Server Components (the default) for everything static; reach for a client
+  component only for genuine interactivity. Current client components: `Nav`,
+  `HeroBench`, `PublicationIndex`.
+- The build output is `./out` (plain HTML/CSS/JS), deployable to any static host with
+  zero rewrite rules.
+
+## Architecture
+
+### `lib/brand.ts` is the single source of truth
+
+Every fact, stat, product description, route, FAQ, and copy fragment lives in
+`lib/brand.ts` (and longer prose in `lib/content.ts`). Pages and components import data
+from here and render it — they do not hardcode content. When changing site copy or
+numbers, edit `lib/brand.ts`, not the JSX.
+
+### The provenance contract (the site's signature rule)
+
+Every numeric claim is a `Stat` carrying a `tag: "measured" | "target" | "reported"`:
+
+- `measured` — reproduced on MLAI hardware; harness in repo (● emerald)
+- `target` — engineering goal, not yet achieved (○ amber)
+- `reported` — figure from a cited research doc (◆ violet)
+
+Numbers render through `<ProvTag>` / `<StatBlock>` so the provenance is always visible.
+**Do not introduce an untagged number into a component**, and do not silently promote a
+`target` to `measured`. `tests/brand.test.ts` enforces that every `Stat.tag` is a known
+provenance value and that color tokens are valid hex. This contract reflects the
+external-claim discipline in the global instructions: targets stay labeled as targets.
+
+### The accent system
+
+Exactly three brand accents — `wdbx` (#00D4FF cyan), `abi` (#7C3AED violet),
+`abbey` (#10B981 emerald) — defined as the `Accent` type. Each page commits to **one**
+accent. Components receive `accent` as a prop and apply color by setting the `--accent`
+CSS variable inline (`style={{ ["--accent"]: accentHex[accent] }}`), which the
+`.accent-edge` / surface utilities in `app/globals.css` consume. Tailwind also exposes
+`text-wdbx` / `border-abi/40` etc. via the `accentText`/`accentBorder`/`accentBg` maps in
+`components/ui.tsx`. Keep all four representations of the palette
+(`tailwind.config.ts`, `lib/brand.ts` `colors`, `accentHex` in `ui.tsx`, the Tailwind
+classes) in sync if a color ever changes.
+
+### Component layers
+
+- `components/ui.tsx` — primitives: `Section`, `Eyebrow`, `StatBlock`, `FeatureCard`,
+  `DataTable`, `ProvTag`/`ProvLegend`, `NextUp`, `Footer`. Re-exports `Nav`.
+- `components/content.tsx` — long-form layout: `Prose`, `SplitSection`, `DeepDive`,
+  `StepList`, `Callout`, `FAQList` (native `<details>`, zero JS), `Glossary`,
+  `PullQuote`, `SpecList`.
+- `components/Logo.tsx`, `HeroArt.tsx`, `HeroBench.tsx` — identity / hero art.
+- `app/**/page.tsx` — one route per directory; 11 content routes + `not-found.tsx`.
+  `app/sitemap.ts` and `app/robots.ts` are `force-static`. `app/icon.svg` is the favicon.
+
+The `NextUp` cross-link rail appears on every route **except `/contact`** (terminal page).
+
+## Conventions
+
+- Import alias `@/*` maps to the repo root (`@/lib/brand`, `@/components/ui`).
+- TypeScript is `strict`; data objects use `as const` heavily — preserve literal types
+  when editing `lib/brand.ts` so `Accent`/`Provenance` narrowing keeps working.
+- Tailwind theme tokens: `ink`, `panel`, `line`, plus the three accents and `warn`.
+  Fonts are CSS variables (`--font-sora`, `--font-manrope`, `--font-jbm`) loaded in
+  `app/layout.tsx` with `display: "swap"`.
+- Custom utilities (`.surface`, `.surface-hover`, `.accent-edge`, `.brand-seam`) live in
+  `app/globals.css` under `@layer components` — extend there, not inline.
+- Accessibility is intentional: skip-to-content link in the layout,
+  `prefers-reduced-motion` handling, `aria-current` on active nav. Preserve these.
+
+## Content integrity (from global instructions)
+
+This is public marketing copy for a founder-led, pre-seed company. Do not inflate
+maturity, team size, traction, partnerships, or benchmarks. Leadership/team copy lists
+only Donald Filimon unless a repo artifact says otherwise. The Apple framing in
+`company.appleFraming` is deliberately worded ("built on Apple's public frameworks") and
+must not be upgraded to partnership language. Frame unproven metrics as `target`.
+
+## Docs
+
+`docs/01..06` are the design-system, brand-guidelines, brand-voice, brand-review,
+system-design, and design-handoff specs the build is verified against.
+`ARCHITECTURE-VERIFICATION.md` (repo root) is a read-only audit mapping every route and
+component back to those docs — consult it for the full route/component inventory.

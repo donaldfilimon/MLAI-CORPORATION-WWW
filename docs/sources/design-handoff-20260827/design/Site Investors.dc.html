@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="investors" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Investors hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="wdbx" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 64px;box-sizing:border-box;position:relative">
+    <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#22d3ee">Pre-seed · 2026</div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance;max-width:42rem">$1.5M to prove the timing.</h1>
+    <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:44rem">Privacy-first AI infrastructure purpose-built for Apple Silicon's unified memory architecture. 200M+ Apple Silicon devices, zero native vector database solutions — positioned against the $2.88B vector database market through proven open-core monetization. 18-month runway to Series A.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;max-width:56rem">
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ m1 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ m2 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ m3 }}" hint-size="100%,150px"></x-import>
+    </div>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="Market" title="TAM to SOM, stated plainly." lead="All market figures ◆ reported from cited industry research." hint-size="100%,420px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Market sizing — ◆ reported." dc-props="{{ market }}" hint-size="100%,220px"></x-import>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="Why now" title="Five forces, one window." lead="" hint-size="100%,560px">
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="M4 @ 38 TOPS — hardware readiness" desc="Neural Engine 60× faster than A11 Bionic. 200M+ Apple Silicon devices run 7B–13B models on-device; unified memory up to 128GB." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="€6.2B fines — regulatory wave" desc="GDPR fines exceed €6.2B since 2018, 60% imposed since 2023. On-device processing becomes a compliance posture." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="10× cost rise — cloud inflection" desc="H100 hours at $2–7. On-device inference carries zero marginal cost; hybrid edge cuts infrastructure spend 60–80%." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Llama 3 era — model maturity" desc="Llama 3, Mistral, Phi competitive at 7B–13B. Apple Intelligence validates on-device viability and kills cloud lock-in." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="73% moving — enterprise edge adoption" desc="73% of enterprises moving to edge AI for privacy and real-time processing. Apple Intelligence hit 68–76% adoption on iOS 18." hint-size="100%,160px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="Business model" title="Open core, priced honestly." lead="" hint-size="100%,420px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Pricing tiers." dc-props="{{ pricing }}" hint-size="100%,240px"></x-import>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:32px">
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ u1 }}" hint-size="100%,140px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ u2 }}" hint-size="100%,140px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ u3 }}" hint-size="100%,140px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ u4 }}" hint-size="100%,140px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Execution" title="Use of funds, and the road." lead="" hint-size="100%,640px">
+  <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:start">
+    <div>
+      <x-import component-from-global-scope="MlaiLab.DataTable" accent="abbey" caption="Use of funds — $1.5M." dc-props="{{ funds }}" hint-size="100%,200px"></x-import>
+      <div style="margin-top:32px">
+        <x-import component-from-global-scope="MlaiLab.SpecList" dc-props="{{ milestones }}" hint-size="100%,180px"></x-import>
+      </div>
+    </div>
+    <x-import component-from-global-scope="MlaiLab.StepList" accent="abbey" dc-props="{{ roadmap }}" hint-size="100%,420px"></x-import>
+  </div>
+  <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+    <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+  </div>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      m1: { value: "$1.5M", label: "Pre-seed raise", tag: "reported" },
+      m2: { value: "18mo", label: "Runway to Series A", tag: "reported" },
+      m3: { value: "$2.88B", label: "Vector-DB market 2026", tag: "reported" },
+      market: {
+        cols: ["Scope", "Size", "Definition"],
+        rows: [
+          ["TAM", "$127B", "Global AI infrastructure"],
+          ["SAM", "$45B", "Edge AI + privacy-first"],
+          ["SOM", "$2.5B", "Apple ecosystem (Year 5)"],
+          ["Growth", "35% / 42%", "Vector-DB CAGR / Edge-AI CAGR"],
+        ],
+      },
+      pricing: {
+        cols: ["Tier", "Price", "What it buys"],
+        rows: [
+          ["Open Source Core", "Free", "Full WDBX and ABI functionality. Apache-2.0. The developer-adoption flywheel."],
+          ["WDBX Pro", "$99/mo", "Distributed clustering, advanced quantization, priority support, commercial license."],
+          ["Enterprise", "$50K–250K", "SSO/RBAC, audit logging, dedicated support, custom integrations, SLA guarantees."],
+          ["WDBX Cloud", "Usage-based", "Fully managed. Pay-per-query. Hybrid cloud/edge deployment."],
+        ],
+      },
+      u1: { value: "$50K+", label: "Target enterprise ACV", tag: "target" },
+      u2: { value: "85%+", label: "Target gross margin", tag: "target" },
+      u3: { value: "5:1", label: "Target LTV:CAC", tag: "target" },
+      u4: { value: "120%", label: "NRR target", tag: "target" },
+      funds: {
+        cols: ["Bucket", "Share", "Amount"],
+        rows: [
+          ["Engineering", "60%", "$900K"],
+          ["Go-to-market", "25%", "$375K"],
+          ["Operations", "15%", "$225K"],
+        ],
+      },
+      milestones: {
+        rows: [
+          { k: "ARR @ 18mo", v: "$240K target" },
+          { k: "Enterprise customers", v: "5–10 target" },
+          { k: "Open source stars", v: "5,000+ target" },
+          { k: "Community developers", v: "1,000+ target" },
+        ],
+      },
+      roadmap: {
+        steps: [
+          { title: "Q1 2026 — Foundation (current)", body: "Team hiring (2 engineers), WDBX 1.0 GA release, Swift SDK beta, developer documentation." },
+          { title: "Q2–Q3 2026 — Growth", body: "Enterprise pilot programs, WDBX Cloud alpha, Abbey 1.0 release, conference presence." },
+          { title: "Q4 2026 — Scale", body: "First enterprise contracts, WDBX 2.0 (distributed), iOS SDK App Store ready, partner integrations." },
+          { title: "2027 — Expand", body: "Series A raise, team expansion (8–10), multi-platform support, enterprise sales team." },
+        ],
+      },
+      nextProps: {
+        items: [
+          { label: "Company", href: "Site Company.dc.html", desc: "The founder, the principles, the hiring plan.", accent: "abbey" },
+          { label: "Contact", href: "Site Contact.dc.html", desc: "One inbox, read by the people who build it.", accent: "wdbx" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

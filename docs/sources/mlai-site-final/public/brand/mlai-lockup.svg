@@ -1,0 +1,20 @@
+<svg width="520" height="160" viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MLAI">
+  <defs>
+    <linearGradient id="g" x1="36" y1="124" x2="124" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D4FF"/><stop offset="0.5" stop-color="#7C3AED"/><stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(16,40) scale(1.6667)">
+    <rect x="4.5" y="4.5" width="39" height="39" rx="11" stroke="url(#g)" stroke-width="2.5"/>
+    <rect x="15" y="1.5" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+    <rect x="23" y="1.5" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+    <rect x="31" y="1.5" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+    <rect x="15" y="43" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+    <rect x="23" y="43" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+    <rect x="31" y="43" width="2" height="3.5" rx="1" fill="url(#g)" opacity="0.55"/>
+    <rect x="13" y="28" width="22" height="4.5" rx="2.25" fill="#00D4FF"/>
+    <rect x="13" y="21.75" width="22" height="4.5" rx="2.25" fill="#7C3AED"/>
+    <rect x="13" y="15.5" width="22" height="4.5" rx="2.25" fill="#10B981"/>
+  </g>
+  <text x="124" y="98" font-family="'Sora',system-ui,sans-serif" font-size="62" font-weight="700" letter-spacing="11" fill="#ffffff">MLAI</text>
+</svg>

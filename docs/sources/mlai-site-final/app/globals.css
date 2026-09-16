@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+body {
+  background-color: #05070B;
+  color: #cbd5e1;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(0, 212, 255, 0.25); color: #fff; }
+
+a:focus-visible, button:focus-visible {
+  outline: 2px solid #00D4FF;
+  outline-offset: 2px;
+}
+
+/* ── Surface system ─────────────────────────────────────────────────────────
+   Depth comes from a top-down sheen + a 1px inner highlight, not from heavy
+   borders. Every card shares this so the craft is consistent. */
+@layer components {
+  .surface {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 42%),
+      #0a0e16;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  }
+  .surface-hover {
+    transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+  .surface-hover:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 24px -12px rgba(0, 0, 0, 0.7);
+    transform: translateY(-2px);
+  }
+  /* Accent-tinted top hairline that fades out — gives a card its product color
+     without a heavy bar. Set --accent per use. */
+  .accent-edge {
+    position: relative;
+  }
+  .accent-edge::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.85;
+  }
+}
+
+/* Tri-product signature gradient — used once, at the footer seam. */
+.brand-seam {
+  height: 1px;
+  background: linear-gradient(90deg, #00d4ff, #7c3aed 50%, #10b981);
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes heroLineIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

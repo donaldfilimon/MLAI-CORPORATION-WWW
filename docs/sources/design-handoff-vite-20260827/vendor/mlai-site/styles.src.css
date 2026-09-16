@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap");
+
+:root {
+  color-scheme: dark;
+  --font-sora: "Sora", system-ui, sans-serif;
+  --font-manrope: "Manrope", system-ui, sans-serif;
+  --font-jbm: "JetBrains Mono", ui-monospace, monospace;
+}
+
+body {
+  background-color: #05070b;
+  color: #cbd5e1;
+  font-family: var(--font-manrope);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(0, 212, 255, 0.25);
+  color: #fff;
+}
+
+/* Keyboard focus — keep mouse clicks quiet; cover links, controls, FAQ summaries. */
+:focus {
+  outline: none;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible {
+  outline: 2px solid #00d4ff;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@layer components {
+  .surface {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 42%),
+      #0a0e16;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  }
+  .surface-hover {
+    transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+  .surface-hover:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 6px 24px -12px rgba(0, 0, 0, 0.7);
+    transform: translateY(-2px);
+  }
+  .accent-edge {
+    position: relative;
+  }
+  .accent-edge::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.85;
+  }
+}
+
+.brand-seam {
+  height: 1px;
+  background: linear-gradient(90deg, #00d4ff, #7c3aed 50%, #10b981);
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes heroLineIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

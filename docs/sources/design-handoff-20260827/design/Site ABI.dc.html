@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="abi" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="ABI hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="abi" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 72px;box-sizing:border-box;position:relative">
+    <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#a78bfa">Compute · Zig + Metal</div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance;max-width:40rem">Apple Silicon, fully spent.</h1>
+    <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:38rem">ML and GPU acceleration framework: tensor operations, neural network layers, and zero-copy unified-memory pipelines in Zig + Metal.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px">
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ g1 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ g2 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ g3 }}" hint-size="100%,150px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ g4 }}" hint-size="100%,150px"></x-import>
+    </div>
+    <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+      <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+    </div>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="The substrate" title="Built around unified memory." lead="On Apple Silicon the CPU and GPU share one pool of memory — a tensor produced by one stage is visible to the next without moving a byte." hint-size="100%,420px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+    <x-import component-from-global-scope="MlaiLab.SpecList" dc-props="{{ silicon }}" hint-size="100%,200px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.Callout" accent="abi" label="Integrity note" hint-size="100%,120px">The 295× matmul figure is a benchmark-track target, not an achievement. Measured speedups today: 5× at 128², 84× at 1024², 13× on a 10-layer net.</x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="What's inside" title="From tensors to personas." lead="One framework spans the math and the orchestration above it." hint-size="100%,640px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Tensor operations" desc="N-dimensional tensors with automatic differentiation. SIMD-optimized CPU paths plus Metal GPU kernels." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="GPU context management" desc="Metal Performance Shaders integration, automatic kernel selection, async pipelines." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Neural network layers" desc="Dense, Conv2D, LSTM, Attention. ReLU, Sigmoid, Softmax. Full backpropagation." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Zero-copy operations" desc="Unified memory eliminates host↔device transfers. Span-based APIs, actor-based concurrency." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Multi-persona orchestration" desc="Intent classification, persona routing across Abbey / Aviva / Abi, RAG over WDBX, DQN reward loop." hint-size="100%,180px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="Comptime specialization" desc="Zig compile-time execution pre-computes lookup tables and vectorized kernels for the exact target ISA." hint-size="100%,180px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="Routing pipeline" title="One request, six stages." lead="Role separation is the point: the router never executes, and the executor never grades itself." hint-size="100%,560px">
+  <x-import component-from-global-scope="MlaiLab.StepList" accent="abi" dc-props="{{ pipeline }}" hint-size="100%,420px"></x-import>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      g1: { value: "5×", label: "MatMul 128×128", tag: "measured" },
+      g2: { value: "84×", label: "MatMul 1024×1024", tag: "measured" },
+      g3: { value: "295×", label: "MatMul 4096×4096", tag: "target", note: "Matrix workload objective" },
+      g4: { value: "13×", label: "10-layer neural net", tag: "measured" },
+      silicon: {
+        rows: [
+          { k: "Unified memory bandwidth", v: "546 GB/s" },
+          { k: "Neural Engine (M4)", v: "38 TOPS" },
+          { k: "Power efficiency", v: "200 GFLOPS/W" },
+          { k: "Language", v: "Zig + Metal" },
+          { k: "License", v: "Apache-2.0" },
+        ],
+      },
+      pipeline: {
+        steps: [
+          { title: "Classify intent", body: "The request is embedded on-device and classified before anything is retrieved or generated." },
+          { title: "Route via Abi", body: "Abi selects Abbey, Aviva, or a blend — argmax over P(persona | input, context)." },
+          { title: "Retrieve from WDBX", body: "Candidates come back as weighted paths with provenance, not anonymous chunks." },
+          { title: "Policy gate", body: "The planned action is checked against the active grants before execution." },
+          { title: "Execute", body: "The chosen persona answers, grounded in the retrieved pack." },
+          { title: "DQN reward loop", body: "The outcome feeds back into routing — the decision improves without retraining the personas." },
+        ],
+      },
+      nextProps: {
+        items: [
+          { label: "WDBX", href: "Site WDBX.dc.html", desc: "The store this framework accelerates.", accent: "wdbx" },
+          { label: "Abbey", href: "Site Abbey.dc.html", desc: "The assistant running on this runtime.", accent: "abbey" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

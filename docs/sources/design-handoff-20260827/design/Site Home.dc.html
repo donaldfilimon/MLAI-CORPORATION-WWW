@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="" hint-size="100%,64px"></dc-import>
+
+<!-- HERO -->
+<div data-screen-label="Hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="wdbx" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:96px 40px 88px;box-sizing:border-box;display:grid;grid-template-columns:1.15fr 1fr;gap:64px;align-items:center;position:relative">
+    <div>
+      <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#22d3ee">Privacy-first AI infrastructure · Apple Silicon</div>
+      <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:60px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:20px 0 0;text-wrap:balance">AI infrastructure that never phones home.</h1>
+      <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:22px 0 0;max-width:34rem">From the vector engine up — WDBX for memory, the ABI Framework for compute, and three minds in one assistant. The inference, the index, and the data on the same chip you already own.</p>
+      <div style="display:flex;gap:14px;margin-top:32px">
+        <a href="Site WDBX.dc.html" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:#05070d;background:#22d3ee;border-radius:999px;padding:13px 24px" style-hover="background:#06b6d4">Explore the stack →</a>
+        <a href="Site Investors.dc.html" style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:#e2e8f0;border:1px solid rgba(255,255,255,0.14);border-radius:999px;padding:13px 24px" style-hover="border-color:rgba(255,255,255,0.3)">Investors</a>
+      </div>
+    </div>
+    <div style="min-width:0">
+      <x-import component-from-global-scope="MlaiLab.HeroBench" prompt="$" dc-props="{{ benchProps }}" hint-size="100%,300px"></x-import>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div style="max-width:80rem;margin:0 auto;padding:80px 40px 0;box-sizing:border-box">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ st295 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ st08 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="wdbx" stat="{{ st165 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ st3 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ st90d }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abi" stat="{{ stSoc }}" hint-size="100%,150px"></x-import>
+  </div>
+  <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+    <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+  </div>
+</div>
+
+<!-- THE STACK -->
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="The stack" title="Three layers. One chip." lead="Each is useful on its own; together they are a private AI stack that never has to phone home." hint-size="100%,520px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <a href="Site WDBX.dc.html" style="text-decoration:none">
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="wdbx" title="WDBX — Storage" desc="A privacy-first vector database that runs where the data lives. HNSW indexing, MVCC transactions, a hash-chained write-ahead log." hint-size="100%,190px"></x-import>
+    </a>
+    <a href="Site ABI.dc.html" style="text-decoration:none">
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abi" title="ABI Framework — Compute" desc="Tensor operations and Metal GPU kernels on Apple Silicon. Zero-copy unified-memory pipelines by construction." hint-size="100%,190px"></x-import>
+    </a>
+    <a href="Site Abbey.dc.html" style="text-decoration:none">
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Abbey — Application" desc="A private, emotionally aware assistant with persistent vector-backed memory. Three personas over one core." hint-size="100%,190px"></x-import>
+    </a>
+  </div>
+</x-import>
+
+<!-- PERSONAS + WHY NOW -->
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Three minds" title="One system, three registers." lead="A model tuned to be warm is bad at being blunt — so the system splits the job and routes between registers." hint-size="100%,520px">
+  <div style="display:grid;grid-template-columns:380px 1fr;gap:40px;align-items:start">
+    <x-import component-from-global-scope="MlaiLab.PersonaCard" dc-props="{{ personaProps }}" hint-size="100%,280px"></x-import>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Hardware crossed the line" desc="The M4 Neural Engine makes 7B–13B models interactive on-device, on hundreds of millions of shipped devices." hint-size="100%,170px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Regulation rewards locality" desc="GDPR and the EU AI Act make on-device processing a compliance posture, not a preference." hint-size="100%,170px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Cloud economics inverted" desc="On-device inference carries zero marginal cost; the cloud's per-query cost compounds." hint-size="100%,170px"></x-import>
+      <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Open models matured" desc="Llama, Mistral, and Phi are capable at on-device sizes. The model stopped being the moat." hint-size="100%,170px"></x-import>
+    </div>
+  </div>
+</x-import>
+
+<!-- EDITORIAL -->
+<x-import component-from-global-scope="MlaiLab.SplitSection" accent="wdbx" kicker="The premise" title="Private by default." hint-size="100%,320px">
+  <p>On-device inference means data never leaves hardware the user controls. Privacy stops being a policy you have to trust and becomes a property of where the computation physically runs.</p>
+  <p>Written close to the metal — Zig for the store, Metal for the math — because the guarantees that matter here (latency, provenance, data residency) are won or lost at that level.</p>
+</x-import>
+
+<!-- NEXT UP -->
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,220px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      benchProps: {
+        lines: [
+          "abi wdbx query --top-k 10 'unified memory'",
+          "",
+          "  resolved 10 records from 3 segments",
+          "  context pack assembled under budget",
+          "  routed → aviva",
+          "",
+          "  chain verified · 0 breaks",
+        ],
+      },
+      st295: { value: "295×", label: "GPU speedup", tag: "target", note: "Matrix workload benchmark track" },
+      st08: { value: "0.8ms", label: "Search latency", tag: "target", note: "1M-vector local retrieval" },
+      st165: { value: "16.5K", label: "Throughput (QPS)", tag: "target", note: "WDBX stress-test objective" },
+      st3: { value: "3", label: "Agent control roles", tag: "measured", note: "Planning, review, execution" },
+      st90d: { value: "90d", label: "Pilot window", tag: "measured", note: "Audit-to-production roadmap" },
+      stSoc: { value: "SOC 2", label: "Readiness track", tag: "target", note: "Controls designed for audit evidence" },
+      personaProps: {
+        personas: [
+          { key: "abbey", name: "Abbey", role: "Empathetic polymath — scaffolds hard ideas with metaphor before precision." },
+          { key: "aviva", name: "Aviva", role: "Unfiltered expert — direct, token-frugal, zero hedging." },
+          { key: "abi", name: "Abi", role: "Adaptive moderator — classifies intent, routes, and blends the other two." },
+        ],
+      },
+      nextProps: {
+        items: [
+          { label: "WDBX", href: "Site WDBX.dc.html", desc: "The vector database — figures, features, and the scale benchmark.", accent: "wdbx" },
+          { label: "Platform", href: "Site Platform.dc.html", desc: "Four layers that make on-device autonomy inspectable.", accent: "abi" },
+          { label: "Research", href: "Site Research.dc.html", desc: "Publications and the formal WDBX retrieval model.", accent: "abbey" },
+          { label: "Investors", href: "Site Investors.dc.html", desc: "The timing bet: $1.5M pre-seed, 18-month runway to Series A.", accent: "wdbx" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

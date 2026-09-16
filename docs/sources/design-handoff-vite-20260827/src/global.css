@@ -1,0 +1,200 @@
+body {
+  margin: 0;
+  background: #05070b;
+  color: #cbd5e1;
+}
+a { color: #00d4ff; text-decoration: none; }
+a:hover { color: #ffffff; }
+
+@keyframes mlaiRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+.mlai-skip {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 100;
+  padding: 10px 14px;
+  font-family: var(--font-jbm), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #00d4ff;
+  background: #05070b;
+  border: 1px solid #00d4ff;
+  transform: translateY(-200%);
+}
+.mlai-skip:focus {
+  transform: none;
+}
+
+.mlai-field:focus-visible {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.35);
+}
+
+.mlai-main > * {
+  animation: mlaiPageIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes mlaiPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.mlai-g2,
+.mlai-g3,
+.mlai-g4,
+.mlai-fields,
+.mlai-contact,
+.mlai-layer-row {
+  display: grid;
+  align-items: start;
+}
+.mlai-g2 { grid-template-columns: 1fr 1fr; gap: 32px; }
+.mlai-g3 { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.mlai-g4 { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+/* Equal-height product / surface cards inside Home grids */
+.mlai-cards {
+  align-items: stretch;
+}
+.mlai-cards > a,
+.mlai-cards > .surface {
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.mlai-fields { grid-template-columns: 1fr 1fr; gap: 22px; }
+.mlai-contact {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+  grid-template-columns: 7fr 5fr;
+  gap: 48px;
+}
+.mlai-layer-row {
+  grid-template-columns: 80px 220px 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.mlai-hero-home {
+  font-family: "Sora", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 28px auto 0;
+  max-width: 980px;
+  animation: mlaiRise 700ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+}
+.mlai-cta-title {
+  font-family: "Sora", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.85rem, 4.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+}
+
+/* Home hero: ~760px floor on desktop; content can grow; padding scales on small screens */
+.mlai-home-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 760px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.mlai-home-hero-inner {
+  position: relative;
+  padding: 140px 24px 90px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+.mlai-home-cta {
+  position: relative;
+  overflow: hidden;
+}
+.mlai-home-cta-inner {
+  position: relative;
+  padding: clamp(72px, 14vw, 110px) 24px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mlai-pill {
+  font-family: "JetBrains Mono", monospace;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  padding: 13px 26px;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  display: inline-block;
+}
+.mlai-pill--primary {
+  border: 1px solid var(--pill, #00d4ff);
+  background: var(--pill, #00d4ff);
+  color: #05070b;
+  font-weight: 600;
+}
+.mlai-pill--primary:hover {
+  background: transparent;
+  color: var(--pill, #00d4ff);
+}
+.mlai-pill--ghost {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #cbd5e1;
+}
+.mlai-pill--ghost:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+
+@media (max-width: 960px) {
+  .mlai-g3,
+  .mlai-g4 { grid-template-columns: 1fr 1fr; }
+  .mlai-contact { grid-template-columns: 1fr; gap: 32px; padding: 32px 20px 72px; }
+  .mlai-layer-row { grid-template-columns: 64px 1fr; gap: 12px 16px; }
+  .mlai-layer-row > :nth-child(3) { grid-column: 1 / -1; }
+  .mlai-layer-row > :nth-child(4) { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .mlai-g2,
+  .mlai-g3,
+  .mlai-g4,
+  .mlai-fields { grid-template-columns: 1fr; }
+  .mlai-layer-row { grid-template-columns: 1fr; }
+  /* Prefer content height over a hard 760 when the viewport is short */
+  .mlai-home-hero {
+    min-height: min(760px, 100svh);
+  }
+  .mlai-home-hero-inner {
+    padding: clamp(88px, 18vw, 120px) 20px 64px;
+  }
+  .mlai-home-cta-inner {
+    padding: clamp(64px, 16vw, 96px) 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

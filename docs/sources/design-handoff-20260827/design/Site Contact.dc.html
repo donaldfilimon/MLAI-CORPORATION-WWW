@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh;display:flex;flex-direction:column">
+<dc-import name="SiteNav" active="" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Contact" style="position:relative;overflow:hidden;flex:1">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="wdbx" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 96px;box-sizing:border-box;display:grid;grid-template-columns:1fr 1fr;gap:64px;position:relative">
+    <div>
+      <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#22d3ee">Contact</div>
+      <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:48px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance">One inbox, read by the people who build it.</h1>
+      <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:32rem">Share the workflow you want to automate, the failure modes you cannot accept, and the infrastructure constraints we need to respect. Most teams begin with a readiness audit.</p>
+      <div style="margin-top:32px">
+        <x-import component-from-global-scope="MlaiLab.Callout" accent="abbey" label="Privacy-first" hint-size="100%,110px">We don't take work that puts your data in our hands. VPC, on-premise, and offline-first deployment paths are the default posture, not an upsell.</x-import>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:32px">
+        <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#64748b">Elsewhere</span>
+        <a href="https://github.com/donaldfilimon/abi" style="font-size:14px;color:#94a3b8;text-decoration:none" style-hover="color:#fff">github.com/donaldfilimon/abi ↗</a>
+        <a href="https://mlai.dev" style="font-size:14px;color:#94a3b8;text-decoration:none" style-hover="color:#fff">mlai.dev ↗</a>
+        <a href="https://x.com/donaldfilimonx" style="font-size:14px;color:#94a3b8;text-decoration:none" style-hover="color:#fff">x.com/donaldfilimonx ↗</a>
+      </div>
+    </div>
+    <div style="border:1px solid rgba(255,255,255,0.08);background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));border-radius:20px;padding:32px;align-self:start">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px">Name</div>
+          <x-import component-from-global-scope="MlaiLab.Input" placeholder="Ada Lovelace" hint-size="100%,40px"></x-import>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px">Work email</div>
+          <x-import component-from-global-scope="MlaiLab.Input" placeholder="ada@company.com" hint-size="100%,40px"></x-import>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px">What are you trying to do?</div>
+          <x-import component-from-global-scope="MlaiLab.Textarea" placeholder="The workflow, the failure modes you can't accept, the constraints we should respect." rows="{{ 5 }}" hint-size="100%,120px"></x-import>
+        </div>
+        <x-import component-from-global-scope="MlaiLab.Button" hint-size="100%,44px">Send inquiry →</x-import>
+        <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.1em;color:#64748b">Deploy · pilot · partner · invest — same inbox.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+</body>
+</html>

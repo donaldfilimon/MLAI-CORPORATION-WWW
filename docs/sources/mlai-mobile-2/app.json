@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "MLAI",
+    "slug": "mlai-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "mlai",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "backgroundColor": "#05070B",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#05070B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.mlai.mobile",
+      "userInterfaceStyle": "dark",
+      "usesAppleSignIn": true,
+      "entitlements": {
+        "com.apple.developer.icloud-container-identifiers": [
+          "iCloud.dev.mlai.mobile"
+        ],
+        "com.apple.developer.icloud-services": [
+          "CloudKit"
+        ],
+        "com.apple.developer.ubiquity-kvstore-identifier": "$(TeamIdentifierPrefix)dev.mlai.mobile"
+      }
+    },
+    "android": {
+      "package": "dev.mlai.mobile",
+      "userInterfaceStyle": "dark",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#05070B"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#05070B"
+        }
+      ],
+      "./plugins/withCloudKit"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

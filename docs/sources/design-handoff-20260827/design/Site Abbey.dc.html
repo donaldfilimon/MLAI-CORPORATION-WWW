@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="abbey" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Abbey hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="abbey" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 72px;box-sizing:border-box;display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:center;position:relative">
+    <div>
+      <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#34d399">Application · three personas, one core</div>
+      <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance">An assistant that remembers — locally.</h1>
+      <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:34rem">Self-learning, emotionally aware AI assistant with persistent vector-backed memory. Every conversation stays on hardware you control.</p>
+    </div>
+    <x-import component-from-global-scope="MlaiLab.PersonaCard" title="The roster" dc-props="{{ personaProps }}" hint-size="100%,280px"></x-import>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Capabilities" title="What the surface can do." lead="Underneath: WDBX for memory, ABI for compute. On the surface: an assistant with a strong opinion about where your data lives." hint-size="100%,520px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Multi-provider LLM support" desc="OpenAI, Anthropic, and local models via Ollama. Seamless provider switching." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Vector-based semantic memory" desc="Powered by WDBX. Remembers conversations, learns preferences — all stored locally." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Neural backtracking" desc="Hash-chained interaction blocks rewind to the exact divergence point when an agent drifts." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Emotional intelligence" desc="Technical precision balanced with empathetic communication, tuned per persona." hint-size="100%,160px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="The registers" title="Why three, not one." lead="A model tuned to be warm is bad at being blunt. The split is a training decision, and the router's choice is recorded on the audit chain." hint-size="100%,560px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="abbey" caption="Fixed persona colors — distinct on sight." dc-props="{{ registers }}" hint-size="100%,220px"></x-import>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:32px">
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ p1 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ p2 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ p3 }}" hint-size="100%,150px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.StatBlock" accent="abbey" stat="{{ p4 }}" hint-size="100%,150px"></x-import>
+  </div>
+  <div style="margin-top:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:16px;padding:14px 20px">
+    <x-import component-from-global-scope="MlaiLab.ProvLegend" variant="inline" hint-size="100%,24px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Where it runs" title="Platform status." lead="Shipping surfaces are labeled shipping; work in flight is labeled in progress." hint-size="100%,340px">
+  <div style="max-width:40rem">
+    <x-import component-from-global-scope="MlaiLab.SpecList" dc-props="{{ status }}" hint-size="100%,160px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.SplitSection" accent="abbey" kicker="Memory" title="Recall is a vector lookup." hint-size="100%,320px">
+  <p>Conversations are embedded and stored in WDBX, on-device. When you ask what you decided last month, the answer is retrieved from your own hardware — with the path that produced it.</p>
+  <p>Because interaction blocks are hash-chained, drift has a remedy: the chain is traversed backward to the divergence point and the session state rewound.</p>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      personaProps: {
+        personas: [
+          { key: "abbey", name: "Abbey", role: "Empathetic Polymath — training penalizes unsupportive phrasing via an explicit empathy loss term." },
+          { key: "aviva", name: "Aviva", role: "Unfiltered Expert — a conciseness loss term penalizes filler tokens. Fewer tokens, lower latency." },
+          { key: "abi", name: "Abi", role: "Adaptive Moderator — routes via argmax over P(persona | input, context), blending when needed." },
+        ],
+      },
+      registers: {
+        cols: ["Persona", "Accent", "Register"],
+        rows: [
+          ["Abbey", "emerald", "empathetic, open-ended"],
+          ["Aviva", "violet", "direct, token-frugal"],
+          ["Abi", "cyan", "router / moderator"],
+        ],
+      },
+      p1: { value: "0.92", label: "Abbey empathy score", tag: "reported", note: "Internal eval harness" },
+      p2: { value: "90.5%", label: "Abbey technical accuracy", tag: "reported", note: "Internal eval harness" },
+      p3: { value: "30%", label: "Aviva latency reduction vs hedged responses", tag: "reported" },
+      p4: { value: "40%", label: "Aviva content density gain", tag: "reported" },
+      status: {
+        rows: [
+          { k: "Discord (Bun + discord.js v14)", v: "Shipping" },
+          { k: "Swift 6 / Vapor 4 / DiscordBM port", v: "In progress" },
+          { k: "Python + Twitch expansion", v: "In progress" },
+        ],
+      },
+      nextProps: {
+        items: [
+          { label: "Platform", href: "Site Platform.dc.html", desc: "The four layers that make Abbey's autonomy inspectable.", accent: "abi" },
+          { label: "WDBX", href: "Site WDBX.dc.html", desc: "The store Abbey's memory lives in.", accent: "wdbx" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

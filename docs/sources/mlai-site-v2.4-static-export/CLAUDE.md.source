@@ -1,0 +1,95 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+This directory is a **Next.js static export** (`next build` with `output: 'export'`) of the
+MLAI corporate marketing site, deployed at `https://mlai.dev`. It is **build output, not source**:
+there is no `package.json`, `next.config.*`, TypeScript, JSX, or component source anywhere in
+this tree. It is also **not a git repository**.
+
+The source project that produces this export is, per workspace notes, the
+`MLAI-CORPORATION-WWW` React/Bun repo. **Editing files here does not change the source** — any
+change is overwritten the next time the site is exported. Make real changes in the source repo
+and re-export; treat this directory as a deployable artifact for inspection, local preview, or
+deployment only.
+
+Build ID of this export: `rdWFNOHrsNL5x5mZViBIe` (same across all pages — confirms one
+coherent build).
+
+## Layout
+
+- `index.html`, `404.html` — top-level pages.
+- `<route>/index.html` — one folder per route (trailing-slash / clean-URL routing). Routes:
+  `wdbx`, `abi`, `abbey`, `platform`, `services`, `research`, `architecture`, `company`,
+  `investors`, `contact`, plus `404/`.
+- `<route>/index.txt` — the **RSC flight payload** for that route (serialized React Server
+  Component tree the client hydrates from). The human-readable copy lives here in a denser form
+  than the HTML and is often the easiest place to read or diff actual page content.
+- `_next/static/chunks/` — content-hashed JS bundles (framework, app, per-page). `app/<route>/page-*.js` maps to each route.
+- `_next/static/css/*.css` — single compiled Tailwind stylesheet.
+- `_next/static/media/*.woff2` — self-hosted fonts (display / body / mono families).
+- `_next/static/<buildId>/_buildManifest.js`, `_ssgManifest.js` — Next.js client manifests.
+- `sitemap.xml`, `robots.txt`, `og.png` — SEO / social assets. `sitemap.xml` enumerates the
+  canonical route set and is regenerated per build (carries a `lastmod` timestamp).
+
+No deploy config is checked in (no `netlify.toml`, `vercel.json`, `CNAME`, `_redirects`,
+`.nojekyll`). Any host config lives in the source repo or the hosting dashboard.
+
+## Previewing locally
+
+No build step exists here — it is already built. Serve it as static files with clean-URL support:
+
+```bash
+npx serve .          # or:  npx http-server .  /  python3 -m http.server
+```
+
+Because routes are `folder/index.html`, a server that resolves directory indexes will route
+correctly. Opening `index.html` from `file://` will break asset and font paths (they are
+site-absolute, e.g. `/_next/...`); always serve over HTTP.
+
+There is no test, lint, or typecheck command in this directory — those belong to the source repo.
+
+## Content conventions (carried from source, visible in the markup)
+
+These are baked into the exported HTML/RSC and should be preserved if you ever hand-edit, and
+respected when writing source that regenerates this site:
+
+- **Provenance legend** (footer, applied to every metric on the site): `●` measured (reproduced
+  on our hardware), `○` target (engineering goal), `◆` reported (cited research figure). When a
+  measured number conflicts with a reported one, the measured number wins everywhere else. Do not
+  present targets or reported figures as present-tense product facts.
+- **Brand / product accent tokens**: WDBX `#00D4FF`, ABI `#7C3AED`, Abbey `#10B981`. Tailwind
+  utility names follow suit (`text-wdbx`, `text-abi`, `text-abbey`, plus surface tokens
+  `bg-ink`, `bg-panel`, `border-line`, `surface`, `accent-edge`).
+- **Entity facts** (JSON-LD in the root layout + footer): Machine Learning Advanced Innovations,
+  Inc. (MLAI), Delaware C-Corp, Orlando FL; founder Donald Filimon (list only Donald for
+  leadership/team). External links: `github.com/donaldfilimon/abi` (Apache-2.0),
+  `donaldfilimon.github.io/abi` (docs), `donaldfilimon.com` (founder).
+- **Contact addresses** present in `contact/`: `enterprise@mlai.dev`, `invest@mlai.dev`,
+  `careers@mlai.dev`.
+
+## The three products described by the site
+
+Useful orientation when reading or editing copy (each has its own route):
+
+- **WDBX** (`/wdbx`) — Zig-built vector database: HNSW indexing, MVCC transactions, hash-chained
+  WAL, Metal/CUDA/Vulkan backends.
+- **ABI Framework** (`/abi`) — ML + GPU acceleration framework in Zig 0.17-dev + Metal: tensor
+  ops, NN layers, zero-copy unified-memory pipelines.
+- **Abbey** (`/abbey`) — self-learning, on-device AI assistant with persistent vector-backed
+  memory.
+
+Public copy must stay within the external-claim boundaries in the global instructions: frame
+unproven performance/scale/security/traction claims as targets or design intent, grounded in
+verifiable artifacts, not as production guarantees.
+
+## Design system
+
+See `DESIGN.md` for the component specs, states, and responsive behavior (the source-repo design
+handoff). It catalogs the source components (`Nav`, `Section`, `StatBlock`, `FAQList`, etc.) and
+the cross-cutting contracts — the accent contract (one of `wdbx | abi | abbey` per page, driven
+through `--accent`), the provenance legend, the `md` (768px) desktop/mobile fork, and the
+`prefers-reduced-motion` rule. Those components live in source, not in this export, but the doc is
+the decoder ring for the rendered markup here.

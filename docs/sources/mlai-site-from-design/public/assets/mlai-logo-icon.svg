@@ -1,0 +1,42 @@
+<svg width="388" height="388" viewBox="318 122 388 388" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MLAI mark">
+  <defs>
+    <linearGradient id="mlaiIconGradient" x1="338" y1="122" x2="686" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A8CFF"></stop>
+      <stop offset="1" stop-color="#005CFF"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="318" y="122" width="388" height="388" rx="82" fill="url(#mlaiIconGradient)"></rect>
+  <g stroke="#FFFFFF" stroke-width="27" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512 438V315"></path>
+    <path d="M512 315V229"></path>
+    <path d="M512 346L448 282"></path>
+    <path d="M448 282L448 255"></path>
+    <path d="M448 346L386 284"></path>
+    <path d="M448 346V508"></path>
+    <path d="M386 284H372"></path>
+    <path d="M512 346L578 280"></path>
+    <path d="M578 280V251"></path>
+    <path d="M578 346L644 280"></path>
+    <path d="M578 346V508"></path>
+    <path d="M644 280V252"></path>
+    <path d="M512 346V508"></path>
+    <path d="M448 438L392 382"></path>
+    <path d="M392 382L372 382"></path>
+    <path d="M578 438L634 382"></path>
+    <path d="M634 382L652 382"></path>
+  </g>
+  <g>
+    <circle cx="512" cy="220" r="34" fill="#FFFFFF"></circle>
+    <circle cx="512" cy="220" r="16" fill="url(#mlaiIconGradient)"></circle>
+    <circle cx="448" cy="248" r="34" fill="#FFFFFF"></circle>
+    <circle cx="448" cy="248" r="16" fill="url(#mlaiIconGradient)"></circle>
+    <circle cx="372" cy="284" r="34" fill="#FFFFFF"></circle>
+    <circle cx="372" cy="284" r="16" fill="url(#mlaiIconGradient)"></circle>
+    <circle cx="644" cy="248" r="34" fill="#FFFFFF"></circle>
+    <circle cx="644" cy="248" r="16" fill="url(#mlaiIconGradient)"></circle>
+    <circle cx="372" cy="382" r="34" fill="#FFFFFF"></circle>
+    <circle cx="372" cy="382" r="16" fill="url(#mlaiIconGradient)"></circle>
+    <circle cx="652" cy="382" r="34" fill="#FFFFFF"></circle>
+    <circle cx="652" cy="382" r="16" fill="url(#mlaiIconGradient)"></circle>
+  </g>
+</svg>

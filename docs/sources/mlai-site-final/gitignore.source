@@ -1,0 +1,16 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next
+/out
+
+# build / misc
+*.log
+.DS_Store
+
+# auto-improve transient marker
+/.claude/auto-improve.active
+
+# typescript incremental build cache
+*.tsbuildinfo

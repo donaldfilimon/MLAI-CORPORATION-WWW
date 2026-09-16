@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#090b10;font-family:Geist,system-ui,sans-serif;color:#E8EBF1}
+a{color:#22D3EE;text-decoration:none}a:hover{color:#fff}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(255,255,255,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.dv-tid{font:600 10px 'JetBrains Mono',monospace;padding:3px 7px;background:#22D3EE;color:#05070D;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 Geist,sans-serif;color:#E8EBF1}
+.dv-sub{font:400 11.5px/1.5 Geist,sans-serif;color:#717B89;margin:0 0 24px;max-width:720px}
+.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px 'JetBrains Mono',monospace;padding:3px 7px;background:rgba(255,255,255,.10);color:#E8EBF1;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.4 Geist,sans-serif;color:#94A0AE;max-width:402px}
+.dv-opt:target .dv-oid{background:#22D3EE;color:#05070D}
+.dv-next{margin:26px 0 0;font:12px/1.5 Geist,sans-serif;color:#717B89}
+@keyframes twinkle{0%,100%{opacity:.25}50%{opacity:.9}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes blinkDot{0%,80%,100%{opacity:.25}40%{opacity:1}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Mobile app — safe interactive prototype + wild explorations</span></div>
+<p class="dv-sub">Recreated from mlai-mobile (theme.ts tokens verbatim: ink #05070D, Spectral / Geist / JetBrains Mono). New IA per your calls: Home · Stack · Chat · Vault · Company — Platform folded into Stack, Chat as 5th tab. All figures from lib/brand.ts, provenance-tagged. <a class="dv-oid" href="#1a">1a</a> is fully tappable: sign-in → onboarding → tabs, product detail, scripted chat.</p>
+<div class="dv-opts">
+
+<!-- ═══════════ 1a — SAFE: interactive prototype ═══════════ -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Safe — faithful to the shipped app, interactive (tap through it)</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div data-screen-label="Prototype" style="position:relative;width:100%;height:100%;background:#05070D;font-family:Geist,system-ui,sans-serif;overflow:hidden">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="mgp" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22D3EE"></stop><stop offset="0.5" stop-color="#A855F7"></stop><stop offset="1" stop-color="#34D399"></stop></linearGradient></defs></svg>
+
+  <!-- SIGN IN -->
+  <sc-if value="{{ isSignin }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Sign in" style="position:absolute;inset:0;display:flex;flex-direction:column;padding:80px 24px 40px;box-sizing:border-box">
+    <div style="position:absolute;top:-40px;left:-60px;width:320px;height:320px;border-radius:220px;background:radial-gradient(circle,rgba(34,211,238,0.13),transparent 70%);pointer-events:none"></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:48px">
+        <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><defs><linearGradient id="mgs" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22D3EE"></stop><stop offset="0.5" stop-color="#A855F7"></stop><stop offset="1" stop-color="#34D399"></stop></linearGradient></defs><rect x="4.5" y="4.5" width="39" height="39" rx="11" stroke="url(#mgp)" stroke-width="2.5"></rect><rect x="15" y="1.5" width="2" height="3.5" rx="1" fill="url(#mgp)" opacity="0.55"></rect><rect x="23" y="1.5" width="2" height="3.5" rx="1" fill="url(#mgp)" opacity="0.55"></rect><rect x="31" y="1.5" width="2" height="3.5" rx="1" fill="url(#mgp)" opacity="0.55"></rect><rect x="15" y="43" width="2" height="3.5" rx="1" fill="url(#mgp)" opacity="0.55"></rect><rect x="23" y="43" width="2" height="3.5" rx="1" fill="url(#mgp)" opacity="0.55"></rect><rect x="31" y="43" width="2" height="3.5" rx="1" fill="url(#mgp)" opacity="0.55"></rect><rect x="13" y="28" width="22" height="4.5" rx="2.25" fill="#22D3EE"></rect><rect x="13" y="21.75" width="22" height="4.5" rx="2.25" fill="#A855F7"></rect><rect x="13" y="15.5" width="22" height="4.5" rx="2.25" fill="#34D399"></rect></svg>
+        <span style="font-family:Spectral,serif;font-weight:600;font-size:18px;letter-spacing:6px;color:#fff">MLAI</span>
+      </div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff">Your data,</div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;background:linear-gradient(90deg,#22D3EE,#60A5FA,#A855F7);-webkit-background-clip:text;background-clip:text;color:transparent">your iCloud.</div>
+      <div style="font-size:15px;line-height:24px;color:#94A0AE;margin-top:16px;max-width:340px">Sign in with Apple. What you save lives in your own private iCloud database via CloudKit — there is no MLAI server in the path, and nothing to phone home to.</div>
+    </div>
+    <div style="padding-bottom:16px">
+      <div onClick="{{ enterOnboard }}" style="height:50px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">
+        <svg width="16" height="19" viewBox="0 0 814 1000" fill="#000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"></path></svg>
+        <span style="font-size:16px;font-weight:600;color:#000;font-family:-apple-system,system-ui">Sign in with Apple</span>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:18px;letter-spacing:0.5px;color:#505964;text-align:center;margin-top:16px">Built on Apple's public frameworks</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ONBOARDING -->
+  <sc-if value="{{ isOnboard }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Onboarding" style="position:absolute;inset:0;display:flex;flex-direction:column;padding:80px 24px 40px;box-sizing:border-box">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:28px 22px;overflow:hidden;animation:fadeUp .4s ease-out">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,{{ obAccent }},transparent 70%);opacity:.9"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:18px;height:1.5px;border-radius:1px;background:{{ obAccent }}"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:{{ obAccent }}">{{ obEyebrow }}</span>
+        </div>
+        <div style="font-family:Spectral,serif;font-weight:600;font-size:22px;line-height:27px;letter-spacing:-0.33px;color:#fff">{{ obTitle }}</div>
+        <sc-if value="{{ obShowPersonas }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+            <sc-for list="{{ obPersonas }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:8px;height:8px;border-radius:4px;background:{{ p.c }};box-shadow:0 0 8px {{ p.c }}99"></div>
+                <span style="font-size:15px;font-weight:500;color:#fff;font-family:Geist,sans-serif">{{ p.name }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:#717B89;text-transform:uppercase">{{ p.role }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ obShowProv }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:16px;margin-top:16px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#34D399">●</span> measured</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#FBBF24">○</span> target</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#A855F7">◆</span> reported</span>
+          </div>
+        </sc-if>
+        <div style="font-size:14px;line-height:22px;color:#94A0AE;margin-top:12px">{{ obBody }}</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:16px">
+      <div style="display:flex;gap:7px">
+        <sc-for list="{{ obDots }}" as="d" hint-placeholder-count="3">
+          <div style="width:7px;height:7px;border-radius:4px;background:{{ d.bg }}"></div>
+        </sc-for>
+      </div>
+      <div onClick="{{ obNext }}" style="background:#22D3EE;border-radius:10px;padding:11px 18px;cursor:pointer">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#05070D">{{ obCta }}</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- APP (tabs) -->
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0">
+
+    <!-- HOME -->
+    <sc-if value="{{ tabHome }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Home" style="position:absolute;inset:0;overflow-y:auto;padding:70px 24px 120px;box-sizing:border-box">
+      <div style="position:absolute;top:-80px;left:-60px;width:280px;height:280px;border-radius:200px;background:radial-gradient(circle,rgba(34,211,238,0.15),transparent 70%);pointer-events:none"></div>
+      <div style="position:absolute;top:40px;right:-80px;width:280px;height:280px;border-radius:200px;background:radial-gradient(circle,rgba(168,85,247,0.13),transparent 70%);pointer-events:none"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px">
+        <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><rect x="4.5" y="4.5" width="39" height="39" rx="11" stroke="url(#mgp)" stroke-width="2.5"></rect><rect x="13" y="28" width="22" height="4.5" rx="2.25" fill="#22D3EE"></rect><rect x="13" y="21.75" width="22" height="4.5" rx="2.25" fill="#A855F7"></rect><rect x="13" y="15.5" width="22" height="4.5" rx="2.25" fill="#34D399"></rect></svg>
+        <span style="font-family:Spectral,serif;font-weight:600;font-size:18px;letter-spacing:6px;color:#fff">MLAI</span>
+      </div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:34px;line-height:40px;letter-spacing:-0.51px;color:#fff">AI infrastructure that</div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:34px;line-height:40px;letter-spacing:-0.51px;background:linear-gradient(90deg,#22D3EE,#60A5FA,#A855F7);-webkit-background-clip:text;background-clip:text;color:transparent">never phones home.</div>
+      <div style="font-size:15px;line-height:24px;color:#94A0AE;margin-top:16px;max-width:360px">Privacy-first AI for Apple Silicon — the inference, the index, and the data on the same chip you already own.</div>
+      <div style="display:flex;align-items:center;gap:24px;margin-top:32px">
+        <div>
+          <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#22D3EE">{{ mP50 }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:18px;letter-spacing:0.5px;color:#717B89">p50 search · measured</div>
+        </div>
+        <div style="width:1px;height:40px;background:rgba(255,255,255,0.10)"></div>
+        <div>
+          <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#22D3EE">{{ mRecall }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:18px;letter-spacing:0.5px;color:#717B89">recall@10 · measured</div>
+        </div>
+      </div>
+
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#22D3EE"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22D3EE">The stack</span></div>
+        <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">Three layers. One chip.</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ products }}" as="pr" hint-placeholder-count="3">
+            <div onClick="{{ pr.open }}" style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden;cursor:pointer">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,{{ pr.accent }},transparent 70%);opacity:.9"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:{{ pr.accent }}">{{ pr.kicker }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#505964">→</span>
+              </div>
+              <div style="font-family:Spectral,serif;font-weight:600;font-size:22px;line-height:27px;letter-spacing:-0.33px;color:#fff;margin-top:4px">{{ pr.name }}</div>
+              <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ pr.blurb }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:16px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#34D399">●</span> measured</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#FBBF24">○</span> target</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#A855F7">◆</span> reported</span>
+        </div>
+      </div>
+
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#A855F7"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#A855F7">Why now</span></div>
+        <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">Four forces, one direction</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ whyNow }}" as="w" hint-placeholder-count="4">
+            <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#A855F7,transparent 70%);opacity:.9"></div>
+              <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;letter-spacing:-0.27px;color:#fff">{{ w.title }}</div>
+              <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ w.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#34D399"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#34D399">The premise</span></div>
+        <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">Private by default</div>
+        <div style="font-size:15px;line-height:24px;color:#94A0AE">On-device inference means data never leaves hardware the user controls. Privacy stops being a policy you have to trust and becomes a property of where the computation physically runs.</div>
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <sc-for list="{{ pills }}" as="pl" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:7px;border-radius:999px;border:1px solid {{ pl.bd }};background:{{ pl.bg }};padding:6px 12px">
+              <div style="width:7px;height:7px;border-radius:4px;background:{{ pl.c }}"></div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#E8EBF1">{{ pl.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="margin-top:48px">
+        <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+          <div style="font-family:Spectral,serif;font-weight:600;font-size:22px;line-height:27px;letter-spacing:-0.33px;color:#fff">Build on the open core.</div>
+          <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">The WDBX and ABI core is Apache-2.0. Built on Apple's public frameworks — Metal, Accelerate, Core ML.</div>
+          <div style="display:inline-block;background:#22D3EE;border-radius:10px;padding:11px 18px;margin-top:16px;cursor:pointer">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#05070D">OPEN GITHUB →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- STACK (products + platform folded in) -->
+    <sc-if value="{{ tabStack }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Stack" style="position:absolute;inset:0;overflow-y:auto;padding:70px 24px 120px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#22D3EE"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22D3EE">The stack</span></div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">Three products, one chip</div>
+      <div style="font-size:15px;line-height:24px;color:#94A0AE">Each is useful on its own; together they are a private AI stack that never has to phone home. Tap any layer to go deeper.</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px">
+        <sc-for list="{{ products }}" as="pr" hint-placeholder-count="3">
+          <div onClick="{{ pr.open }}" style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden;cursor:pointer">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,{{ pr.accent }},transparent 70%);opacity:.9"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:{{ pr.accent }}">{{ pr.kicker }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#505964">→</span>
+            </div>
+            <div style="font-family:Spectral,serif;font-weight:600;font-size:22px;line-height:27px;letter-spacing:-0.33px;color:#fff;margin-top:4px">{{ pr.name }}</div>
+            <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ pr.blurb }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:24px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#34D399">●</span> measured</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#FBBF24">○</span> target</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89"><span style="color:#A855F7">◆</span> reported</span>
+      </div>
+
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#A855F7"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#A855F7">Platform</span></div>
+        <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">Autonomy you can answer for</div>
+        <div style="font-size:15px;line-height:24px;color:#94A0AE">An agent that plans, calls tools, and acts is useful exactly to the degree you can see what it did and constrain what it may do. Four layers make on-device autonomy inspectable.</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px">
+          <sc-for list="{{ layers }}" as="l" hint-placeholder-count="4">
+            <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#A855F7,transparent 70%);opacity:.9"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;letter-spacing:-0.27px;color:#fff">{{ l.title }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#505964">{{ l.num }}</span>
+              </div>
+              <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ l.body }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#717B89;margin-top:10px">{{ l.meta }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- CHAT -->
+    <sc-if value="{{ tabChat }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Chat" style="position:absolute;inset:0;display:flex;flex-direction:column;padding:64px 0 100px;box-sizing:border-box">
+      <div style="padding:0 24px 12px;border-bottom:1px solid rgba(255,255,255,0.08)">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:18px;height:1.5px;background:#34D399"></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#34D399">Abbey</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:#505964">LOCAL · WDBX MEMORY</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:12px">
+          <sc-for list="{{ personas }}" as="pp" hint-placeholder-count="4">
+            <div onClick="{{ pp.on }}" style="flex:1;text-align:center;padding:7px 0;border-radius:999px;border:1px solid {{ pp.bd }};background:{{ pp.bg }};cursor:pointer">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:{{ pp.tc }}">{{ pp.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px 24px;display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="4">
+          <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+            <div style="align-self:flex-end;max-width:78%;background:#171B21;border:1px solid rgba(255,255,255,0.10);border-radius:16px 16px 4px 16px;padding:12px 14px">
+              <div style="font-size:14px;line-height:21px;color:#E8EBF1">{{ m.text }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ m.isRecall }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#717B89">◆ RECALLED</span>
+              <sc-for list="{{ m.chips }}" as="ch" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:6px;border-radius:999px;border:1px solid rgba(34,211,238,0.3);background:rgba(34,211,238,0.08);padding:4px 10px">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#22D3EE">{{ ch.label }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#505964">{{ ch.score }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ m.isTrace }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;padding-left:2px">
+              <div style="width:5px;height:5px;border-radius:3px;background:#22D3EE;opacity:.7"></div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.5px;color:#505964">{{ m.text }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ m.isPersona }}" hint-placeholder-val="{{ false }}">
+            <div style="align-self:flex-start;max-width:86%">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                <div style="width:7px;height:7px;border-radius:4px;background:{{ m.dot }};box-shadow:0 0 8px {{ m.dot }}99"></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:{{ m.dot }}">{{ m.name }}</span>
+              </div>
+              <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:4px 16px 16px 16px;padding:12px 14px">
+                <div style="font-size:14px;line-height:21px;color:#E8EBF1">{{ m.text }}</div>
+              </div>
+            </div>
+          </sc-if>
+        </sc-for>
+        <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-start;display:flex;align-items:center;gap:5px;background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:4px 16px 16px 16px;padding:12px 16px">
+            <div style="width:6px;height:6px;border-radius:3px;background:#94A0AE;animation:blinkDot 1.2s infinite"></div>
+            <div style="width:6px;height:6px;border-radius:3px;background:#94A0AE;animation:blinkDot 1.2s .2s infinite"></div>
+            <div style="width:6px;height:6px;border-radius:3px;background:#94A0AE;animation:blinkDot 1.2s .4s infinite"></div>
+          </div>
+        </sc-if>
+      </div>
+      <div style="padding:10px 24px 0">
+        <sc-if value="{{ showSuggestion }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ advanceChat }}" style="display:inline-block;border:1px solid rgba(255,255,255,0.14);border-radius:999px;padding:7px 14px;margin-bottom:10px;cursor:pointer;background:rgba(255,255,255,0.04)">
+            <span style="font-size:13px;color:#94A0AE">{{ suggestion }} ↑</span>
+          </div>
+        </sc-if>
+        <div style="display:flex;align-items:center;gap:10px;background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:999px;padding:6px 6px 6px 16px">
+          <span style="flex:1;font-size:14px;color:#505964">{{ composerHint }}</span>
+          <div onClick="{{ advanceChat }}" style="width:34px;height:34px;border-radius:17px;background:#22D3EE;display:flex;align-items:center;justify-content:center;cursor:pointer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="#05070D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- VAULT -->
+    <sc-if value="{{ tabVault }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Vault" style="position:absolute;inset:0;overflow-y:auto;padding:70px 24px 120px;box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:18px;height:1.5px;background:#22D3EE"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22D3EE">Vault</span></div>
+        <div style="width:38px;height:38px;border-radius:19px;background:#0E1218;border:1px solid rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8EBF1">DF</span>
+        </div>
+      </div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff">Private by storage</div>
+      <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">Notes saved here are written to your own iCloud — proof of the thesis, not a demo of it.</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px;border-radius:12px;border:1px solid rgba(52,211,153,0.27);background:#0E1218">
+        <div style="width:8px;height:8px;border-radius:4px;background:#34D399"></div>
+        <span style="font-size:13px;line-height:20px;color:#E8EBF1">iCloud · your private database · synced</span>
+      </div>
+      <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden;margin-top:16px">
+        <div style="border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:10px 14px;background:#05070D">
+          <span style="font-size:14px;color:#505964">Note title</span>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:10px 14px;background:#05070D;margin-top:8px;height:44px;box-sizing:border-box">
+          <span style="font-size:14px;color:#505964">Note body</span>
+        </div>
+        <div style="display:inline-block;background:#22D3EE;border-radius:10px;padding:11px 18px;margin-top:12px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#05070D">SAVE TO VAULT →</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:24px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.10);background:#0E1218">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89">⌕</span>
+        <span style="font-size:15px;color:#505964">Search notes</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+        <sc-for list="{{ notes }}" as="n" hint-placeholder-count="2">
+          <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#22D3EE,transparent 70%);opacity:.9"></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="flex:1;font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;letter-spacing:-0.27px;color:#fff">{{ n.title }}</span>
+              <div style="height:28px;padding:0 10px;display:flex;align-items:center;border-radius:8px;background:#171B21"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89">edit</span></div>
+              <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#171B21"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89">✕</span></div>
+            </div>
+            <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ n.body }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#505964;margin-top:10px">{{ n.date }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- COMPANY -->
+    <sc-if value="{{ tabCompany }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Company" style="position:absolute;inset:0;overflow-y:auto;padding:70px 24px 120px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#34D399"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#34D399">Company</span></div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">Why MLAI exists</div>
+      <div style="font-size:15px;line-height:24px;color:#94A0AE">The most capable AI is also the most opaque and least private. The bet behind MLAI is that Apple Silicon finally makes the alternative practical — capable AI that runs where you can see it.</div>
+      <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden;margin-top:16px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#717B89">Delaware C-Corp · Orlando, FL</div>
+        <div style="font-size:15px;font-weight:500;color:#fff;margin-top:8px;font-family:Geist,sans-serif">Donald Filimon</div>
+        <div style="font-size:13px;line-height:20px;color:#94A0AE">Founder &amp; Systems Architect</div>
+      </div>
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#34D399"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#34D399">How we operate</span></div>
+        <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">The approach</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ principles }}" as="p" hint-placeholder-count="3">
+            <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#34D399,transparent 70%);opacity:.9"></div>
+              <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;letter-spacing:-0.27px;color:#fff">{{ p.title }}</div>
+              <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ p.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:#22D3EE"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22D3EE">Investors</span></div>
+        <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-bottom:12px">A timing bet</div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <sc-for list="{{ investorStats }}" as="s" hint-placeholder-count="4">
+            <div style="position:relative;flex:1;min-width:150px;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#22D3EE,transparent 70%);opacity:.9"></div>
+              <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#22D3EE">{{ s.value }}</div>
+              <div style="font-size:13px;line-height:20px;color:#E8EBF1;margin-top:2px">{{ s.label }}</div>
+              <div style="display:flex;align-items:center;gap:5px;margin-top:8px">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ s.gc }}">{{ s.glyph }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89">{{ s.prov }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:48px">
+        <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+          <div style="font-family:Spectral,serif;font-weight:600;font-size:22px;line-height:27px;letter-spacing:-0.33px;color:#fff">Get in touch</div>
+          <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">Deploy, pilot, partner, or invest — one inbox, read by the people who build it.</div>
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <div style="border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:9px 14px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8EBF1">GITHUB</span></div>
+            <div style="border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:9px 14px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8EBF1">WEB</span></div>
+            <div style="border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:9px 14px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8EBF1">X</span></div>
+          </div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:18px;color:#505964;margin-top:16px">Built on Apple's public frameworks — Metal, Accelerate, Core ML.</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- PRODUCT DETAIL overlay -->
+    <sc-if value="{{ hasDetail }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Product detail" style="position:absolute;inset:0;background:#05070D;z-index:40;overflow-y:auto;padding:64px 24px 80px;box-sizing:border-box;animation:fadeUp .25s ease-out">
+      <div style="position:absolute;top:-60px;left:-80px;width:320px;height:320px;border-radius:220px;background:radial-gradient(circle,{{ dGlow }},transparent 70%);pointer-events:none"></div>
+      <div onClick="{{ closeDetail }}" style="display:inline-block;padding:12px 0;cursor:pointer">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#94A0AE">← back</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:{{ dAccent }}"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:{{ dAccent }}">{{ dKicker }}</span></div>
+      <div style="font-family:Spectral,serif;font-weight:700;font-size:34px;line-height:40px;letter-spacing:-0.51px;color:#fff">{{ dName }}</div>
+      <div style="font-size:15px;line-height:24px;color:#94A0AE;margin-top:12px;max-width:360px">{{ dBlurb }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:48px">
+        <sc-for list="{{ dStats }}" as="s" hint-placeholder-count="4">
+          <div style="position:relative;width:calc(50% - 6px);box-sizing:border-box;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,{{ dAccent }},transparent 70%);opacity:.9"></div>
+            <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:{{ dAccent }}">{{ s.value }}</div>
+            <div style="font-size:13px;line-height:20px;color:#E8EBF1;margin-top:2px">{{ s.label }}</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:8px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ s.gc }}">{{ s.glyph }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#717B89">{{ s.prov }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:{{ dAccent }}"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:{{ dAccent }}">How it works</span></div>
+        <sc-for list="{{ dIntro }}" as="para" hint-placeholder-count="2">
+          <div style="font-size:15px;line-height:24px;color:#94A0AE;margin-top:12px">{{ para.text }}</div>
+        </sc-for>
+      </div>
+      <div style="margin-top:48px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:18px;height:1.5px;background:{{ dAccent }}"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:{{ dAccent }}">What's inside</span></div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+          <sc-for list="{{ dFeatures }}" as="f" hint-placeholder-count="4">
+            <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,{{ dAccent }},transparent 70%);opacity:.9"></div>
+              <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;letter-spacing:-0.27px;color:#fff">{{ f.title }}</div>
+              <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">{{ f.desc }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:48px">
+        <div style="position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:18px;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,{{ dAccent }},transparent 70%);opacity:.9"></div>
+          <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;letter-spacing:-0.27px;color:#fff">Open source, Apache-2.0</div>
+          <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:6px">Start with the core; reach out for Pro or enterprise terms.</div>
+          <div style="display:inline-block;background:{{ dAccent }};border-radius:10px;padding:11px 18px;margin-top:16px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#05070D">VIEW ON GITHUB →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- TAB BAR -->
+    <div style="position:absolute;left:0;right:0;bottom:0;height:84px;display:flex;align-items:flex-start;padding-top:10px;background:rgba(5,7,11,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.10);z-index:30;box-sizing:border-box">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
+        <div onClick="{{ tb.on }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="{{ tb.d }}" stroke="{{ tb.c }}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:{{ tb.c }}">{{ tb.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</x-import>
+</div>
+
+<!-- ═══════════ 1b — WILD: constellation home ═══════════ -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Wild — Home as an embedding constellation, type-driven, instrument rail</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div data-screen-label="Wild home" style="position:relative;width:100%;height:100%;background:#05070D;font-family:Geist,system-ui,sans-serif;overflow:hidden">
+  <svg viewBox="0 0 402 874" style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="xMidYMid slice">
+    <line x1="60" y1="150" x2="150" y2="220" stroke="rgba(255,255,255,0.07)"></line>
+    <line x1="150" y1="220" x2="255" y2="170" stroke="rgba(255,255,255,0.07)"></line>
+    <line x1="255" y1="170" x2="330" y2="255" stroke="rgba(255,255,255,0.07)"></line>
+    <line x1="150" y1="220" x2="120" y2="330" stroke="rgba(255,255,255,0.07)"></line>
+    <line x1="120" y1="330" x2="230" y2="370" stroke="rgba(255,255,255,0.07)"></line>
+    <line x1="230" y1="370" x2="330" y2="255" stroke="rgba(255,255,255,0.07)"></line>
+    <line x1="230" y1="370" x2="300" y2="450" stroke="rgba(255,255,255,0.05)"></line>
+    <line x1="60" y1="150" x2="90" y2="60" stroke="rgba(255,255,255,0.05)"></line>
+    <line x1="255" y1="170" x2="290" y2="80" stroke="rgba(255,255,255,0.05)"></line>
+    <circle cx="90" cy="60" r="1.6" fill="#22D3EE" opacity=".5" style="animation:twinkle 5s infinite"></circle>
+    <circle cx="60" cy="150" r="2.4" fill="#22D3EE" style="animation:twinkle 4s .5s infinite"></circle>
+    <circle cx="150" cy="220" r="3" fill="#60A5FA" style="animation:twinkle 6s 1s infinite"></circle>
+    <circle cx="255" cy="170" r="2.2" fill="#A855F7" style="animation:twinkle 4.5s .2s infinite"></circle>
+    <circle cx="290" cy="80" r="1.5" fill="#A855F7" opacity=".5" style="animation:twinkle 5.5s infinite"></circle>
+    <circle cx="330" cy="255" r="2.6" fill="#22D3EE" style="animation:twinkle 5s 1.4s infinite"></circle>
+    <circle cx="120" cy="330" r="2" fill="#34D399" style="animation:twinkle 4.2s .8s infinite"></circle>
+    <circle cx="230" cy="370" r="2.8" fill="#60A5FA" style="animation:twinkle 6.5s .3s infinite"></circle>
+    <circle cx="300" cy="450" r="1.8" fill="#22D3EE" opacity=".6" style="animation:twinkle 5s 2s infinite"></circle>
+    <circle cx="80" cy="470" r="1.4" fill="#A855F7" opacity=".4" style="animation:twinkle 7s infinite"></circle>
+  </svg>
+  <div style="position:absolute;left:14px;top:180px;transform:rotate(180deg);writing-mode:vertical-rl;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:#505964">PRIVACY-FIRST AI INFRASTRUCTURE · ZIG · LOCAL-FIRST</div>
+  <div style="position:absolute;top:66px;right:24px">
+    <svg width="34" height="34" viewBox="0 0 48 48" fill="none"><defs><linearGradient id="mgw" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22D3EE"></stop><stop offset="0.5" stop-color="#A855F7"></stop><stop offset="1" stop-color="#34D399"></stop></linearGradient></defs><rect x="4.5" y="4.5" width="39" height="39" rx="11" stroke="url(#mgw)" stroke-width="2.5"></rect><rect x="13" y="28" width="22" height="4.5" rx="2.25" fill="#22D3EE"></rect><rect x="13" y="21.75" width="22" height="4.5" rx="2.25" fill="#A855F7"></rect><rect x="13" y="15.5" width="22" height="4.5" rx="2.25" fill="#34D399"></rect></svg>
+  </div>
+  <div style="position:absolute;left:36px;right:36px;bottom:220px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#22D3EE;margin-bottom:14px">MLAI</div>
+    <div style="font-family:Spectral,serif;font-weight:700;font-size:46px;line-height:50px;letter-spacing:-0.9px;color:#fff;text-wrap:balance">Never phones home.</div>
+    <div style="font-size:15px;line-height:24px;color:#94A0AE;margin-top:14px;max-width:300px">The inference, the index, and the data — on the same chip you already own.</div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:110px;border-top:1px solid rgba(255,255,255,0.10);border-bottom:1px solid rgba(255,255,255,0.10);display:flex">
+    <div style="flex:1;padding:14px 0 14px 36px;border-right:1px solid rgba(255,255,255,0.10)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#22D3EE">2.3ms</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:3px">P50 SEARCH <span style="color:#34D399">●</span></div>
+    </div>
+    <div style="flex:1;padding:14px 0 14px 20px;border-right:1px solid rgba(255,255,255,0.10)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#22D3EE">98.2%</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:3px">RECALL@10 <span style="color:#34D399">●</span></div>
+    </div>
+    <div style="flex:1;padding:14px 0 14px 20px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#94A0AE">16.5K</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:3px">QPS <span style="color:#FBBF24">○</span></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:36px;bottom:64px;display:flex;gap:10px">
+    <div style="background:#22D3EE;border-radius:999px;padding:12px 20px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#05070D">EXPLORE THE STACK →</span></div>
+    <div style="border:1px solid rgba(255,255,255,0.14);border-radius:999px;padding:12px 20px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;color:#E8EBF1">MEET ABBEY</span></div>
+  </div>
+</div>
+</x-import>
+</div>
+
+<!-- ═══════════ 1c — WILD: chat with trace spine ═══════════ -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Wild — Chat with a hash-chain trace spine; routing shown as an instrument</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div data-screen-label="Wild chat" style="position:relative;width:100%;height:100%;background:#05070D;font-family:Geist,system-ui,sans-serif;overflow:hidden;display:flex;flex-direction:column;padding:64px 0 40px;box-sizing:border-box">
+  <div style="padding:0 24px 12px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <span style="font-family:Spectral,serif;font-weight:600;font-size:22px;letter-spacing:-0.33px;color:#fff">Abbey</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#505964">SESSION · HASH-CHAINED</span>
+  </div>
+  <div style="flex:1;overflow:hidden;position:relative;padding:16px 24px 0 52px">
+    <div style="position:absolute;left:33px;top:16px;bottom:0;width:1px;background:linear-gradient(180deg,rgba(34,211,238,0.5),rgba(168,85,247,0.4),rgba(52,211,153,0.4))"></div>
+    <div style="position:absolute;left:28px;top:34px;width:11px;height:11px;border-radius:6px;border:1.5px solid #22D3EE;background:#05070D"></div>
+    <div style="align-self:flex-end;margin-left:40px;background:#171B21;border:1px solid rgba(255,255,255,0.10);border-radius:16px 16px 4px 16px;padding:12px 14px">
+      <div style="font-size:14px;line-height:21px;color:#E8EBF1">What did we settle on for the index parameters?</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#505964;margin-top:6px">H₄₁ ‖ sha-256 · 8f3a…c41d</div>
+    </div>
+    <div style="position:absolute;left:28px;top:150px;width:11px;height:11px;border-radius:6px;border:1.5px solid #A855F7;background:#05070D"></div>
+    <div style="margin-top:14px;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.25);border-radius:12px;padding:12px 14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1.5px;color:#A855F7;margin-bottom:8px">ROUTING · P(PERSONA | INPUT) — ILLUSTRATIVE</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#A855F7;width:44px">aviva</span>
+        <div style="flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.06)"><div style="width:91%;height:100%;border-radius:2px;background:#A855F7"></div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#94A0AE">.91</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#34D399;width:44px">abbey</span>
+        <div style="flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.06)"><div style="width:7%;height:100%;border-radius:2px;background:#34D399"></div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#94A0AE">.07</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#22D3EE;width:44px">abi</span>
+        <div style="flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.06)"><div style="width:2%;height:100%;border-radius:2px;background:#22D3EE"></div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#94A0AE">.02</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:12px;overflow:hidden">
+      <div style="flex-shrink:0;display:flex;align-items:center;gap:6px;border-radius:999px;border:1px solid rgba(34,211,238,0.3);background:rgba(34,211,238,0.08);padding:5px 10px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#22D3EE">◆ HNSW tuning — Jul 12</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#505964">.89</span>
+      </div>
+      <div style="flex-shrink:0;display:flex;align-items:center;gap:6px;border-radius:999px;border:1px solid rgba(34,211,238,0.3);background:rgba(34,211,238,0.08);padding:5px 10px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#22D3EE">◆ Corpus metric</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#505964">.84</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:28px;top:388px;width:11px;height:11px;border-radius:6px;border:1.5px solid #A855F7;background:#A855F7"></div>
+    <div style="margin-top:14px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <div style="width:7px;height:7px;border-radius:4px;background:#A855F7;box-shadow:0 0 8px rgba(168,85,247,0.6)"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#A855F7">AVIVA</span>
+      </div>
+      <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:4px 16px 16px 16px;padding:12px 14px">
+        <div style="font-size:14px;line-height:21px;color:#E8EBF1">M=16, efConstruction=200. Cosine for the text corpus — you picked it for explainable recall. Done.</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#505964;margin-top:6px">H₄₂ ‖ sha-256 · b02e…97fa</div>
+      </div>
+    </div>
+    <div style="position:absolute;left:28px;top:520px;width:11px;height:11px;border-radius:6px;border:1.5px solid #34D399;background:#05070D"></div>
+    <div style="margin-top:14px;display:flex;align-items:center;gap:8px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#505964">rewind to divergence ↺ available · chain verified</span>
+    </div>
+  </div>
+  <div style="padding:12px 24px 0">
+    <div style="display:flex;align-items:center;gap:10px;background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:999px;padding:6px 6px 6px 16px">
+      <span style="flex:1;font-size:14px;color:#505964">Message — every turn appends to the chain</span>
+      <div style="width:34px;height:34px;border-radius:17px;background:#22D3EE;display:flex;align-items:center;justify-content:center">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="#05070D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+    </div>
+  </div>
+</div>
+</x-import>
+</div>
+
+<!-- ═══════════ 1d — Console (mobile) ═══════════ -->
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>New — WDBX console on mobile: instrument-panel density, brand.ts figures only</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div data-screen-label="Console" style="position:relative;width:100%;height:100%;background:#05070D;font-family:Geist,system-ui,sans-serif;overflow:hidden">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:70px 20px 60px;box-sizing:border-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:18px;height:1.5px;background:#22D3EE"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#22D3EE">CONSOLE</span></div>
+      <div style="display:flex;align-items:center;gap:6px;border:1px solid rgba(52,211,153,0.3);border-radius:999px;padding:4px 10px">
+        <div style="width:6px;height:6px;border-radius:3px;background:#34D399"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#34D399">LOCAL NODE</span>
+      </div>
+    </div>
+    <div style="font-family:Spectral,serif;font-weight:700;font-size:30px;line-height:34px;letter-spacing:-0.45px;color:#fff;margin-top:10px">WDBX, instrumented</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px">
+      <div style="background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#22D3EE">2.3ms</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:4px">P50 SEARCH <span style="color:#34D399">●</span></div>
+      </div>
+      <div style="background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#22D3EE">98.2%</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:4px">RECALL@10 <span style="color:#34D399">●</span></div>
+      </div>
+      <div style="background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#94A0AE">16.5K</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:4px">QPS OBJECTIVE <span style="color:#FBBF24">○</span></div>
+      </div>
+      <div style="background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#94A0AE">0.8ms</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#505964;margin-top:4px">P50 @ 1M <span style="color:#FBBF24">○</span></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;overflow:hidden">
+      <div style="padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#94A0AE">SCALE BENCHMARK</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#34D399">● measured</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;font-family:'JetBrains Mono',monospace;font-size:10.5px">
+        <div style="padding:8px 14px;color:#505964"></div><div style="padding:8px 4px;color:#505964">100K</div><div style="padding:8px 4px;color:#505964">1M</div><div style="padding:8px 4px;color:#505964">10M</div>
+        <div style="padding:8px 14px;color:#94A0AE;background:rgba(255,255,255,0.02)">insert/s</div><div style="padding:8px 4px;color:#E8EBF1;background:rgba(255,255,255,0.02)">6,667</div><div style="padding:8px 4px;color:#E8EBF1;background:rgba(255,255,255,0.02)">6,579</div><div style="padding:8px 4px;color:#E8EBF1;background:rgba(255,255,255,0.02)">6,500</div>
+        <div style="padding:8px 14px;color:#94A0AE">search k=10</div><div style="padding:8px 4px;color:#E8EBF1">2.5ms</div><div style="padding:8px 4px;color:#22D3EE">8.2ms</div><div style="padding:8px 4px;color:#E8EBF1">15.3ms</div>
+        <div style="padding:8px 14px;color:#94A0AE;background:rgba(255,255,255,0.02)">memory</div><div style="padding:8px 4px;color:#E8EBF1;background:rgba(255,255,255,0.02)">150MB</div><div style="padding:8px 4px;color:#E8EBF1;background:rgba(255,255,255,0.02)">1.5GB</div><div style="padding:8px 4px;color:#E8EBF1;background:rgba(255,255,255,0.02)">15GB</div>
+        <div style="padding:8px 14px;color:#94A0AE">quantized</div><div style="padding:8px 4px;color:#34D399">20MB</div><div style="padding:8px 4px;color:#34D399">200MB</div><div style="padding:8px 4px;color:#34D399">2GB</div>
+      </div>
+      <div style="padding:8px 14px;border-top:1px solid rgba(255,255,255,0.08)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#505964">single Apple Silicon node · harness in repo</span>
+      </div>
+    </div>
+    <div style="margin-top:20px;background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;overflow:hidden">
+      <div style="padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.08)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#94A0AE">TRACE — LAST QUERY</span>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="color:#22D3EE">▸</span><span style="color:#E8EBF1">retrieve</span><span style="color:#505964">· hnsw · k=10 · cosine</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><span style="color:#22D3EE">▸</span><span style="color:#E8EBF1">policy gate</span><span style="color:#34D399">· pass</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><span style="color:#22D3EE">▸</span><span style="color:#E8EBF1">execute</span><span style="color:#505964">· persona=aviva</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><span style="color:#22D3EE">▸</span><span style="color:#E8EBF1">evaluate</span><span style="color:#505964">· appended H₄₂</span></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;background:#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:14px">
+      <div>
+        <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;color:#fff">Benchmark runner</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#505964;margin-top:3px">zig build bench · stress-test track</div>
+      </div>
+      <div style="background:#22D3EE;border-radius:10px;padding:10px 16px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#05070D">RUN →</span></div>
+    </div>
+    <div style="display:flex;gap:14px;margin-top:16px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#717B89"><span style="color:#34D399">●</span> measured</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#717B89"><span style="color:#FBBF24">○</span> target</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#717B89"><span style="color:#A855F7">◆</span> reported</span>
+    </div>
+  </div>
+</div>
+</x-import>
+</div>
+
+<!-- ═══════════ 1e — WILD: memory vault ═══════════ -->
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Wild — Vault reframed as the hash-chained memory store (notes as verified blocks)</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div data-screen-label="Memory vault" style="position:relative;width:100%;height:100%;background:#05070D;font-family:Geist,system-ui,sans-serif;overflow:hidden">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:70px 24px 60px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:8px"><div style="width:18px;height:1.5px;background:#22D3EE"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#22D3EE">VAULT</span></div>
+    <div style="font-family:Spectral,serif;font-weight:700;font-size:34px;line-height:40px;letter-spacing:-0.51px;color:#fff;margin-top:8px">Memory you can verify.</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px;border-radius:12px;border:1px solid rgba(52,211,153,0.27);background:rgba(52,211,153,0.05)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#34D399">✓ chain verified</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#505964">H₀ → H₄₂ · your iCloud only</span>
+    </div>
+    <div style="position:relative;margin-top:28px;padding-left:26px">
+      <div style="position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,#22D3EE66,#A855F766,#34D39966)"></div>
+      <div style="position:relative;margin-bottom:18px">
+        <div style="position:absolute;left:-24px;top:14px;width:11px;height:11px;border-radius:6px;border:1.5px solid #22D3EE;background:#05070D"></div>
+        <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:16px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#505964">H₄₂ ‖ sha-256 · b02e…97fa</div>
+          <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;color:#fff;margin-top:6px">HNSW tuning decision</div>
+          <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:5px">M=16, efC=200; cosine for the text corpus. Revisit efSearch after the 1M ingest.</div>
+          <div style="display:flex;gap:6px;margin-top:10px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#22D3EE;border:1px solid rgba(34,211,238,0.3);border-radius:999px;padding:3px 8px">768-d embedded</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#94A0AE;border:1px solid rgba(255,255,255,0.14);border-radius:999px;padding:3px 8px">user_stated · 0.78</span>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;margin-bottom:18px">
+        <div style="position:absolute;left:-24px;top:14px;width:11px;height:11px;border-radius:6px;border:1.5px solid #A855F7;background:#05070D"></div>
+        <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0) 50%),#0E1218;border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:16px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#505964">H₄₁ ‖ sha-256 · 8f3a…c41d</div>
+          <div style="font-family:Spectral,serif;font-weight:600;font-size:18px;line-height:23px;color:#fff;margin-top:6px">Pilot follow-up</div>
+          <div style="font-size:13px;line-height:20px;color:#94A0AE;margin-top:5px">Send the provenance legend with the benchmark table — measured vs target confusion came up twice.</div>
+          <div style="display:flex;gap:6px;margin-top:10px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#22D3EE;border:1px solid rgba(34,211,238,0.3);border-radius:999px;padding:3px 8px">768-d embedded</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#94A0AE;border:1px solid rgba(255,255,255,0.14);border-radius:999px;padding:3px 8px">user_stated · 0.78</span>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div style="position:absolute;left:-24px;top:14px;width:11px;height:11px;border-radius:6px;border:1.5px solid #34D399;background:#34D399"></div>
+        <div style="border:1px dashed rgba(255,255,255,0.14);border-radius:16px;padding:16px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;color:#505964">New memory…</span>
+          <div style="background:#22D3EE;border-radius:10px;padding:9px 14px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#05070D">APPEND →</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#505964;margin-top:22px">Hᵢ = SHA-256(Hᵢ₋₁ ‖ tᵢ ‖ seqᵢ ‖ pᵢ ‖ mᵢ) · H₀ = 0 — audit integrity never taxes search.</div>
+  </div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#1b">1b</a> the real Home in the prototype" · "riff on <a class="dv-oid" href="#1c">1c</a>'s trace spine in the safe chat" · "start the website phase"</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reduceMotion&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot;}, &quot;startAt&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;signin&quot;, &quot;onboard&quot;, &quot;app&quot;], &quot;default&quot;: &quot;signin&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Prototype&quot;}}">
+class Component extends DCLogic {
+  state = { phase: "signin", ob: 0, tab: "home", detail: null, chatCount: 4, typing: false, persona: "AUTO", p50: 0, recall: 0 };
+
+  componentDidMount() {
+    const at = this.props.startAt;
+    if (at === "onboard") this.setState({ phase: "onboard" });
+    else if (at === "app") { this.setState({ phase: "app" }); this.startMetrics(); }
+  }
+
+  startMetrics() {
+    if (this.props.reduceMotion) { this.setState({ p50: 2.3, recall: 98.2 }); return; }
+    const t0 = performance.now(), dur = 1100;
+    const tick = () => {
+      const p = Math.min(1, (performance.now() - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      this.setState({ p50: (2.3 * e).toFixed(1), recall: (98.2 * e).toFixed(1) });
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const ACC = { wdbx: "#22D3EE", abi: "#A855F7", abbey: "#34D399" };
+    const PROV = { measured: ["●", "#34D399"], target: ["○", "#FBBF24"], reported: ["◆", "#A855F7"] };
+    const stat = (value, label, prov) => ({ value, label, prov, glyph: PROV[prov][0], gc: PROV[prov][1] });
+
+    const PRODUCTS = {
+      wdbx: { kicker: "Storage", name: "WDBX", blurb: "A privacy-first vector database that runs where the data lives.", accent: ACC.wdbx,
+        stats: [stat("2.3ms", "p50 search latency", "measured"), stat("98.2%", "Recall@10", "measured"), stat("16.5K", "QPS — stress objective", "target"), stat("0.8ms", "p50 @ 1M vectors", "target")],
+        intro: ["A vector database has one job: given a query vector, find the nearest stored vectors fast, and keep doing it correctly as the data grows. Most systems solve this in the cloud. WDBX solves it on the device.", "Written in Zig for control without a runtime — no garbage collector in the hot path, SIMD as a language feature, and a single static binary. The same distance kernel compiles to AVX-512 on a server and NEON on Apple Silicon."],
+        features: [
+          { title: "HNSW indexing", desc: "Hierarchical Navigable Small World graphs — logarithmic search, tunable recall (M=16, efC=200)." },
+          { title: "Memory-mapped persistence", desc: "mmap + write-ahead log. Near-instant cold starts; durable, checksummed writes." },
+          { title: "Quantization", desc: "Product & scalar quantization for large datasets that fit in unified memory." },
+          { title: "Metal GPU", desc: "Distance calculations on Apple GPU via the ABI Framework. App Store-shippable." },
+          { title: "MVCC", desc: "Readers never block writers; writers never block readers." },
+          { title: "Hash-chained WAL", desc: "Tamper-evident audit trail at the log level — integrity without taxing search." }] },
+      abi: { kicker: "Compute", name: "ABI Framework", blurb: "The GPU compute layer — tensors and Metal kernels on Apple Silicon.", accent: ACC.abi,
+        stats: [stat("5×", "GPU matmul, 128²", "measured"), stat("84×", "GPU matmul, 1024²", "measured"), stat("295×", "GPU matmul, 4096²", "target"), stat("13×", "10-layer NN forward", "measured")],
+        intro: ["ABI is the compute layer that runs the math. WDBX needs distance calculations and embeddings; Abbey needs inference. ABI spends the GPU to make both fast.", "On Apple Silicon the CPU and GPU share one pool of memory, so a tensor produced by one stage is visible to the next without moving a byte. ABI is written around that fact — pipelines are zero-copy by construction."],
+        features: [
+          { title: "N-dimensional tensors", desc: "Automatic differentiation, SIMD CPU paths, and Metal GPU kernels." },
+          { title: "Neural-network layers", desc: "Dense, Conv2D, LSTM, Attention with full backpropagation." },
+          { title: "Zero-copy pipelines", desc: "Unified memory means no host↔device copy between stages." },
+          { title: "Capability reporting", desc: "Adapts to the GPU it runs on across M-series generations." }] },
+      abbey: { kicker: "Application", name: "Abbey", blurb: "A private, emotionally aware assistant with local vector memory.", accent: ACC.abbey,
+        stats: [stat("0.92", "Abbey empathy score", "reported"), stat("90.5%", "Abbey technical accuracy", "reported"), stat("30%", "Aviva latency reduction", "reported"), stat("40%", "Aviva density gain", "reported")],
+        intro: ["Abbey is the layer people talk to. Underneath it is WDBX for memory and ABI for compute; on the surface it is an assistant with a personality, a memory, and a strong opinion about where your data lives — on your hardware.", "It is not one assistant but three personas over one core, because a model tuned to be warm is bad at being blunt. So the system splits the job and routes between them."],
+        features: [
+          { title: "Three personas", desc: "Abbey (empathetic), Aviva (unfiltered expert), Abi (the router) — one core." },
+          { title: "Local memory", desc: "Conversations embedded and stored in WDBX, on-device. Recall is a vector lookup." },
+          { title: "Neural backtracking", desc: "Hash-chained interaction blocks rewind to the divergence point on drift." },
+          { title: "Multi-provider", desc: "OpenAI, Anthropic, or a local model via Ollama — the model is pluggable." }] },
+    };
+
+    const OB = [
+      { eyebrow: "Private by default", accent: ACC.wdbx, title: "Runs where the data lives.", body: "Inference, index, and data on the same chip you already own. Nothing phones home.", cta: "CONTINUE →" },
+      { eyebrow: "Three minds", accent: ACC.abbey, title: "One system, three registers.", body: "Abi classifies intent and routes each turn to the right register — or blends them.", cta: "CONTINUE →", personas: true },
+      { eyebrow: "Verifiable", accent: ACC.abi, title: "Every number carries its proof.", body: "Measured on MLAI hardware, a stated target, or a cited figure — never conflated.", cta: "ENTER MLAI →", prov: true },
+    ];
+    const ob = OB[s.ob];
+
+    const CHAT = [
+      { isUser: true, text: "What did we settle on for the index parameters?" },
+      { isRecall: true, chips: [{ label: "◆ HNSW tuning — Jul 12", score: "0.89" }, { label: "◆ Corpus metric choice", score: "0.84" }] },
+      { isTrace: true, text: "abi → aviva · intent: technical_recall · p=0.91" },
+      { isPersona: true, name: "AVIVA", dot: ACC.abi, text: "M=16, efConstruction=200. Cosine for the text corpus — you picked it for explainable recall. Done." },
+      { isUser: true, text: "Why did that feel like the right call at the time?" },
+      { isTrace: true, text: "abi → abbey · intent: reflective · p=0.87" },
+      { isPersona: true, name: "ABBEY", dot: ACC.abbey, text: "You'd just watched a black-box index miss a memory you knew was there. Cosine plus a traceable graph meant every recall could show its path — you chose the version of fast you could explain." },
+    ];
+
+    const d = s.detail ? PRODUCTS[s.detail] : null;
+    const mkTab = (id, label, dPath) => ({
+      label, d: dPath,
+      c: s.tab === id && !s.detail ? "#22D3EE" : "#717B89",
+      on: () => this.setState({ tab: id, detail: null }),
+    });
+
+    return {
+      isSignin: s.phase === "signin",
+      isOnboard: s.phase === "onboard",
+      isApp: s.phase === "app",
+      enterOnboard: () => this.setState({ phase: "onboard", ob: 0 }),
+      obNext: () => {
+        if (s.ob < 2) this.setState({ ob: s.ob + 1 });
+        else { this.setState({ phase: "app" }); this.startMetrics(); }
+      },
+      obEyebrow: ob.eyebrow, obTitle: ob.title, obBody: ob.body, obAccent: ob.accent, obCta: ob.cta,
+      obShowPersonas: !!ob.personas, obShowProv: !!ob.prov,
+      obPersonas: [
+        { name: "Abbey", role: "Empathic polymath", c: ACC.abbey },
+        { name: "Aviva", role: "Unfiltered expert", c: ACC.abi },
+        { name: "Abi", role: "Adaptive moderator", c: ACC.wdbx },
+      ],
+      obDots: [0, 1, 2].map((i) => ({ bg: i === s.ob ? "#22D3EE" : "rgba(255,255,255,0.18)" })),
+
+      tabHome: s.tab === "home", tabStack: s.tab === "stack", tabChat: s.tab === "chat",
+      tabVault: s.tab === "vault", tabCompany: s.tab === "company",
+      tabs: [
+        mkTab("home", "HOME", "M4 11.5 12 5l8 6.5M6 10.5V19h12v-8.5"),
+        mkTab("stack", "STACK", "M12 4 20 8l-8 4-8-4 8-4ZM4 12l8 4 8-4M4 16l8 4 8-4"),
+        mkTab("chat", "CHAT", "M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4V6Z"),
+        mkTab("vault", "VAULT", "M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM12 15v0"),
+        mkTab("company", "COMPANY", "M15.2 8a3.2 3.2 0 1 1-6.4 0 3.2 3.2 0 0 1 6.4 0ZM5.5 19c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5"),
+      ],
+
+      mP50: s.p50 + "ms", mRecall: s.recall + "%",
+      products: ["wdbx", "abi", "abbey"].map((k) => ({
+        ...PRODUCTS[k], open: () => this.setState({ detail: k }),
+      })),
+      whyNow: [
+        { title: "Hardware crossed the line", body: "The M4 Neural Engine makes 7B–13B models interactive on-device, on hundreds of millions of shipped devices." },
+        { title: "Regulation rewards locality", body: "GDPR and the EU AI Act make on-device processing a compliance posture, not a preference." },
+        { title: "Cloud economics inverted", body: "On-device inference carries zero marginal cost; the cloud's per-query cost compounds." },
+        { title: "Open models matured", body: "Llama, Mistral, and Phi are capable at on-device sizes. The model stopped being the moat." },
+      ],
+      pills: [
+        { label: "WDBX", c: ACC.wdbx, bg: "rgba(34,211,238,0.10)", bd: "rgba(34,211,238,0.30)" },
+        { label: "ABI", c: ACC.abi, bg: "rgba(168,85,247,0.10)", bd: "rgba(168,85,247,0.30)" },
+        { label: "Abbey", c: ACC.abbey, bg: "rgba(52,211,153,0.10)", bd: "rgba(52,211,153,0.30)" },
+      ],
+      layers: [
+        { num: "01", title: "Trace Layer", body: "Retrieval paths, policy checks, tool calls — captured as inspectable events.", meta: "what the agent saw" },
+        { num: "02", title: "Control Plane", body: "Which agents may plan, review, execute, escalate, or abstain. Capability is a grant.", meta: "what it was allowed to do" },
+        { num: "03", title: "Evaluation Mesh", body: "Regression scenarios across faithfulness, latency, safety, and prompt injection.", meta: "how it was tested" },
+        { num: "04", title: "Private Runtime", body: "Cloud, VPC, on-premise, and offline-first. The boundary is your choice.", meta: "where it runs" },
+      ],
+      principles: [
+        { title: "Disciplined secrecy", body: "Build quietly, ship deliberately, say only what is true." },
+        { title: "Mission stewardship", body: "Privacy is the product, not the marketing." },
+        { title: "Operational velocity", body: "A small team with the right tools, moving fast." },
+      ],
+      investorStats: [
+        stat("$1.5M", "Pre-seed raise", "reported"),
+        stat("18mo", "Runway to Series A", "reported"),
+        stat("$2.88B", "Vector-DB market 2026", "reported"),
+        stat("200M+", "Apple Silicon devices", "reported"),
+      ],
+      notes: [
+        { title: "HNSW tuning decision", body: "M=16, efC=200; cosine for the text corpus. Revisit efSearch after the 1M ingest.", date: "Jul 12, 2026, 4:18 PM" },
+        { title: "Pilot follow-up", body: "Send the provenance legend with the benchmark table — measured vs target confusion came up twice.", date: "Aug 3, 2026, 9:02 AM" },
+      ],
+
+      personas: ["AUTO", "ABBEY", "AVIVA", "ABI"].map((p) => {
+        const c = { ABBEY: ACC.abbey, AVIVA: ACC.abi, ABI: ACC.wdbx, AUTO: "#E8EBF1" }[p];
+        const active = s.persona === p;
+        return { label: p, on: () => this.setState({ persona: p }),
+          tc: active ? (p === "AUTO" ? "#05070D" : "#05070D") : "#94A0AE",
+          bg: active ? (p === "AUTO" ? "#E8EBF1" : c) : "rgba(255,255,255,0.04)",
+          bd: active ? "transparent" : "rgba(255,255,255,0.12)" };
+      }),
+      chatMsgs: CHAT.slice(0, s.chatCount),
+      typing: s.typing,
+      showSuggestion: s.chatCount <= 4 && !s.typing,
+      suggestion: CHAT[4].text,
+      composerHint: s.persona === "AUTO" ? "Message — Abi routes it" : "Direct to " + s.persona.charAt(0) + s.persona.slice(1).toLowerCase(),
+      advanceChat: () => {
+        if (this.state.chatCount > 4) return;
+        this.setState({ chatCount: 5, typing: true });
+        setTimeout(() => this.setState({ chatCount: 7, typing: false }), this.props.reduceMotion ? 0 : 1100);
+      },
+
+      hasDetail: !!d,
+      dName: d ? d.name : "", dKicker: d ? d.kicker : "", dBlurb: d ? d.blurb : "",
+      dAccent: d ? d.accent : "#22D3EE",
+      dGlow: d ? d.accent + "26" : "transparent",
+      dStats: d ? d.stats : [],
+      dIntro: d ? d.intro.map((t) => ({ text: t })) : [],
+      dFeatures: d ? d.features : [],
+      closeDetail: () => this.setState({ detail: null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

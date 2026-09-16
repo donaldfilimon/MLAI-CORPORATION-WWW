@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/fonts/fonts.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.css">
+<link rel="stylesheet" href="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/styles.css">
+<script src="_ds/mlai-design-system-6d97fa83-1224-4573-9c22-46f67ac46f3c/_ds_bundle.js"></script>
+<style>body{margin:0;background:#05070d;color:#94a3b8;font-family:Geist,system-ui,sans-serif}a{color:#22d3ee}a:hover{color:#fff}</style>
+</helmet>
+<div style="background:#05070d;min-height:100vh">
+<dc-import name="SiteNav" active="company" hint-size="100%,64px"></dc-import>
+
+<div data-screen-label="Company hero" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06)">
+  <x-import component-from-global-scope="MlaiLab.AccentGlow" accent="abbey" hint-size="100%,0px"></x-import>
+  <div style="max-width:80rem;margin:0 auto;padding:88px 40px 64px;box-sizing:border-box;position:relative">
+    <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#34d399">Company · Delaware C-Corp · Orlando, FL</div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:56px;line-height:1.08;letter-spacing:-0.015em;color:#fff;margin:18px 0 0;text-wrap:balance;max-width:42rem">Why MLAI exists.</h1>
+    <p style="font-size:17px;line-height:1.625;color:#94a3b8;margin:20px 0 0;max-width:44rem">The most capable AI is also the most opaque and least private. The bet behind MLAI is that Apple Silicon finally makes the alternative practical — capable AI that runs where you can see it.</p>
+  </div>
+</div>
+
+<x-import component-from-global-scope="MlaiLab.SplitSection" accent="abbey" kicker="Founder" title="Donald Filimon — Founder &amp; Systems Architect." hint-size="100%,420px">
+  <p>Polyglot systems engineer who works deliberately low in the stack — Zig, Rust, Swift, TypeScript, Python, and GPU-oriented runtimes — because the guarantees MLAI cares about (latency, provenance, data residency) are won or lost at that level.</p>
+  <p>Leads WDBX retrieval, the Abbey–Aviva–Abi orchestration framework, and the ABI runtime. 8+ years across systems programming, compiler infrastructure, and AI development.</p>
+  <p><strong style="color:#e2e8f0">Care first. Clarity always. Competence throughout.</strong></p>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abbey" eyebrow="Principles" title="How we operate." lead="" hint-size="100%,380px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Disciplined secrecy" desc="We publish benchmarks, not roadmaps. What ships speaks; what's in flight stays quiet until it's real." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Mission stewardship" desc="Privacy-first is an architecture decision, not a marketing position. Data never leaves the device unless the owner sends it." hint-size="100%,160px"></x-import>
+    <x-import component-from-global-scope="MlaiLab.FeatureCard" accent="abbey" title="Operational velocity" desc="Small team, systems languages, zero ceremony. We measure in p50s and ship in weeks." hint-size="100%,160px"></x-import>
+  </div>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="wdbx" eyebrow="Open work" title="The projects." lead="Everything below is public." hint-size="100%,420px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="wdbx" caption="Public repositories." dc-props="{{ projects }}" hint-size="100%,240px"></x-import>
+</x-import>
+
+<x-import component-from-global-scope="MlaiLab.Section" accent="abi" eyebrow="Hiring" title="Four seats, in order." lead="" hint-size="100%,380px">
+  <x-import component-from-global-scope="MlaiLab.DataTable" accent="abi" caption="Open roles." dc-props="{{ hiring }}" hint-size="100%,220px"></x-import>
+</x-import>
+
+<div style="max-width:80rem;margin:0 auto;padding:0 40px 96px;box-sizing:border-box">
+  <x-import component-from-global-scope="MlaiLab.NextUp" dc-props="{{ nextProps }}" hint-size="100%,180px"></x-import>
+</div>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      projects: {
+        cols: ["Project", "What it is", "Stack"],
+        rows: [
+          ["abi", "AI agent runtime + WDBX vector database — local AI/ML orchestration with GPU capability reporting and an MCP server.", "Zig"],
+          ["WDBX", "Durable vector/block memory store for traceable retrieval and agent memory.", "Zig · Rust · Py · TS"],
+          ["gama", "Swift + MLX framework for on-device language-model inference, including a self-learning agent.", "Swift"],
+          ["Nyon", "Voxel 3D world experiment exploring a novel hexa-gravity system.", "Zig"],
+        ],
+      },
+      hiring: {
+        cols: ["#", "Role", "Focus"],
+        rows: [
+          ["1", "Senior Swift Engineer", "Metal / GPU, Core ML"],
+          ["2", "Systems Engineer (Zig)", "WDBX core, distributed"],
+          ["3", "ML Engineer", "Embeddings, quantization"],
+          ["4", "Developer Advocate", "Content, community"],
+        ],
+      },
+      nextProps: {
+        items: [
+          { label: "Investors", href: "Site Investors.dc.html", desc: "The raise, the market, the road.", accent: "wdbx" },
+          { label: "Contact", href: "Site Contact.dc.html", desc: "Deploy, pilot, partner, or invest.", accent: "abbey" },
+        ],
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
