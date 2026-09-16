@@ -7,7 +7,10 @@ records every imported file as copied.
 
 To keep these trees inert, nested agent guidance was renamed
 (`CLAUDE.md` → `CLAUDE.md.source`, `AGENTS.md` → `AGENTS.md.source`) and nested
-`.gitignore` files became `gitignore.source`. Dependency, build, `.git`, `.next`,
+`.gitignore` files became `gitignore.source`. Dependency manifests and lockfiles
+(`package.json`, `bun.lock`, `package-lock.json`) carry a `.source` suffix, so
+GitHub's dependency graph and Dependabot don't treat these frozen prototypes
+as live dependencies. Before that rename they raised 43 alerts. Dependency, build, `.git`, `.next`,
 `.expo`, `.claude` and `.remember` directories were excluded. No source tree was
 moved or deleted.
 

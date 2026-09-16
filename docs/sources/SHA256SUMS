@@ -23,9 +23,9 @@ a49db4faaf2e18502be020e7dee87566c7b08fac6d3f74f0a0e3a4155ac4e4bf  ./design-hando
 732d9d5d9599cba1701fb41fe1649421a79dded042f385d5dc4d62a2e566657e  ./design-handoff-20260827/src/web/views/ConsoleGate.tsx
 288ae76267a1be5c84cc47b6a3b89607bde450a25959192b0161a623e61d34fb  ./design-handoff-20260827/src/web/views/DocsShell.tsx
 bd14df0fb8cf00fa0f11f55cc9991b92efc900c2322f901b07260b47183e5b8b  ./design-handoff-vite-20260827/README.md
-2d29441bc805c4a47bb5476d49397dba975ca641ab081eed5b0a645d3a33c1d4  ./design-handoff-vite-20260827/bun.lock
+2d29441bc805c4a47bb5476d49397dba975ca641ab081eed5b0a645d3a33c1d4  ./design-handoff-vite-20260827/bun.lock.source
 f16b1b0295382b6cae5e7d963bee35690c04241dd7c670e45eec09df7b05e3a8  ./design-handoff-vite-20260827/index.html
-550628978eb719905c18224ffd051470217914e39ab5a49c1f52e5b2ab0e8105  ./design-handoff-vite-20260827/package.json
+550628978eb719905c18224ffd051470217914e39ab5a49c1f52e5b2ab0e8105  ./design-handoff-vite-20260827/package.json.source
 4f1845a559e8300be04adf6bf761d26b62e2d3fc30dd910021410ed9c976827c  ./design-handoff-vite-20260827/public/apple-touch-icon.svg
 4a00838fcd29ef86c934a2409e0447d1444fc6ce36cafa69fea10b525a6d6edd  ./design-handoff-vite-20260827/public/favicon.svg
 816f4bd7445a89ee91e286c40e4862a28fb33a2c35e9814e93c6f6d4215d7149  ./design-handoff-vite-20260827/public/robots.txt
@@ -49,8 +49,8 @@ ad7bdde307f37dd952b2bab7c69747d5f1f7bc10788e91f35596414c6764c1a2  ./design-hando
 470ed43fa059954a4f68e92fd9739861e5546eecb4f128d5e55e5c68bf9b6b9f  ./design-handoff-vite-20260827/src/pages/Services.tsx
 e5cce08bcc81f0e22ccf5cc4c38656253b42a116918e824795ba8a82928554c7  ./design-handoff-vite-20260827/src/pages/Wdbx.tsx
 76584cdfb5291de91a83893722010584a15b3a29882f45c1a4cd82ed3298b3eb  ./design-handoff-vite-20260827/tsconfig.json
-8371f663957facce8e17227c195a244e7d63c6efde704cd976d0dbd3a61c2a11  ./design-handoff-vite-20260827/vendor/mlai-site/bun.lock
-cf622b55183079e0d0951fc8c576ab3dc07d8d5b51eefeb9099926b00334d983  ./design-handoff-vite-20260827/vendor/mlai-site/package.json
+8371f663957facce8e17227c195a244e7d63c6efde704cd976d0dbd3a61c2a11  ./design-handoff-vite-20260827/vendor/mlai-site/bun.lock.source
+cf622b55183079e0d0951fc8c576ab3dc07d8d5b51eefeb9099926b00334d983  ./design-handoff-vite-20260827/vendor/mlai-site/package.json.source
 92aa1fdcd75b28e3e225021b13e5db8b6bbab0c162a1016ff54f37c27b554fe6  ./design-handoff-vite-20260827/vendor/mlai-site/src/HeroArt.tsx
 ac897333dd82a651e54ac6e694190eb05a2273da2985bc62cd5edeb3d26cf780  ./design-handoff-vite-20260827/vendor/mlai-site/src/HeroBench.tsx
 8cb03f7b25ec12a7c607dab46be601bc67e0b9762e2054e07cf5eec92282d60e  ./design-handoff-vite-20260827/vendor/mlai-site/src/Logo.tsx
@@ -84,7 +84,7 @@ a983fe44d0fd6e0c3d1b4ba3ac585a76dc22a8464c76f09e0a842134623f7cbc  ./mlai-mobile-
 bade61c55957b59b2cfc92b4b50661a6cff41571de2709642d5f8e940b1fb856  ./mlai-mobile-2/assets/icon.png
 dea233446b427508d56266eb44622a470ff8805ec37bc8d874fa63e6b1a96f01  ./mlai-mobile-2/assets/splash.png
 ad89cf8ef20ab83fd9136fe78e9b40d5996dbf6463d33084f5a5b3bcf176e43f  ./mlai-mobile-2/babel.config.js
-349f4bee6936a6dff21e1e71d9afee74aa9611cb4d377b42a176b67b3e655f2c  ./mlai-mobile-2/bun.lock
+349f4bee6936a6dff21e1e71d9afee74aa9611cb4d377b42a176b67b3e655f2c  ./mlai-mobile-2/bun.lock.source
 8a657cdc57f637ccefc4ebce08be3fb35f54a2e1a49f436b97c3e1d0aa24dfd8  ./mlai-mobile-2/components/Hero.tsx
 33ef1143ad48197b0a8bc6b19347df2473d3148eebada7b076078f0f9bafd2a5  ./mlai-mobile-2/components/Logo.tsx
 817b53c8960694d4b2d81517be52d6046599ba556f9a2faec80415ebd376e76a  ./mlai-mobile-2/components/ProductCard.tsx
@@ -104,7 +104,7 @@ ba2fe4e9bc229bd200003f57820ec80caad71931e8316fb0843daf1ac85ce3fa  ./mlai-mobile-
 696cbc5691855c18c92af2b676c7f5356c628c9224c498cb5c7e276611a3d24b  ./mlai-mobile-2/modules/mlai-cloudkit/ios/MlaiCloudKit.podspec
 951b64ac6df821f27238a0134d24339fb9523f8a93253324469668aad14db74e  ./mlai-mobile-2/modules/mlai-cloudkit/ios/MlaiCloudKitModule.swift
 1533840c5c8d9b4b4e50001c82192165fb5866e2a5c8ac8e2c3ad43c935da953  ./mlai-mobile-2/modules/mlai-cloudkit/src/MlaiCloudKit.types.ts
-83b1e40391959a06c9d014cae7ce29441188e5327fb691773901049eee218753  ./mlai-mobile-2/package.json
+83b1e40391959a06c9d014cae7ce29441188e5327fb691773901049eee218753  ./mlai-mobile-2/package.json.source
 08ec9e7e3a0e97cc204ffb107cf83c7c5dffb24cd5c2e0721a11638af448d85c  ./mlai-mobile-2/plugins/withCloudKit.js
 69cff581dd2ab73c2a4a938bb1ea9f7abc7549a51c58992bbceec0c6e028ec39  ./mlai-mobile-2/tsconfig.json
 719488ddb2e8699683d0b0c746b042beda113c741ddd67b78fc92429ff1e8b33  ./mlai-site-final/ARCHITECTURE-VERIFICATION.md
@@ -127,7 +127,7 @@ cc929aefc2646d575b25bb0df64e7965e05a1ae82ff8d91c8c69b0c502f54416  ./mlai-site-fi
 13e2574e2084882ba78e4787b7f2573a3e4dad12483ad32c6d6dcb9fecf74c0d  ./mlai-site-final/app/services/page.tsx
 ab14c25fb62fc7232ef9a86da8ecbdabd21672397063e12b04a7f452f90ab242  ./mlai-site-final/app/sitemap.ts
 10730e5e4bdc6c256b66de296821624dbe5671fc5cd09de2c8fe9af8c615b92e  ./mlai-site-final/app/wdbx/page.tsx
-b88addf15a09aad7125abcdfeb224a7fa92867b70d036cbaf6d02f48cecae66c  ./mlai-site-final/bun.lock
+b88addf15a09aad7125abcdfeb224a7fa92867b70d036cbaf6d02f48cecae66c  ./mlai-site-final/bun.lock.source
 a70aa4adc739c966a448ad615fc78af12e23e8f93897c9f8c388e91cce67a811  ./mlai-site-final/components/HeroArt.tsx
 33e134c818ee65f4ff776d066edc2e97664096cd84f66f5169bfe53ba3538db8  ./mlai-site-final/components/HeroBench.tsx
 8cb03f7b25ec12a7c607dab46be601bc67e0b9762e2054e07cf5eec92282d60e  ./mlai-site-final/components/Logo.tsx
@@ -146,7 +146,7 @@ f1afd6159a9c09b0862ebd0e032981fa8022259128a07dca250fda3274d35b8f  ./mlai-site-fi
 5cfd71d4ac46752ca3fd7406f7fff86348df8329df33b2dfff29da21944893f1  ./mlai-site-final/lib/content.ts
 85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6  ./mlai-site-final/next-env.d.ts
 079e83accd7e6c1e1c121849d7b11ccfba72bc6e2f97e0a4027a05e82b8b9eb4  ./mlai-site-final/next.config.ts
-18751a9cd212176772533352919b4fa565f57466e6139cedc82fe1e56874ed02  ./mlai-site-final/package.json
+18751a9cd212176772533352919b4fa565f57466e6139cedc82fe1e56874ed02  ./mlai-site-final/package.json.source
 08910ce1d5cd87d2167e9c78b77262bf985b3f07dc5037ff745ecd6a759fd0c0  ./mlai-site-final/postcss.config.mjs
 93563ba5c4dd4b2db6ac0ffb8be1c9a783a3424cac0bfac1c2cee9549457c251  ./mlai-site-final/public/brand/mlai-lockup.svg
 c1692783a793dce645395b6f3dfcfd5a6ae65ebf2d74a9f12aceaadb081b3cb5  ./mlai-site-final/public/brand/mlai-mark-mono.svg
@@ -174,7 +174,7 @@ e291bc462cd913c531b30c1fbfead2b22d29fd11c799a9ad3aff681bb2084d3b  ./mlai-site-fr
 0ca16861a309a719d655563697d4379bd4c39df9207df5f58cd931c1ca4ff307  ./mlai-site-from-design/app/services/page.tsx
 6e815ab6aa03f8f343aa6a630dbd4e08fa17e624cc2f1f1edd98ab4849fe1da5  ./mlai-site-from-design/app/sitemap.ts
 57b806b5a242ffdef1f64152e45d656699a1620dcdb18e2df70f34e8ae20f73e  ./mlai-site-from-design/app/wdbx/page.tsx
-7d73b1f79c4454158987e47ebe9b6e214377e95907c18980b85a2fb3b11ac682  ./mlai-site-from-design/bun.lock
+7d73b1f79c4454158987e47ebe9b6e214377e95907c18980b85a2fb3b11ac682  ./mlai-site-from-design/bun.lock.source
 8f558118a613695e7570b75f84b54e9756c945a40fc34a8aadbd650315e0f1fd  ./mlai-site-from-design/components/DocsInteractions.tsx
 4e16413bb6bb03ed104bfa0d9c9a6f4e116cca33c65b9b3bacdc3d064b2248f2  ./mlai-site-from-design/components/Motion.tsx
 65d307e9ead20a6f82498e86b676dbab903352b37419669e0ab78b6cc49025ee  ./mlai-site-from-design/components/SiteFooter.tsx
@@ -183,7 +183,7 @@ b21e7a7c6b27e45accf878fce6a89ad4fb4173c23e660400128a831aef2fdd8f  ./mlai-site-fr
 233159beb366bb524e48ea2712bbb416dfef5218dba8bc0f45d3ae98829607b1  ./mlai-site-from-design/lib/site.ts
 85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6  ./mlai-site-from-design/next-env.d.ts
 f12119f3a031a8592af6d518fe47322b2cec6072a53c01a3599443939e200ca3  ./mlai-site-from-design/next.config.ts
-014081079a794fb79fa28efb903e08d7887b4837e011ba480067ac1f4ce28c8f  ./mlai-site-from-design/package.json
+014081079a794fb79fa28efb903e08d7887b4837e011ba480067ac1f4ce28c8f  ./mlai-site-from-design/package.json.source
 89353c6c2ee29ce20860a0c0079376931a3ba3a22f5a98372eafb8bf7ee12fde  ./mlai-site-from-design/public/assets/mlai-logo-icon.svg
 6fa4e5fbc9d3ea8fbe695a8fe8ef4fa0d3354e9235645f4bf7f73a6ac4a4bbad  ./mlai-site-from-design/public/canvases.js
 8cf296160c605d0b2002e5535044f74985c4c9c47043455f0887a6585518e3b4  ./mlai-site-from-design/public/neural.js
@@ -220,7 +220,7 @@ a70aa4adc739c966a448ad615fc78af12e23e8f93897c9f8c388e91cce67a811  ./mlai-site-v2
 760f9434a07067678e140959a35cd9faa1e1a4d1efdca30cc28af02ba5c9077b  ./mlai-site-v2.4-source/lib/brand.ts
 f2b3bca04d1bfe583daae1e1f798c92ec24bb6693bd88d0a09ba6802dee362a8  ./mlai-site-v2.4-source/next-env.d.ts
 079e83accd7e6c1e1c121849d7b11ccfba72bc6e2f97e0a4027a05e82b8b9eb4  ./mlai-site-v2.4-source/next.config.ts
-837bcbcaab9d13ead9232be65ac4370a68dc0ad96b95785cb41ae0ee7d80b228  ./mlai-site-v2.4-source/package.json
+837bcbcaab9d13ead9232be65ac4370a68dc0ad96b95785cb41ae0ee7d80b228  ./mlai-site-v2.4-source/package.json.source
 08910ce1d5cd87d2167e9c78b77262bf985b3f07dc5037ff745ecd6a759fd0c0  ./mlai-site-v2.4-source/postcss.config.mjs
 7bc92ac5866c0a40b6e20e70397f7346cd1a9f59a4dfbcef5e1b3219a1569065  ./mlai-site-v2.4-source/public/og.png
 b790c56c5aebdcda50926fe6f8c98cc140b8da2e79a6eeb2255230c460b3fa61  ./mlai-site-v2.4-source/tailwind.config.ts
@@ -308,8 +308,8 @@ cb0972d9cadee7d24a01cea97e621daa1ec25992f0637a60abacce586783f10e  ./nextjs-landi
 207e265ff4901f9ad9f96d8ce08530e04f9fc600815472a66d0a446096d654cd  ./nextjs-landing-20260916/nextjs-boilerplate/gitignore.source
 1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b  ./nextjs-landing-20260916/nextjs-boilerplate/next-env.d.ts
 4c4ac8e71d0bfd5d8b76a03c99ea91d0684dc119fd80563986d3aabe944b41e4  ./nextjs-landing-20260916/nextjs-boilerplate/next.config.ts
-a40116f1d0711b8ca9676d19d50ab3a560beda50108c161e74e4c5c3a0018c18  ./nextjs-landing-20260916/nextjs-boilerplate/package-lock.json
-39f758f4e22554557f647f264c5a772f4415c257dbfcb1b9ba7af55cabea0b90  ./nextjs-landing-20260916/nextjs-boilerplate/package.json
+a40116f1d0711b8ca9676d19d50ab3a560beda50108c161e74e4c5c3a0018c18  ./nextjs-landing-20260916/nextjs-boilerplate/package-lock.json.source
+39f758f4e22554557f647f264c5a772f4415c257dbfcb1b9ba7af55cabea0b90  ./nextjs-landing-20260916/nextjs-boilerplate/package.json.source
 dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde  ./nextjs-landing-20260916/nextjs-boilerplate/postcss.config.mjs
 2b67812c325c199a02536cdbeea0c593a72f707d323b72ee3e08dbab06753bd4  ./nextjs-landing-20260916/nextjs-boilerplate/public/file.svg
 b614b9bf183925957661ac851498fe1d8029fd43a62fbfed86f9e2624a57e7cf  ./nextjs-landing-20260916/nextjs-boilerplate/public/globe.svg
