@@ -1052,8 +1052,36 @@ integration with `origin/main`.
 
 ### Open
 
-- Phase 3: the eight-scene grammar on the extracted core.
+- Phase 3: the scenes themselves (monolith, shatter, Abi, Aviva, Abbey,
+  convergence, final mark) on the sequencer below, and **where they mount**:
+  a new showcase route, or replacing `/showcase/trailer`. That is a product
+  call for Donald; until it is made the scenes can be built and tested in Node
+  without a page.
 - Phase 4: accessibility, visual reduced motion, CSP, SEO.
+
+### Phase 3 slice 1, 2026-09-16 13:5x-14:0x: the scene grammar, package-only
+
+- `packages/trailer-engine/src/sequencer.ts`: `LifecycleScene`
+  (`enter`/`update(dt, local)`/`draw`/`exit`), `SceneCue` (start, duration,
+  seed) and `SceneSequencer`, a `Scene` the renderer drives. enter runs once
+  per activation with a `createRandom(seed)` context and the shared
+  `ParticleBuffer`; exit runs on every switch, on resize (re-layout, not
+  stretch) and on dispose; a backward move re-enters and replays the same seed.
+- **One design flaw found by its own test and fixed before commit.** The first
+  version detected a backward move by comparing local time to the *integrated*
+  time, but integration lags the playhead on purpose (the `MAX_FRAME_DT` stall
+  clamp), so after a few clamped frames a real backward move read as forward
+  motion. Now `lastLocal` is tracked separately. The consequence is stated in
+  the code: `draw()` cannot tell a scrub from a stalled tab, so a forward jump
+  is clamped (the picture may lag, never skip), and a host that knows it is
+  scrubbing calls the new `seek(t)`, which re-enters and integrates to the
+  target in bounded steps so a scrub lands on the frame playing would have
+  reached.
+- Eight Node tests: lifecycle order across a boundary, backward re-entry with
+  identical seeded rolls, seek exactness (15 steps for one second), stall
+  clamping, substepping, gaps, resize and dispose, and the duration guard.
+- Not yet: any concrete scene, any page. `apps/web` is unchanged by this slice
+  apart from the test file.
 
 ### Closed 2026-09-16 13:1x-13:5x, on Donald's decisions, with Phase 2 finished
 
