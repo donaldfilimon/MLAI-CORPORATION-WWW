@@ -125,7 +125,11 @@ async function parseDocument(job: Job, output: string, signal: AbortSignal) {
     sandbox ? "/usr/bin/sandbox-exec" : python,
     [
       ...(sandbox
-        ? ["-p", "(version 1)(allow default)(deny network*)", python]
+        ? [
+            "-p",
+            "(version 1)(allow default)(deny network*)(allow network* (local unix-socket))",
+            python,
+          ]
         : []),
       "worker/extract.py",
       join(uploadsDir, job.document_id, `original.${job.extension}`),

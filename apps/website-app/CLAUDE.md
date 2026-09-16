@@ -129,7 +129,10 @@ attempt/lease ownership checks around publication and cleanup so stale workers c
 or delete a newer attempt's output. Expired leases are recovered during acquisition.
 
 Extraction spawns `worker/.venv/bin/python worker/extract.py`, wrapped on macOS in
-`sandbox-exec -p "(version 1)(allow default)(deny network*)"`. `extract.py` writes exactly one
+`sandbox-exec -p "(version 1)(allow default)(deny network*)(allow network* (local unix-socket))"`.
+The Unix-socket allowance is load-bearing: LibreOffice 26.8 opens a local IPC socket at
+startup, and under a bare `(deny network*)` every legacy `.doc`/`.xls`/`.ppt` conversion
+exits 1 with no stderr while IP networking stays denied either way. `extract.py` writes exactly one
 JSON object to stdout and must stay that way; the worker parses only the last stdout line for an
 error message. Embeddings spawn `worker/embed.py` with `HF_HUB_OFFLINE=1`.
 

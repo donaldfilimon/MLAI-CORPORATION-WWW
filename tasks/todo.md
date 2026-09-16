@@ -40,16 +40,16 @@ Goal: see `goals.md`. Measured and executed 2026-09-16 from `~/dev/active/mlai`.
       and an owner sweep: `~/dev/archive/mlai-website-app-merged-20260916` and
       `~/dev/archive/mlai-research-sites-merged-20260916`. `project-registry`,
       `~/.claude/launch.json`, the `dev/active` maps and `~/CLAUDE.md` point at the new paths.
-- [~] LibreOffice 26.8 installed (`brew install --cask libreoffice`; `soffice` on
-      PATH). `bun run setup` in `apps/website-app` now verifies 20 of 23 formats
-      and writes `.data/capabilities.json`, but still exits 1: `.doc`, `.xls` and
-      `.ppt` fail because the macOS extraction sandbox profile also denies the
-      local Unix-domain socket that LibreOffice 26.8 opens at startup. The bare
-      `soffice` call converts the fixture in 1.7 s; the same call under
-      `sandbox-exec` exits 1 with no output; re-allowing local Unix sockets in
-      the profile makes it pass. The change touches `scripts/worker.ts:128`,
-      `worker/validate_formats.py:15` and one `CLAUDE.md` sentence, and it
-      loosens a sandbox, so it waits for Donald's decision.
+- [x] LibreOffice 26.8 installed (`brew install --cask libreoffice`; `soffice` on
+      PATH). The first `bun run setup` verified 20 of 23 formats: `.doc`, `.xls`
+      and `.ppt` failed because the macOS extraction sandbox profile also denied
+      the local Unix-domain socket LibreOffice 26.8 opens at startup (bare
+      `soffice` converted the fixture in 1.7 s; under `sandbox-exec` it exited 1
+      with no output). On Donald's approval (14:0x) the profile in
+      `scripts/worker.ts` and `worker/validate_formats.py` re-allows local Unix
+      sockets while IP networking stays denied; `bun run setup` then exited 0
+      with all 23 formats, `check-website-app.sh` exited 0 and `format:check` is
+      green.
 
 ## Still Donald's
 

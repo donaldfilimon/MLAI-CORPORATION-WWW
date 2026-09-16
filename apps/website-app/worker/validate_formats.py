@@ -12,7 +12,7 @@ for path in files:
         target=pathlib.Path(tmp)/"result.json"
         try:
             command=[sys.executable,str(ROOT/"worker/extract.py"),str(path),str(target)]
-            if sys.platform=="darwin":command=["sandbox-exec","-p","(version 1)(allow default)(deny network*)",*command]
+            if sys.platform=="darwin":command=["sandbox-exec","-p","(version 1)(allow default)(deny network*)(allow network* (local unix-socket))",*command]
             run=subprocess.run(command,capture_output=True,text=True,timeout=180,cwd=ROOT)
             if run.returncode!=0 or not target.exists():raise ValueError(run.stdout[-500:] or "Parser failed; inspect installed models and dependencies.")
             data=json.loads(target.read_text());assert data["chunks"] and data["text"].strip()
