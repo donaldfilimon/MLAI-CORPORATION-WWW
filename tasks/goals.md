@@ -733,6 +733,59 @@ guess was right for the right reason. Recorded so nobody re-derives it.
   needs the `user` OAuth scope this token lacks, so an agent cannot confirm the
   balance itself — only the annotation.
 
+
+### 2026-09-16 13:1x EDT — Donald chose the full cutover; blocked on billing before anything was created
+
+Donald's decisions this session: go ahead with the **full Cloud Run cutover**, host it in a
+**new `quesar-prod` GCP project**, and **reconnect the Vercel connector** so the orphan can
+be verified. Measured before acting:
+
+- **Hard stop: every GCP billing account on `cbkshadow@gmail.com` is closed.**
+  `gcloud billing accounts list` shows four accounts (`My Billing Account`,
+  `My Billing Account 1`, `My Billing Account 2`, `Main`), all `OPEN False`. The
+  OpenTofu root needs a billed project (regional-HA Cloud SQL `db-custom-2-7680`,
+  global HTTPS load balancer, KMS, Scheduler, Artifact Registry). So
+  `quesar-prod` was **not** created: an unbilled project would be one more orphan.
+  Reopening a billing account or adding a payment method is Donald's.
+- **Ready once billing is open:** `gcloud` is authenticated as `cbkshadow@gmail.com`,
+  application-default credentials exist (2026-09-03), `tofu` is installed, and no
+  GCP organization exists (personal account). The ID `quesar-prod` could not be
+  checked for availability; `describe` returns the same permission error whether a
+  project is foreign or absent.
+- **Still zero deploy variables and secrets** at repository scope and in both
+  environments (`github-pages`, `production`).
+- **The cutover moves quesar.cloud off GitHub Pages.** `edge.tf`'s Cloud Armor policy
+  admits only Cloudflare proxy ranges, so the apex must be proxied through
+  Cloudflare, and the nameservers move from Hostinger's `dns-parking.com`. The iCloud
+  MX, SPF and `apple-domain` records must be recreated there first, or mail breaks.
+  No Cloudflare CLI or credentials are on this machine.
+- **Credentials only Donald can supply:** `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`,
+  `WORKOS_ORGANIZATION_ID`, the Cloudflare AI Gateway URL, ID and token, the Turnstile
+  site key and secret, and `ADMIN_EMAILS`. `SESSION_SECRET` and `AUDIT_SUBJECT_PEPPER`
+  can be generated locally and piped straight to `gcloud secrets versions add`.
+- **Even when fully configured, the deploy cannot run** until the GitHub Actions billing
+  lock (above) is cleared.
+- **Vercel `mlai-web`: still unverified.** The connector is signed in but
+  `list_teams` returns `[]` and `get_project mlai-web` returns 403. The default URL
+  `https://mlai-web.vercel.app` answers `x-vercel-error: DEPLOYMENT_NOT_FOUND`,
+  which means no deployment is served there. It does not prove the project was
+  deleted. Next step: Donald reconnects the connector with access to the owning
+  account; then verify, pause (reversible), and Donald deletes.
+
+**Execution order once unblocked:**
+1. Open a billing account.
+2. `gcloud projects create quesar-prod`, then link billing.
+3. Create the versioned state bucket.
+4. `tofu init` / `plan`, with the plan reviewed before `apply`.
+5. Load the secret versions.
+6. Set the GitHub variables from `tofu output -json runtime_configuration`.
+7. Cloudflare zone with the mail records copied, then the nameserver change at
+   Hostinger.
+8. Clear the Actions billing lock.
+9. Run the deploy, then check the job breakdown rather than the run badge.
+
+`status:` stays `blocked`.
+
 ## Productionize the MLAI & Abbey cinematic trailer
 status: in_progress
 opened: 2026-09-08 16:5x EDT
