@@ -17,6 +17,7 @@ const required = [
   "apps/website-app/worker/uv.lock",
   "packages/contracts/package.json",
   "packages/design-tokens/package.json",
+  "packages/trailer-engine/package.json",
 ];
 
 const missing = required.filter((path) => !existsSync(join(root, path)));

@@ -627,7 +627,10 @@ async function measure(who: string, text: string): Promise<number | null> {
 function pause(): void {
   state.paused = true;
   if (state.master) _ramp(state.master, 0, 0.08);
-  if (state.ctx) setTimeout(() => { if (state.paused) state.ctx!.suspend().catch(() => {}); }, 100);
+  // Capture the instance: state.ctx is mutable and this fires 100ms later,
+  // so re-reading it through `!` would assert non-null on whatever is there then.
+  const ctx = state.ctx;
+  if (ctx) setTimeout(() => { if (state.paused && ctx.state === "running") ctx.suspend().catch(() => {}); }, 100);
   emit();
 }
 function resume(): void {

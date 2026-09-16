@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@mlai/contracts": "file:../../packages/contracts",
+    "@mlai/trailer-engine": "file:../../packages/trailer-engine",
     "@base-ui/react": "^1.8.0",
     "@fontsource-variable/geist": "^5.3.0",
     "@google-cloud/kms": "^6.0.0",

@@ -6,6 +6,7 @@ import {
   createContext, useContext, useState, useRef, useEffect, useMemo, useCallback,
   type ReactNode, type CSSProperties,
 } from "react";
+import { advance, frameDelta } from "@mlai/trailer-engine";
 import { Easing, clamp } from "./easing";
 
 /* ── timeline context ─────────────────────────────────────────── */
@@ -137,17 +138,31 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
     if (!playing || !ready) { lastTsRef.current = null; return; }
     const stepFrame = (ts: number) => {
       if (lastTsRef.current == null) lastTsRef.current = ts;
-      const dt = (ts - lastTsRef.current) / 1000; lastTsRef.current = ts;
+      // frameDelta clamps the step — see MAX_FRAME_DT in easing.ts for why a
+      // backgrounded tab would otherwise jump the playhead by the time away.
+      const dt = frameDelta(ts, lastTsRef.current); lastTsRef.current = ts;
       setTime((t) => {
-        let next = t + dt;
-        if (next >= duration) { if (loop) next = next % duration; else { next = duration; setPlaying(false); } }
-        return next;
+        const r = advance(t, dt, duration, loop);
+        if (r.ended) setPlaying(false);
+        return r.time;
       });
       rafRef.current = requestAnimationFrame(stepFrame);
     };
     rafRef.current = requestAnimationFrame(stepFrame);
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); lastTsRef.current = null; };
   }, [playing, ready, duration, loop]);
+
+  // Pause when the tab goes away. rAF stops in a background tab but the
+  // AudioContext does not, so without this the narration keeps advancing
+  // against a frozen picture and returns out of sync. `playing` is the single
+  // lever — narration.tsx mirrors it to NeuralVoice — so clearing it pauses
+  // clock and voice together. Deliberately does NOT auto-resume: audio should
+  // not restart at a tab nobody is looking at.
+  useEffect(() => {
+    const onVisibility = () => { if (document.hidden) setPlaying(false); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
