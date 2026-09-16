@@ -1043,34 +1043,56 @@ integration with `origin/main`.
 
 ### Open
 
-- **BLOCKED on Donald — the latency claim.** `apps/web/docs/master-reference.md:209`
-  reads "At 110 ms latency and 90 req/s" tagged `reported`, whose legend at line
-  20 defines it as "a cited or internal-eval figure", so the doc discloses.
-  Trailer copy reading `110ms LATENCY - ZERO SACRIFICE` would not. Three
-  options: define the end-to-end metric and produce a reproducible artifact;
-  carry the disclosure into the copy; or drop the number. A claims decision.
-- ~~**BLOCKED on Donald — the 94-behind reconciliation**~~ **Resolved
-  2026-09-16** during the MLAI tree consolidation: the checkout was fast-forwarded
-  101 commits onto `ef8412b` and this work committed on top as `883d634`, with a
-  root lockfile fix in `1b09043`. The root `bun run check` exited 0 at `1b09043`,
-  and the work was pushed in `9b75f6b`.
-- **Design decision: `tokens.ts` → `@mlai/design-tokens`** (found 2026-09-16).
-  This is not a mechanical rewire. `productColor.abi` is violet while the film's
-  `PERSONAS.abi` is cyan (the film gives violet to Aviva), and the base inks
-  differ (`#040406` vs `labColor.ink` `#05070D`). Only cyan, violet,
-  green/emerald and amber match. Also unverified: `@mlai/design-tokens`
-  depends on `@mlai/contracts` via `workspace:*`, which `apps/web`'s own
-  non-workspace install may not resolve, whereas `@mlai/trailer-engine` has no
-  dependencies. Needs a brand ruling (product accents vs persona colors)
-  before wiring.
-- **Design decision — AudioEngine**: parameterise the persona registry, or move
-  brand data into the engine package. See slice 5.
-- Phase 2 remainder — AudioEngine, Renderer/Canvas2DRenderer.
-- Phase 3 — the eight-scene grammar. Phase 4 — accessibility, CSP, SEO.
+- Phase 3: the eight-scene grammar on the extracted core.
+- Phase 4: accessibility, visual reduced motion, CSP, SEO.
+
+### Closed 2026-09-16 13:1x-13:5x, on Donald's decisions, with Phase 2 finished
+
+Donald answered the three open decisions in one pass; each is recorded with
+the ruling and what it changed.
+
+- **Latency claim: drop the number.** No trailer copy carries a numeric latency
+  figure. `apps/web/docs/master-reference.md:209` stays as the disclosed
+  `reported` source for the 110 ms figure; the scene grammar writes that beat as
+  non-numeric copy. No file changed for this; it binds Phase 3.
+- **Colours: persona colours.** `tokens.ts` `PERSONAS` (Abbey green, Aviva
+  violet, Abi cyan) stays the film's source. The planned rewire of `tokens.ts`
+  onto `@mlai/design-tokens` is **dropped, not deferred**: `productColor` is a
+  product map (`abi` violet) and only four hex values coincide, so a rewire
+  would have been a brand decision in disguise. `productColor` is product-only.
+- **AudioEngine: registry passed in.** Shipped as `f456c9e` + `490ec56`:
+  `packages/trailer-engine/src/audio.ts` takes `PersonaVoiceRegistry`,
+  `loadTTS`, `createAudioContext`, `prefersReducedMotion` and a `Scheduler` as
+  constructor arguments, disposes through a generation token, and never
+  touches `window`, `console` or `setTimeout` itself. `neural-voice.ts` is the
+  brand adapter (registry, pronunciation rows, Kokoro loader in
+  `kokoro-loader.ts`) with an unchanged `NeuralVoice` surface, so the two
+  consumers did not change. Ten Node tests with hand-written fakes.
+- **Renderer seam.** `renderer.ts` (`Renderer`, `Scene`, `DrawContext`,
+  `Canvas2DRenderer`) and `neural-scene.ts` (`NeuralScene`, `buildNet3D` with
+  an injected random source and intensity read). `neural.tsx` is now a React
+  shell that owns the colour presets and the canvas lifetime. Five Node tests.
+- **Two premise corrections found while doing it, recorded so nobody re-derives
+  them.** (1) `/showcase/film` and `/showcase/trailer` contain **no canvas**;
+  the only canvas in `film/` is the neural galaxy used by `/showcase/mega` and
+  `/showcase/explainer`, so those two are the Renderer slice's equivalence
+  check and film/trailer are the null check. (2) The film's pixel ratio is a
+  **hardcoded 2** on a 1920×1080 logical frame, not a capped
+  `devicePixelRatio`; `Canvas2DRenderer.resize` takes `dpr` as an argument and
+  the shell passes 2, so output is unchanged on 1× displays.
+- **One trap that bit and is now written down:**
+  `apps/web/node_modules/@mlai/trailer-engine` is a **copy**, not a symlink.
+  A new package file is invisible to `tsc` and Vitest until
+  `cd apps/web && bun install` re-runs (its `bun.lock` does not change).
+  Never run that install at the repo root.
+- **What has no automated coverage, said plainly:** the Kokoro CDN path and
+  the React shells. The gate proves the engine and scene logic, the typecheck,
+  and that route sizes did not move; it does not prove audio plays.
 
 Acceptance: `done` only when the scene grammar ships on an extracted engine with
-the root gate green **against a reconciled main** (now satisfied as of
-`9b75f6b`) and the latency copy resolved.
+the root gate green **against a reconciled main** (satisfied as of `9b75f6b`)
+and the latency copy resolved (decided: no number). Phase 2 is complete; the
+goal stays `in_progress` for Phases 3 and 4.
 Six green gates on a 94-behind tree are slices, not the goal.
 
 ### A third session wrote and STAGED in this tree concurrently (18:1x-18:3x)
