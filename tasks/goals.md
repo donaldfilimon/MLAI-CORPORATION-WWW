@@ -1054,12 +1054,33 @@ integration with `origin/main`.
 
 - A visual and audible review by Donald of `/showcase/abbey` (the preview
   server from `.claude/launch.json` was left running on :3000 at 14:1x).
-- Phase 4 remainder: a `:focus-visible` style on the transport buttons (they
-  rely on the browser default ring today), a keyboard-operable scrub on the
-  slider itself beyond Home/End (arrows are handled at the window), and a
-  screen-reader pass by a person. The CSP needs no change for the new route:
-  it adds no script origin, inline handler or external asset beyond what the
-  film already uses.
+- Phase 4 remainder: a screen-reader pass by a person (VoiceOver on the
+  transcript, the live caption and the slider). The CSP needs no change for the
+  new route: it adds no script origin or external asset beyond what the film
+  already uses, and the one new inline `<style>` is covered by the existing
+  `style-src 'unsafe-inline'`.
+
+### Phase 4 slice 2, 2026-09-16 14:2x-14:3x: focus ring and hidden-chrome tab order
+
+- **Focus ring.** The transport bar carries a scoped `:focus-visible` rule
+  (2px `#7cb0ff`, offset 2px) on its buttons and slider; pointer clicks show
+  nothing. Verified with real Tab/Shift-Tab in the preview: the slider and the
+  play button both matched `:focus-visible` with that outline.
+- **Slider keys needed no new code.** The Stage's window handler already scrubs
+  on arrows and jumps on Home from a focused `div`, and cancels Space's native
+  button activation so a focused play button toggles once.
+- **Defect found and fixed: the site chrome behind every cinematic route was
+  still in the tab order.** `CinematicShell` covers the navbar and footer
+  visually only, so on `/showcase/abbey` the focus order ran through 10
+  navbar links and 30 footer links the user could not see. The shell now marks
+  every sibling of `<main>` `inert` while mounted and removes exactly what it
+  added on unmount. Verified: on the route, focus order is the six shell
+  controls; after "Back to the showcase", zero `inert` elements remain and the
+  navbar's links are focusable again. Applies to all six cinematic routes.
+- **Gate:** check:topology exit 0; `NEXT_DIST_DIR=.next-gate bun run
+  check:web` exit 0 (53 files, 465 tests, full route table) beside the running
+  dev server. The build rewrote `tsconfig.json` and `next-env.d.ts`; both
+  were restored, and `apps/web/CLAUDE.md` now names both.
 
 ### Phase 4 slice 1, 2026-09-16 14:1x-14:2x: accessibility, reduced motion, adaptive quality
 
