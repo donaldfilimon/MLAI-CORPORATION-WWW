@@ -12,6 +12,7 @@ import { Canvas2DRenderer, ParticleBuffer, SceneSequencer } from "@mlai/trailer-
 import { C, FONT, PERSONAS } from "../film/tokens";
 import { fade } from "../film/easing";
 import { Stage, useTimeline } from "../film/engine";
+import { primeNeural, setSpeechPlaying, speak, stopSpeech, useVoiceReady, VoiceToggle } from "../film/narration";
 import { Grain, Vignette } from "../film/primitives";
 import { buildAbbeyTimeline, captionAt, type AbbeyTimeline } from "./scenes";
 
@@ -80,13 +81,50 @@ function AbbeyCaption({ timeline }: { timeline: AbbeyTimeline }) {
   );
 }
 
+// Fires each caption's line through the shared voice engine as the true
+// playhead (clock, not the hover-preview time) crosses its start; a seek back
+// stops speech and re-arms the lines behind the new position. Same contract as
+// Trailer.tsx, so the voice toggle and reduced-motion gating behave the same.
+function AbbeyNarration({ timeline }: { timeline: AbbeyTimeline }) {
+  const { clock: time, playing } = useTimeline();
+  const prev = useRef(0);
+  const spoken = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    primeNeural(timeline.captions.map((c) => ({ who: c.who ?? "abbey", text: c.text })));
+    return () => stopSpeech();
+  }, [timeline]);
+  useEffect(() => {
+    const p = prev.current;
+    prev.current = time;
+    if (time < p - 0.35) {
+      stopSpeech();
+      spoken.current = new Set(timeline.captions.filter((c) => c.start <= time + 0.05).map((c) => c.start));
+      return;
+    }
+    if (!playing) return;
+    for (const c of timeline.captions) {
+      if (p < c.start && time >= c.start && !spoken.current.has(c.start)) {
+        spoken.current.add(c.start);
+        speak(c.who ?? "abbey", c.text);
+      }
+    }
+  }, [time, playing, timeline]);
+  useEffect(() => {
+    setSpeechPlaying(playing);
+  }, [playing]);
+  return null;
+}
+
 export function AbbeyTrailer() {
   const timeline = useAbbeyTimeline();
+  const ready = useVoiceReady();
   return (
-    <Stage width={W} height={H} duration={timeline.duration} background={C.bg} persistKey="mlai-abbey">
+    <Stage width={W} height={H} duration={timeline.duration} background={C.bg} persistKey="mlai-abbey" ready={ready}>
       <AbbeyCanvas timeline={timeline} />
       <Vignette />
       <AbbeyCaption timeline={timeline} />
+      <AbbeyNarration timeline={timeline} />
+      <VoiceToggle />
       <Grain />
     </Stage>
   );
