@@ -1,3 +1,17 @@
+## Consolidate every MLAI tree into this repository
+
+status: in_progress
+
+Captured 2026-09-16 on Donald's request. The destination is the canonical checkout
+`~/dev/active/mlai`, chosen over the second checkout
+`~/dev/active/MLAI-CORPORATION-WWW`. Consolidation means bringing unique content in
+with its provenance recorded. It never means moving or deleting a source. quesar.cloud
+stays the GitHub Pages static site. Its Hostinger DNS already points at Pages, and the
+live page matched `apps/web/site/index.html` byte for byte, so no DNS change is part of
+this goal. The per-tree record is in [`todo.md`](todo.md).
+
+---
+
 # Current four-app journey delivery — 2026-09-08
 
 The integration at `720b403` is the baseline. All four milestones are implemented
