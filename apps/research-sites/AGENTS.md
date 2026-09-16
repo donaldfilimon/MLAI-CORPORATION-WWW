@@ -4,7 +4,8 @@ Canonical guidance for this generated review artifact, not the MLAI source app.
 
 Since 2026-09-16 this artifact lives at `apps/research-sites` inside the MLAI
 monorepo (`donaldfilimon/MLAI-CORPORATION-WWW`), merged with its full history
-from the former standalone `~/dev/active/mlai-research-sites` checkout. The
+from the former standalone `~/dev/active/mlai-research-sites` checkout (kept at
+`~/dev/archive/mlai-research-sites-merged-20260916`). The
 exporter is `apps/web/scripts/export-research.tsx` in this same repository. Run
 `bun run check:research-sites` from the repository root, or `bun run check` here.
 The `git.chatgpt-team.site` origin below describes the retired standalone copy.

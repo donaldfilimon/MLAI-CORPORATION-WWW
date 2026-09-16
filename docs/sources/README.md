@@ -28,9 +28,9 @@ moved or deleted.
 
 Other MLAI trees and why they have no directory here:
 
-- `~/dev/active/mlai-website-app`: merged with history into `apps/website-app`
+- `~/dev/active/mlai-website-app` (now `~/dev/archive/mlai-website-app-merged-20260916`; GitHub repo archived): merged with history into `apps/website-app`
   (see `docs/website-app-integration.md`).
-- `~/dev/active/mlai-research-sites`: merged with history into `apps/research-sites`.
+- `~/dev/active/mlai-research-sites` (now `~/dev/archive/mlai-research-sites-merged-20260916`): merged with history into `apps/research-sites`.
 - `~/dev/active/MLAI-CORPORATION-WWW`, `~/Downloads/files/MLAI-CORPORATION-WWW`,
   `~/Downloads/files (1)/MLAI-CORPORATION-WWW` and
   `~/dev/archive/mlai-website-pre-monorepo-20260824`: checkouts of this same

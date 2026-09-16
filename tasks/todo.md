@@ -28,15 +28,33 @@ Goal: see `goals.md`. Measured and executed 2026-09-16 from `~/dev/active/mlai`.
 - [x] Root `bun run check` exit 0 at `1b09043`, then `main` pushed. The lockfile
       fix `1b09043` was found by the frozen root install.
 
-## Not done here (Donald's call)
+## Follow-ups done 2026-09-16 13:2x-13:3x (Donald's choices)
 
-- Archiving the `donaldfilimon/mlai-website-app` GitHub repository and retiring
-  the standalone checkouts, which are all still in place.
+- [x] The 43 Dependabot alerts raised by the `docs/sources` manifests were
+      dismissed as `not_used` after the `*.source` rename did not close them.
+      One open alert remains: `apps/website-app/worker/uv.lock` (`accelerate`,
+      no fixed version).
+- [x] `donaldfilimon/mlai-website-app` archived on GitHub (read-only, reversible).
+- [x] Both standalone checkouts moved, after fresh bundles
+      (`mlai-website-app-final-20260916.bundle`, `mlai-research-sites-final-20260916.bundle`)
+      and an owner sweep: `~/dev/archive/mlai-website-app-merged-20260916` and
+      `~/dev/archive/mlai-research-sites-merged-20260916`. `project-registry`,
+      `~/.claude/launch.json`, the `dev/active` maps and `~/CLAUDE.md` point at the new paths.
+- [~] LibreOffice 26.8 installed (`brew install --cask libreoffice`; `soffice` on
+      PATH). `bun run setup` in `apps/website-app` now verifies 20 of 23 formats
+      and writes `.data/capabilities.json`, but still exits 1: `.doc`, `.xls` and
+      `.ppt` fail because the macOS extraction sandbox profile also denies the
+      local Unix-domain socket that LibreOffice 26.8 opens at startup. The bare
+      `soffice` call converts the fixture in 1.7 s; the same call under
+      `sandbox-exec` exits 1 with no output; re-allowing local Unix sockets in
+      the profile makes it pass. The change touches `scripts/worker.ts:128`,
+      `worker/validate_formats.py:15` and one `CLAUDE.md` sentence, and it
+      loosens a sandbox, so it waits for Donald's decision.
+
+## Still Donald's
+
 - Retiring the `MLAI-CORPORATION-WWW` second checkout.
 - Clearing the GitHub billing lock. Hosted CI and the Pages redeploy will not run
   until it is cleared.
-- Installing LibreOffice so `apps/website-app` setup can complete.
-- During the iCloud read, a mis-split rsync exclude list downloaded about 120 MB of
-  `.git` and `.next` data for `~/Documents/files/mlai-site-{final,from-design}`
-  before it was stopped. Nothing was changed, but those files are now local
-  until iCloud evicts them again.
+- The iCloud download slip noted above (about 120 MB of `.git`/`.next` data now
+  local under `~/Documents/files/mlai-site-{final,from-design}`).
