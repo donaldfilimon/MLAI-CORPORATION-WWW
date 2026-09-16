@@ -249,6 +249,13 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
       </IconButton>
       <div style={{ fontFamily: mono, fontSize: 12, fontVariantNumeric: "tabular-nums", width: 64, textAlign: "right" }}>{fmt(time)}</div>
       <div ref={trackRef}
+        role="slider" tabIndex={0} aria-label="Playhead" aria-valuemin={0} aria-valuemax={Math.round(duration)} aria-valuenow={Math.round(time)} aria-valuetext={fmt(time)}
+        onKeyDown={(e) => {
+          // The window handler already scrubs on arrows; this makes the track a
+          // real slider for assistive tech, with Home/End as well.
+          if (e.key === "Home") { e.preventDefault(); onSeek(0); }
+          else if (e.key === "End") { e.preventDefault(); onSeek(duration); }
+        }}
         onMouseMove={(e) => (dragging ? onSeek(timeFromEvent(e)) : onHover(timeFromEvent(e)))}
         onMouseLeave={() => { if (!dragging) onHover(null); }}
         onMouseDown={(e) => { setDragging(true); onSeek(timeFromEvent(e)); onHover(null); }}
@@ -265,7 +272,7 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
 function IconButton({ children, onClick, title }: { children: ReactNode; onClick: () => void; title: string }) {
   const [hover, setHover] = useState(false);
   return (
-    <button onClick={onClick} title={title} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    <button type="button" onClick={onClick} title={title} aria-label={title} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
         background: hover ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
         borderRadius: 6, color: "#f6f4ef", cursor: "pointer", padding: 0, transition: "background 120ms" }}>

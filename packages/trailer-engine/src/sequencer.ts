@@ -26,6 +26,12 @@ export interface SceneContext {
   particles: ParticleBuffer;
   width: number;
   height: number;
+  /**
+   * 0..1 detail budget, set by the host from measured frame time, never from
+   * the user agent. Scenes scale their particle counts by it on enter; it is
+   * read at activation, so a change takes effect at the next cue or seek.
+   */
+  quality: number;
 }
 
 export interface LifecycleScene {
@@ -70,6 +76,7 @@ export class SceneSequencer implements Scene {
 
   private active: SceneCue | null = null;
   private ctx: SceneContext | null = null;
+  private quality = 1;
   /** Local time the active scene has been integrated to. */
   private integrated = 0;
   /** Local time of the last draw, used to detect a backward move. */
@@ -107,6 +114,15 @@ export class SceneSequencer implements Scene {
     return this.integrated;
   }
 
+  /** Detail budget handed to scenes at their next activation. Clamped to 0..1. */
+  setQuality(q: number): void {
+    this.quality = Math.max(0, Math.min(1, q));
+  }
+
+  get currentQuality(): number {
+    return this.quality;
+  }
+
   private activate(cue: SceneCue | null, width: number, height: number): void {
     const from = this.active;
     if (from) {
@@ -117,7 +133,7 @@ export class SceneSequencer implements Scene {
     this.integrated = 0;
     this.lastLocal = 0;
     if (cue) {
-      this.ctx = { random: createRandom(cue.seed), particles: this.particles, width, height };
+      this.ctx = { random: createRandom(cue.seed), particles: this.particles, width, height, quality: this.quality };
       this.active = cue;
       cue.scene.enter(this.ctx);
     }

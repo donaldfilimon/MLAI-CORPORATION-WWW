@@ -1054,9 +1054,40 @@ integration with `origin/main`.
 
 - A visual and audible review by Donald of `/showcase/abbey` (the preview
   server from `.claude/launch.json` was left running on :3000 at 14:1x).
-- Phase 4: real `<button>` transport controls with `:focus-visible`, a static
-  transcript beside the `aria-live` caption, a visual reduced-motion grammar,
-  frame-time-driven adaptive quality, CSP/SEO check of the new route.
+- Phase 4 remainder: a `:focus-visible` style on the transport buttons (they
+  rely on the browser default ring today), a keyboard-operable scrub on the
+  slider itself beyond Home/End (arrows are handled at the window), and a
+  screen-reader pass by a person. The CSP needs no change for the new route:
+  it adds no script origin, inline handler or external asset beyond what the
+  film already uses.
+
+### Phase 4 slice 1, 2026-09-16 14:1x-14:2x: accessibility, reduced motion, adaptive quality
+
+- **Visual reduced motion is a different grammar, not fewer particles.** Under
+  `prefers-reduced-motion: reduce`, `AbbeyCanvas` shows each cue as its
+  settled constellation (`seek()` to the cue's end) and changes cues with a
+  400 ms fade; no continuous motion is drawn. Evaluated from the media query,
+  re-evaluated on change, never inferred from hardware.
+- **Adaptive quality from measured frame time only.** An exponential average of
+  the draw cost steps the sequencer's `quality` budget down by 0.2 (floor 0.3)
+  when frames exceed 14 ms and back up when under 7 ms. The package gained
+  `SceneContext.quality` and `SceneSequencer.setQuality()`; scenes size their
+  particle count through `particleBudget()` with a 400-particle floor, applied
+  at the next activation. Pinned by a test.
+- **Transcript.** A `<details>` panel lists every caption with its speaker as
+  React text nodes beside the `aria-live` caption; the canvas is
+  `aria-hidden`.
+- **Transport semantics (Stage-wide, so every film benefits):** the transport
+  buttons gained `type="button"` and `aria-label`; the scrub track is now a
+  `role="slider"` with `aria-valuemin/max/now/text`, focusable, with Home/End.
+- **Gate, partial at 14:2x:** `check:topology` exit 0; typecheck and the
+  53-file / 465-test suite green; **the `next build` stage is not yet
+  trusted** for this slice. It exited 0 but printed a route table of zeros and
+  a 17-byte `app-build-manifest.json`, because Donald's preview dev server
+  was writing `apps/web/.next` at the same time (same trap as slice 3). This
+  app has no `NEXT_DIST_DIR` escape like `website-app`. The build is rerun
+  and this line replaced once the dev server is stopped; nothing is pushed
+  until then.
 
 ### Phase 3 slice 3, 2026-09-16 14:1x: narration on the new trailer
 

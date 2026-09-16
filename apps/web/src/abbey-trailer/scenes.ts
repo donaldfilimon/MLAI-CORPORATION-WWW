@@ -36,6 +36,7 @@ export interface Caption {
 
 export const ABBEY_DURATION = 38;
 export const PARTICLE_COUNT = 1400;
+export const MIN_PARTICLES = 400;
 const CX = 960, CY = 540;
 
 /* ───────────────────────── shared integration ───────────────────────── */
@@ -54,10 +55,15 @@ function springStep(ctx: SceneContext, dt: number, stiffness: number, damping: n
   }
 }
 
+/** Particle count for the host's detail budget; never below a legible floor. */
+export function particleBudget(quality: number): number {
+  return Math.max(MIN_PARTICLES, Math.round(PARTICLE_COUNT * clamp(quality, 0, 1)));
+}
+
 /** Scatter every particle across the frame with a seeded layout. */
 function scatter(ctx: SceneContext): void {
   const p = ctx.particles;
-  p.resize(PARTICLE_COUNT);
+  p.resize(particleBudget(ctx.quality));
   p.seedAll(ctx.random);
   for (let i = 0; i < p.count; i++) {
     p.x[i] = ctx.random() * ctx.width;

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { ParticleBuffer, SceneSequencer, type DrawContext } from "@mlai/trailer-engine";
 
-import { ABBEY_DURATION, buildAbbeyTimeline, captionAt, type TrailerPalette } from "@/abbey-trailer/scenes";
+import { ABBEY_DURATION, MIN_PARTICLES, PARTICLE_COUNT, buildAbbeyTimeline, captionAt, particleBudget, type TrailerPalette } from "@/abbey-trailer/scenes";
 
 const PAL: TrailerPalette = { abi: "#22d3ee", aviva: "#a855f7", abbey: "#34d399", ink: "#040406", text: "#fafafa", dim: "#b6b6c0" };
 
@@ -96,6 +96,24 @@ describe("MLAI & Abbey timeline", () => {
     seq.seek(17, 1920, 1080);
     expect(Array.from(particles.x.subarray(0, 8))).toEqual(a);
     expect(seq.activeCue?.name).toBe("aviva");
+  });
+
+  it("scales particle counts by the host's quality budget, never below the floor", () => {
+    const { cues } = buildAbbeyTimeline(PAL);
+    const particles = new ParticleBuffer(1600);
+    const seq = new SceneSequencer(cues, { particles });
+    const { ctx } = makeContext();
+    seq.draw(ctx, 1920, 1080, 0);
+    expect(particles.count).toBe(PARTICLE_COUNT);
+    seq.setQuality(0.5);
+    seq.draw(ctx, 1920, 1080, 0.02); // no activation yet: the budget waits for the next enter
+    expect(particles.count).toBe(PARTICLE_COUNT);
+    seq.seek(12, 1920, 1080);
+    expect(particles.count).toBe(particleBudget(0.5));
+    seq.setQuality(0);
+    seq.seek(20, 1920, 1080);
+    expect(particles.count).toBe(MIN_PARTICLES);
+    expect(seq.currentQuality).toBe(0);
   });
 
   it("draws every cue without touching anything but the 2D context", () => {
