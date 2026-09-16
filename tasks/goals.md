@@ -1080,14 +1080,16 @@ integration with `origin/main`.
 - **Transport semantics (Stage-wide, so every film benefits):** the transport
   buttons gained `type="button"` and `aria-label`; the scrub track is now a
   `role="slider"` with `aria-valuemin/max/now/text`, focusable, with Home/End.
-- **Gate, partial at 14:2x:** `check:topology` exit 0; typecheck and the
-  53-file / 465-test suite green; **the `next build` stage is not yet
-  trusted** for this slice. It exited 0 but printed a route table of zeros and
-  a 17-byte `app-build-manifest.json`, because Donald's preview dev server
-  was writing `apps/web/.next` at the same time (same trap as slice 3). This
-  app has no `NEXT_DIST_DIR` escape like `website-app`. The build is rerun
-  and this line replaced once the dev server is stopped; nothing is pushed
-  until then.
+- **Gate, 14:2x:** `check:topology` exit 0; typecheck and the 53-file /
+  465-test suite green. The first `next build` ran beside Donald's preview dev
+  server, exited 0 and printed a route table of zeros with a 17-byte
+  `app-build-manifest.json`, so it was not counted. `apps/web` then gained a
+  `NEXT_DIST_DIR` escape (as `website-app` has), and
+  `NEXT_DIST_DIR=.next-gate bun run build` exited 0 with the real table
+  (`/showcase/abbey` 1.41 kB, shared JS 104 kB) while the dev server kept
+  running. That build rewrote `tsconfig.json`'s `include`; it was restored and
+  the typecheck rerun clean. The trap and the escape are now in
+  `apps/web/CLAUDE.md`.
 
 ### Phase 3 slice 3, 2026-09-16 14:1x: narration on the new trailer
 
