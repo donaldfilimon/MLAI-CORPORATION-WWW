@@ -7,6 +7,11 @@ nor hosted credentials.
 
 ## Repeatable browser checks
 
+Run build/typecheck gates and browser gates serially in the same checkout.
+Per-run Next/data directories do not isolate `packages/ui/dist`: a concurrent
+shared UI rebuild can temporarily remove a stylesheet and invalidate a live
+development server. Do not hide the resulting HTTP 500s with fixture retries.
+
 Run `bun run test:e2e` from `apps/website-app`. Each invocation allocates an
 independent UUID under `.data-e2e/runs/` and `.next-e2e/runs/`, keeping application
 data and generated Next output separate from canonical `.data`. Workers inherit
@@ -47,12 +52,33 @@ are never overwritten; use a distinct name for each run. Public source links may
 still require separate availability or permission checks; matching their pinned
 revision syntax does not establish anonymous access.
 
+For an unpublished presentation-only export, also supply `--site-revision`
+with the exact committed 40-character canonical revision. This pins the candidate
+without overwriting historical publication evidence. The receipt records both
+the candidate export revision and the reviewed content revision, while requiring
+unchanged research content, exact implementation bytes, and matching PDF bytes.
+An empty, malformed, or mismatched revision fails. Omission retains the stricter
+published-review revision comparison; it does not automatically accept a new export.
+
 Real Agent acceptance additionally requires explicitly supplied
 `MLAI_E2E_MODEL_URL` and `MLAI_E2E_MODEL_ID`. Never reuse canonical private data or
 configure hosted credentials to make a local test pass. Keep model/provider
 unavailability distinct from application failure.
 
 ## Activation and recovery
+
+The clean-install gate requires explicit `MLAI_MODEL_URL` and `MLAI_MODEL_ID`
+(or the matching `MLAI_LOCAL_MODEL_URL` and `MLAI_LOCAL_MODEL_ID`). It maps that
+selection into the isolated setup registry and rejects conflicting, missing,
+credential-bearing, or non-loopback selections. Install/setup/check commands
+own detached process groups; failure cleanup must stop descendants before
+removing the artifact. A success receipt is written only after the final
+production server has stopped and its port is released.
+
+The September 8 completion retry bounds CPU library threads with
+`OMP_NUM_THREADS=1 MKL_NUM_THREADS=1`; this is a verification invocation setting,
+not a production provider or authentication configuration change. Parser fixture
+deadlines and every required format assertion remain unchanged.
 
 Before activating a changed artifact, rerun formatting, application checks,
 public and Agent browser workflows, integrations, and the clean-install gate.

@@ -250,7 +250,7 @@
   font: 700 11px/1.35 var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-faint);
+  color: var(--muted);
   margin-bottom: 2px;
 }
 
@@ -271,7 +271,7 @@
   font: 10px/1.5 var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-faint);
+  color: var(--muted);
 }
 
 .stack-section {
@@ -3752,7 +3752,7 @@
 .public-footer-prov .prov-legend.inline {
   margin: 0;
   font-size: 0.6875rem;
-  color: var(--text-faint);
+  color: var(--muted);
 }
 .home-prov {
   margin-top: 28px;

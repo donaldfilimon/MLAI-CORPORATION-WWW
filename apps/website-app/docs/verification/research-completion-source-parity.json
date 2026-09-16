@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "verifiedAt": "2026-09-08T12:02:01.514Z",
+  "applicationRevision": "a8bac5cc6fd4f0417be89076654eb07065fdf903",
+  "applicationDirty": true,
+  "topics": 6,
+  "publications": 21,
+  "studies": 7,
+  "attachments": 4,
+  "researchContentSha256": "1bac66896aa58c1c97813cdf7ff9ac80f94285abb6e3b183d901620a352ecaa4",
+  "validatorSha256": "65d2efbb01c1382dae3f67978263db0159e023488a6a768a516446aa68131006",
+  "verifierSha256": "cf54f7f342eccb6bf468065761b10626e0685b2b7e046db0d1b260d7254cc2d3",
+  "applicationDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "implementationDataSha256": "c9e7b8cb39e88ad6379de3aa022f051adc5914b6c30b50fd3b79991e61abc651",
+  "sourceParity": {
+    "sourceRevision": "2718e0cc61dfa969cb7d30ade1af1fd826652b22",
+    "reviewedContentRevision": "419f08b24753c024c6d40a720ea5a417d8192251",
+    "revisionBasis": "explicit candidate revision; publication not asserted",
+    "sourceDirty": false,
+    "contentSha256": "1bac66896aa58c1c97813cdf7ff9ac80f94285abb6e3b183d901620a352ecaa4",
+    "implementationDataSha256": "c9e7b8cb39e88ad6379de3aa022f051adc5914b6c30b50fd3b79991e61abc651",
+    "researchParity": "semantic",
+    "implementationParity": "byte-identical",
+    "attachmentParity": "byte-identical",
+    "remoteAvailability": "not checked"
+  }
+}

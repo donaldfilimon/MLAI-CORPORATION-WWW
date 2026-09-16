@@ -62,3 +62,29 @@ the merge commit. Hosted CI, Node 24 execution, public deployment, the complete
 authenticated browser suite and live ABI/WDBX/model integration were not run for
 this import. Historical receipts carried from the source are not new acceptance
 proof for this checkout. No source checkout, branch or worktree was deleted.
+
+## Follow-up merge — 2026-09-16
+
+The standalone repository kept moving after the import. Its twelve commits from
+`d988a218` to `801bdad` (research release evidence, verification process-group
+cleanup, footer contrast, and the Quesar pilot call to action) were brought in
+with `git merge -X subtree=apps/website-app`. Because `1b3e2b3` already made
+`d988a218` an ancestor, that is the merge base, and the twelve commits keep their
+original hashes in this history.
+
+Four files needed hand resolution:
+
+- `scripts/verify-clean-install.ts`: kept this repository's
+  `writeVerificationReceipt` and the source's move of `execFileSync` into
+  `verification-command.ts`. `writeFileSync` is no longer imported.
+- `CLAUDE.md`: kept the monorepo wording, which already carried the source's
+  changes plus the root CI and `MLAI_E2E_PORT` context.
+- `docs/LOCAL-LIFECYCLE.md`: kept the monorepo text and added the source's
+  serial-gate warning, `--site-revision` pinning and clean-install
+  model-selection notes.
+- `docs/IMPLEMENTATION.md`: kept both, with the source's completion section
+  labelled as standalone history.
+
+`docs/website-app-import-manifest.json` is left unchanged. It remains the
+provenance record of the 2026-09-08 import, not a manifest of the current tree.
+The standalone checkout and its GitHub repository were not modified.

@@ -101,6 +101,24 @@ export function QuesarLanding() {
           </aside>
         </div>
       </section>
+
+      <section className="system-section marketing-section">
+        <div className="section-intro">
+          <span className="eyeline wdbx">{quesar.pilot.eyeline}</span>
+          <h2>{quesar.pilot.title}</h2>
+          <p>{quesar.pilot.body}</p>
+        </div>
+        <div className="button-row">
+          <Link className="button primary" href={quesar.pilot.ctaHref}>
+            {quesar.pilot.ctaLabel} <ArrowRight size={18} />
+          </Link>
+        </div>
+        <ul className="quesar-nonclaims">
+          {quesar.pilot.nonClaims.map((claim) => (
+            <li key={claim}>{claim}</li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

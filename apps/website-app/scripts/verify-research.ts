@@ -14,9 +14,12 @@ try {
   const { values } = parseArgs({
     options: {
       "site-root": { type: "string" },
+      "site-revision": { type: "string" },
       output: { type: "string" },
     },
   });
+  if (values["site-revision"] !== undefined && !values["site-root"])
+    throw new Error("--site-revision requires --site-root");
   const input = readResearchSnapshot();
   const result = {
     status: "passed",
@@ -43,7 +46,11 @@ try {
     ]),
     implementationDataSha256: sha256(input.studyBytes),
     sourceParity: values["site-root"]
-      ? verifySiteParity(values["site-root"])
+      ? verifySiteParity(
+          values["site-root"],
+          process.cwd(),
+          values["site-revision"],
+        )
       : "not requested",
   };
   const output = `${JSON.stringify(result, null, 2)}\n`;

@@ -94,6 +94,18 @@ export const quesar = {
       actor: "mfa:admin-02",
     },
   ],
+  pilot: {
+    eyeline: "Pilot",
+    title: "Request a private-ops pilot",
+    body: "Invite-only private AI operations for teams that need membership, a metadata-only gateway, and a KMS-wrapped audit. No public signup.",
+    ctaLabel: "Request pilot",
+    ctaHref: "/contact",
+    nonClaims: [
+      "Not a compliance certification",
+      "No QPS, latency SLA, or TAM figures claimed here",
+      "Does not carry Abbey product naming or Intelligence Without Limits",
+    ],
+  },
 } as const;
 
 export type QuesarRecord = (typeof quesar.records)[number];

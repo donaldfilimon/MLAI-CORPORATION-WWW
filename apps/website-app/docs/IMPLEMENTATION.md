@@ -35,6 +35,61 @@ screen-reader and actual browser-zoom acceptance remain unperformed.
 Everything below is historical evidence for its named source, not the current
 integration status.
 
+## Standalone source completion, merged 2026-09-16
+
+The section below was written in the standalone `mlai-website-app` checkout
+(through `801bdad`) and merged here with that history on 2026-09-16. Its paths
+and "canonical local `main`" refer to that standalone repository.
+
+### Research and release preparation completion (2026-09-08)
+
+Guided manual acceptance has started; see
+[the session record](verification/research-guided-acceptance.md). Candidate
+identity and preview ownership were reverified without changing runtime source.
+Native Chrome displayed actual 200% zoom; keyboard Clear search recovery restored
+31 articles and focus to search, followed by both filter selectors in tab order.
+These are partial agent-observed subchecks, not a completed operator gate. The
+400% attempt was interrupted by a concurrent tab change; final zoom restoration,
+full-page overflow, VoiceOver and remaining rendered contrast remain unverified.
+
+This completion supersedes the earlier exporter-authorization gap below. The
+authorized canonical exporter work is committed on `mlai/main` at
+`2718e0cc61dfa969cb7d30ade1af1fd826652b22`. The generated Site candidate is on its
+local `main` at `a45d20f`. Shared-content parity covers all 21 publications, seven
+studies and four PDFs without importing native-only notes or rewriting historical
+publication evidence. The canonical source passed 365 tests and its 104-page
+production build; Site packaging passed 11 tests and nine cross-engine/width runs.
+
+Native runtime source: `a8bac5cc6fd4f0417be89076654eb07065fdf903`.
+Runtime SHA-256: `fd4ea9e43941f27f98163e8102fac0b1910afc1fdf37c3f2213f1deab80406ff`.
+The retained `.data/releases/mlai-clean-YTXxce` candidate passed clean installation,
+all 23 advertised formats, shared-UI/types, 116 unit tests, 26 parser tests and the
+64-page production build, followed by development startup, production restart
+persistence and complete process cleanup. Formatting passed. Deterministic
+Chromium acceptance passed 21/21; focused research/auth cross-engine checks passed
+11/11. Real MLX integration/recovery, Agent/restored authorization and the final
+real-model Agent browser flow (1/1) passed at that same runtime digest.
+
+The selected endpoint remains `http://127.0.0.1:3102/v1`, model
+`mlx-community/Llama-3.2-3B-Instruct-4bit`. No hosted credentials were used or
+configured. Authorization, proposal-before-write, confirmation, cancellation,
+stale-revision and exactly-once receipt safeguards remain enforced.
+
+Detailed evidence, rejected attempts, candidate identity, screenshots, exact
+proposed targets and rollback instructions are in
+[the completion report](verification/research-completion.md) and
+[the source-bound acceptance receipt](verification/research-completion-acceptance.json).
+Candidate-specific receipt filenames preserve the prior activated-release receipts.
+
+All implementation is committed on canonical local `main`; this assistant did
+not push, publish or activate it. A later read-only refresh found `origin/main`
+matching local `029814f` and two successful hosted runs at that revision, linked
+in the session record. Those runs do not cover the subsequent evidence update.
+Pushes have publication effects and remain withheld by this session. Actual full-workflow
+200%/400% zoom, VoiceOver and unmeasured rendered-contrast cases remain operator
+gates. Publication-ready and activation-ready are therefore both false. Published
+Site version 2 and the healthy port-3100 `mlai-clean-bKPz2X` artifact are unchanged.
+
 ## Research improvements candidate (2026-09-08)
 
 Native source checkpoint: `d988a218efe747f2adf1ee073ec72ee249d69d76`.
