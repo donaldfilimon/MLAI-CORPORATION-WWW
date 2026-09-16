@@ -236,9 +236,12 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
   const mono = "JetBrains Mono, ui-monospace, monospace";
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(20,20,20,0.92)",
+    <div className="mlai-transport" style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(20,20,20,0.92)",
       borderTop: "1px solid rgba(255,255,255,0.08)", width: "100%", maxWidth: 680, alignSelf: "center", borderRadius: 8,
       color: "#f6f4ef", userSelect: "none", flexShrink: 0 }}>
+      {/* Inline styles cannot express :focus-visible, so the transport's keyboard
+          focus ring lives here, scoped to this bar. Pointer clicks show nothing. */}
+      <style>{`.mlai-transport button:focus-visible,.mlai-transport [role="slider"]:focus-visible{outline:2px solid #7cb0ff;outline-offset:2px;border-radius:6px}`}</style>
       <IconButton onClick={onReset} title="Return to start (0)">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2v10M12 2L5 7l7 5V2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" /></svg>
       </IconButton>
