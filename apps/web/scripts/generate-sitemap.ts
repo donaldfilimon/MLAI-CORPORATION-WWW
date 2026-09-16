@@ -48,6 +48,7 @@ const staticEntries: Entry[] = [
   { path: "/showcase", changefreq: "monthly", priority: "0.8" },
   { path: "/showcase/film", changefreq: "monthly", priority: "0.6" },
   { path: "/showcase/trailer", changefreq: "monthly", priority: "0.6" },
+  { path: "/showcase/abbey", changefreq: "monthly", priority: "0.6" },
   { path: "/showcase/mega", changefreq: "monthly", priority: "0.6" },
   { path: "/showcase/explainer", changefreq: "monthly", priority: "0.6" },
   { path: "/showcase/design", changefreq: "monthly", priority: "0.6" },

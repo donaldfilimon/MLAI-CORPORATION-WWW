@@ -41,6 +41,18 @@ const SURFACES: Surface[] = [
     accent: "text-sky-300",
   },
   {
+    to: "/showcase/abbey",
+    index: "06",
+    title: "MLAI & Abbey",
+    duration: "38s · seven cues",
+    blurb:
+      "A monolith gathers and shatters, three minds draw the shards into their own orbits, and they converge on one mark — a seeded particle grammar on the extracted engine.",
+    icon: Sparkles,
+    glow: "radial-gradient(80% 90% at 50% 0%, rgba(52,211,153,0.26), transparent 65%)",
+    edge: "rgba(110,231,183,0.4)",
+    accent: "text-emerald-300",
+  },
+  {
     to: "/showcase/mega",
     index: "03",
     title: "Mega-Trailer",

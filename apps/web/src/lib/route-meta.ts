@@ -210,6 +210,11 @@ export const routeMetadata: Record<string, RouteMeta> = {
     description:
       "The 62-second MLAI vision trailer — the spectrum identity, the three minds, and the architecture in motion, rendered live in the browser.",
   },
+  "/showcase/abbey": {
+    title: "MLAI & Abbey | MLAI Showcase",
+    description:
+      "The MLAI & Abbey trailer: a monolith gathers and shatters, three minds draw the shards into their own orbits, and they converge on one mark — a seeded particle grammar rendered live in the browser.",
+  },
   "/showcase/mega": {
     title: "Mega-Trailer | MLAI Showcase",
     description:
