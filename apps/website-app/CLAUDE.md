@@ -63,7 +63,9 @@ Three gate behaviors have already cost sessions time; `docs/IMPLEMENTATION.md` r
   `bun run format:check` green. The byte-pinned implementation snapshot is explicitly excluded
   in `.prettierignore`; `bun run verify:research` validates its unchanged evidence digest instead.
 - `next build` sometimes rewrites `tsconfig.json` with generated dist-dir includes. Compare it
-  before and after and revert before committing; it does not happen on every run.
+  before and after and revert before committing; it does not happen on every run. The
+  `.next-e2e` (Playwright) and `.next-gate` (isolated gate build, `NEXT_DIST_DIR=.next-gate`)
+  type globs are already listed, so those two directories no longer trigger the rewrite.
 
 CI runs a subset of that gate: the root `.github/workflows/ci.yml` website-app job
 (the imported `.github/workflows/check.yml` is retained as historical source) does a frozen-lockfile install,
