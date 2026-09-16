@@ -1,6 +1,6 @@
 ## Consolidate every MLAI tree into this repository
 
-status: in_progress
+status: done
 
 Captured 2026-09-16 on Donald's request. The destination is the canonical checkout
 `~/dev/active/mlai`, chosen over the second checkout
@@ -9,6 +9,13 @@ with its provenance recorded. It never means moving or deleting a source. quesar
 stays the GitHub Pages static site. Its Hostinger DNS already points at Pages, and the
 live page matched `apps/web/site/index.html` byte for byte, so no DNS change is part of
 this goal. The per-tree record is in [`todo.md`](todo.md).
+
+- Outcome, 2026-09-16 13:0x EDT: root `bun run check` exited 0 at `1b09043`
+  (tooling 5, web 436, mobile 59 plus export, Quasar 69 plus export, website-app
+  137 plus 26 parser tests, research-sites 11). `mlai-website-app` and
+  `mlai-research-sites` were merged with their history, the remaining trees were
+  preserved under `docs/sources/`, and nothing was moved or deleted. Hosted CI
+  and the Pages redeploy stay blocked by the GitHub billing lock.
 
 ---
 

@@ -25,7 +25,8 @@ Goal: see `goals.md`. Measured and executed 2026-09-16 from `~/dev/active/mlai`.
       `mlai-site-from-design` (with their uncommitted edits), the v2.4 export and
       source zip, `mlai-mobile 2`, and the master reference. `~/Documents/mlai-mobile`
       and the pre-monorepo archive were already contained in `main`.
-- [ ] Root `bun run check` green, then push `main`.
+- [x] Root `bun run check` exit 0 at `1b09043`, then `main` pushed. The lockfile
+      fix `1b09043` was found by the frozen root install.
 
 ## Not done here (Donald's call)
 
