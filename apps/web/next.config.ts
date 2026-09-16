@@ -40,6 +40,12 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // `next build` and `next dev` cannot share a dist directory: a build run
+  // beside a live dev server "succeeds" with a route table of zeros and an
+  // empty app-build-manifest. NEXT_DIST_DIR lets a gate build into its own
+  // directory (the isolated-check script uses `.next-gate`), mirroring
+  // apps/website-app.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   outputFileTracingRoot: __dirname,
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];

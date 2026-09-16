@@ -24,6 +24,7 @@ Production website + invite-only private AI operations console for **Quesar by M
 - `bun run og` — Regenerate the **static** raster brand assets in `public/` (`og-image.png` + the PWA/apple icons) from [scripts/generate-og.py](scripts/generate-og.py); needs `python3` with `pillow fonttools brotli`. Distinct from the per-slug OG images, which are Satori/TSX and built by `next build`. Re-run after a re-skin — and refresh the duplicated copies in `site/`, which this script does not touch.
 - `bun run audit:expire` — Runs `expireConversationAudits()` from `src/lib/server/audit-store.ts` against the configured Postgres ([scripts/expire-audits.ts](scripts/expire-audits.ts)) and prints `{"ok":true,"deleted":<n>}`. Needs database configuration; not part of CI.
 - `bun run clean` — `rm -rf .next dist`.
+- **Never run `bun run build` (or `check:web`) while `bun run dev` is up in this checkout.** They share `.next`; the build then exits 0 with a route table of zeros and a 17-byte `app-build-manifest.json`, which is not a build. Either stop the dev server, or build into an isolated directory: `NEXT_DIST_DIR=.next-gate bun run build` (gitignored as `.next-*/`). Compare `tsconfig.json` before and after an isolated build and revert any generated `include` entry, as `apps/website-app` already documents for the same trap.
 
 ## Architecture
 

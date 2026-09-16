@@ -21,6 +21,7 @@ output/playwright/
 inquiries.db
 .playwright-cli/
 .next/
+.next-*/
 tsconfig.tsbuildinfo
 nohup.out
 
