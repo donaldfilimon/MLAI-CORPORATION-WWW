@@ -65,7 +65,10 @@ print('content', shaj(d) == m['contentSha256'], 'publications bad', pubs, 'attac
 PY
 ```
 
-Clean output is `files 99 bad [] unlisted []` and `content True publications bad [] attachments bad []`.
+Clean output is `files N bad [] unlisted []` and `content True publications bad [] attachments bad []`, where N is
+whatever the manifest lists (107 at `a45d20f`, 2026-09-08; it was 99 before that export). The number is not the
+contract; the empty `bad` and `unlisted` lists and the three `True`/empty results are. A stale N here has already
+read as a defect once (2026-09-15), so compare the lists, not the count.
 
 What each hash actually covers, because getting this wrong produces a false green:
 
