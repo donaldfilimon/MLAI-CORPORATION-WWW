@@ -14,3 +14,19 @@ export { createRandom } from "./random";
 export { ParticleBuffer } from "./particles";
 export type { PlaybackHooks, PlaybackState } from "./playback";
 export { PlaybackController } from "./playback";
+export type {
+  AudioContextLike,
+  AudioEngineOptions,
+  AudioParamLike,
+  EqBand,
+  EqBandType,
+  LoadTTS,
+  PersonaVoice,
+  PersonaVoiceRegistry,
+  Scheduler,
+  SpeakOptions,
+  TTSAudio,
+  TTSHandle,
+  VoiceSnapshot,
+} from "./audio";
+export { AudioEngine, chunkText } from "./audio";
