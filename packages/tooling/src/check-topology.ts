@@ -15,6 +15,8 @@ const required = [
   "apps/website-app/mlai-website-agent/package.json",
   "apps/website-app/worker/pyproject.toml",
   "apps/website-app/worker/uv.lock",
+  "apps/research-sites/package.json",
+  "apps/research-sites/public/research-manifest.json",
   "packages/contracts/package.json",
   "packages/design-tokens/package.json",
   "packages/trailer-engine/package.json",

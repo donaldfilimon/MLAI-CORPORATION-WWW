@@ -14,6 +14,10 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
 - `apps/website-app` is the imported local Next.js application. Keep its own
   workspace, shared UI, agent scaffold, SQLite/Better Auth, worker and lockfiles
   together. Run commands from that app directory; never add it to root workspaces.
+- `apps/research-sites` is the generated static export of the research
+  collection, imported with its history on 2026-09-16. It has zero
+  dependencies and no install step. Never hand-edit its `public/`: regenerate it
+  with `apps/web/scripts/export-research.tsx` and keep the manifest provenance.
 - `packages/contracts` contains names and types, not publishable benchmark
   values. App content sources remain authoritative for copy and figures.
 - `packages/tooling` holds repository checks and the isolated website-app gate
@@ -29,10 +33,11 @@ Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn.
 
 ```bash
 bun run install:all
-bun run check            # aggregate gate: check:topology && check:workflows && check:tooling && check:web && check:mobile && check:quasar && check:website-app
+bun run check            # aggregate gate: check:topology && check:workflows && check:tooling && check:web && check:mobile && check:quasar && check:website-app && check:research-sites
 bun run check:topology
 bun run check:workflows
 bun run check:tooling
+bun run check:research-sites
 bun run check:web
 bun run check:mobile
 bun run check:quasar
@@ -67,6 +72,9 @@ local build alone.
 - `check:quasar`: workspace typechecks, `bun test packages`, then Expo **web**
   export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
   `bun test packages/service/src/paths.test.ts` (Bun's runner, unlike web/mobile).
+- `check:research-sites`: `bun test` plus `bun run build`, which verifies the
+  clean manifest, exact file inventory and every file hash before copying
+  `public/` to the ignored `out/`.
 - `check:website-app`: serial database migration, UI build, TypeScript, Vitest,
   Python pytest and Next build. Both stages share a temporary `MLAI_DATA_DIR`
   removed on exit; a nonempty explicit override is preserved and may be modified

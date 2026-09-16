@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 `AGENTS.md` is the canonical repository-wide map: the boundaries between the
-four apps, the root commands, and what each gate does and does not prove.
+five apps, the root commands, and what each gate does and does not prove.
 Read it first, then the guidance for the surface you are changing. Do not
 duplicate their detailed instructions here.
 
@@ -13,6 +13,7 @@ duplicate their detailed instructions here.
 | `apps/mobile` | `apps/mobile/AGENTS.md`, `apps/mobile/CLAUDE.md` |
 | `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
 | `apps/website-app` | `apps/website-app/AGENTS.md`, `apps/website-app/CLAUDE.md`, and `apps/website-app/README.md` |
+| `apps/research-sites` | `apps/research-sites/AGENTS.md`, `apps/research-sites/CLAUDE.md` (generated export; never hand-edit `public/`) |
 | `packages/*` | that package's own `README.md` |
 
 `apps/web` is the canonical production Next.js website; `apps/website-app` is
@@ -28,7 +29,7 @@ specific belongs to an app and runs from that app's own directory. Use Bun
 
 ```bash
 bun run install:all      # root packages, then web, mobile, quasar, website-app (non-frozen)
-bun run check            # check:topology, check:workflows, check:tooling, then web, then mobile, then quasar, then website-app
+bun run check            # check:topology, check:workflows, check:tooling, then web, then mobile, then quasar, then website-app, then research-sites
 bun run check:topology   # bun packages/tooling/src/check-topology.ts
 bun run check:workflows  # pinned Actionlint 1.7.12 via Go (requires Go 1.25+)
 bun run check:tooling    # repository wrapper regression tests
@@ -36,6 +37,7 @@ bun run check:web        # cd apps/web && lint && test && build
 bun run check:mobile     # cd apps/mobile && typecheck && test && lint && expo export
 bun run check:quasar     # cd apps/quasar && typecheck && test && expo export
 bun run check:website-app # isolated data wrapper: db:migrate, then check
+bun run check:research-sites # cd apps/research-sites && bun test && build (manifest-verified)
 bun run dev:web          # also dev:mobile, dev:quasar, dev:website-app
 ```
 

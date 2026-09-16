@@ -1,0 +1,10 @@
+out/
+node_modules/
+package-lock.json
+.agents/
+.claude/
+.grok/
+.pi/
+.playwright-mcp/
+.mcp.json
+skills-lock.json

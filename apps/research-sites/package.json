@@ -1,0 +1,11 @@
+{
+  "name": "mlai-research-review-artifact",
+  "private": true,
+  "type": "module",
+  "description": "Generated static artifact. Edit research source in the canonical MLAI repository; do not edit this snapshot.",
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "check": "bun test && bun run build",
+    "test": "bun test"
+  }
+}

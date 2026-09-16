@@ -99,3 +99,17 @@ jobs:
       # Migrate once before parallel Next build workers import the database.
       - run: bun run db:migrate
       - run: bun run build
+
+  research-sites:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/research-sites
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.0"
+      # Zero dependencies by design: no install step. build verifies the
+      # manifest and every file hash before copying public/ to out/.
+      - run: bun run check
