@@ -711,3 +711,345 @@ guess was right for the right reason. Recorded so nobody re-derives it.
 - Clearing it is Donald's, in GitHub billing settings. The `gh` billing endpoint
   needs the `user` OAuth scope this token lacks, so an agent cannot confirm the
   balance itself — only the annotation.
+
+## Productionize the MLAI & Abbey cinematic trailer
+status: in_progress
+opened: 2026-09-08 16:5x EDT
+
+Donald passed a deep-research report proposing that a single-file HTML/CSS/JS
+"MLAI & Abbey" cinematic trailer prototype be rebuilt as a production
+framework-agnostic engine in a new `mlai-abbey-trailer/` root. Plan approved at
+`~/.claude/plans/virtual-prancing-turtle.md`, full scope (four phases).
+
+**The report's premise was wrong in the same way the 2026-09-07 stack-audit
+report's was, and this is the second instance of one pattern.** That goal (home
+ledger, "MLAI marketing/docs site — 2026 stack audit report") is blocked because
+its report concluded "greenfield build" against a repo that already exists. This
+report likewise proposes building a `ParticleSystem`, `TimelineEngine`,
+`AudioEngine` and `SceneManager` from scratch, while `apps/web/src/film/` already
+holds 4,196 lines of exactly that, live at `/showcase/film` and
+`/showcase/trailer`. **Externally-authored reports about this codebase have now
+twice recommended greenfield against existing code. Verify the premise against
+disk before acting on the next one.**
+
+Two further premise corrections, both measured rather than argued:
+
+- **The prototype file is not on this machine.** Searched `~/dev/active`,
+  `~/Desktop`, `~/Downloads` (incl. `files/` and `files (1)/`), `~/tmp`,
+  `~/Archive`, `~/Public` for `scriptTimeline`, `renderCanvas`, `highlight-abi`,
+  `110ms LATENCY`, `Lissajous` — zero hits. The report was written against code
+  supplied in conversation. **Its twelve defects are therefore design hazards to
+  test against, not located bugs**, and nothing here claims that file was read.
+- **Four of those twelve were already solved in `film/`**, verified by reading
+  it: frame-rate-independent `dt` (`engine.tsx:140`), `devicePixelRatio` capped
+  at 2 (8 call sites), no `innerHTML` anywhere in `film/` or `trailer/`, and an
+  EQ/compressor bus already on the audio graph.
+
+### Slice 1 — Phase 1 correctness
+
+- **The clock defect was more precise than the report described, and the report
+  would have missed it.** `engine.tsx:140` already derived `dt` from the rAF
+  timestamp correctly. What was absent was a clamp: rAF stops in a backgrounded
+  tab while `lastTsRef` retains the pre-suspension timestamp, so the first frame
+  back advanced the playhead by the entire time away — two minutes off-tab ran
+  the whole trailer out. Now `frameDelta()` / `MAX_FRAME_DT`.
+- **`visibilitychange` pauses on tab-hide** (`engine.tsx`). `narration.tsx:177`
+  already mirrors `playing` to `NeuralVoice`, so clearing that one flag pauses
+  clock and voice together. Deliberately does **not** auto-resume.
+  **PRODUCT-VISIBLE on two live routes:** tabbing away from `/showcase/film` or
+  `/showcase/trailer` now returns to a paused player. Donald's to veto.
+- **`neural-voice.ts` `pause()` captures its `AudioContext` instance** instead of
+  re-reading mutable `state.ctx!` inside a 100 ms timer.
+- Regression test `apps/web/src/__tests__/film-clock.test.ts`; mutating the clamp
+  out fails 3 of its 5 assertions.
+
+### Resolved from repo evidence, not by asking
+
+The plan claimed three conflicting persona->color mappings. **That was
+overstated and the plan file has been corrected.**
+`apps/web/docs/master-reference.md:170-176` states the shipped mapping —
+**Abbey emerald, Aviva violet, Abi cyan** — and `film/tokens.ts` `PERSONAS`
+matches it exactly. The apparent third mapping is `packages/design-tokens`
+`productColor`, keyed by `ProductAccent`: **products, not personas.** Only the
+report's mapping (amber=Abi, cyan=Aviva, violet=Abbey) is wrong, on all three,
+and MLAI has no amber persona at all.
+
+**Trap to carry forward:** `productColor.abi` is violet while `PERSONAS.abi` is
+cyan. New scenes must reach for `PERSONAS`.
+
+Contrast, computed directly rather than taken from the report: every MLAI token
+passes WCAG AA at both thresholds (violet `#A855F7` 5.18:1). The prototype's
+violet `#B400FF` is the only failing color at 4.25:1.
+
+### Slice 2 — Phase 2 mechanism proven
+
+**Chosen to answer one unknown before 4,196 lines depend on it, and the unknown
+was real.** No runtime value had ever crossed a package boundary in this repo:
+`@mlai/contracts` is imported type-only, exactly once
+(`apps/web/src/components/site/accent.ts:17`), and a type import never reaches
+the bundler; `@mlai/design-tokens` has **zero consumers**; `next.config.ts` sets
+no `transpilePackages`.
+
+- Created `packages/trailer-engine` (`@mlai/trailer-engine`) carrying
+  `src/clock.ts` — `MAX_FRAME_DT` and `frameDelta`.
+- Wired the full mechanism: `file:` dep in `apps/web/package.json` matching the
+  `@mlai/contracts` form, added to `check-topology.ts`'s hardcoded list
+  (topology now reports **9** required paths, was 8), `bun install` exit 0.
+- **PROVEN, not inferred.** The emitted client chunk contains
+  `let r=1/15,a=(e,t)=>Math.min(Math.max(0,(e-t)/1e3),r)`. The value crossed the
+  boundary, was transpiled from raw `.ts`, and reached the browser bundle **with
+  no `transpilePackages`**. A green compile alone would not have shown this.
+- **Re-verified against `origin/main` 2026-09-08 18:3x:** `packages/` there is
+  still exactly `contracts`, `design-tokens`, `tooling`, and `next.config.ts`
+  still has no `transpilePackages` — so this finding is about a topology that
+  still exists upstream, not one that 94 commits have since replaced.
+
+### Slice 3 — easing moved wholesale
+
+- All 104 lines moved to `packages/trailer-engine/src/easing.ts`;
+  `apps/web/src/film/easing.ts` is a 15-line re-export shim, so the **13
+  importers under `src/film/` are untouched**.
+- Bundle proof rather than a green compile: `easeOutBack`'s `1.70158` constant
+  appears in the emitted chunk.
+
+**Finding, recorded not fixed — two `clamp` definitions that disagree at the
+edge.** `easing.ts:62` is `Math.max(min, Math.min(max, v))`; `tokens.ts:54` is
+`Math.min(hi, Math.max(lo, v))`. Identical whenever `lo <= hi`, but with
+inverted bounds the first returns the **lower** bound and the second the
+**upper**. A behaviour change in a degenerate case, so it belongs in its own
+slice with its own test rather than folded into a move.
+
+### Slice 4 — playhead advance extracted
+
+**Checked for a live owner first, and the obvious check lied.** A cwd sweep for
+processes in `dev/active/mlai` returned six PIDs — all cwd'd in
+`mlai-website-app/.data/releases/mlai-clean-*`, a path that merely *contains*
+the substring `dev/active/mlai`. **A substring match on a repo path hits every
+sibling repo whose name extends it.** HEAD `2718e0c` was committed at 07:35,
+nine hours before this session opened.
+
+- `advance(time, dt, duration, loop)` moved to
+  `packages/trailer-engine/src/timeline.ts`. `engine.tsx` keeps its `setTime`
+  updater and structure; only the math is delegated. Behaviour unchanged by
+  construction.
+- Scope confirmed first: all four `<Stage>` consumers (`Film`, `Trailer`,
+  `Mega`, `Explainer`) pass a real `DURATION` and none override `loop`.
+- Six tests; two mutations kill them (snapping the loop wrap to `0`; relaxing
+  `next < duration` to `<=`).
+
+**Finding, recorded not fixed — a setter inside another setter's updater.**
+`engine.tsx` calls `setPlaying(false)` from inside the `setTime` updater. React
+may invoke an updater more than once, so it is not pure. Hoisting it changes
+when playback stops relative to the render — a behaviour change on two live
+routes, so it belongs in its own slice.
+
+**Second finding — `advance` returns `NaN` when `duration` is 0** (`next % 0`).
+Preserved rather than guarded; no caller passes 0 and `Stage`'s default is 10.
+
+### Slice 5 — deterministic particle substrate
+
+**The obvious next item was AudioEngine, and it was rejected as a slice rather
+than attempted.** `neural-voice.ts` is React-free, so it looked ready to move,
+but it imports `PERSONAS` from `./tokens` and is referenced by
+`src/lib/csp.ts` — so moving it either drags MLAI brand data into a generic
+engine package or requires parameterising the persona registry, and it touches
+the CSP allowlist. **A design decision with architectural consequences, not a
+move.** Surfaced rather than taken unilaterally.
+
+- **`random.ts` — seeded RNG (mulberry32).** Coerces the seed to uint32 so a
+  negative or fractional seed yields a stable sequence instead of `NaN`.
+- **`particles.ts` — `ParticleBuffer`, structure-of-arrays.** Nine parallel
+  typed arrays rather than per-particle objects carrying generated color
+  strings, so a scene's update loop allocates nothing per frame.
+- **`seedAll` seeds the whole capacity, not the active count** — otherwise
+  raising quality mid-scene exposes unseeded particles at 0. Mutating
+  `capacity` to `count` kills that test.
+- 10 tests; two mutations kill them.
+
+**Corrected my own rule while here.** The barrel previously said nothing in it
+may "touch the DOM" — wrong for the engine this package is meant to become,
+since Web Audio, canvas and rAF *are* browser APIs. The rule now reads: no
+React, no bundler globals, and no browser API at module scope.
+
+### Slice 6 — PlaybackController
+
+- States `idle | starting | playing | paused | ended | error`. `starting` is
+  deliberately distinct from `playing`: acquiring an AudioContext is async and
+  can fail, and collapsing the two is what lets a second start slip in
+  mid-acquisition.
+- Every `start()` claims a generation and every late completion checks it, so a
+  superseded run cannot touch the run that replaced it.
+- 12 tests covering the plan's lifecycle list.
+
+**Mutation testing caught a vacuous test of mine.** Removing the generation
+guard before `set("playing")` left the suite **green**: the race test started
+run 1, superseded it, started run 2, and asserted `playing` — but *both* runs
+end in `playing`, and `set()` no-ops when the state already matches, so the
+missing guard was unobservable. Fixed with a test where the newer run is
+**paused** when the older resolves.
+
+### Slice 6 shipped a real defect. Found by review, proven by test, now fixed.
+
+**`PlaybackController` leaked on the plain replay path**, and the "fixed
+structurally" claim was overstated when written. The class exists to guarantee
+exactly one live resource, and it broke that guarantee by **inferring resource
+ownership from the state machine** instead of tracking it.
+
+- `start()` disposed only when coming from `paused`. But `end()` leaves the
+  machine in `ended` still holding its resources, so `play -> end -> start` —
+  the plain replay path, one of the plan's own listed cases — ran `onStart`
+  again with the first resource still live. Proven, not argued: a probe test
+  reported `expected 2 to be 1`.
+- **The suite was green throughout.** The existing replay test calls `stop()`
+  between `end()` and `start()`, taking the disposal path and hiding the case.
+- **Fixed by tracking ownership explicitly** (`held`), set *before* `onStart` so
+  a partial acquisition that then throws is still released, and checked in both
+  `start()` and `stop()`. `isActive` became `holdsResources`, true through
+  `ended` — reaching the end frees nothing; only `stop()` or the next `start()`
+  does. The old name asserted the opposite and encoded the bug.
+- Three mutations pin it: reverting to the `paused`-only dispose fails 2 tests,
+  marking `held` after `onStart` fails 5, dropping the generation guard fails 1.
+
+**Stated no wider than the evidence supports:** two defects in this module were
+invisible to a green suite, and in both cases the test that should have caught
+it was written to a path that avoided the bug. Mutation testing found the first;
+a reviewer found the second. Neither was found by the gate.
+
+### This checkout is 4 ahead and 94 BEHIND origin/main (measured after fetch)
+
+Surfaced 18:2x while answering a peer session about to act on this tree.
+Measured after `git fetch`, not off the cached tracking ref.
+
+- The **4 ahead are not this goal's**: `419f08b`, `7b5a8e9`, `1b9f5ec`,
+  `2718e0c`, all `research` commits authored 01:04-07:35 on 2026-09-08, before
+  this session opened at 16:34. Nothing in this goal is committed.
+- The **94 behind** means every slice above is built on a `main` that is 94
+  commits stale. The gate is green against *this* tree; it has never been run
+  against the reconciled one. **Do not read green gates as evidence that this
+  work integrates with `origin/main`.**
+- A peer session independently confirmed `origin/main` is now `cf8cefd` and
+  byte-identical to `~/dev/active/MLAI-CORPORATION-WWW`, which is 0 ahead /
+  0 behind — so that second permanent checkout is the source of the 94.
+- Reconciling is Donald's decision, not this goal's: a rebase here touches four
+  commits belonging to someone else's work.
+
+### Ledger recovery note — this section was rebuilt 18:3x after I truncated it
+
+**I destroyed this file and rebuilt it from the session transcript.** A malformed
+one-liner opened `tasks/goals.md` for write (truncating it to 0 bytes) and only
+then read it, so the read returned empty and the write persisted nothing. The
+four pre-existing goal sections were recovered intact from `HEAD`; everything
+above in this section is uncommitted work that existed only in the working tree
+and was retyped from the conversation record.
+
+Two consequences worth carrying: the pre-existing sections are byte-exact from
+git, but **this section is a faithful reconstruction, not the original bytes** —
+if a detail here reads oddly, the transcript is the authority. And the mechanism
+is general: in Python, `open(p,'w')` truncates at open time, so any
+`open(p,'w').write(open(p).read()...)` shape destroys the file before reading it.
+Read fully, close, then write.
+
+### Gate history
+
+Every entry read from the gate's own recorded exit code, never a wrapper's.
+`bun run check` = `check:topology && check:web && check:mobile && check:quasar`.
+
+| After | topology | web | mobile | quasar | exit |
+|---|---|---|---|---|---|
+| slices 1-3 | 9 paths | 377/43 + build | 41/41 + export | 60 pass + export | 0 |
+| slice 4 | 9 paths | 377/43 + build | 41/41 + export | 60 pass + export | 0 |
+| slice 5 | 9 paths | 387/44 + build | 41/41 + export | 60 pass + export | 0 |
+| slice 6 | 9 paths | 399/45 + build | 41/41 + export | 60 pass + export | 0 |
+| slice 6 fix | 9 paths | **401/45** + build | 41/41 + export | 60 pass + export | **0** |
+
+`/showcase/film` and `/showcase/trailer` stayed at 1.41 kB / 1.4 kB throughout —
+the extraction-equivalence signal the plan asked for. Local green is not hosted
+CI and not a deploy, and per the divergence note above it is not evidence of
+integration with `origin/main`.
+
+### Open
+
+- **BLOCKED on Donald — the latency claim.** `apps/web/docs/master-reference.md:209`
+  reads "At 110 ms latency and 90 req/s" tagged `reported`, whose legend at line
+  20 defines it as "a cited or internal-eval figure", so the doc discloses.
+  Trailer copy reading `110ms LATENCY - ZERO SACRIFICE` would not. Three
+  options: define the end-to-end metric and produce a reproducible artifact;
+  carry the disclosure into the copy; or drop the number. A claims decision.
+- **BLOCKED on Donald — the 94-behind reconciliation**, and its ordering versus
+  committing this work.
+- **Design decision — AudioEngine**: parameterise the persona registry, or move
+  brand data into the engine package. See slice 5.
+- Phase 2 remainder — AudioEngine, Renderer/Canvas2DRenderer.
+- Phase 3 — the eight-scene grammar. Phase 4 — accessibility, CSP, SEO.
+
+Acceptance: `done` only when the scene grammar ships on an extracted engine with
+the root gate green **against a reconciled main** and the latency copy resolved.
+Six green gates on a 94-behind tree are slices, not the goal.
+
+### A third session wrote and STAGED in this tree concurrently (18:1x-18:3x)
+
+Found 18:3x, after I had already told a peer session this tree was mine.
+**That claim was right about the work and wrong about the tree.**
+
+- `apps/web/.design-sync/NOTES.md` is **staged in the index** (`M ` in
+  `git status`), modified 18:31:52 — not by this goal, which has staged nothing.
+  About ten files under `apps/web/.design-sync/` were written in the preceding
+  twenty minutes.
+- Its own new entry describes a "Re-sync run (2026-09-08 18:1x)" uploading 222
+  files writes-only, and notes that
+  `~/dev/active/MLAI-CORPORATION-WWW/apps/web/.design-sync/` holds a
+  byte-identical `config.json` pointing at the **same remote `projectId`**.
+- No process was cwd'd in the repo by the time I swept, so that session had
+  finished or drives absolute paths from elsewhere. **Nothing of theirs was
+  touched and the staged file is left exactly as found.**
+
+**This is a sharper hazard than the 94-behind divergence, because it needs no
+push to do damage:** a bare `git commit` in this tree now sweeps a third party's
+staged work in with whatever the committer meant to include. Commit with an
+explicit pathspec here, never `-a` and never a bare `git commit`.
+
+It also means three trees are in play around one upstream — this one,
+`~/dev/active/MLAI-CORPORATION-WWW`, and the `~/Downloads/files (1)` checkout —
+with at least two of them sharing design-sync state against one `projectId`.
+
+### The design-sync re-sync ran FROM this 94-stale tree, against a shared remote project
+
+Verified directly 2026-09-08 18:3x, not taken from the peer's report:
+
+- `apps/web/.design-sync/` is **tracked** here — 40 files, including
+  `config.json`, `NOTES.md`, `conventions.md` and 30+ `previews/*.tsx`.
+- `config.json` is **byte-identical** between `~/dev/active/mlai` and
+  `~/dev/active/MLAI-CORPORATION-WWW`, and both carry the same
+  `projectId 6d97fa83-1224-4573-9c22-46f67ac46f3c`. A peer reports its
+  `~/Downloads/files (1)` checkout also tracks a `.design-sync/`, so the shared
+  state spans at least three trees against **one remote project**.
+- `~/dev/active/MLAI-CORPORATION-WWW` is clean at `cf8cefd`, which is
+  `origin/main`.
+
+**The consequence, which the earlier note understated.** The 18:1x re-sync that
+uploaded 222 files writes-only ran from **this** checkout — the one that is 94
+commits behind `origin/main`. Its 41 re-verified sheets were therefore built
+from sources 94 commits stale, and uploaded to a remote project that the
+up-to-date tree (`MLAI-CORPORATION-WWW`, at `origin/main`) also feeds. A
+writes-only upload from one tree is not scoped to that tree.
+
+Whether that is a problem depends on whether any of those 94 commits touched
+the components those sheets render. **Not measured here, and not this goal's to
+resolve** — but it should be checked before the next re-sync, because the same
+shape will recur every time a session runs design-sync from whichever checkout
+it happens to be sitting in.
+
+**Measured, and it looks clear — with a stated limit.** The drift between this
+tree and `origin/main` under `apps/web/src/{components,design}` is **6 files**:
+`Footer.tsx`, `Hero.tsx`, `Navbar.tsx`, `PageHeader.tsx`, `ScrollToTop.tsx`,
+`research/index.tsx`. **None of the six has a matching sheet under
+`.design-sync/previews/`** — they are page-level composition, not the primitives
+the 41 sheets render. So the stale upload most likely rendered current content.
+
+**The limit on that check, stated rather than glossed:** it matches sheet names
+to file names, so it would miss a sheet that imports a drifted file
+transitively. Confirming properly means resolving each sheet's import graph, and
+that is worth doing before the *next* re-sync rather than retroactively. The
+structural hazard stands regardless of this particular run's outcome: design-sync
+uploads from whichever checkout a session happens to occupy, and two of those
+checkouts are 94 commits apart.
