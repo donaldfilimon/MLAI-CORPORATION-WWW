@@ -786,6 +786,15 @@ be verified. Measured before acting:
 
 `status:` stays `blocked`.
 
+- **Re-measured 2026-09-16 13:5x EDT, after the consolidation and trailer slices
+  landed:** all four GCP billing accounts still read `OPEN False`; the hosted
+  Actions annotation still says the account is locked for billing (read on the
+  latest run); the Vercel connector still returns no teams and a 403 for
+  `mlai-web`. To let an agent verify and pause that project, reconnect the
+  Vercel connector in claude.ai connector settings with the account or team
+  that owns `mlai-web`; deletion stays a dashboard action. Nothing in this
+  goal moved. `status:` stays `blocked`.
+
 ## Productionize the MLAI & Abbey cinematic trailer
 status: in_progress
 opened: 2026-09-08 16:5x EDT
