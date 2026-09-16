@@ -996,15 +996,28 @@ integration with `origin/main`.
   Trailer copy reading `110ms LATENCY - ZERO SACRIFICE` would not. Three
   options: define the end-to-end metric and produce a reproducible artifact;
   carry the disclosure into the copy; or drop the number. A claims decision.
-- **BLOCKED on Donald — the 94-behind reconciliation**, and its ordering versus
-  committing this work.
+- ~~**BLOCKED on Donald — the 94-behind reconciliation**~~ **Resolved
+  2026-09-16** during the MLAI tree consolidation: the checkout was fast-forwarded
+  101 commits onto `ef8412b` and this work committed on top as `883d634`, with a
+  root lockfile fix in `1b09043`. The root `bun run check` exited 0 at `1b09043`,
+  and the work was pushed in `9b75f6b`.
+- **Design decision: `tokens.ts` → `@mlai/design-tokens`** (found 2026-09-16).
+  This is not a mechanical rewire. `productColor.abi` is violet while the film's
+  `PERSONAS.abi` is cyan (the film gives violet to Aviva), and the base inks
+  differ (`#040406` vs `labColor.ink` `#05070D`). Only cyan, violet,
+  green/emerald and amber match. Also unverified: `@mlai/design-tokens`
+  depends on `@mlai/contracts` via `workspace:*`, which `apps/web`'s own
+  non-workspace install may not resolve, whereas `@mlai/trailer-engine` has no
+  dependencies. Needs a brand ruling (product accents vs persona colors)
+  before wiring.
 - **Design decision — AudioEngine**: parameterise the persona registry, or move
   brand data into the engine package. See slice 5.
 - Phase 2 remainder — AudioEngine, Renderer/Canvas2DRenderer.
 - Phase 3 — the eight-scene grammar. Phase 4 — accessibility, CSP, SEO.
 
 Acceptance: `done` only when the scene grammar ships on an extracted engine with
-the root gate green **against a reconciled main** and the latency copy resolved.
+the root gate green **against a reconciled main** (now satisfied as of
+`9b75f6b`) and the latency copy resolved.
 Six green gates on a 94-behind tree are slices, not the goal.
 
 ### A third session wrote and STAGED in this tree concurrently (18:1x-18:3x)
