@@ -1097,6 +1097,14 @@ the ruling and what it changed.
 - **What has no automated coverage, said plainly:** the Kokoro CDN path and
   the React shells. The gate proves the engine and scene logic, the typecheck,
   and that route sizes did not move; it does not prove audio plays.
+- **Manual smoke, 2026-09-16 13:5x-14:0x, dev server on :3000 in the built-in
+  browser.** `/showcase/mega`: one canvas at 3840×2160, the chaos-red net
+  animating at t=0.12, sampled pixels lit over the base, no console error from
+  the page (one stray `/showcas` 404 came from the pane). `/showcase/film`:
+  the voice toggle defaults on, the `Stage` gate opened and the playhead
+  advanced (0:00.01 → 0:02.56) with **no `[NeuralVoice]` warning**, which is
+  the `ready` path, not `error`; the Hugging Face hub download warning
+  confirms the loader ran. Not verified: that sound came out. No one listened.
 
 Acceptance: `done` only when the scene grammar ships on an extracted engine with
 the root gate green **against a reconciled main** (satisfied as of `9b75f6b`)
