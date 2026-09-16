@@ -51,10 +51,41 @@ Goal: see `goals.md`. Measured and executed 2026-09-16 from `~/dev/active/mlai`.
       with all 23 formats, `check-website-app.sh` exited 0 and `format:check` is
       green.
 
+## Also done 2026-09-16 14:2x-14:3x
+
+- [x] `project-registry` `projects.toml` archive paths committed (`796e20a`,
+      local-only repo). 61 unit tests pass; `validate` stopped on a live writer
+      under `~/Desktop/String`, unrelated. The `reports/*` refresh beside it is
+      another session's and stays uncommitted.
+- [x] `apps/web` gained a `NEXT_DIST_DIR` escape and both apps pin the
+      `.next-gate` type globs (`526bdc3`, `a31e78c`), so a gate can build while
+      a preview server runs without dirtying `tsconfig.json`.
+
+## Open, recorded rather than fixed
+
+- **Dependabot alert 5, `accelerate` 1.14.0 in `apps/website-app/worker/uv.lock`.**
+  PyPI has 1.15.0 (2026-09-09), outside the advisory's `<= 1.14.0` range, but
+  both upstream fix PRs (huggingface/accelerate #4070 and #4138) were closed
+  unmerged and 1.15.0's commits contain neither; the range predates the
+  release. Upgrading would silence the alert without fixing the flaw, so the
+  lock stays. Re-check when a release ships the fix. Inference for Donald to
+  confirm: the worker loads one pinned embedding model with
+  `HF_HUB_OFFLINE=1`, not user-supplied sharded checkpoints, so the path the
+  advisory describes is not reached. Dismissing it as tolerable risk is his call.
+
 ## Still Donald's
 
-- Retiring the `MLAI-CORPORATION-WWW` second checkout.
+- Retiring the `MLAI-CORPORATION-WWW` second checkout. It was kept on his
+  explicit earlier choice, so "complete all" was not read as reversing it.
 - Clearing the GitHub billing lock. Hosted CI and the Pages redeploy will not run
   until it is cleared.
+- Opening a GCP billing account and reconnecting the Vercel connector (the
+  hosted provider goal).
+- Listening to `/showcase/abbey`, a VoiceOver pass, and a visual review.
+- Dismissing or accepting the `accelerate` alert.
 - The iCloud download slip noted above (about 120 MB of `.git`/`.next` data now
-  local under `~/Documents/files/mlai-site-{final,from-design}`).
+  local under `~/Documents/files/mlai-site-{final,from-design}`); harmless, and
+  `brctl evict` would return it to the cloud.
+- After this session ends: `~/dev/active/mlai-website-app/` holds only the
+  memory hook's `.remember/` and a `.claude/launch.json` copy the preview tool
+  needed; both can go.

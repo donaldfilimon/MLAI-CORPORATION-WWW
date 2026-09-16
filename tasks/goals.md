@@ -794,10 +794,23 @@ be verified. Measured before acting:
   Vercel connector in claude.ai connector settings with the account or team
   that owns `mlai-web`; deletion stays a dashboard action. Nothing in this
   goal moved. `status:` stays `blocked`.
+- **Re-measured 2026-09-16 14:3x EDT:** billing accounts 4 of 4 still
+  `OPEN False`; nothing else moved. `status:` stays `blocked`.
 
 ## Productionize the MLAI & Abbey cinematic trailer
-status: in_progress
+status: done
 opened: 2026-09-08 16:5x EDT
+
+- Outcome, 2026-09-16 14:3x EDT: acceptance met. The scene grammar ships on the
+  extracted `@mlai/trailer-engine` core as `/showcase/abbey` (seven cues,
+  narration, transcript, visual reduced motion, frame-time adaptive quality);
+  the latency copy was resolved by dropping the number; and the root
+  `bun run check` exited 0 on a reconciled main at 14:29 with
+  `NEXT_DIST_DIR=.next-gate` (tooling 5, web 465, mobile 59, Quasar 69,
+  website-app 137 + 26 parser, research-sites 11), then again typechecked
+  after `a31e78c`. Residuals, stated plainly: nobody has listened to the
+  narration, nobody has run VoiceOver over the transcript, caption and slider,
+  and Donald has not yet reviewed the seven frames.
 
 Donald passed a deep-research report proposing that a single-file HTML/CSS/JS
 "MLAI & Abbey" cinematic trailer prototype be rebuilt as a production
