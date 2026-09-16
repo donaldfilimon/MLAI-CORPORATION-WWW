@@ -1052,12 +1052,35 @@ integration with `origin/main`.
 
 ### Open
 
-- Phase 3 polish: narration for the new trailer (the caption lines exist;
-  wiring `NeuralVoice` through the shared narration helpers is the same shape
-  as `Trailer.tsx`), and a visual review by Donald of the seven frames.
+- A visual and audible review by Donald of `/showcase/abbey` (the preview
+  server from `.claude/launch.json` was left running on :3000 at 14:1x).
 - Phase 4: real `<button>` transport controls with `:focus-visible`, a static
   transcript beside the `aria-live` caption, a visual reduced-motion grammar,
   frame-time-driven adaptive quality, CSP/SEO check of the new route.
+
+### Phase 3 slice 3, 2026-09-16 14:1x: narration on the new trailer
+
+- `AbbeyNarration` in `AbbeyTrailer.tsx` mirrors `TrailerNarration`: it fires
+  each caption through the shared `speak()` as the true playhead (`clock`)
+  crosses its start, stops and re-arms on a seek back, mirrors play/pause to
+  the voice engine, and primes the nine lines. The Stage is gated on
+  `useVoiceReady()` and carries the `VoiceToggle`, so the trailer behaves like
+  the film: no line is crossed before the model can speak it, and reduced
+  motion is honoured through the same engine path.
+- **Verified in the preview:** with the toggle on, the gate opened (status
+  `ready`, no `[NeuralVoice]` warning; the Hugging Face download warning shows
+  the loader ran), and the clock advanced at 1.0× while the Abi caption sat
+  in the `aria-live` region. **Not verified:** that sound came out; nobody
+  listened.
+- `.claude/launch.json` (local, git-excluded) now names both previewable
+  servers: `mlai-web` on :3000 and `mlai-website-app` on :3100. Mobile and
+  Quasar are Expo bundlers, not web servers to preview.
+- **Gate trap, recorded because it read like a code fault:** `check:web` failed
+  once with `Cannot find module for page: /api/auth/logout/route` (ENOENT)
+  during "Collecting page data", while the preview's `next dev` was running.
+  Both share `apps/web/.next`; the route files were on disk. Stopping the dev
+  server and rerunning gave exit 0 (53 files, 464 tests, build). Never run
+  `check:web` with a dev server up in the same checkout.
 
 ### Phase 3 slice 2, 2026-09-16 14:0x-14:1x: the seven cues, mounted at `/showcase/abbey`
 
