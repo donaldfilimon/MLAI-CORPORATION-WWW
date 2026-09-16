@@ -484,3 +484,53 @@ unrelated pass. The previews and component sources are byte-identical; only the 
 **To ship it:** run the driver, grade the 36 sheets against this file's preview conventions
 (the ink ground, the external-claims policy, the provenance-tag rules), then upload
 writes-only as always. Nothing about the writes-only constraint changes.
+
+## Re-sync run (2026-09-08 18:1x) — 41 re-verified from source commits, uploaded writes-only
+
+`resync.mjs --remote` → build ok, diff ok, validate **exit 0**, capture ok, `anchor: "ok"`,
+`learningsUnmerged: []`. Verification: **0 unchanged, 41 changed, 0 added, 0 removed**,
+`pendingGrade: 36` (the 5 floor cards are never graded). Uploaded **222 files**
+(220 content + sentinel + anchor), **0 deletes**. Render check **41 total, 0 bad, 0 thin,
+0 variantsIdentical**.
+
+- **⚠️ THIS REPO NOW HAS A SECOND CHECKOUT, AND IT CARRIES A TRACKED COPY OF `.design-sync/`
+  POINTING AT THE SAME `projectId`.** `~/dev/active/MLAI-CORPORATION-WWW/apps/web/.design-sync/`
+  has a **byte-identical `config.json` and `NOTES.md`** (both are in the durable set, so git
+  carries them to every clone). Syncing from there would push *that* checkout's DS source to
+  **project `6d97fa83`** — the same project this one anchors. **Always sync from
+  `~/dev/active/mlai/apps/web`.** Two independent tells that this one is the working tree:
+  it holds the gitignored machine state (`.cache/`, the `node_modules` fork symlink, and
+  `lab-compiled.css`), and it is the canonical checkout in `~/CLAUDE.md`. The two checkouts
+  are on different commits and neither has fetched the other, so they are not interchangeable.
+- **Why all 41 re-verified, and why that was cheap anyway.** `keyRecipe` (7) and `scriptsSha`
+  (`c0730d65e41fa758`) were **unchanged**, so this was NOT pipeline churn and produced no
+  canary. Five real commits touched `src/components/**` since the 09-06 anchor
+  (`419f08b`, `75e2837`, `0e2af60`, `f08203c`, `87e89e1`), moving every `sourceKey`. But
+  **37 of 41 `renderHashes` were byte-identical to the anchor**, and the 4 that moved were
+  exactly the floor cards (Dialog, DropdownMenu, Sheet, Tooltip) — i.e. **every graded
+  component rendered pixel-identical to the render the previous sync already graded good**.
+  Grading was therefore a confirmation pass over the 3 contact sheets, not a re-authoring.
+  Keep this distinction: `sourceKeys` moving is a re-verify signal, `renderHashes` holding is
+  the evidence that re-verification is cheap.
+- **`lab-compiled.css` did NOT regenerate byte-identical this run** (`f33fea44…` → `f882f98c…`),
+  and that is correct rather than the nondeterminism the 08-22 note warns about: the DS sources
+  legitimately changed. `git status` on `src/components` and `src/index.css` was **clean** at
+  build time — the repo's other dirty files (`src/film/*`, `package.json`, `bun.lock`) are
+  outside the DS surface. **Residual caveat worth knowing:** Tailwind v4 auto-detects sources,
+  so uncommitted files anywhere under `src/` can still contribute utilities to the compiled
+  CSS and move `styleSha`. It adds unused classes rather than wrong ones, but if you want a
+  reproducible `styleSha`, build from a clean tree.
+- **The two stale items the 08-22 pass deliberately left are GONE.** Post-upload `list_files`
+  shows no `components/site/LogoMark/**` and no `_preview/{Dialog,DropdownMenu,Toaster,Tooltip}.js`.
+  `_preview/` now holds exactly the 36 authored components. Nothing to clean there.
+- **The preserved non-repo layer is intact and was never at risk**: the plan's `deletes` was
+  `[]` (the diff's `upload.deletePaths` was empty), so `_ds/**`, `preview/**`, `templates/**`,
+  `ui_kits/**`, `uploads/**`, `vendor/**`, `assets/**`, `colors_and_type.css`, `SKILL.md` and
+  the app-regenerated `_ds_manifest.json`/`_adherence.oxlintrc.json` all survive. The
+  never-use-`components/**`-delete-globs constraint from the retarget section still stands.
+- **playwright pin held**: cache has chromium 1234 and 1243, `.ds-sync` playwright pins 1243 —
+  no browser download needed. (It has drifted every prior run; keep reading `browsers.json`.)
+- **`[TOKENS_MISSING]` is still 5** and unchanged from 09-06. No new validate warns.
+- **`conventions.md` re-validated against the fresh build: zero drift** — 36 component names,
+  18 utility classes and 3 tokens all resolve. **It still does not mention `Sheet`** (same
+  standing note as 09-06; deliberately not applied, the file is authored).
