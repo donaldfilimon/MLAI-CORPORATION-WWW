@@ -20,6 +20,10 @@
       "name": "@mlai/tooling",
       "version": "0.1.0",
     },
+    "packages/trailer-engine": {
+      "name": "@mlai/trailer-engine",
+      "version": "0.1.0",
+    },
   },
   "packages": {
     "@mlai/contracts": ["@mlai/contracts@workspace:packages/contracts"],
@@ -27,5 +31,7 @@
     "@mlai/design-tokens": ["@mlai/design-tokens@workspace:packages/design-tokens"],
 
     "@mlai/tooling": ["@mlai/tooling@workspace:packages/tooling"],
+
+    "@mlai/trailer-engine": ["@mlai/trailer-engine@workspace:packages/trailer-engine"],
   }
 }
