@@ -94,6 +94,14 @@ Current edition validation: every paragraph in each of the two article bodies wa
 
 Existing technical notes retain substantive derivations, worked examples and reproducible evaluation methods. Unsupported old softmax/blended-answer and scaling equations were replaced rather than presented as implementations. Cosine, hybrid ranking, SEA weighted scoring and token packing, and actual additive/EMA persona routing are source-backed. Proposed notes describe study design and acceptance rather than implying completed experiments. Reading times are calculated from body words plus equation/code allowance at 200 words per minute.
 
+## Cross-site implementation studies (2026-09-08)
+
+The seven implementation studies in `src/data/categories/research-context.ts` are a separate explanatory layer, not additions to the 21-publication evidence classification. Their structured source entries are the authoritative inventory of exact locators, 40-character revisions, and SHA-256 digests. All 20 cited committed blobs were recomputed and matched before export. `implementation-data.json` and each rendered study are covered by the export manifest's file hashes.
+
+Sources cover the canonical MLAI platform and exporter, the independent MLAI application's private retrieval workflow, Mobile Vault and Quasar, Abbey's executable claim ledger, and WDBX Specimen's architecture and conformance model. Duplicate copies of the existing publication corpus were not counted as new research. Uncommitted application changes and unsupported deployment, benchmark, or production-readiness claims were excluded.
+
+GitHub references use immutable source-browser URLs. WDBX Specimen's configured Git host does not offer a verified browser route: its citations are Git remote plus revision/path locators, may require repository access, and are not represented as anonymously accessible source pages. Public site access does not grant access to any private source repository.
+
 ## Reviewed documentation and archive dispositions
 
 | Exact path | Revision | SHA-256 | Disposition / reason |
