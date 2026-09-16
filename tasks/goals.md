@@ -689,3 +689,25 @@ reading this file for "is CI green" must read this entry too.
 - **There is no fixed version yet** (`first_patched_version: null`), so this
   cannot be closed by bumping and is not an oversight. Recorded so it is not
   rediscovered as new.
+
+### 2026-09-16 — the CI outage cause is now CONFIRMED, not inferred
+
+The 2026-09-08 entry above stopped at "most commonly means a spending limit or
+payment problem" and said to confirm before believing it. Confirmed now, and the
+guess was right for the right reason. Recorded so nobody re-derives it.
+
+- **The annotation says it outright:** `The job was not started because your
+  account is locked due to a billing issue.` Read with
+  `gh api repos/<owner>/<repo>/check-runs/<job id>/annotations --jq '.[].message'`.
+- **That is the method the earlier entry lacked.** `gh run view --log-failed`
+  returns `log not found`, which is **not evidence of anything** — the jobs never
+  ran, so no log exists. Do not read that as a missing-log defect.
+- **Still locked**, verified on run `35051297357` at `304cf28`, eight days after
+  the first refusal. Scope is account-wide across `donaldfilimon/*`, not this
+  repository, and **self-hosted runners are unaffected**.
+- **Treat every red hosted check dated after 2026-09-08 20:26Z as UNMEASURED,
+  never as a failing gate, and never change code to satisfy one.** The local
+  gate remains the usable signal: `bun run check:web` passed at `cf8cefd`.
+- Clearing it is Donald's, in GitHub billing settings. The `gh` billing endpoint
+  needs the `user` OAuth scope this token lacks, so an agent cannot confirm the
+  balance itself — only the annotation.
