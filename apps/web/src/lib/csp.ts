@@ -11,7 +11,7 @@
  *   the JSON-LD block, and Framer Motion / KaTeX inline styles (no nonce
  *   middleware in this stack).
  * - 'wasm-unsafe-eval' + blob: workers + jsdelivr + huggingface: the Kokoro
- *   neural-voice runtime (src/film/neural-voice.ts) dynamic-imports
+ *   neural-voice runtime (src/film/kokoro-loader.ts) dynamic-imports
  *   kokoro.web.js from jsDelivr and pulls ONNX weights from Hugging Face.
  * - storage.googleapis.com: @tensorflow-models/posenet checkpoint downloads
  *   (/tf-pose-demo).
