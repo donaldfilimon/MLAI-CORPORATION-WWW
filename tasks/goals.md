@@ -1052,12 +1052,41 @@ integration with `origin/main`.
 
 ### Open
 
-- Phase 3: the scenes themselves (monolith, shatter, Abi, Aviva, Abbey,
-  convergence, final mark) on the sequencer below, and **where they mount**:
-  a new showcase route, or replacing `/showcase/trailer`. That is a product
-  call for Donald; until it is made the scenes can be built and tested in Node
-  without a page.
-- Phase 4: accessibility, visual reduced motion, CSP, SEO.
+- Phase 3 polish: narration for the new trailer (the caption lines exist;
+  wiring `NeuralVoice` through the shared narration helpers is the same shape
+  as `Trailer.tsx`), and a visual review by Donald of the seven frames.
+- Phase 4: real `<button>` transport controls with `:focus-visible`, a static
+  transcript beside the `aria-live` caption, a visual reduced-motion grammar,
+  frame-time-driven adaptive quality, CSP/SEO check of the new route.
+
+### Phase 3 slice 2, 2026-09-16 14:0x-14:1x: the seven cues, mounted at `/showcase/abbey`
+
+Donald chose a **new route** over replacing `/showcase/trailer`, so the
+existing 62 s Vision Trailer is untouched.
+
+- `apps/web/src/abbey-trailer/scenes.ts`: `MonolithScene`, `ShatterScene`,
+  `PersonaRingScene` (used for Abi, Aviva, Abbey), `ConvergenceScene`,
+  `FinalMarkScene`, and `buildAbbeyTimeline(palette)` returning seven
+  contiguous cues (38 s) plus nine caption windows. The palette is an
+  argument (tokens.ts `PERSONAS` in the app), so the module imports no brand
+  data. Every impulse and layout is rolled in `enter()` from the cue's seed.
+- `AbbeyTrailer.tsx`: `Stage` + `Canvas2DRenderer` + `SceneSequencer` over a
+  1600-particle buffer; jumps over 0.5 s go through `seek()`.
+- Route, metadata, sitemap, showcase card (index 06). Five Node tests.
+- **Copy rule applied:** every caption reuses a line already shipped in
+  `Trailer.tsx`; the test asserts no caption contains a digit.
+- **Gate:** check:topology and check:web, 53 files / 464 tests / build, exit 0.
+  `/showcase/abbey` 1.41 kB; the other showcase routes moved by 0.01 kB from
+  the metadata table growing.
+- **Visual pass** at t=4 (slab formed), 8 (burst), 13 (cyan Abi ring with
+  label), 28 (three rings merging), 34 (hexagonal mark, "This is MLAI."):
+  each matched the intended frame; no console errors.
+- **One thing learned about the harness, not the code:** `engine.tsx:162`
+  pauses the Stage on `visibilitychange`, and the browser pane's screenshot
+  hides the document for a moment, so every screenshot pauses playback. The
+  scrub keys also match on `e.code`, which the pane's key injection did not
+  set; scrubbing was driven by dispatching `KeyboardEvent`s with `code` from
+  inside the page. Neither is a defect to fix here.
 
 ### Phase 3 slice 1, 2026-09-16 13:5x-14:0x: the scene grammar, package-only
 
