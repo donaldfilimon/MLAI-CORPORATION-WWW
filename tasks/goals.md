@@ -1423,3 +1423,18 @@ and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchr
 - **Both checkouts fast-forwarded to `main`:** `~/dev/active/mlai` was reinstalled from the root
   lockfile (install and frozen install both exit 0).
 
+- **Residual follow-ups, 2026-09-16 21:5x EDT (Donald chose these four; he kept the re-resolved
+  website-app React 19.3.0 / Next 16.3.5):**
+  - **Bun 1.4.2 pinned** in `packageManager`, all seven CI/Pages `bun-version` pins and the
+    docs that state the current pin (`e485dd7`). Historical acceptance records that ran on
+    1.4.0 were left alone.
+  - **Dependabot #5 fixed in the lock:** `accelerate` 1.14.0 → 1.15.0 (GHSA-4j2p-28q2-5m79,
+    arrives via `docling-slim`), and nothing else moved (`d1d76ae`).
+  - **`docs/sources` deduplicated:** 23 cross-tree byte-identical files (224,399 B) removed,
+    each `cmp`-checked against its kept copy and mapped in the README. `SHA256SUMS` was
+    regenerated (302 entries, all verify) with a recorded recipe (`748850a`). Within-tree
+    duplicates that are structural parts of one export were kept.
+  - **Measured on `748850a`:** `bun install --frozen-lockfile` exit 0; `bun run check` exit 0
+    across all eight stages (web 465, mobile 59, quasar 69, website-app 138 Vitest + 26
+    pytest, research-sites 11, tooling 11).
+  - The `~/CLAUDE.md` MLAI rows were corrected after the push.
