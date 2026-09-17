@@ -157,3 +157,11 @@ is documented above; current receipt and screenshot paths are distinct.
 2026-09-17: every hosted CI, Pages and Cloud Run run after 2026-09-08 20:26Z was refused
 by a GitHub account billing lock before any step ran, so those runs are unmeasured rather
 than failed. The CI results above are the last hosted evidence; later evidence is local.
+
+2026-09-17, browser zoom (web, Chromium only): a production build was measured at a
+320 CSS px viewport (WCAG 1.4.10) and at 200% text via both Chromium's font-size setting
+and a 640 px viewport (1.4.4), across 18 indexable static routes, three noindex routes
+and one to four slugs per dynamic family (32 routes). One defect was found and fixed
+(`/products/abi` measured 463 px wide at 320 px). Still unmeasured: Firefox text-only
+zoom, WebKit, clipping under `overflow: hidden`, authenticated console routes and the
+full-screen showcase canvases.
