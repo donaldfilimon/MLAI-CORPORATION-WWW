@@ -1413,3 +1413,13 @@ and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchr
     places.
   - About 20 older PNGs remain under `apps/website-app/docs/verification/screenshots/`.
   - `apps/research-sites/README.md` (generated) still names the old exporter location.
+- **Design sync, 2026-09-16 21:3x EDT, from `~/dev/active/mlai/apps/web` at `64ff43b`:**
+  - Uploaded writes-only to project `6d97fa83`: 220 files, 0 deletes.
+  - Render check 41/41 clean. Remote `_ds_sync.json` re-read and equal to local.
+  - **The workspace change had silently broken font shipping.** The isolated linker realpaths
+    `@fontsource-variable/geist` outside `apps/web`, so the converter dropped all five Geist
+    faces. Fixed with `extraFonts` in `apps/web/.design-sync/config.json` before uploading.
+  - Details in `apps/web/.design-sync/NOTES.md`.
+- **Both checkouts fast-forwarded to `main`:** `~/dev/active/mlai` was reinstalled from the root
+  lockfile (install and frozen install both exit 0).
+

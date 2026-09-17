@@ -61,6 +61,9 @@
     "Spectral",
     "JetBrains Mono"
   ],
+  "extraFonts": [
+    "node_modules/@fontsource-variable/geist/index.css"
+  ],
   "readmeHeader": ".design-sync/conventions.md",
   "projectId": "6d97fa83-1224-4573-9c22-46f67ac46f3c",
   "overrides": {

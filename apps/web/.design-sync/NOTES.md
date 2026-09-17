@@ -559,3 +559,31 @@ stale-tree hazard did not apply).
   `mfa-workos-runbook.md`. That is `guidelinesGlob`'s default picking up operational runbooks; the
   09-06 note already counted 7 guidelines, so they have shipped since at least then. Narrowing the glob would leave the remote copies behind
   (writes-only), so removing them is a deliberate decision, not a config tweak.
+
+## Re-sync run (2026-09-16 21:3x) — first run under the root Bun workspace, uploaded writes-only
+
+Run from `~/dev/active/mlai/apps/web` at `64ff43b`, right after the repo moved every app into one
+root `bun.lock` with `linker = "isolated"` (PR #75) and removed five unreferenced web components.
+
+- **Invocation needs explicit arguments.** A bare `node .ds-sync/resync.mjs --remote` exits 2 with a
+  usage line. The working form is
+  `node .ds-sync/resync.mjs --config .design-sync/config.json --node-modules node_modules --out ds-bundle --remote .design-sync/.cache/remote-sync.json`.
+- **`.cache/remote-sync.json` had drifted from the live anchor** (styleSha `613ae027…` vs remote
+  `4dfed15b…`). The fetched remote `_ds_sync.json` matched `ds-bundle/_ds_sync.json` field for field,
+  so the local file was copied over the cache (old copy kept as `remote-sync.json.pre-20260917`).
+- **The isolated linker silently dropped the Geist fonts.** `@import "@fontsource-variable/geist"`
+  now realpaths into `<repo>/node_modules/.bun/…`, outside `apps/web`, so `extractFonts` skipped
+  the five `.woff2` files and validate warned `[FONT_DANGLING]`; `_ds_bundle.css` dropped 5 faces.
+  Rewriting the compiled CSS urls to the app-local symlink did not help (the converter realpaths
+  too). **Fix: `extraFonts: ["node_modules/@fontsource-variable/geist/index.css"]` in
+  `config.json`**, which resolves against the git workspace root. Result: 15 @font-face rules,
+  5 urls rewritten to `fonts/`, all five `.woff2` shipped, no FONT warning.
+- Verdict: build/diff/validate exit 0, capture skipped (`empty_worklist`), `anchor: "ok"`,
+  41 unchanged, `pendingGrade: []`, render check 41/41 clean (same 5 floor cards), only warn the
+  known `[TOKENS_MISSING]` 5. `upload.any` true: `FAQList` (its `.prompt.md` moved with a doc
+  comment edit), bundle, styling (`lab-compiled.css` 213 → 205 KB after the component removals),
+  aux.
+- Uploaded writes-only: sentinel → 220 content files (same path set as 09-16) → `_ds_sync.json`,
+  **0 deletes**. Remote anchor re-read after upload: `styleSha 1684af25…`, `bundleSha12
+  cde194b6a3ae`, `auxSha 8d560f568b4c9ca1`, equal to local. `list_files` shows the preserved
+  non-repo layer intact. Logs: `.cache/resync-20260917.log`, `.cache/upload-list-20260917.txt`.
