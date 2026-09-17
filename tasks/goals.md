@@ -1470,7 +1470,7 @@ and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchr
   - **Still residual:** `docker build` (Docker is not installed) and hosted CI (billing lock).
 
 ## Close the locally measurable acceptance and hygiene gaps (zoom, dependency audit, app docs)
-status: in_progress
+status: done
 
 Captured 2026-09-17 05:0x EDT from Donald's "do all and more", after every
 agent-actionable item from the workspace goal was closed. Three independent
@@ -1573,3 +1573,29 @@ coordinator reviews, gates and commits.
   - `bun run check` in research-sites exit 0; manifest 107 files.
   - Research-sites AGENTS/CLAUDE now document the out-of-repo export-then-copy
     procedure, because the exporter refuses destinations inside the repository.
+- **Firefox + WebKit zoom, 2026-09-17 05:4x EDT.**
+  - Coverage: the same 32 routes against a production build. A page counted
+    only if it returned 200, had an `h1`, and had the site CSS applied.
+  - Firefox: 32/32 at 320 px, 640 px, and 200% text (`ui.textScaleFactor=200`
+    with `browser.display.os-zoom-behavior=2`, and separately the font-size prefs).
+  - WebKit: 32/32 at 320 and 640 px, over a temporary HTTPS loopback proxy with
+    CSP left on. Plain HTTP had every `/_next` request upgraded and failing, so it
+    is not valid evidence. WebKit has no text-only zoom through Playwright.
+  - Chromium re-check: 32/32. No defects, so no source change.
+- **Outcome (goal done, 2026-09-17 05:4x EDT):** every slice this goal named landed
+  and was verified.
+  - Chromium reflow fix (#78).
+  - App docs (#77).
+  - Quasar template: first a Next 15 patch (#76), then Next 16 with 0 template
+    advisories (`e067df5`).
+  - Research export regenerated (`4b103c6`).
+  - Firefox and WebKit zoom: clean.
+  - Final `bun run check` on `4b103c6`: exit 0 across all eight stages after a
+    frozen install (web 474, mobile 59, quasar 69, website-app 138 + 26 pytest,
+    research-sites 11, tooling 11).
+  - **Still unmeasured** (not agent-actionable here, or out of scope): each
+    browser's own zoom control, WebKit text-only zoom, native screen readers,
+    the showcase canvases and `/tf-pose-demo`, the authenticated console, a full
+    Quasar generation end to end, `docker build`, and hosted CI (billing lock).
+  - The root `bun.lock` still carries 9 build-tooling advisories judged
+    unreachable; they are left until upstream ranges move.

@@ -165,3 +165,9 @@ and one to four slugs per dynamic family (32 routes). One defect was found and f
 (`/products/abi` measured 463 px wide at 320 px). Still unmeasured: Firefox text-only
 zoom, WebKit, clipping under `overflow: hidden`, authenticated console routes and the
 full-screen showcase canvases.
+
+2026-09-17, browser zoom in Firefox and WebKit: the same 32 routes passed at 320 and 640 px
+in both engines, and at 200% text in Firefox (`ui.textScaleFactor` with OS zoom behavior,
+and the font-size preferences). WebKit ran over an HTTPS loopback proxy with CSP enabled and
+has no text-only zoom through Playwright. Still unmeasured: each browser's own zoom control
+and native screen readers.
