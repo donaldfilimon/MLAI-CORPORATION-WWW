@@ -797,6 +797,16 @@ be verified. Measured before acting:
 - **Re-measured 2026-09-16 14:3x EDT:** billing accounts 4 of 4 still
   `OPEN False`; nothing else moved. `status:` stays `blocked`.
 
+### Re-measured 2026-09-16 20:1x EDT — the billing lock still holds
+
+- Push `a04abe6` (docs only) triggered CI run `35165891132` and Cloud Run run
+  `35165898375` at 2026-09-17 00:16Z. All eight jobs (topology, web, mobile,
+  quasar, website-app, research-sites, readiness, deploy) show zero steps and no
+  runner, and the check-run annotation reads "The job was not started because
+  your account is locked due to a billing issue." So the red CI on `a04abe6`
+  is the lock, not the code; `check:topology` passed locally on that commit.
+- Nothing about this goal is agent-actionable until the lock is cleared.
+
 ## Productionize the MLAI & Abbey cinematic trailer
 status: done
 opened: 2026-09-08 16:5x EDT
