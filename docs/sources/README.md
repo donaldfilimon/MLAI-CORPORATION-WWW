@@ -3,7 +3,9 @@
 Consolidated 2026-09-16 from MLAI trees scattered across this machine. Nothing
 here is built, linted, tested, or deployed. These directories preserve design
 and prototype history. The live applications are under `apps/`. `SHA256SUMS`
-records every imported file as copied.
+records every file still present (regenerate it with the recipe under *Removals*).
+The trees are content-complete rather than byte-complete: byte-identical copies
+across trees were removed on 2026-09-16, each pointing at the copy that was kept.
 
 To keep these trees inert, nested agent guidance was renamed
 (`CLAUDE.md` → `CLAUDE.md.source`, `AGENTS.md` → `AGENTS.md.source`) and nested
@@ -32,8 +34,26 @@ moved or deleted.
   21 files it contained are present, byte-identical, under
   `nextjs-landing-20260916/nextjs-boilerplate/` (with the `.source` renames above). The
   tarball remains in git history (present through `fe41894`) and `SHA256SUMS` was
-  regenerated without it. Byte-identical files across the other trees were kept, because
-  each row above records a complete tree state.
+  regenerated without it.
+- 2026-09-16 (later the same evening, on Donald's call): 23 files (224,399 bytes) that were
+  byte-identical to a copy in another tree, or to the `nextjs-boilerplate/` project beside
+  them, were removed. Each removed path is listed with its kept copy below; every pair was
+  checked with `cmp` first. Removed files remain in git history through `a30722e`.
+  Byte-identical files *within* one tree were kept because they are structural parts of that
+  tree: `mlai-site-final/app/icon.svg` = `public/brand/mlai-mark.svg`, the static export's
+  `404.html` = `404/index.html`, and its two sets of identical route chunks.
+
+  | Removed | Kept copy |
+  | --- | --- |
+  | `design-handoff-vite-20260827/vendor/mlai-site/src/Logo.tsx` | `mlai-site-final/components/Logo.tsx` |
+  | `design-handoff-vite-20260827/vendor/mlai-site/src/brand.ts` | `mlai-site-final/lib/brand.ts` |
+  | `mlai-site-v2.4-source/lib/brand.ts`, `app/{globals.css,layout.tsx,not-found.tsx,robots.ts,sitemap.ts}`, `components/{HeroArt,HeroBench,PublicationIndex}.tsx`, `next.config.ts`, `postcss.config.mjs`, `public/og.png`, `tailwind.config.ts`, `tsconfig.json` | the same paths under `mlai-site-final/` |
+  | `mlai-site-v2.4-static-export/og.png` | `mlai-site-final/public/og.png` |
+  | `mlai-site-from-design/next-env.d.ts` | `mlai-site-final/next-env.d.ts` |
+  | `nextjs-landing-20260916/{globals.css,layout.tsx,metrics.ts,next.config.ts,page.tsx}` | the same files under `nextjs-landing-20260916/nextjs-boilerplate/` (`src/app/`, `src/lib/metrics.ts`, `next.config.ts`) |
+
+  `SHA256SUMS` recipe (run in this directory; it excludes itself and this README):
+  `git ls-files | grep -v '^SHA256SUMS$\|^README.md$' | sed 's|^|./|' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 shasum -a 256`
 
 Other MLAI trees and why they have no directory here:
 
