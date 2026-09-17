@@ -14,6 +14,8 @@ import { buildCsp } from "./src/lib/csp";
 // src/__tests__/csp.test.ts can pin its invariants — above all that the
 // development-only 'unsafe-eval' escape hatch never reaches a production
 // response. The directive rationale and the allowlist are documented there.
+const REPO_ROOT = path.join(__dirname, "../..");
+
 const CSP = buildCsp({ dev: process.env.NODE_ENV === "development" });
 
 const SECURITY_HEADERS = [
@@ -46,7 +48,12 @@ const nextConfig: NextConfig = {
   // directory (the isolated-check script uses `.next-gate`), mirroring
   // apps/website-app.
   distDir: process.env.NEXT_DIST_DIR || ".next",
-  outputFileTracingRoot: __dirname,
+  // apps/web is one workspace of the repository-root Bun install: its
+  // dependencies are symlinks into <repo>/node_modules/.bun and the shared
+  // packages live in <repo>/packages. Tracing and Turbopack must both see the
+  // repository root, and the Dockerfile runs the traced standalone server.
+  output: "standalone",
+  outputFileTracingRoot: REPO_ROOT,
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
   },
@@ -58,6 +65,7 @@ const nextConfig: NextConfig = {
     return config;
   },
   turbopack: {
+    root: REPO_ROOT,
     resolveAlias: {
       "react-router-dom": "./src/lib/router-compat.tsx",
     },

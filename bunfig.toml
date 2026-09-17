@@ -1,0 +1,16 @@
+# One root Bun workspace (see AGENTS.md). The isolated linker gives every
+# workspace its own node_modules view, so the Next apps (React 19.2 types) and
+# the Expo SDK 53 apps (React 19.0 types) resolve their own copies from one
+# lockfile. Never switch to "hoisted" without re-running every app typecheck.
+#
+# hoistPattern keeps React's type packages out of Bun's hidden fallback
+# directory (node_modules/.bun/node_modules). Packages such as next and cmdk
+# import "react" in their declarations without depending on @types/react, so
+# TypeScript falls back to whatever that directory holds, and Bun fills it
+# with an arbitrary version (it chose Expo's 19.0 types, which broke both Next
+# apps). With these two names excluded, the lookup continues to the root
+# node_modules, where the root package.json pins the Next-side 19.2 types.
+# Expo packages are unaffected: react-native links its own @types/react peer.
+[install]
+linker = "isolated"
+hoistPattern = ["*", "!@types/react", "!@types/react-dom"]
