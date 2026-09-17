@@ -9,7 +9,7 @@
  *   abbey → emerald (the agent/persona layer)
  *
  * **Do not confuse this with the persona color axis.** Personas are a separate,
- * fixed mapping used by `PersonaLegend.tsx` and `public/neural.js` — Abbey is
+ * fixed mapping used by `PersonaCard.tsx` and `public/neural.js` — Abbey is
  * emerald, Aviva is violet, Abi is *cyan*. The product named "abi" is violet
  * here; the persona named "Abi" is cyan there. They are different axes that
  * happen to share a name, so always pick the one matching what you're labeling.

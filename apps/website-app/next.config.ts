@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
+import path from "node:path";
+
+// This app is one workspace of the repository-root Bun install, so its
+// dependencies are symlinks into <repo>/node_modules/.bun. Tracing and
+// Turbopack must both treat the repository root as the project root.
+const repoRoot = path.join(import.meta.dirname, "../..");
+
 const config: NextConfig = {
   agentRules: false,
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  outputFileTracingRoot: repoRoot,
+  turbopack: { root: repoRoot },
   typescript: {
     tsconfigPath: process.env.MLAI_NEXT_TSCONFIG || "tsconfig.json",
   },

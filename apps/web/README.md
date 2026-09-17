@@ -19,7 +19,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 
 - **Frontend:** Next.js 15 App Router, React 19, TailwindCSS v4, Framer Motion, Lucide React.
 - **Backend:** Next route handlers in `app/api/*`, shared server utilities in `src/lib/server/*`.
-- **Runtime and package manager:** Bun 1.4+ with the checked-in `bun.lock`.
+- **Runtime and package manager:** Bun 1.4+; installed from the repository root, locked by the root `bun.lock`.
 - **Auth:** WorkOS AuthKit with active membership in one invited organization and encrypted `mlai_session` cookies.
 - **Generation:** Gemini 3.7 Flash through an authenticated Cloudflare AI Gateway with payload logging and caching disabled.
 - **Storage:** PostgreSQL on regional-HA Cloud SQL for inquiries, allowlisted telemetry, consent, encrypted conversation audits, and access events.
@@ -43,7 +43,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 ## Setup
 
 ```bash
-bun install --frozen-lockfile
+(cd ../.. && bun install --frozen-lockfile)   # one root workspace and bun.lock
 cp .env.example .env
 ```
 
@@ -86,7 +86,7 @@ Write endpoints are protected on independent axes. In-memory fixed-window limits
 
 ## Deployment
 
-The Dockerfile targets Google Cloud Run, runs as a non-root user, and executes `next start` on the injected `PORT`. [`infra/`](infra/) provisions the durable/security foundation with OpenTofu. The deploy workflow authenticates through GitHub OIDC—there is no long-lived GCP key—builds an immutable SHA-tagged Artifact Registry image, mounts the Cloud SQL connector, injects Secret Manager values, restricts ingress to the external load balancer, and disables the default `run.app` URL.
+The Dockerfile targets Google Cloud Run, builds from the repository root (one root Bun workspace), runs as a non-root user, and executes the standalone `server.js` on the injected `PORT`. [`infra/`](infra/) provisions the durable/security foundation with OpenTofu. The deploy workflow authenticates through GitHub OIDC—there is no long-lived GCP key—builds an immutable SHA-tagged Artifact Registry image, mounts the Cloud SQL connector, injects Secret Manager values, restricts ingress to the external load balancer, and disables the default `run.app` URL.
 
 `APP_URL=https://quesar.cloud` is required as the OAuth redirect base. Leave `FRONTEND_URL` unset unless a proxy preserves the state-cookie topology. `.github/workflows/ci.yml` runs lint/test/build on every push and PR to `main`; deployment then checks out the exact successful push SHA and retains the event/repository trust checks that keep fork PRs outside production context. See [`docs/deploy-cloud-run.md`](docs/deploy-cloud-run.md) for bootstrap, secrets, provider configuration, DNS cutover, and acceptance gates.
 

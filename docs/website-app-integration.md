@@ -9,7 +9,11 @@ below are historical provenance.
 The local `mlai-website-app` main history through `d988a218efe747f2adf1ee073ec72ee249d69d76` is
 merged into this repository under `apps/website-app`. The import also includes
 its current uncommitted source, local lifecycle documentation, research receipts
-and screenshots. The source checkout and its active runtime are retained.
+and screenshots. The source checkout was retained at import time. Its later
+history (through `801bdad`) was merged here on 2026-09-16, the checkout moved to
+`~/dev/archive/mlai-website-app-merged-20260916`, and the
+`donaldfilimon/mlai-website-app` repository was archived read-only on GitHub;
+`apps/website-app` is now the only place to develop the app.
 The [source manifest](website-app-import-manifest.json) records all 284 imported
 file hashes and the files adapted for integration. Ignored private databases,
 credentials, documents, model weights, environments and build outputs were not copied.
@@ -23,8 +27,10 @@ public routes remain distinct. This is a repository integration, not a runtime
 migration or a deployment change.
 
 Root `install:all`, `check`, `check:website-app`, `dev:website-app` and the topology
-gate include the imported app. Its Bun workspace and lockfiles remain app-local.
-Root CI has a website-app job with Node 24, Bun 1.4.0, frozen install, TypeScript,
+gate include the imported app. Since 2026-09-16 its JavaScript dependencies are
+locked by the repository's root `bun.lock` (one root workspace, isolated
+linker); its Python worker keeps `worker/uv.lock`.
+Root CI has a website-app job with Node 24, Bun 1.4.0, a frozen root install, TypeScript,
 formatting, research verification, unit tests, serial database migration and build.
 The nested source workflow is retained for provenance; GitHub runs the root job.
 

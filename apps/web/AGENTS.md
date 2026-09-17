@@ -13,7 +13,9 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 
 ## Commands And Gates
 
-- `bun install --frozen-lockfile` matches CI and uses the checked-in `bun.lock`.
+- Install from the repository root: this app is one workspace of the root Bun workspace, locked by the root `bun.lock` (no app lockfile). CI runs `bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/web` there. `@mlai/contracts` and `@mlai/trailer-engine` are `workspace:*` dependencies.
+- Declare every package the app or its scripts import. The isolated linker exposes only declared dependencies, so a package that was only reachable through another package's dependencies (as `postcss` once was for `scripts/export-research.tsx`) fails to resolve.
+- `next.config.ts` sets `output: "standalone"` and points `outputFileTracingRoot` and `turbopack.root` at the repository root. The Dockerfile builds from the repository root and runs `.next/standalone/apps/web/server.js`.
 - `bun run dev` starts the complete app on port 3000. `bun run start` honors an injected `PORT`.
 - `bun run lint` is TypeScript checking (`tsc --noEmit`), not ESLint or formatting.
 - `bun run test` runs Vitest in a Node-only environment. There is no jsdom/component-test setup. Focus with `bunx vitest run src/__tests__/file.test.ts` or `bunx vitest run -t "name"`; do not use `bun test`, which invokes Bun's runner.
@@ -35,7 +37,6 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 ## Components And Styling
 
 - Build primitives from `src/components/ui/` and section-level page blocks from `src/components/site/`. `site/` blocks take content as props, keep router dependencies out, and require `measured | target | reported` provenance on figures.
-- `FAQ.tsx`/`Stats.tsx` intentionally differ from `site/FAQList`/`site/StatBlock`. Do not collapse them. `Stats.tsx` now presents operating-model facts only; performance figures require a reproducible repository harness and published methodology.
 - `src/components/ds.ts` is bundled for claude.ai/design. Anything reachable from it must be transitively free of `react-router-dom` and `next/*`; those imports crash the standalone browser bundle. `LogoMark` is exported, while router-dependent `Logo` is intentionally excluded.
 - Tailwind v4 has no `tailwind.config.js`; canonical tokens and custom utilities live in `src/index.css`. Preserve the current Lab identity: cyan/sky brand chrome, near-black ink, Spectral display type, and violet/emerald/amber persona accents. Do not revive the retired indigo/fuchsia Signal palette.
 - `src/design/` is real `/showcase/design` source. It is distinct from partially tracked `.design-sync/`, ignored `ds-bundle/` output, and ignored `.ds-sync/` staging. `src/design/mlai-ds-tokens.css` stays scoped under `.mlai-ds` through `CinematicShell`; do not promote it to global `:root`.

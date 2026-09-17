@@ -21,6 +21,9 @@ study/PDF bytes while keeping the historical publication revision separate.
   filters, visible legacy tags, keyboard recovery, contents links, long input,
   equation focus, reduced motion, JavaScript-disabled links and PDF integrity.
 - Screenshots in this directory were inspected at mobile and desktop widths.
+  They were removed from the tree on 2026-09-16 and remain in git history
+  (present through `fe41894`); `scripts/verify-browser.mjs` rewrites them here
+  on each run, and they are now ignored.
 - Computed rendered solid-background text contrast passed on the collection and
   representative article, with minimum measured ratio 7.85:1. Gradient/opacity
   layers, placeholders, borders and pseudo-elements are not certified by that check.

@@ -3,11 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.4.0",
-  "workspaces": [
-    "packages/*",
-    "mlai-website-agent"
-  ],
   "scripts": {
     "setup": "node --import tsx scripts/setup.ts",
     "dev": "bun run build:ui && node --import tsx scripts/dev.ts",

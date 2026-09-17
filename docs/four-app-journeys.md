@@ -12,8 +12,10 @@ This record tracks the 2026-09-08 user-approved roadmap independently of histori
 
 Each milestone receives a scoped commit, affected-app gate, all-five-job hosted CI check,
 and observed automatic Pages / Cloud Run outcomes. The final pass reran all four app gates.
-Workspaces, lockfiles, authentication and storage stay independent. The active local installation
-and provider settings are preserved. No cutover, provisioning, Vercel removal or agent deployment.
+Authentication and storage stay independent. Since 2026-09-16 the apps share one root Bun
+workspace and `bun.lock` (isolated linker), and CI has six jobs, adding research-sites; the
+"CI 5/5" and "all five jobs" results in this record predate both changes. The active local
+installation and provider settings are preserved. No cutover, provisioning, Vercel removal or agent deployment.
 
 Native screen-reader, actual browser zoom, signed native CloudKit and provider-dependent
 Quasar generation are distinct acceptance layers. Missing access is recorded, never inferred

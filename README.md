@@ -13,25 +13,30 @@ Current journey delivery and acceptance limits: [four-app delivery ledger](docs/
 |---|---|---|
 | `apps/web/` | Next.js 15 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
 | `apps/mobile/` | Expo SDK 53 mobile companion and native CloudKit module | `bun run check:mobile` |
-| `apps/quasar/` | Independent nested Bun workspace for the local AI site builder | `bun run check:quasar` |
+| `apps/quasar/` | Local AI site builder: service, shared package, Expo app, and a separately locked Next template | `bun run check:quasar` |
 | `apps/website-app/` | Next.js local application, Abbey workspace, SQLite/Better Auth, Python worker, and agent package | `bun run check:website-app` |
+| `apps/research-sites/` | Generated static export of the research collection; no dependencies | `bun run check:research-sites` |
 | `packages/contracts/` | Shared type vocabulary for product, persona, and claim provenance axes | `bun run check:topology` |
 | `packages/design-tokens/` | Raw cross-platform Lab colors; semantic UI tokens remain app-local | `bun run check:topology` |
 | `packages/tooling/` | Repository topology and workflow checks | `bun run check:topology`, `bun run check:workflows`, `bun run check:tooling` |
 
 The former mobile `www/` subtree was a historical copy of the website. Its
 history is retained by the merge, but the current implementation lives only at
-`apps/web/`. Quasar remains a nested workspace because it has its own app,
-service, shared package, template, lockfile, and acceptance flow.
+`apps/web/`. Quasar keeps its own app, service, shared package, template, and
+acceptance flow under `apps/quasar/`.
 
 ## Setup and verification
 
-Use Bun 1.4 or newer. Root tooling, web, mobile, Quasar, and website-app deliberately keep
-separate lockfiles. This prevents Next's React 19.2 types from being hoisted
-over Expo SDK 53's React 19.0 types (or vice versa).
+Use Bun 1.4 or newer. Every app installs through one root Bun workspace with
+one `bun.lock` and the isolated linker (`bunfig.toml`), so each app sees only
+its own declared dependencies. The Next apps keep React 19.2 types and the
+Expo apps keep SDK 53's React 19.0 types; [AGENTS.md](AGENTS.md) records the
+two mechanisms that keep third-party declarations on the right copy. Only
+`apps/research-sites` (no dependencies) and the Quasar template (its own
+lockfile) stay outside the workspace.
 
 ```bash
-bun run install:all
+bun run install:all      # bun install at the root
 bun run check:topology
 bun run check:workflows
 bun run check:tooling
@@ -39,6 +44,7 @@ bun run check:web
 bun run check:mobile
 bun run check:quasar
 bun run check:website-app
+bun run check:research-sites
 # or run every gate in order
 bun run check
 ```
@@ -81,9 +87,10 @@ checkouts is still a separate operator decision.
 ## Website application integration
 
 `mlai-website-app` is integrated with its Git history under `apps/website-app/`.
-Run its commands from that directory, or use the root wrappers above. It retains
-its own Bun workspace, shared UI, lockfile, SQLite migrations, Python worker,
-and non-deployable agent scaffold. `apps/web` remains the canonical production
+Run its commands from that directory, or use the root wrappers above. It keeps
+its shared UI package, SQLite migrations, Python worker and lock, and
+non-deployable agent scaffold; its JavaScript dependencies are locked by the
+root `bun.lock`. `apps/web` remains the canonical production
 website with its existing deployment workflows.
 
 Before the full website-app gate, follow [its setup guide](apps/website-app/README.md):
@@ -96,4 +103,5 @@ CI runs its separate TypeScript/format/research/unit/build subset; parser and
 browser acceptance remain local gates. Private databases, credentials, uploaded
 documents, model weights and generated output are not part of the import.
 See [the integration record](docs/website-app-integration.md) for source provenance
-and validation. The source checkout has been retained.
+and validation. The source repository, `donaldfilimon/mlai-website-app`, was
+archived read-only on 2026-09-16 after its history was merged here.

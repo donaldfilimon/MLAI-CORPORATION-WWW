@@ -11,12 +11,12 @@ This file provides guidance to coding agents working in this repository.
 Use **Bun**, not npm/yarn/pnpm.
 
 ```bash
-bun install
+bun install               # from the repository root (one root workspace and bun.lock)
 bun start                 # Expo dev server (QR → Expo Go)
 bun run ios               # iOS simulator
 bun run android           # Android emulator
 bun run web               # react-native-web
-bun run typecheck         # tsc --noEmit, strict
+bun run typecheck         # tsc --noEmit -p tsconfig.typecheck.json, strict
 bun run test              # jest (jest-expo) — pure-logic and component-render suites
 bun run lint              # expo lint (eslint-config-expo)
 
@@ -48,11 +48,35 @@ other surfaces are siblings, not children of the Expo project:
 
 | Path | What it is | Its own gates |
 |---|---|---|
-| `../quasar/` | Bun-workspaces monorepo: local AI website-builder service + Expo app + Next 15 template | from the repository root: `bun run check:quasar` |
+| `../quasar/` | Local AI website-builder: service, shared package and Expo app (root workspace members) plus a separately locked Next 15 template | from the repository root: `bun run check:quasar` |
 | `../web/` | Canonical Next 15 App Router marketing/console site on Bun | from the repository root: `bun run check:web` |
 
 The app's TypeScript, ESLint, and Jest roots are `apps/mobile`, so sibling
-sources are naturally fenced out. The historical `www/` subtree is retained in
+sources are naturally fenced out.
+
+### Root workspace install
+
+The app installs through the repository's root Bun workspace (root `bun.lock`,
+`linker = "isolated"` in the root `bunfig.toml`); there is no app lockfile.
+Three files depend on that layout:
+
+- `metro.config.js` watches the repository root and enables symlink and
+  package-exports resolution, because dependencies are symlinks into
+  `<repo>/node_modules/.bun` and `@mlai/contracts` is a workspace symlink.
+- `jest.config.js` restates jest-expo's `transformIgnorePatterns` with a
+  `(?!\.bun/)` guard; without it Jest skips transforming React Native and Expo
+  sources that live under the `.bun` store.
+- `tsconfig.typecheck.json` (used by `bun run typecheck`) maps `react` to this
+  app's SDK 53 `@types/react`. Many React Native packages import `react` in
+  their declarations without depending on `@types/react`, and would otherwise
+  resolve the repository root's Next-side 19.2 types. Keep that mapping out
+  of `tsconfig.json`: Metro reads its `paths` when bundling.
+
+Declare every package the app imports. The isolated linker hides undeclared
+ones; `@babel/runtime`, `@expo/config-plugins`, `@expo/metro-runtime`,
+`babel-preset-expo`, `expo-linking`, `expo-modules-core` and `query-string`
+(an undeclared `expo-router` 5.0 dependency) are declared for that reason.
+Never switch the root linker to `hoisted` without re-running this app's gate. The historical `www/` subtree is retained in
 Git history only; never recreate it. Read each sibling's own guidance before
 working there.
 

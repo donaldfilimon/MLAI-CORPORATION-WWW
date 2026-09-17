@@ -1348,7 +1348,7 @@ status: done
   (https://claude.ai/artifact/Y3kiSrwLA7XYaS3DJitkGq) was built the same evening from `apps/web`.
 
 ## Unify MLAI into one root Bun workspace and clean up
-status: in_progress
+status: done
 
 Captured 2026-09-16 20:3x EDT on Donald's request ("merge all into main and into one
 project mega project and cleanup codebase ... /design-sync mlai"). He chose a single
@@ -1369,3 +1369,47 @@ and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchr
   is skipped (no WIF credentials). Fixed as part of the workspace migration.
 - Workspace migration and cleanup run in two isolated worktrees in parallel; design
   sync runs after both land.
+- **Landed, 2026-09-16 21:2x EDT, on `build/root-workspace-cleanup` (PR #71).**
+  - **Workspace:** every app except `apps/research-sites` (install-free) now
+    installs from one root `bun.lock` with `linker = "isolated"`. `apps/quasar/templates/next-site`
+    keeps its own lockfile. The four app lockfiles and the nested `workspaces` fields are
+    gone, and `check-topology` now forbids both.
+  - **React types:** the plan's Expo fallbacks were not needed, but the React type
+    clash was real. Packages that import `react` in their types without declaring
+    `@types/react` fell through to one shared copy. The fix: a root `@types/react` pin for
+    the Next apps, `hoistPattern` excluding `@types/react*`, and a
+    `tsconfig.typecheck.json` per Expo app that maps `react` to its own 19.0 types
+    (Metro reads `tsconfig.json`, so the mapping cannot live there).
+  - **Undeclared dependencies** the isolated layout exposed are now declared in mobile,
+    both Expo apps (`query-string` for expo-router), web (`postcss`, `ts-morph`) and
+    `@mlai/ui`.
+  - **Dockerfile:** now installs from the root workspace
+    (`--filter @mlai/platform --filter @mlai/web --frozen-lockfile`), which fixes the
+    missing `trailer-engine`, and runs Next's standalone `server.js`.
+  - **CI and `pages.yml`:** install at the root, and the topology job checks for
+    lockfile drift.
+- **Cleanup:**
+  - Removed five unreferenced web components, `og-image.svg`, `start_dev.sh`, 35
+    tracked verification/design PNGs (12.8 MB; still in history through `fe41894`), the
+    landing tarball duplicated by its extracted tree, and the run-skill npm lockfile.
+  - Stale docs corrected across root, web, research-sites, quasar and website-app.
+  - **Kept on purpose:** the 25 byte-identical duplicate sets inside `docs/sources`,
+    because its README promises each tree whole.
+- **Measured on the merged tree (`fce283e`), in this checkout:**
+  - Clean `bun install`: exit 0.
+  - `bun install --frozen-lockfile`: exit 0, `bun.lock` unchanged.
+  - `bun run check`: exit 0, all eight stages. Topology: 26 required paths, 4 forbidden
+    lockfiles. web: 465 tests plus build. mobile: 59 Jest tests plus export. quasar: 69
+    tests plus export. website-app: 138 Vitest plus 26 pytest plus build.
+    research-sites: 11 tests plus build.
+  - Both Expo bundles carry only React `19.0.0`.
+- **Unmeasured or residual:**
+  - `docker build` (Docker not installed; the agent built the Dockerfile's copy set
+    locally and `server.js` served `/`, static and public assets with 200).
+  - Hosted CI (billing lock).
+  - CI pins Bun 1.4.0 while the lockfile was written by 1.4.2.
+  - Expo exports now emit assets under `assets/__node_modules/.bun/…`.
+  - `packages/design-tokens` is still unused, and Lab colors remain duplicated in five
+    places.
+  - About 20 older PNGs remain under `apps/website-app/docs/verification/screenshots/`.
+  - `apps/research-sites/README.md` (generated) still names the old exporter location.
