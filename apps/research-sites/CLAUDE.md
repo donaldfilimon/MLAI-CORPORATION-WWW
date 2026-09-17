@@ -91,8 +91,8 @@ on regeneration they move. Preserve real provenance, never restate a hash you di
 
 ### Checking this export against canonical source
 
-The `sourceRevision` resolves in `~/dev/active/mlai`, so freshness is measurable rather
-than assumed. Run this from that repo, not this one:
+The `sourceRevision` resolves in this repository, so freshness is measurable rather
+than assumed. Run this from the repository root, not from `apps/research-sites`:
 
 ```sh
 git cat-file -t <sourceRevision>                        # it is a real commit
@@ -137,9 +137,10 @@ offline-complete. AGENTS.md's "bundled locally" describes the local half.
 ## Editing boundaries
 
 Prose, HTML, PDFs, CSS, and JavaScript under `public/` are exporter output. Fixing content by
-hand here fixes the review copy and diverges it from source. Route content changes to the
-canonical MLAI repository and its `scripts/export-research.tsx`, which is not present in this
-checkout; the local `build` is not a regeneration path.
+hand here fixes the review copy and diverges it from source. Route content changes to
+`apps/web` and its exporter, `apps/web/scripts/export-research.tsx`, in this same repository;
+the local `build` is not a regeneration path.
 
-This artifact is not `dev/active/mlai` (the published monorepo) and not `mlai-website-app`
-(the independent Next.js application). Confirm which MLAI tree a request means before editing.
+Since 2026-09-16 this artifact lives inside the MLAI monorepo as `apps/research-sites`. It is
+not `apps/web` (the source it is exported from) and not `apps/website-app` (the independent
+Next.js application). Confirm which MLAI tree a request means before editing.

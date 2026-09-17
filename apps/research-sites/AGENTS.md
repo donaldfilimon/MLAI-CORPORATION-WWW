@@ -15,9 +15,9 @@ The `git.chatgpt-team.site` origin below describes the retired standalone copy.
 - `README.md` and `package.json` identify this as an export of canonical MLAI
   research. Do not hand-edit generated prose, HTML, PDFs, CSS, or JavaScript in
   `public/` to fix source behavior.
-- Route source changes to the canonical MLAI repository and its
-  `scripts/export-research.tsx`, as named in the README. That exporter is not
-  present here; regeneration is not the local `build` command.
+- Route source changes to `apps/web` and its exporter,
+  `apps/web/scripts/export-research.tsx`, in this same repository.
+  Regeneration is that exporter, not the local `build` command.
 - `public/research-manifest.json` records source revision/dirty state, canonical
   origin, content hashes, publication attachments, and per-file hashes. Preserve
   provenance on regeneration; do not replace evidence with a new claimed hash.
