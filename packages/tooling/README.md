@@ -2,7 +2,10 @@
 
 Repository-only checks live here so app packages do not acquire orchestration
 dependencies. `check-topology.ts` verifies the documented app and shared-package
-boundaries before the platform-specific gates run.
+boundaries before the platform-specific gates run: the root `bun.lock` and
+`bunfig.toml` (isolated linker), every workspace manifest, both Expo Metro and
+typecheck configs, no app-level lockfile, and no nested `workspaces` field.
+`check-topology.test.ts` covers each rule against temporary fixtures.
 
 `bun run check:workflows` at the root runs Actionlint 1.7.12 using
 `go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12`. Go 1.25+ and an
