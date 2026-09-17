@@ -4,7 +4,7 @@ import { CardPanel } from "./CardPanel";
 /**
  * Persona accent colors. **This is the persona axis, not the product accent
  * axis** in `accent.ts` — Abbey is emerald, Aviva is violet, Abi is cyan,
- * matching `PersonaLegend.tsx` and the galaxy in `public/neural.js`.
+ * matching the galaxy in `public/neural.js`.
  */
 export type PersonaKey = "abbey" | "aviva" | "abi";
 
