@@ -20,6 +20,15 @@ standalone copy.
 - Route source changes to `apps/web` and its exporter,
   `apps/web/scripts/export-research.tsx`, in this same repository.
   Regeneration is that exporter, not the local `build` command.
+- The exporter refuses any destination inside the repository, so
+  `--output apps/research-sites` throws by design. Regenerate from a clean
+  checkout: run the exporter from `apps/web` with `--output` set to an absolute,
+  non-symlinked scratch directory outside the repo (for example under
+  `/private/tmp`), `diff -r` its `public/` against this `public/`, replace
+  `public/` as a whole tree (so removed files go too), then run
+  `bun run check:research-sites` from the repository root. Copy only `public/`;
+  the scratch `README.md` and `package.json` are exporter templates.
+  `CLAUDE.md` has the commands and the freshness-diff method.
 - `public/research-manifest.json` records source revision/dirty state, canonical
   origin, content hashes, publication attachments, and per-file hashes. Preserve
   provenance on regeneration; do not replace evidence with a new claimed hash.

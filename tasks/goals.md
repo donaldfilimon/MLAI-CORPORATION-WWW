@@ -1526,3 +1526,50 @@ coordinator reviews, gates and commits.
   research-sites export is recorded as generated from `2718e0c` and needing
   regeneration.
 - **Dependency slice:** PR #76, merged 2026-09-17 09:16Z.
+- **Integration, 2026-09-17 05:2x-05:3x EDT.** Donald merged PRs #77-#80 (#79 and #80
+  were cross-merges of the two topic branches). This checkout was fast-forwarded to
+  `07fe5fb` (0/0). Both topic branches were deleted locally and on GitHub, each after
+  a `merge-base --is-ancestor` check. `~/dev/active/mlai` was fast-forwarded as well:
+  clean, no `cwd` holders, no peer session working in it, frozen install exit 0.
+  On the merged tip: frozen install exit 0 and `bun run check` exit 0 across all
+  eight stages (web 474, mobile 59, quasar 69, website-app 138 Vitest + 26 pytest,
+  research-sites 11, tooling 11).
+- **Donald's decisions, 2026-09-17:** move the Quasar template to Next 16; keep
+  Quasar's LAN exposure and document it; run the zoom pass in Firefox and WebKit.
+- **Quasar binding, measured:** the service started with a temporary `QUASAR_HOME`
+  on port 4798 listened on `TCP *:4798` (IPv6 wildcard, all interfaces), matching the
+  README; `server.ts:372` passes no hostname. It was stopped and the port confirmed free.
+- **Quasar template on Next 16, 2026-09-17 05:3x EDT (Donald's choice).**
+  - `templates/next-site` now requires `next ^16.3.5` and resolves 16.3.5 with
+    `sharp` 0.35.4. The template `bun audit` reports "No vulnerabilities found
+    (checked 102 packages)", with or without the postcss override, so the
+    override was removed.
+  - `next build` rewrites two tsconfig fields (`jsx: react-jsx`, the
+    `.next/dev/types` include); both were committed so generated sites are not
+    rewritten on their first build.
+  - `next.config.mjs` sets `agentRules: false` (verified in Next 16's config
+    schema). Otherwise `next dev` writes AGENTS.md/CLAUDE.md into every
+    generated site, pointing at docs the Quasar path guard never lets the model
+    read.
+  - The model-facing wording is now "Next.js 16" (`systemPrompt.ts`, README,
+    `engine.test.ts`).
+  - Re-verified by the coordinator: template audit exit 0, template build exit 0,
+    `check:quasar` exit 0 (69 tests), root `bun.lock` byte-identical.
+  - The agent's `next dev` smoke returned 200 and listened on `TCP *:3917`.
+  - Not run: a full scaffold, install and preview generation end to end.
+  - Machine note: the Homebrew `bun` now reports 1.4.3 while `packageManager`
+    pins 1.4.2; the lockfile format (`lockfileVersion: 2`) is unchanged.
+- **Quasar LAN exposure documented** in `apps/quasar/README.md`, with both
+  measured listeners. No code change, per Donald.
+- **Research export regenerated from `07fe5fb`** (exporter run from the clean
+  `~/dev/active/mlai` checkout, so `sourceDirty: false`).
+  - Against the `2718e0c` export, re-run with the same timestamp: data, content
+    hash, PDFs and fonts are identical, and the 31 pages differed only in the
+    footer revision.
+  - `assets/lab.css` changed, because the exporter compiles Tailwind across all
+    of `apps/web`: 20 classes from components deleted in `fb2037c` went, and 5
+    from `9a67562` arrived. No exported page uses any of them.
+  - Copied as a whole `public/` tree with a current timestamp.
+  - `bun run check` in research-sites exit 0; manifest 107 files.
+  - Research-sites AGENTS/CLAUDE now document the out-of-repo export-then-copy
+    procedure, because the exporter refuses destinations inside the repository.

@@ -115,11 +115,36 @@ Measured 2026-09-06 19:5x: `0a516a84f3b2d8f6f0c96491b8ac4f3e4307cefb` is an ance
 that point, and a re-export would have produced the same bytes. Re-measure rather than
 trusting this line; it dates the moment, not the repository.
 
-Measured 2026-09-17: the manifest's `sourceRevision` is now
-`2718e0cc61dfa969cb7d30ade1af1fd826652b22` (`generatedAt` 2026-09-08). It is an ancestor of
-`main`, but `apps/web/app/research/[slug]/page.tsx` and
-`apps/web/scripts/export-research.tsx` have changed since (control: 910 files changed), so
-this export is behind canonical source until it is regenerated.
+The path list above is not the whole input set. The exporter builds `assets/lab.css` with
+Tailwind over all of `apps/web` (`base: root`), so a class added or removed anywhere in
+`apps/web` changes exported bytes even when no research path moved. A re-export plus diff
+(below) is the only complete freshness test.
+
+Regenerated 2026-09-17 from `07fe5fbc549bd0143f8047a299b77a916a8d0f06` (then `origin/main`,
+clean tree; `generatedAt` 2026-09-17T09:34:09Z). Against the previous export (`2718e0c`,
+2026-09-08), re-exported with the old timestamp: `research-data.json`, `contentSha256`, the
+107-file inventory, PDFs and fonts were identical; the 31 HTML pages differed only in the
+footer revision; `assets/lab.css` really changed (utilities from the legacy landing
+components deleted in `fb2037c` dropped out, and classes from `9a67562`'s Products/GetStarted
+views came in). No exported page uses any of the changed classes.
+
+## Regenerating this export
+
+The exporter refuses any destination inside the repository, so
+`--output apps/research-sites` throws by design. Export to scratch, then copy:
+
+```sh
+# from apps/web, in a CLEAN checkout (a dirty tree sets sourceDirty and marks every footer)
+bun scripts/export-research.tsx --output /private/tmp/<scratch> --generated-at <ISO>
+diff -r /private/tmp/<scratch>/public apps/research-sites/public   # from the repo root
+rm -rf apps/research-sites/public && ditto /private/tmp/<scratch>/public apps/research-sites/public
+bun run check:research-sites
+```
+
+Use a real (non-symlinked) absolute path; the exporter rejects `/tmp`. To test freshness
+without regenerating, pass the committed manifest's `generatedAt` and normalize the footer
+revision before diffing. Copy only `public/`: the scratch `README.md` and `package.json` are
+the exporter's templates and would overwrite this package's scripts.
 
 ## Content model
 
