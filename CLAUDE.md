@@ -14,7 +14,7 @@ duplicate their detailed instructions here.
 | `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
 | `apps/website-app` | `apps/website-app/AGENTS.md`, `apps/website-app/CLAUDE.md`, and `apps/website-app/README.md` |
 | `apps/research-sites` | `apps/research-sites/AGENTS.md`, `apps/research-sites/CLAUDE.md` (generated export; never hand-edit `public/`) |
-| `packages/*` | that package's own `README.md` |
+| `packages/*` | that package's own `README.md`; `packages/trailer-engine` has none, so read its `src/index.ts` exports |
 
 `apps/web` is the canonical production Next.js website; `apps/website-app` is
 the independently configured local Next.js application. Other trees
@@ -68,11 +68,18 @@ rather than inside one app's docs.
   `apps/mobile/lib/brand.ts`, `apps/mobile/lib/theme.ts`). By contrast
   `@mlai/design-tokens` is imported by no app source at all: it holds raw
   cross-platform Lab colors while semantic tokens stay app-local, so a change
-  there does not reach a running app on its own.
+  there does not reach a running app on its own. `@mlai/trailer-engine` is
+  the one shared package with **runtime** code: `apps/web` depends on it via
+  `file:../../packages/trailer-engine`, it exports raw `.ts` source, and the
+  film/trailer code in `apps/web/src/film` and `apps/web/src/abbey-trailer`
+  plus their `film-*`/`abbey-trailer` tests import it. A change there is web
+  behavior, so run `check:web`, not only `check:tooling`.
 - **A green local `bun run check` does not prove CI's install step.**
-  `.github/workflows/ci.yml` runs topology, web, mobile, quasar, and website-app as five
-  independent jobs, each doing `bun install --frozen-lockfile` from its own
-  app directory, while `install:all` is deliberately non-frozen. Lockfile
+  `.github/workflows/ci.yml` runs topology, web, mobile, quasar, website-app,
+  and research-sites as six independent jobs. The four app jobs with
+  dependencies each do `bun install --frozen-lockfile` from their own app
+  directory (research-sites has no install step by design), while
+  `install:all` is deliberately non-frozen. Lockfile
   drift therefore surfaces in CI and not locally.
 - **`apps/web/site/` is a separately published artifact, not a build output.**
   GitHub Pages publishes it from `.github/workflows/pages.yml` with Actions as
