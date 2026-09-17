@@ -10,12 +10,14 @@ commands and the provenance model behind `public/research-manifest.json`.
 ## What this repository is
 
 A generated static artifact: the approved MLAI research collection, exported for private
-review. There is no application framework or dev server. Filter behavior lives in
-`src/*.ts`; `bun run build` emits browser JS then copies `public/` to `out/`.
+review. There is no application framework or dev server. `bun run build` compiles nothing:
+it verifies the manifest, then copies `public/` to `out/` and verifies the copy. The
+historical filter utilities in `src/*.ts` are tested but no exported page loads them.
 
-Origin is `git.chatgpt-team.site/.../appgprj_6a9d484ec5a881919dc02a7a3ee7934e.git`, a
-Codex-app generated host, not a `donaldfilimon/*` GitHub repository. Push rights and
-durability of that host are unverified, so do not treat a successful commit here as a backup.
+The origin is now `donaldfilimon/MLAI-CORPORATION-WWW` (GitHub). The former standalone
+copy's origin was `git.chatgpt-team.site/.../appgprj_6a9d484ec5a881919dc02a7a3ee7934e.git`,
+a Codex-app generated host; that history is kept at
+`~/dev/archive/mlai-research-sites-merged-20260916`.
 
 The canonical site is `https://quesar.cloud`; every page carries `noindex,nofollow` plus a
 `rel=canonical` pointing there. `robots.txt` disallows all crawling. Neither is an access
@@ -24,8 +26,9 @@ control.
 ## Commands
 
 ```sh
-bun run build     # compile src/filter.ts → public/assets/filter.js, hash it, copy public/ → out/
-bun test          # publication-filter and applyFilter unit tests
+bun run build     # verify manifest + every file hash, copy public/ → out/, verify the copy
+bun test          # filter unit tests plus scripts/ packaging tests (verify-export, replace-file-hash)
+bun test scripts/verify-export.test.ts   # one test file
 bun run check     # bun test && bun run build
 git diff --check  # whitespace check for documentation edits
 ```
@@ -73,7 +76,7 @@ read as a defect once (2026-09-15), so compare the lists, not the count.
 What each hash actually covers, because getting this wrong produces a false green:
 
 - `files` maps every file under `public/` except the manifest itself to its byte sha256.
-  Ninety-nine entries, and the tree holds exactly those ninety-nine. Rendered HTML is
+  The tree holds exactly the listed entries (107 on 2026-09-17; see the count note above). Rendered HTML is
   covered here and nowhere else.
 - Top-level `contentSha256` hashes the compact UTF-8 re-serialization of `research-data.json`
   (a `JSON.stringify` equivalent), not the on-disk bytes. That is why it differs from
@@ -112,6 +115,12 @@ Measured 2026-09-06 19:5x: `0a516a84f3b2d8f6f0c96491b8ac4f3e4307cefb` is an ance
 that point, and a re-export would have produced the same bytes. Re-measure rather than
 trusting this line; it dates the moment, not the repository.
 
+Measured 2026-09-17: the manifest's `sourceRevision` is now
+`2718e0cc61dfa969cb7d30ade1af1fd826652b22` (`generatedAt` 2026-09-08). It is an ancestor of
+`main`, but `apps/web/app/research/[slug]/page.tsx` and
+`apps/web/scripts/export-research.tsx` have changed since (control: 910 files changed), so
+this export is behind canonical source until it is regenerated.
+
 ## Content model
 
 `public/research-data.json` is the structured collection every page renders from:
@@ -126,12 +135,13 @@ trusting this line; it dates the moment, not the repository.
 
 Page layout mirrors it: `public/index.html` is the collection landing page,
 `public/research/index.html` the index, and `public/research/<slug>/index.html` one page per
-publication. Filter source is `src/filter.ts`; the emitted `assets/filter.js` filters cards
-by `data-filter` against `data-publication-tag` and updates `#publication-status`. It is
-progressive enhancement, and every article link works without JavaScript.
+publication. Every page loads `assets/discovery.js` (exported from
+`apps/web/scripts/research-discovery.js`) with `defer`; no page loads a `filter.js`, and
+`src/filter.ts` is historical. It is progressive enhancement, and every article link works
+without JavaScript.
 
 Assets are only partly local. Geist and KaTeX fonts plus `lab.css` ship in `public/assets/`,
-but all 24 HTML pages load Spectral from `fonts.googleapis.com`, so the pages are not
+but all 31 HTML pages (2026-09-17) load Spectral from `fonts.googleapis.com`, so the pages are not
 offline-complete. AGENTS.md's "bundled locally" describes the local half.
 
 ## Editing boundaries

@@ -86,13 +86,16 @@ binds to `0.0.0.0`, so it's reachable from other devices on the same LAN.
 Site data and the registry live under `~/.quasar` (`QUASAR_HOME` overrides
 this).
 
-**Start the app** (dev, web target):
+**Start the app** (dev, web target), from the repository root:
 
 ```bash
-cd apps/quasar && bun run web
+cd apps/quasar/apps/quasar && bun run web
 ```
 
-Or build a static export: `bunx expo export --platform web`.
+(`bun run dev:quasar` from the repository root starts the same app with
+`expo start`. `apps/quasar` itself has no `web` script.)
+
+Or build a static export from that same directory: `bunx expo export --platform web`.
 
 **Reaching the service from a phone:** the app defaults its base URL to
 `http://localhost:4700`, which only works when the app and service share a
@@ -148,7 +151,9 @@ rate-limit message; the preview-manager tests do spawn real local processes
 and poll `localhost`, and the streaming regression tests spawn local HTTP
 stubs, but nothing in the suite calls the Anthropic API or needs
 credentials), and `bunx expo export --platform web` for `apps/quasar` all
-pass clean as of this task.
+pass clean as of this task. (Re-measured 2026-09-17 in the monorepo: `bun test packages`
+from `apps/quasar` runs 69 cases across 11 files, including `packages/shared`, exit 0.
+Run one file with `bun test packages/service/src/paths.test.ts`.)
 
 **Not exercised in this build environment:** a real end-to-end generation
 run against the live Anthropic API. The engine's tool loop, path guard, and

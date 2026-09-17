@@ -12,7 +12,8 @@ skill drives. The driver, [`driver.mjs`](driver.mjs), serves the static web
 export and pilots it with the system Chrome via `playwright-core`
 (`channel:"chrome"` — no chromium download).
 
-All paths below are relative to the repo root (`<unit>/`). The driver lives at
+All paths below are relative to this app's root, `apps/mobile/` (not the
+monorepo root). The driver lives at
 `.claude/skills/run-mlai-mobile/driver.mjs`.
 
 ## Prerequisites
@@ -27,7 +28,7 @@ cd .claude/skills/run-mlai-mobile && npm i
 
 ## Build
 
-Produce the static web bundle (16 routes) from the repo root:
+Produce the static web bundle (16 routes) from `apps/mobile/`:
 
 ```bash
 bunx expo export --platform web
@@ -57,15 +58,13 @@ unlock below first; the same command then captures `02-home.png` …
 
 The auth gate cannot be passed on the stock web build (Gotcha #1). To drive the
 real app on web, alias `expo-secure-store` to the localStorage shim shipped in
-this skill (`patches/expo-secure-store.web.js`) — **web only**. Create
-`metro.config.js` at the repo root:
+this skill (`patches/expo-secure-store.web.js`) — **web only**.
+`apps/mobile/metro.config.js` is tracked and required (it makes Metro follow
+the root Bun workspace's symlinks); never overwrite or delete it. Temporarily
+insert these lines into it, directly above `module.exports = config;`:
 
-```bash
-cat > metro.config.js <<'JS'
-const { getDefaultConfig } = require("expo/metro-config");
-const path = require("path");
-const config = getDefaultConfig(__dirname);
-const shim = path.resolve(__dirname, ".claude/skills/run-mlai-mobile/patches/expo-secure-store.web.js");
+```js
+const shim = path.resolve(projectRoot, ".claude/skills/run-mlai-mobile/patches/expo-secure-store.web.js");
 const prev = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (platform === "web" && moduleName === "expo-secure-store") {
@@ -73,8 +72,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   }
   return (prev || context.resolveRequest)(context, moduleName, platform);
 };
-module.exports = config;
-JS
 ```
 
 Then rebuild and re-run the driver:
@@ -84,8 +81,9 @@ bunx expo export --platform web
 cd .claude/skills/run-mlai-mobile && node driver.mjs ../../../dist screenshots
 ```
 
-The shim is **plaintext localStorage — dev only, never ship it.** Remove
-`metro.config.js` and rebuild to return to the stock (gate-closed) web build.
+The shim is **plaintext localStorage — dev only, never ship it.** Restore
+`metro.config.js` (`git checkout -- metro.config.js`) and rebuild to return to
+the stock (gate-closed) web build. Never commit the inserted lines.
 
 ## Gotchas
 
@@ -117,5 +115,5 @@ The shim is **plaintext localStorage — dev only, never ship it.** Remove
 - `Cannot find package 'playwright-core'` → you ran the driver from the wrong
   dir, or skipped `npm i`. Run it from `.claude/skills/run-mlai-mobile/`.
 - Build error `failed to read file ... patches/expo-secure-store.web.js` after
-  adding `metro.config.js` → the shim file is missing; it must exist at
+  adding the shim lines to `metro.config.js` → the shim file is missing; it must exist at
   `.claude/skills/run-mlai-mobile/patches/expo-secure-store.web.js`.

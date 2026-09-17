@@ -169,6 +169,13 @@ NEXT_DIST_DIR=.next bun run --cwd .data/releases/mlai-clean-rG7B8J start
 
 This explicitly uses the main installation's records and connections, rather than the snapshot's isolated verification fixtures. The current launch metadata and logs are `.data/local-release.json` and `.data/local-release.log`. The launcher is not installed as a login service.
 
+Correction, 2026-09-17: this section predates the monorepo import. `apps/website-app`
+has no `.data` directory, and nothing listened on port 3100 when this was re-checked.
+The `.data/releases/{verified-app,mlai-clean-rG7B8J}` artifacts and
+`.data/local-release.json` exist only in the retired standalone checkout,
+`~/dev/archive/mlai-website-app-merged-20260916`. The restart command above applies
+there, not in this directory.
+
 ## Abbey development agent
 
 `.claude/agents/abbey.md` is the project-scoped Claude Code development agent. Start Claude Code from this repository with `claude --agent abbey` to select it. It follows the repository's authorization, local-model, source-citation, privacy, and evidence rules. It is separate from the in-app Abbey chat assistant and from in-app autonomous agent runs, which propose every change for explicit confirmation before anything is applied.
