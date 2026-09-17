@@ -1326,3 +1326,13 @@ that is worth doing before the *next* re-sync rather than retroactively. The
 structural hazard stands regardless of this particular run's outcome: design-sync
 uploads from whichever checkout a session happens to occupy, and two of those
 checkouts are 94 commits apart.
+
+## Re-sync the MLAI Lab design system to Claude Design
+status: done
+
+- 2026-09-16 20:1x: `/design-sync` re-run against the pinned project `6d97fa83` ("MLAI Design
+  System") from this checkout at `d856a94`. 41 components unchanged; the compiled Lab stylesheet
+  had moved with later `apps/web/src` commits, so the build was uploaded writes-only (222 files,
+  0 deletes). Validate exit 0, render check 41/41 clean (5 deliberate floor cards). Details in
+  `apps/web/.design-sync/NOTES.md`. A separate "MLAI Lab" Design System artifact
+  (https://claude.ai/artifact/Y3kiSrwLA7XYaS3DJitkGq) was built the same evening from `apps/web`.

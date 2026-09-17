@@ -534,3 +534,28 @@ writes-only as always. Nothing about the writes-only constraint changes.
 - **`conventions.md` re-validated against the fresh build: zero drift** — 36 component names,
   18 utility classes and 3 tokens all resolve. **It still does not mention `Sheet`** (same
   standing note as 09-06; deliberately not applied, the file is authored).
+
+## Re-sync run (2026-09-16 20:1x) — stylesheet-only upload, 0 components re-verified
+
+Invoked from the `MLAI-CORPORATION-WWW` checkout as `/design-sync MLAI Lab`; the target stayed the
+pinned `6d97fa83` ("MLAI Design System") on Donald's explicit choice, and the run moved to this
+checkout per the rule above (both checkouts were clean at `d856a94` = `origin/main`, so the
+stale-tree hazard did not apply).
+
+- `resync.mjs --remote` → build ok, diff ok, validate **exit 0**, capture skipped
+  (`empty_worklist`), `anchor: "ok"`. **41 unchanged, 0 changed/added/removed**, `pendingGrade: []`.
+  Render check (full) **41/41 clean**, same 5 floor cards. Only warn: the known `[TOKENS_MISSING]` 5.
+- **`upload.any` was true with `styling: true` only.** `lab-compiled.css` moved (`f882f98c…` →
+  `66f0cd59…`) because 12 commits under `apps/web/src` since 09-08 (e.g. `786ad8e`) added
+  utilities; no DS source or render hash moved. Tailwind scans all of `src/`, so page-level
+  commits alone are enough to require an upload. Uploaded **222 files** writes-only, **0 deletes**.
+- **The local `ds-bundle/_ds_sync.json` can stand in for the fetched anchor** when the last upload
+  came from this checkout: every field of the fetched `_ds_sync.json` (styleSha, auxSha,
+  bundleSha12, scriptsSha, keyRecipe, sampled render/source keys, 41/41/123 counts) matched it, so
+  it was copied to `.cache/remote-sync.json` instead of being hand-transcribed (see the 09-06
+  malformed-sidecar trap). Compare first; never skip the comparison.
+- `conventions.md` re-validated: zero drift (the only miss is the `"<this DS>"` placeholder). Still no `Sheet` line.
+- `guidelines/` uploads all 7 `docs/*.md`, including `deploy-cloud-run.md` and
+  `mfa-workos-runbook.md`. That is `guidelinesGlob`'s default picking up operational runbooks; the
+  09-06 note already counted 7 guidelines, so they have shipped since at least then. Narrowing the glob would leave the remote copies behind
+  (writes-only), so removing them is a deliberate decision, not a config tweak.
