@@ -8,7 +8,7 @@ keeps its own lockfile. From the repository root, `bun run check:quasar` runs
 its native type, unit, and Expo export gates.
 
 Quasar is an AI website builder: describe a site in a prompt, Claude scaffolds
-and writes a real **Next.js 15 App Router** project, and you preview it live
+and writes a real **Next.js 16 App Router** project, and you preview it live
 on your own machine. **v1** is intentionally small — a local Bun service plus
 an Expo app that drives it. There is no deploy step yet; "preview" means
 `next dev` running on your Mac.
@@ -29,7 +29,7 @@ packages/service      local Bun service (Bun.serve, default port 4700):
                       registry, path guard, site filesystem tools, the
                       generation engine, the scaffolder, and the preview
                       manager
-templates/next-site   a buildable, checked-in minimal Next.js 15 + Tailwind v4
+templates/next-site   a buildable, checked-in minimal Next.js 16 + Tailwind v4
                       starter — copied per-site as the generation baseline
 apps/quasar           Expo SDK 53 / React 19 / Expo Router app (web + iOS +
                       Android): sites list, new-site form, live generation
@@ -182,6 +182,13 @@ credentials configured.
   hole than "any LAN peer": since there's no origin check, any webpage open
   in a browser on the LAN (not just a device or person you trust) can drive
   the service via a cross-origin `fetch` from that page's own JavaScript.
+- **Every listener is on all interfaces, on purpose.** The service
+  (`Bun.serve` with no hostname, default port 4700) and each site preview
+  (`next dev`, ports 4710 and up) listen on every interface, which is what
+  lets a phone on the LAN reach them. Measured 2026-09-17: the service
+  reported `TCP *:4798`, and a Next 16 `next dev` preview reported
+  `TCP *:3917` plus a LAN network URL. Run Quasar only on a network you
+  trust, and stop it when you are done.
 
 ## Docs
 

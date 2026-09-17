@@ -47,7 +47,7 @@ test("passes model, prompt, and stream:true through to the runner", async () => 
   expect(seen.stream).toBe(true);
   expect(JSON.stringify(seen.messages)).toContain("hello");
   expect((seen.tools as unknown[]).length).toBe(3);
-  expect(seen.system as string).toContain("Next.js 15");
+  expect(seen.system as string).toContain("Next.js 16");
 });
 
 test("a throwing onEvent on the terminal event does not escape and does not double-emit", async () => {

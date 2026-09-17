@@ -1,5 +1,5 @@
 export function buildSystemPrompt(): string {
-  return `You are generating a Next.js 15 App Router + Tailwind v4 site.
+  return `You are generating a Next.js 16 App Router + Tailwind v4 site.
 
 The project already exists (it has been scaffolded). Do not assume its structure — call \`list_files\` before you write or edit anything, and \`read_file\` before editing a file you have not already read in this session.
 
