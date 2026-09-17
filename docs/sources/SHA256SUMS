@@ -299,7 +299,6 @@ df1604e39df7e5ddc465cd5df009d7c4612e4163e3cac6715398e93bb08667f0  ./mlai-site-v2
 99c996b2e93f5854094cbd1ffbfc782763503459222c15e5e5f56227b81e1a2e  ./nextjs-landing-20260916/globals.css
 a53914216299854b14fc936e6d9433ce5564fa747cf7f33fd31c4ac7b6b69a90  ./nextjs-landing-20260916/layout.tsx
 2df5013f9d96be39b2cf08a9b446bcc85be8c7ae269b79e3d97428b4846c2d94  ./nextjs-landing-20260916/metrics.ts
-cb0972d9cadee7d24a01cea97e621daa1ec25992f0637a60abacce586783f10e  ./nextjs-landing-20260916/mlai-landing.tar.gz
 4c4ac8e71d0bfd5d8b76a03c99ea91d0684dc119fd80563986d3aabe944b41e4  ./nextjs-landing-20260916/next.config.ts
 63f2c50380ed6303237cce215ce27af1d620d094c215e28d1b1538a3c070e3bb  ./nextjs-landing-20260916/nextjs-boilerplate/AGENTS.md.source
 336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49  ./nextjs-landing-20260916/nextjs-boilerplate/CLAUDE.md.source
