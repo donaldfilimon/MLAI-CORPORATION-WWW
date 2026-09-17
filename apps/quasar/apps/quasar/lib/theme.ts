@@ -1,5 +1,5 @@
-/* The "Lab" identity, shared with www and mlai-mobile. Values trace to
-   `www/src/index.css` `:root`; the oklch-only tokens were converted to sRGB
+/* The "Lab" identity, shared with apps/web and apps/mobile. Values trace to
+   `apps/web/src/index.css` `:root`; the oklch-only tokens were converted to sRGB
    with gamut clipping (converter validated against known Lab values). */
 export const color = {
   ink: "#05070D", // Lab --ink
