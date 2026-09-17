@@ -3,7 +3,7 @@ import type { Stats } from '../schemas';
 export const stats: Stats = ([
   { value: "3", label: "Agent Control Roles", detail: "Planning, review, and execution" },
   { value: "90d", label: "Pilot Window", detail: "Audit-to-production roadmap" },
-  // Was `value: "SOC 2"`, which `Stats.tsx` renders at text-4xl/5xl — a
+  // Was `value: "SOC 2"`, which the former `Stats.tsx` rendered at text-4xl/5xl — a
   // certification badge with the hedge in small print underneath. No SOC 2
   // program, controls matrix, or auditor exists in this repo or in
   // docs/master-reference.md, so the value carries the posture and the detail

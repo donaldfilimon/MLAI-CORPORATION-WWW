@@ -26,8 +26,7 @@ export interface FAQListProps {
  * keyboard-accessible for free, and it still works if hydration never runs.
  *
  * This is the generic primitive. The site's own answers live in
- * `src/data/categories/faq.ts` and are rendered by `src/components/FAQ.tsx`,
- * which supplies them to this component.
+ * `src/data/categories/faq.ts`; pass them in as `items`.
  */
 export function FAQList({
   items,

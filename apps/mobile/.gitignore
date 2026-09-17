@@ -17,3 +17,6 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+
+# run-mlai-mobile skill installs its driver with npm; its lockfile stays local
+.claude/skills/run-mlai-mobile/package-lock.json

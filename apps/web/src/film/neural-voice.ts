@@ -10,7 +10,7 @@
 // base prosody from tokens.ts, EQ chains and level trims authoritative here),
 // the domain vocabulary Kokoro would otherwise mangle, the Kokoro loader, and
 // the browser plumbing. The exported `NeuralVoice` object keeps the same
-// surface it always had, so narration.tsx and PersonaVoices.tsx are unchanged.
+// surface it always had, so narration.tsx is unchanged.
 //
 // Design goals (unchanged):
 //   • never block the film          • never throw into React

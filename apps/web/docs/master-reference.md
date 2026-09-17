@@ -167,7 +167,7 @@ engineering target tag is not a substitute for that evidence.
 
 Abbey is the consumer-facing, emotionally-aware assistant with persistent,
 vector-backed memory. Three personas share one core. Accents below match the
-shipped `PersonaLegend` + hero galaxy (Abbey emerald, Aviva violet, Abi cyan):
+shipped persona colors (`site/PersonaCard.tsx`) and hero galaxy (Abbey emerald, Aviva violet, Abi cyan):
 
 | Persona | Role | Behavior | Accent |
 |---|---|---|---|
