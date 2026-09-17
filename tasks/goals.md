@@ -1468,3 +1468,39 @@ and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchr
     26 pytest, research-sites 11, tooling 11). The first run exited 2 on a strict-index
     error in the new test, which was fixed before this run.
   - **Still residual:** `docker build` (Docker is not installed) and hosted CI (billing lock).
+
+## Close the locally measurable acceptance and hygiene gaps (zoom, dependency audit, app docs)
+status: in_progress
+
+Captured 2026-09-17 05:0x EDT from Donald's "do all and more", after every
+agent-actionable item from the workspace goal was closed. Three independent
+slices run in parallel in this checkout, each in different files; the
+coordinator reviews, gates and commits.
+
+- **Browser zoom (web):** WCAG 1.4.10 reflow at 320 CSS px and 1.4.4 200% text on
+  every indexable route plus one slug per dynamic family. This is the "actual
+  browser zoom" gap in `docs/four-app-journeys.md`. Fixes are confined to `apps/web`.
+- **Dependency audit:** `bun audit` on the root lockfile and `pip-audit` on the
+  website-app worker. Report only; any upgrade is applied serially afterwards.
+- **App-local agent docs:** mobile, quasar, website-app and research-sites guidance
+  checked against the 2026-09-16 workspace consolidation.
+- Not in scope, and still Donald's: native screen reader, signed CloudKit, live
+  provider generation, `docker build`, hosted CI.
+- **Dependency audit result, 2026-09-17 05:0x EDT.** The root `bun.lock` reports 9
+  advisories (4 high, 5 moderate); by the audit's reading none is on an untrusted-input
+  path in shipped code (build tooling, or APIs this repo does not call). The Python
+  worker is clean (`pip-audit`, 114 pins). The real exposure was
+  `apps/quasar/templates/next-site`, which the root audit does not cover and which
+  every generated site copies:
+  - `next` 15.5.23 carried two critical advisories; the template now requires
+    `^15.5.24` and locks 15.5.25.
+  - A template `overrides` entry lifts `postcss` to 8.5.26, clearing four PostCSS
+    advisories.
+  - Template `bun audit`: 2 high left, both `sharp` < 0.35.4, which Next 15's
+    `^0.34.3` range blocks. Fixing it means a Next 16 template or an out-of-range
+    override: Donald's call.
+  - Template `next build` exit 0; `check:quasar` exit 0 (69 tests plus export);
+    root `bun.lock` byte-identical.
+  - **Not changed, by design:** the preview `next dev` is deliberately
+    LAN-reachable so a phone can open it (Quasar README), so it was not bound to
+    loopback.
