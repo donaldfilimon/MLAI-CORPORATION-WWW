@@ -78,11 +78,14 @@ rather than inside one app's docs.
   mobile each consume it through a `workspace:*` dependency,
   and every use in app source is an `import type`
   (`apps/web/src/components/site/accent.ts`,
-  `apps/mobile/lib/brand.ts`, `apps/mobile/lib/theme.ts`). By contrast
-  `@mlai/design-tokens` is imported by no app source at all: it holds raw
-  cross-platform Lab colors while semantic tokens stay app-local, so a change
-  there does not reach a running app on its own. `@mlai/trailer-engine` is
-  the one shared package with **runtime** code: `apps/web` depends on it via
+  `apps/mobile/lib/brand.ts`, `apps/mobile/lib/theme.ts`).
+  `@mlai/design-tokens` holds the five raw Lab hex colors (`labColor`) and is
+  a **runtime** import in both Expo `lib/theme.ts` files, so a change there
+  reaches mobile and Quasar. Web keeps the same values in `src/index.css`;
+  `apps/web/src/__tests__/design-tokens.test.ts` fails if the two drift, so
+  change both together and run `check:web`, `check:mobile` and
+  `check:quasar`. Semantic tokens stay app-local. `@mlai/trailer-engine` is
+  the shared package with the most runtime code: `apps/web` depends on it via
   `workspace:*`, it exports raw `.ts` source, and the
   film/trailer code in `apps/web/src/film` and `apps/web/src/abbey-trailer`
   plus their `film-*`/`abbey-trailer` tests import it. A change there is web

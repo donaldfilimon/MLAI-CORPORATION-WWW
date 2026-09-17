@@ -19,6 +19,7 @@
         "@expo-google-fonts/spectral": "^0.4.1",
         "@expo/metro-runtime": "~5.0.4",
         "@mlai/contracts": "workspace:*",
+        "@mlai/design-tokens": "workspace:*",
         "@react-native-masked-view/masked-view": "0.3.2",
         "expo": "~53.0.0",
         "expo-apple-authentication": "~7.2.4",
@@ -68,6 +69,7 @@
       "version": "1.0.0",
       "dependencies": {
         "@expo/metro-runtime": "~5.0.4",
+        "@mlai/design-tokens": "workspace:*",
         "@quasar/shared": "workspace:*",
         "@react-native-async-storage/async-storage": "2.1.2",
         "expo": "~53.0.0",
@@ -144,6 +146,7 @@
         "zod": "^4.5.4",
       },
       "devDependencies": {
+        "@mlai/design-tokens": "workspace:*",
         "@types/bun": "^1.4.1",
         "@types/katex": "^0.16.8",
         "@types/node": "^25.9.5",

@@ -1451,3 +1451,20 @@ and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchr
     across all eight stages (web 465, mobile 59, quasar 69, website-app 138 Vitest + 26
     pytest, research-sites 11, tooling 11).
   - The `~/CLAUDE.md` MLAI rows were corrected after the push.
+- **Residuals closed, 2026-09-17 05:1x EDT** (plan `~/.claude/plans/next-steps-snappy-dongarra.md`):
+  - `apps/research-sites/README.md` exporter path corrected (`e085606`).
+  - **`packages/design-tokens` wired in, on Donald's choice.** Both Expo `lib/theme.ts` files
+    now take `labColor` from it at runtime (declared in each `package.json`), and both web
+    export bundles contain the value. Web stays CSS-sourced; the new
+    `design-tokens.test.ts` pins `index.css` to `labColor`. A deliberate one-character change
+    to `labColor.violet` made it fail (1 of 6), so it tests something. `app.json` stays static.
+    Semantic tokens and the extrapolated mobile values stay app-local.
+  - **Expo `assets/__node_modules/.bun/…` paths: no action.** CI builds both Expo web
+    exports but publishes neither; `pages.yml` uploads only `apps/web/site`.
+  - **The 23 website-app verification PNGs: kept.** Each is referenced by 11 to 13 tracked files.
+  - `docs/four-app-journeys.md` now says hosted runs after 2026-09-08 20:26Z are unmeasured.
+  - **Measured:** `bun install --frozen-lockfile --lockfile-only` exit 0; `bun run check`
+    exit 0 across all eight stages (web 471, mobile 59, quasar 69, website-app 138 Vitest +
+    26 pytest, research-sites 11, tooling 11). The first run exited 2 on a strict-index
+    error in the new test, which was fixed before this run.
+  - **Still residual:** `docker build` (Docker is not installed) and hosted CI (billing lock).

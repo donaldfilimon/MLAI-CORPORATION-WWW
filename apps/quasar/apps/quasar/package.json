@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
+    "@mlai/design-tokens": "workspace:*",
     "@quasar/shared": "workspace:*",
     "@react-native-async-storage/async-storage": "2.1.2",
     "expo": "~53.0.0",

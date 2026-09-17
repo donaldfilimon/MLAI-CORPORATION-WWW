@@ -1,8 +1,8 @@
 /* MLAI mobile — design tokens. The "Lab" identity, shared with www: near-black
    surfaces, three product accents, Spectral / Geist / JetBrains Mono.
 
-   Every value below is traceable to `www/src/index.css` `:root`. Raw hex tokens
-   (--ink, --cyan, --violet, --emerald, --amber) are copied verbatim. The three
+   Every value below is traceable to `apps/web/src/index.css` `:root`. Raw hex tokens
+   (--ink, --cyan, --violet, --emerald, --amber) come from @mlai/design-tokens. The three
    that exist only as oklch (--foreground, --muted-foreground, --secondary) were
    converted to sRGB with gamut clipping; the converter was validated against
    known values first (oklch(0.79 0.13 207) -> #25D1E5 vs the documented
@@ -11,9 +11,10 @@
 
 import { Platform } from "react-native";
 import type { ProductAccent } from "@mlai/contracts";
+import { labColor } from "@mlai/design-tokens";
 
 export const color = {
-  ink: "#05070D", // Lab --ink, verbatim
+  ink: labColor.ink, // Lab --ink, from @mlai/design-tokens
   panel: "#0E1218", // Lab --secondary, oklch(0.18 0.014 260)
   panelRaised: "#171B21", // extrapolated: one Lab step (+0.04 L) above --secondary
   line: "rgba(255,255,255,0.10)", // Lab --border
@@ -21,10 +22,10 @@ export const color = {
 
   /* Accents are Lab's raw hex. Keep these 6-digit — `tint()` and four call
      sites concatenate a 2-char alpha suffix directly onto them. */
-  wdbx: "#22D3EE", // Lab --cyan
-  abi: "#A855F7", // Lab --violet
-  abbey: "#34D399", // Lab --emerald
-  warn: "#FBBF24", // Lab --amber
+  wdbx: labColor.cyan, // Lab --cyan
+  abi: labColor.violet, // Lab --violet
+  abbey: labColor.emerald, // Lab --emerald
+  warn: labColor.amber, // Lab --amber
 
   white: "#FFFFFF",
   text: "#E8EBF1", // Lab --foreground, oklch(0.94 0.008 255)
@@ -34,7 +35,7 @@ export const color = {
 } as const;
 
 /** Lab's signature gradient (--grad: cyan -> blue -> violet). */
-export const gradient: [string, string, string] = ["#22D3EE", "#60A5FA", "#A855F7"];
+export const gradient: [string, string, string] = [labColor.cyan, "#60A5FA", labColor.violet];
 
 export type Accent = ProductAccent;
 

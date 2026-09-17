@@ -2,7 +2,7 @@
 //
 // This is the first runtime (non-type) export to cross the package boundary in
 // this monorepo: @mlai/contracts is imported type-only and @mlai/design-tokens
-// has no consumers, so nothing here had yet proven that apps/web's bundler will
+// had no consumers when this was written, so nothing here had yet proven that apps/web's bundler will
 // transpile raw TypeScript out of a `file:` workspace package. That is why the
 // clock came over first and alone — it is the smallest thing that can prove it.
 

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@mlai/contracts": "workspace:*",
+    "@mlai/design-tokens": "workspace:*",
     "@babel/runtime": "^7.20.0",
     "@expo-google-fonts/geist": "^0.4.2",
     "@expo-google-fonts/jetbrains-mono": "^0.4.0",

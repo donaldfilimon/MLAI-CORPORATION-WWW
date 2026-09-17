@@ -153,3 +153,7 @@ CloudKit/device execution, native screen-reader and actual browser zoom. The
 local 15-run citation evaluation retains one source-selection annotation error,
 with no retrieval, mapping or authorization failure. Historical raw report loss
 is documented above; current receipt and screenshot paths are distinct.
+
+2026-09-17: every hosted CI, Pages and Cloud Run run after 2026-09-08 20:26Z was refused
+by a GitHub account billing lock before any step ran, so those runs are unmeasured rather
+than failed. The CI results above are the last hosted evidence; later evidence is local.
