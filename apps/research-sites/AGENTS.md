@@ -8,7 +8,9 @@ from the former standalone `~/dev/active/mlai-research-sites` checkout (kept at
 `~/dev/archive/mlai-research-sites-merged-20260916`). The
 exporter is `apps/web/scripts/export-research.tsx` in this same repository. Run
 `bun run check:research-sites` from the repository root, or `bun run check` here.
-The `git.chatgpt-team.site` origin below describes the retired standalone copy.
+This checkout's origin is `donaldfilimon/MLAI-CORPORATION-WWW`; the
+`git.chatgpt-team.site` origin recorded in older notes belongs to the retired
+standalone copy.
 
 ## Ownership and regeneration
 
@@ -38,14 +40,16 @@ The `git.chatgpt-team.site` origin below describes the retired standalone copy.
   `package-lock.json`, and do not reintroduce a dependency without a use for it —
   the previous `shadcn` devDependency pulled 81 MB of Babel for nothing and was
   removed. `bun test` covers historical filter logic and export packaging;
-  `bun run check` runs tests then integrity-checked packaging. There is no CI workflow.
+  `bun run check` runs tests then integrity-checked packaging. The root
+  `.github/workflows/ci.yml` `research-sites` job runs `bun run check` here with
+  no install step. This directory is not a root Bun workspace member.
 - For documentation-only work, review the diff and use `git diff --check`.
 
 ## Static behavior
 
 - `public/index.html` and `public/research/` contain the review pages;
   `research-data.json` is the structured collection and `assets/` is bundled locally.
-- Canonical `scripts/research-discovery.js` is exported as
+- Canonical `apps/web/scripts/research-discovery.js` is exported as
   `public/assets/discovery.js`, loaded with `defer`. Historical `src/filter.ts`
   utilities remain tested but are no longer loaded by the exported pages.
   Article links work without JavaScript.

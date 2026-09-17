@@ -50,6 +50,8 @@ other surfaces are siblings, not children of the Expo project:
 |---|---|---|
 | `../quasar/` | Local AI website-builder: service, shared package and Expo app (root workspace members) plus a separately locked Next 15 template | from the repository root: `bun run check:quasar` |
 | `../web/` | Canonical Next 15 App Router marketing/console site on Bun | from the repository root: `bun run check:web` |
+| `../website-app/` | Independent local Next.js application (Node runtime, SQLite, Python worker) | from the repository root: `bun run check:website-app` |
+| `../research-sites/` | Generated static research export (zero dependencies, not a root workspace member) | from the repository root: `bun run check:research-sites` |
 
 The app's TypeScript, ESLint, and Jest roots are `apps/mobile`, so sibling
 sources are naturally fenced out.
@@ -62,7 +64,8 @@ Three files depend on that layout:
 
 - `metro.config.js` watches the repository root and enables symlink and
   package-exports resolution, because dependencies are symlinks into
-  `<repo>/node_modules/.bun` and `@mlai/contracts` is a workspace symlink.
+  `<repo>/node_modules/.bun` and `@mlai/contracts` and `@mlai/design-tokens`
+  are workspace symlinks.
 - `jest.config.js` restates jest-expo's `transformIgnorePatterns` with a
   `(?!\.bun/)` guard; without it Jest skips transforming React Native and Expo
   sources that live under the `.bun` store.
@@ -107,7 +110,7 @@ Adding a CloudKit field touches four places: the Swift module (`modules/mlai-clo
 ### Facts + theme (single sources of truth)
 
 - **`lib/brand.ts`** — all copy, product data, and metrics, mirroring the web `lib/brand.ts`. Every `Stat` carries `provenance: "measured" | "target" | "reported"`. **Integrity rule: never render a target as a result.** `provenanceMeta` maps each to a glyph (● ○ ◆). Edit copy here, not in screens.
-- **`lib/theme.ts`** — design tokens: `color`, `space`, `radius`, `font`, `type`, and the three product accents (`wdbx` cyan, `abi` violet, `abbey` green) keyed by the `Accent` type. Use `tint(hex, alpha)` for soft accent fills. Screens compose tokens; they don't hardcode colors/sizes.
+- **`lib/theme.ts`** — design tokens: `color`, `space`, `radius`, `font`, `type`, and the three product accents (`wdbx` cyan, `abi` violet, `abbey` green) keyed by the `Accent` type. The raw Lab hex values (`ink` and the four accents) are imported at runtime from `@mlai/design-tokens` (`labColor`), so a change there reaches this app. Use `tint(hex, alpha)` for soft accent fills. Screens compose tokens; they don't hardcode colors/sizes.
 
 ### Reactive UI primitives (`components/ui/`)
 
@@ -119,7 +122,7 @@ Reanimated requires `react-native-reanimated/plugin` in `babel.config.js` — it
 
 ## Conventions
 
-- Path alias `@/*` → repo root (`tsconfig.json`). Import as `@/lib/theme`, `@/components/ui/Text`.
+- Path alias `@/*` → this app's root, `apps/mobile` (`tsconfig.json`). Import as `@/lib/theme`, `@/components/ui/Text`.
 - TypeScript `strict` is on; keep `bun run typecheck` clean.
 - Dark UI only (`userInterfaceStyle: "dark"`, near-black `color.ink` `#05070D` (Lab `--ink`)).
 - Dependency set is pinned to the Expo SDK 53 family (the verified React 19 baseline). To bump: `bunx expo install expo@latest --fix`.
