@@ -32,6 +32,7 @@ export function ShardingLatencyDemo() {
       </div>
       <input
         type="range" min={1} max={32} value={n}
+        aria-label="Modeled partition count"
         onChange={(e) => setN(+e.target.value)}
         className="w-full accent-sky-400"
       />

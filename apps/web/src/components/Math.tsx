@@ -41,7 +41,9 @@ export function BlockMath({ tex }: { tex: string }) {
 
   if (!katex) {
     return (
-      <div className="my-1 overflow-x-auto rounded-lg border border-white/5 bg-white/2 px-5 py-4 font-mono text-xs text-cyan-50/50">
+      // tabIndex: a wide equation scrolls inside this box, so keyboard users
+      // need to be able to focus it to scroll (WCAG 2.1.1, axe scrollable-region-focusable).
+      <div tabIndex={0} className="my-1 overflow-x-auto rounded-lg border border-white/5 bg-white/2 px-5 py-4 font-mono text-xs text-cyan-50/50">
         {tex}
       </div>
     );
@@ -54,6 +56,7 @@ export function BlockMath({ tex }: { tex: string }) {
   });
   return (
     <div
+      tabIndex={0}
       className="my-1 overflow-x-auto rounded-lg border border-white/5 bg-white/2 px-5 py-4 text-[0.95em] text-cyan-50/90"
       // KaTeX output generated from trusted in-repo LaTeX strings, rendered
       // with output:"html" and throwOnError:false — no user input reaches this.

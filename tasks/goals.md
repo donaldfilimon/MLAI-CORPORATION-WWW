@@ -1621,3 +1621,54 @@ neither present) and a real zoom-control pass himself.
   command is in `.github/self-hosted-runner.md`. Agents do not enter tokens.
   After registration, dispatch CI and read the `check (self-hosted)` job, not
   the run badge, since the hosted jobs still fail under the lock.
+
+## Extend web acceptance to zoom emulation, cinematic routes and the signed-in console
+status: in_progress
+
+Captured 2026-09-17 06:1x EDT from Donald's "continue" on the unmeasured list.
+
+- **Zoom-control emulation** (viewport 1280/z × 800/z at `deviceScaleFactor` z, matching
+  how a real zoom control changes `innerWidth` and `devicePixelRatio`):
+  - 32/32 routes at 200/300/400% in Chromium, Firefox and WebKit.
+  - Defect: the mobile menu sheet (558 px of content) did not scroll, so the
+    lower links were unreachable once zoomed. Fixed with `overflow-y-auto`
+    (`Navbar.tsx`) and pinned in `reflow.test.ts`.
+  - Not emulated: raster sharpness, OS text scaling, minimum font size, and
+    `outerWidth`/`screen.*`.
+- **Cinematic routes** (6 showcase sub-routes, 3 engines, 1280/320, with and
+  without reduced motion):
+  - Every route returned 200 with no uncaught errors, the stages draw, the
+    controls are keyboard-reachable and named, and the hub reaches all six.
+  - Fixed: Space on a focused button (Return to start, the voice toggle) also
+    toggled playback (`src/film/engine.tsx`), now pinned.
+  - **Open:** only `/showcase/abbey` honors reduced motion; the other four films
+    keep animating.
+  - **Open:** every film starts downloading the voice model on load.
+  - **Open:** the voice toggle is 22×7 px at 320 px.
+  - **Open:** End on the scrubber loops back to 0.
+  - **Open:** the design board buttons lack `aria-pressed`.
+- **`/tf-pose-demo` is broken (open):** it always shows "Media elements not
+  found", because `TFPoseDemo.tsx` renders `<video>` only after loading and never
+  renders a `<canvas>`. The camera-denied path and PoseNet itself remain
+  unmeasured.
+- **Signed-in console:** rendered against `next dev` with a locally sealed
+  session (the dev fallback secret, a fake user, IP/UA bound to loopback, no
+  real credentials).
+  - Without Postgres or WorkOS the console degrades cleanly: consent shows as
+    unavailable and file sources return 503.
+  - `/console/workspace` overflowed by 424 px at 320 px; fixed with a wrapping
+    top bar and a rail that starts collapsed. All three console routes now
+    measure 0 overflow at 1280, 320 and 200%.
+- **axe-core 4.13.0 (WCAG 2.2 A/AA, Chromium, 26 routes):**
+  - Fixed: unlabeled sliders (`/benchmarks`, critical), unfocusable scroll boxes
+    (`/products/abi`), nested landmarks, a double tab stop on sign-in, and
+    low-contrast small text on 8 routes (only in-view opacity values changed;
+    no brand tokens).
+  - The last workspace contrast item (0.35 → 0.55) was applied by the
+    coordinator. `a11y-source.test.ts` pins the fixes.
+  - **Open:** KaTeX renders `output:"html"`, so screen readers get no MathML.
+  - **Open:** contrast over gradients cannot be judged by axe.
+  - **Open:** `heading-order` findings.
+  - **Open:** one link-in-text item on `/login` and `/signup`.
+  - axe is not a screen-reader test; Donald is doing the VoiceOver pass.
+- `check:web` exit 0 (56 files, 481 tests, build).

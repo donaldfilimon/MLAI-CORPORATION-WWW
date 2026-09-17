@@ -36,7 +36,6 @@ export function DocPage({ slug }: { slug: string }) {
   return (
     <article
       className="container-custom pt-32 pb-24 min-h-screen font-sans overflow-hidden"
-      role="main"
       aria-labelledby="doc-heading"
     >
       <div className="mx-auto max-w-3xl">
@@ -90,7 +89,7 @@ export function DocPage({ slug }: { slug: string }) {
                       className="overflow-hidden rounded-lg border border-white/5 bg-white/2"
                     >
                       {block.file && (
-                        <figcaption className="border-b border-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-dim/60">
+                        <figcaption className="border-b border-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-dim/80">
                           {block.file}
                         </figcaption>
                       )}
@@ -127,7 +126,7 @@ export function DocPage({ slug }: { slug: string }) {
           <>
             <Separator className="my-14 bg-white/10" />
             <div>
-              <p className="mb-3 text-sm font-mono uppercase tracking-widest text-text-dim/50">
+              <p className="mb-3 text-sm font-mono uppercase tracking-widest text-text-dim/80">
                 Sources
               </p>
               <ul className="space-y-3">

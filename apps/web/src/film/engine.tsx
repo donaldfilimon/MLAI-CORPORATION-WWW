@@ -166,8 +166,12 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement | null)?.tagName;
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
+      // A focused button owns Space (activates it natively); toggling playback
+      // too would make "Return to start" or the voice toggle also play/pause.
+      if (e.code === "Space" && target?.closest("button, [role=button]")) return;
       // Clear any scrubber-hover preview so keyboard control isn't frozen at the
       // hovered frame when the pointer is resting on the track (mouseleave never fires).
       if (e.code === "Space") { e.preventDefault(); setHoverTime(null); setPlaying((p) => !p); }

@@ -272,7 +272,7 @@ function DataRow({ label, periods, get, kind = "money", style = "normal", indent
     style === "subtotal"
       ? "font-semibold text-white"
       : style === "muted"
-        ? "text-text-dim/70"
+        ? "text-text-dim/80"
         : "text-text-dim";
   const valCls = style === "subtotal" ? "font-semibold text-white" : "text-slate-200";
   return (
@@ -415,7 +415,7 @@ export function ThreeStatementModelDemo() {
       {/* Scenario assumptions — the inputs everything below is derived from */}
       <div className="mb-5 rounded-xl border border-white/10 bg-black/20 p-3">
         <div className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-cyan-200/80">
-          Scenario drivers — inputs <span className="text-text-dim/50">(ramps shown Y1→Y5)</span>
+          Scenario drivers — inputs <span className="text-text-dim/80">(ramps shown Y1→Y5)</span>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-4 lg:grid-cols-6">
           {DRIVER_VIEW.map((dv) => (
@@ -434,7 +434,7 @@ export function ThreeStatementModelDemo() {
         <table className="w-full min-w-[640px] border-collapse px-5 sm:px-6">
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 bg-bg px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-widest text-text-dim/60">
+              <th className="sticky left-0 z-10 bg-bg px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-widest text-text-dim/80">
                 $ millions
               </th>
               {periods.map((p) => (
@@ -515,7 +515,7 @@ export function ThreeStatementModelDemo() {
         </table>
       </div>
 
-      <p className="mt-4 font-mono text-[11px] text-text-dim/70">
+      <p className="mt-4 font-mono text-[11px] text-text-dim/80">
         Δassets = NI + Δpayables + Δaccrued + Δdebt − dividends = Δliabilities + Δequity
         &nbsp;→&nbsp; balance = 0 every period. Loss years bank an NOL + deferred-tax asset
         (post-2017 80% cap); the deferred-tax add-back keeps cash tied.
@@ -539,7 +539,7 @@ function Kpi({
     tone === "ok" ? "text-emerald-300" : tone === "bad" ? "text-red-300" : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-black/20 px-3 py-2.5">
-      <div className="text-[10px] uppercase tracking-widest text-text-dim/70">{label}</div>
+      <div className="text-[10px] uppercase tracking-widest text-text-dim/80">{label}</div>
       <div className={`mt-0.5 flex items-center gap-1.5 text-lg font-bold tabular-nums ${toneCls}`}>
         {icon}
         {value}
