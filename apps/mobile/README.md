@@ -18,7 +18,7 @@ Spectral / Geist / JetBrains Mono via @expo-google-fonts
 ## Run it
 
 ```bash
-bun install
+(cd ../.. && bun install)   # one root workspace and bun.lock
 bun start            # Expo dev server → scan the QR with Expo Go
 # or target a platform directly:
 bun run ios          # iOS simulator (macOS)

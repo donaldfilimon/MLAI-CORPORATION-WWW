@@ -82,8 +82,9 @@ acceptance does not establish semantic correctness for every model answer.
 ## Reproduce
 
 Use Node 24.x and Bun 1.4.0 plus the app's documented uv/Python, Java and
-LibreOffice prerequisites. Keep all app workspaces and lockfiles independent.
-From the repository root:
+LibreOffice prerequisites. Since 2026-09-16 every app installs through one root
+Bun workspace and `bun.lock` (isolated linker); keep app authentication and data
+stores independent. From the repository root:
 
 ```sh
 bun run install:all
@@ -128,8 +129,11 @@ Preflight the selected model's `/models` endpoint before live commands. Missing
 services are blockers, not reasons to substitute hosted processing. CI's narrower
 app gate omits parser setup, clean-install and browser/live acceptance; the local
 results above are independent evidence. Read the [app setup guide](../apps/website-app/README.md)
-for details. The root install helper is non-frozen; clean-install and CI require
-frozen installs separately in the independent workspaces.
+for details. The root install helper is non-frozen. Clean-install and CI run
+frozen installs of the root lockfile, filtered to `@mlai/platform` and the
+workspaces under test, and CI's topology job fails on lockfile drift. CI now has
+six jobs (topology, web, mobile, Quasar, website-app, research-sites); the
+five-job results below predate the research-sites job.
 
 ## Hosted delivery and remaining boundaries
 

@@ -41,7 +41,10 @@ try {
       "scripts",
       "tests",
       "package.json",
-      "bun.lock",
+      // The lockfile and linker settings live at the repository root since
+      // every app joined one Bun workspace; `:/` anchors them there.
+      ":/bun.lock",
+      ":/bunfig.toml",
       "playwright.config.ts",
     ]),
     implementationDataSha256: sha256(input.studyBytes),

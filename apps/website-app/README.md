@@ -12,7 +12,7 @@ The original verification receipts below predate this import; see
 Requirements: Node 24.x (the CI and release-verification runtime), Bun 1.4.0, uv, Python 3.11–3.13, LibreOffice (`soffice` on PATH), and Java 21+. On Apple silicon, `bun run model` can start a dedicated MLX runtime. Existing MLX Core or another local OpenAI-compatible runtime can also be used.
 
 ```sh
-bun install --frozen-lockfile
+(cd ../.. && bun install --frozen-lockfile)   # one root workspace and bun.lock
 bun run setup
 bun run dev
 ```
@@ -155,7 +155,7 @@ The original baseline artifact at `.data/releases/verified-app` and its locked r
 
 Run `MLAI_KEEP_RELEASE=1 bun run verify:clean-install` to retain a separately installed source snapshot, locked Node/Python dependencies, and production build under `.data/releases/mlai-clean-*`. Its exact path and source hashes are written to `docs/verification/clean-install.json`. The verifier includes new, non-ignored package sources, excludes generated `next-env.d.ts`, and refuses to report success if executable source changes during verification. It reuses dependency/model caches and the verified Tika jar; this is not an offline dependency-distribution bundle. Fixture accounts stay in the separate installation.
 
-Release receipts hash application code, shared UI, configuration, tests, agent definition, and lockfiles. Documentation and acceptance receipts are excluded from the runtime hash so evidence can be recorded afterward. `docs/verification/release-artifact.json` identifies the accepted combined release and local handoff. Generated outputs, private records, secrets, and dependencies are not committed.
+Release receipts hash application code, shared UI, configuration, tests, agent definition, and the Python lockfile; the clean-install receipt separately hashes the root Bun install inputs (`workspaceSlice`). Documentation and acceptance receipts are excluded from the runtime hash so evidence can be recorded afterward. `docs/verification/release-artifact.json` identifies the accepted combined release and local handoff. Generated outputs, private records, secrets, and dependencies are not committed.
 
 The current frozen release is already running on port 3100. After stopping that launcher, restart this exact snapshot from the canonical repository root with:
 

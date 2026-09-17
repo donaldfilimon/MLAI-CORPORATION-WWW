@@ -119,9 +119,9 @@ jobs:
       # page. Cheap insurance, and the two are not substitutes.
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4"
-      - run: bun install --frozen-lockfile
-        working-directory: apps/web
+          bun-version: "1.4.0"
+      # One root workspace: install at the repository root (see ci.yml).
+      - run: bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/web
       - run: bunx vitest run src/__tests__/landing-page.test.ts
         working-directory: apps/web
 

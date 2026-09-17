@@ -1,8 +1,11 @@
 # Quasar
 
-Quasar lives at `apps/quasar/` inside the MLAI integration repository but
-remains an independent Bun workspace with its own lockfile. From the repository
-root, `bun run check:quasar` runs its native type, unit, and Expo export gates.
+Quasar lives at `apps/quasar/` inside the MLAI integration repository. Its
+service, shared package and Expo app are members of the repository's root Bun
+workspace and are locked by the root `bun.lock` (isolated linker); install
+from the repository root. `templates/next-site` is outside that workspace and
+keeps its own lockfile. From the repository root, `bun run check:quasar` runs
+its native type, unit, and Expo export gates.
 
 Quasar is an AI website builder: describe a site in a prompt, Claude scaffolds
 and writes a real **Next.js 15 App Router** project, and you preview it live
@@ -16,7 +19,8 @@ scope here.
 
 ## Architecture
 
-Four Bun workspaces:
+Four parts; the first two and the Expo app are root workspace members, the
+template is copied, not installed in place:
 
 ```
 packages/shared      TypeScript types + zod schemas shared by service and app
@@ -66,7 +70,7 @@ that wrote it and that you use for the driven experience.
 ## How to run
 
 ```bash
-bun install
+bun install    # from the repository root
 ```
 
 **Start the service** (needs Anthropic credentials — either set

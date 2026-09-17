@@ -3,7 +3,9 @@
 Canonical project guidance; `CLAUDE.md` adds source-level detail and commands.
 
 This is the MLAI website and local application, integrated under `apps/website-app`.
-It remains an independent Bun workspace and runtime. `apps/web` is the canonical
+It keeps an independent runtime, but its JavaScript dependencies (including
+`packages/ui` and `mlai-website-agent`) are members of the repository's root Bun
+workspace and are locked by the root `bun.lock`. `apps/web` is the canonical
 production website. ABI, Abbey, and WDBX remain external services.
 
 ## Architecture
@@ -12,13 +14,21 @@ Next.js App Router and TypeScript run on Node.js. Bun manages packages and scrip
 
 ## Commands
 
-Run `bun install --frozen-lockfile`, `bun run setup`, then `bun run dev`. Development builds the private shared UI package before starting the web process and persistent worker on loopback. `bun run check` covers shared UI ESM/declarations, types, unit tests, parser tests, and production build; `bun run test:e2e` covers browser workflows. Use `bun run format:check` for read-only formatting validation. Keep generated UI dist, Next output, and next-env.d.ts out of Git.
+Run `bun install --frozen-lockfile` at the repository root, then `bun run setup` and `bun run dev` here. Development builds the private shared UI package before starting the web process and persistent worker on loopback. `bun run check` covers shared UI ESM/declarations, types, unit tests, parser tests, and production build; `bun run test:e2e` covers browser workflows. Use `bun run format:check` for read-only formatting validation. Keep generated UI dist, Next output, and next-env.d.ts out of Git.
 
 ## Runtime traps
 
-- `package.json` pins Bun 1.4.0 for package management; runtime scripts use
-  `node --import tsx`. Use `bun run <script>`, not `bun scripts/<file>.ts`.
-  Keep native `better-sqlite3` on Node and preserve `serverExternalPackages`.
+- The root `package.json` pins Bun 1.4.0 for package management; runtime
+  scripts use `node --import tsx`. Use `bun run <script>`, not
+  `bun scripts/<file>.ts`. Keep native `better-sqlite3` on Node and preserve
+  `serverExternalPackages`.
+- Install at the repository root; this app has no lockfile of its own. The
+  root `bunfig.toml` uses the isolated linker, so only declared dependencies
+  resolve. `next.config.ts` points `outputFileTracingRoot` and `turbopack.root`
+  at the repository root. `verify:clean-install` copies the root install
+  inputs (`scripts/workspace-slice.ts`) and runs a filtered frozen install
+  there. Never install with Bun 1.3: it cannot parse the root lockfile's
+  `lockfileVersion: 2` and rewrites it instead of failing.
 - Run from this app directory (`apps/website-app`): migrations, Python entry points, and the gRPC
   protobuf resolve against cwd. `APP_URL` selects the launch port (default 3100).
 - Importing `config.ts` creates private directories and an auth secret;

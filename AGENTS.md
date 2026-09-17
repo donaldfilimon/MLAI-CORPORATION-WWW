@@ -9,11 +9,12 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
   mobile `www/` snapshot or collapse the website into an Expo static mock.
 - `apps/mobile` is the Expo companion. Preserve its native CloudKit versus
   encrypted-local fallback distinction and its signed-device acceptance gap.
-- `apps/quasar` is an independent nested Bun workspace. Its service, Expo app,
-  template, tests, and lockfile move together.
-- `apps/website-app` is the imported local Next.js application. Keep its own
-  workspace, shared UI, agent scaffold, SQLite/Better Auth, worker and lockfiles
-  together. Run commands from that app directory; never add it to root workspaces.
+- `apps/quasar` holds Quasar's service, shared package and Expo app, which are
+  members of the root workspace, plus `templates/next-site`, which stays
+  outside it with its own lockfile because it is copied per generated site.
+- `apps/website-app` is the imported local Next.js application. Keep its shared
+  UI, agent scaffold, SQLite/Better Auth, worker and Python lockfile together.
+  Run its commands from that app directory.
 - `apps/research-sites` is the generated static export of the research
   collection, imported with its history on 2026-09-16. It has zero
   dependencies and no install step. Never hand-edit its `public/`: regenerate it
@@ -24,15 +25,32 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
   wrapper. `check:topology` runs `bun packages/tooling/src/check-topology.ts`.
 - The root is orchestration only. Run app-native gates independently and report
   their results independently.
-- Do not add web, mobile, or website-app to the root Bun workspace. Their React type graphs
-  intentionally differ; each app owns its own lockfile and `node_modules`.
+- Every app except `apps/research-sites` (no dependencies) and the Quasar
+  template installs through one root Bun workspace: one root `bun.lock`, no app
+  lockfiles, `linker = "isolated"` in the root `bunfig.toml`. The workspace list
+  in the root `package.json` names each member; there is deliberately no
+  `apps/*` glob.
+- The React type graphs still differ: the Next apps use React 19.2 types and
+  the Expo apps use SDK 53's 19.0 types. The isolated linker gives each app its
+  own view, and two mechanisms keep third-party declarations (which often
+  import `react` without depending on `@types/react`) on the right copy. The
+  root `package.json` pins the Next-side `@types/react`/`@types/react-dom` and
+  `bunfig.toml`'s `hoistPattern` keeps those two out of Bun's hidden fallback
+  directory, so such declarations resolve to the root pin. Each Expo app
+  typechecks through `tsconfig.typecheck.json`, which maps `react` to its own
+  types. Do not remove either mechanism, and never switch the linker to
+  `hoisted` without re-running every app's typecheck.
+- The isolated linker exposes only declared dependencies. Declare every
+  package an app or its scripts import; do not rely on another package's
+  dependencies being reachable.
 
 ## Commands
 
-Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn.
+Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn. The lockfile is
+`lockfileVersion: 2`; Bun 1.3 rewrites it instead of failing.
 
 ```bash
-bun run install:all
+bun run install:all      # bun install at the root (every workspace)
 bun run check            # aggregate gate: check:topology && check:workflows && check:tooling && check:web && check:mobile && check:quasar && check:website-app && check:research-sites
 bun run check:topology
 bun run check:workflows
@@ -55,10 +73,16 @@ local build alone.
 
 ## Gate boundaries
 
-- `install:all` uses non-frozen installs; CI uses `bun install --frozen-lockfile`
-  separately in web, mobile, Quasar, and website-app. Root workspaces contain only `packages/*`.
-- `check:topology` only checks required paths exist; it does not compile contracts
-  or validate content, lockfile drift, or app behavior.
+- `install:all` is a plain, non-frozen `bun install` at the root. Each CI job
+  installs at the root with `bun install --frozen-lockfile --filter
+  @mlai/platform --filter <its workspaces>`, and the topology job runs
+  `bun install --frozen-lockfile --lockfile-only`, which fails when a manifest
+  changed without the matching `bun.lock` update.
+- `check:topology` checks that required paths exist (root `bun.lock` and
+  `bunfig.toml`, every workspace manifest, both Metro configs and both Expo
+  typecheck configs), that no app lockfile exists, that no nested manifest
+  declares `workspaces`, and that the isolated linker is set. It does not
+  compile contracts or validate content, lockfile drift, or app behavior.
 - `check:workflows` runs pinned Actionlint 1.7.12 via Go (Go 1.25+ required;
   first run downloads the module). It checks workflow syntax and expressions,
   with optional ShellCheck and Pyflakes disabled.
@@ -69,8 +93,8 @@ local build alone.
   `bun run test src/__tests__/landing-page.test.ts`; do not substitute `bun test`.
 - `check:mobile`: TypeScript, Jest in-band, Expo lint, Expo **web** export.
   From `apps/mobile`: `bun run test __tests__/cloud.test.ts --runInBand`.
-- `check:quasar`: workspace typechecks, `bun test packages`, then Expo **web**
-  export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
+- `check:quasar`: the three Quasar typechecks (`@quasar/*` and `quasar-app`),
+  `bun test packages`, then Expo **web** export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
   `bun test packages/service/src/paths.test.ts` (Bun's runner, unlike web/mobile).
 - `check:research-sites`: `bun test` plus `bun run build`, which verifies the
   clean manifest, exact file inventory and every file hash before copying
@@ -82,8 +106,13 @@ local build alone.
   CI covers formatting, research validation, TypeScript, Vitest, migration and
   build; it does not cover pytest, Playwright, or live integrations. The nested
   agent scaffold remains non-deployable under its own `AGENTS.md`.
-- Quasar workspace globs are `packages/*` and `apps/*`; `templates/next-site`
-  has its own lockfile and is not built by that aggregate gate.
+- The root workspace lists Quasar's `packages/*` and `apps/*`;
+  `templates/next-site` has its own lockfile and is not built by that aggregate
+  gate.
+- CI covers six jobs: topology, web, mobile, quasar, website-app and
+  research-sites. Hosted runs have been blocked by a billing lock since
+  2026-09-08, so a red hosted check after that date is unmeasured, not a
+  failing gate.
 - `dev:quasar` starts only the Expo app. Start the service separately from
   `apps/quasar` with `bun run --filter '@quasar/service' start`; see its README
   for the unauthenticated LAN listener and provider-dependent acceptance flow.
@@ -114,10 +143,10 @@ The consequences are easy to get wrong and expensive:
   means before editing.
 
 Note also that `apps/website-app` was imported from the separate repository
-`donaldfilimon/mlai-website-app`, which **still exists and has kept moving**, so a
-fix made in the standalone checkout is absent here until re-imported or
-cherry-picked, and vice versa. Provenance is in
-`docs/website-app-import-manifest.json`.
+`donaldfilimon/mlai-website-app`. Everything through its `801bdad` was merged
+here with history on 2026-09-16, and that repository has been archived
+read-only on GitHub since the same day, so this tree is the only place to
+develop the app. Provenance is in `docs/website-app-import-manifest.json`.
 
 ## Git workflow (machine policy, 2026-08-27)
 
