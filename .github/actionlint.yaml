@@ -1,0 +1,4 @@
+# Custom label of the MLAI self-hosted runner (see self-hosted-runner.md).
+self-hosted-runner:
+  labels:
+    - mlai

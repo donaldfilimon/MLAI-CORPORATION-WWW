@@ -1,10 +1,18 @@
 name: CI
 
+# Trusted same-repository events also run the full gate on the macOS arm64
+# self-hosted runner (the `check (self-hosted)` job). Fork pull requests never
+# reach that machine; they run only on the GitHub-hosted jobs below.
+# Runner operations and security model: .github/self-hosted-runner.md
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -15,6 +23,30 @@ concurrency:
 # filtered to the workspaces it checks; @mlai/platform (the root workspace)
 # carries the @types/react fallback that Next's declarations resolve through.
 jobs:
+  check-self-hosted:
+    name: check (self-hosted)
+    if: >
+      github.repository == 'donaldfilimon/MLAI-CORPORATION-WWW' &&
+      (github.event_name == 'push' ||
+       github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository))
+    runs-on: [self-hosted, macOS, ARM64, mlai]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.2"
+      # Same drift check as the hosted topology job, then the full install.
+      - run: bun install --frozen-lockfile --lockfile-only
+      - run: bun install --frozen-lockfile
+      # All eight stages. check:workflows uses the host's Go (1.25+), and
+      # check:website-app creates and removes its own MLAI_DATA_DIR.
+      - run: bun run check
+
   topology:
     runs-on: ubuntu-latest
     steps:

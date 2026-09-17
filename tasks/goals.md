@@ -1599,3 +1599,25 @@ coordinator reviews, gates and commits.
     Quasar generation end to end, `docker build`, and hosted CI (billing lock).
   - The root `bun.lock` still carries 9 build-tooling advisories judged
     unreachable; they are left until upstream ranges move.
+
+## Run CI on a self-hosted runner while hosted Actions are billing-locked
+status: in_progress
+
+Captured 2026-09-17 05:5x EDT on Donald's choice ("Register a macOS runner"), in the
+same exchange where he skipped `docker build` and took the VoiceOver pass, the
+Quasar end-to-end generation (it needs an `ANTHROPIC_API_KEY` or `ant auth login`,
+neither present) and a real zoom-control pass himself.
+
+- `ci.yml` gains a `check (self-hosted)` job, modelled on abi's: it runs
+  `bun run check` behind a same-repository trust gate
+  (push / dispatch / non-fork PR only), with `permissions: contents: read` and
+  `persist-credentials: false`. The workflow also gains `workflow_dispatch`.
+  Hosted jobs are unchanged and stay the only fork-reachable jobs.
+- `.github/actionlint.yaml` declares the `mlai` label. Without it,
+  `check:workflows` exits 1 (`label "mlai" is unknown`), measured.
+- `~/actions-runner-mlai` was prepared by copying abi's 2.337.0 runner binaries
+  and scripts, with no credentials or state, plus a local `CLAUDE.md`.
+- **Blocked on Donald:** registration needs a GitHub registration token. The
+  command is in `.github/self-hosted-runner.md`. Agents do not enter tokens.
+  After registration, dispatch CI and read the `check (self-hosted)` job, not
+  the run badge, since the hosted jobs still fail under the lock.
