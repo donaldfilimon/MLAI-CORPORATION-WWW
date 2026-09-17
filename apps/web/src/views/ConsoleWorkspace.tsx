@@ -133,6 +133,13 @@ export function ConsoleWorkspace() {
   const [reload, setReload] = useState(0);
   const searchRef = useRef<HTMLInputElement>(null);
 
+  // Reflow (WCAG 1.4.10): at 320 CSS px the expanded 208px rail left the
+  // results ~110px wide. Start collapsed on narrow viewports; the toggle
+  // still expands it on request.
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) setExpanded(false);
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
     let live = true;
@@ -347,7 +354,7 @@ function Rail({
             >
               MLAI
             </div>
-            <div style={{ fontFamily: MONO, fontSize: 9.5, color: "rgba(232,237,246,0.4)" }}>
+            <div style={{ fontFamily: MONO, fontSize: 9.5, color: "rgba(232,237,246,0.55)" }}>
               console
             </div>
           </div>
@@ -366,7 +373,7 @@ function Rail({
             borderRadius: 6,
             border: "1px solid rgba(255,255,255,0.11)",
             background: "transparent",
-            color: "rgba(232,237,246,0.4)",
+            color: "rgba(232,237,246,0.55)",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -409,7 +416,7 @@ function Rail({
                 style={{
                   flexShrink: 0,
                   display: "flex",
-                  color: on ? "var(--cyan)" : "rgba(232,237,246,0.4)",
+                  color: on ? "var(--cyan)" : "rgba(232,237,246,0.55)",
                 }}
               >
                 <Icon size={16} strokeWidth={2} />
@@ -481,13 +488,14 @@ function Topbar({
   return (
     <header
       style={{
-        height: 56,
+        minHeight: 56,
         flexShrink: 0,
         borderBottom: "1px solid rgba(255,255,255,0.09)",
         display: "flex",
+        flexWrap: "wrap",
         alignItems: "center",
-        gap: 16,
-        padding: "0 20px",
+        gap: "10px 16px",
+        padding: "11px 20px",
         background: "rgba(8,11,18,0.85)",
         backdropFilter: "blur(24px)",
       }}
@@ -499,7 +507,7 @@ function Topbar({
           gap: 7,
           fontFamily: MONO,
           fontSize: 11,
-          color: "rgba(232,237,246,0.4)",
+          color: "rgba(232,237,246,0.55)",
           flexShrink: 0,
         }}
       >
@@ -512,7 +520,8 @@ function Topbar({
 
       <label
         style={{
-          flex: 1,
+          flex: "1 1 180px",
+          minWidth: 0,
           maxWidth: 520,
           display: "flex",
           alignItems: "center",
@@ -674,7 +683,7 @@ function PageHead({
             fontSize: 9.5,
             letterSpacing: "0.14em",
             textTransform: "uppercase",
-            color: "rgba(232,237,246,0.35)",
+            color: "rgba(232,237,246,0.55)",
           }}
         >
           {loading ? "Loading" : `${total} shown`} · last {DEFAULT_WINDOW.days} days
@@ -727,7 +736,7 @@ function SourceSection({
         <h2 style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "var(--color-text)" }}>
           {source.label}
         </h2>
-        <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(232,237,246,0.4)" }}>
+        <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(232,237,246,0.55)" }}>
           {source.status === "ok"
             ? `${files.length} FILES · ${source.identity === "google" ? "MY DRIVE" : "TENANT"}`
             : source.status.toUpperCase()}
@@ -742,7 +751,7 @@ function SourceSection({
         {connection?.connected && (
           <>
             {connection.accountEmail && (
-              <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(232,237,246,0.4)" }}>
+              <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(232,237,246,0.55)" }}>
                 {connection.accountEmail}
               </span>
             )}
@@ -819,7 +828,7 @@ function FileRows({ files }: { files: WorkspaceFile[] }) {
           fontFamily: MONO,
           fontSize: 9.5,
           letterSpacing: "0.12em",
-          color: "rgba(232,237,246,0.4)",
+          color: "rgba(232,237,246,0.55)",
         }}
       >
         <span>NAME</span>
@@ -892,7 +901,7 @@ function FileRows({ files }: { files: WorkspaceFile[] }) {
               style={{
                 fontFamily: MONO,
                 fontSize: 11,
-                color: "rgba(232,237,246,0.4)",
+                color: "rgba(232,237,246,0.55)",
                 textAlign: "right",
               }}
             >
@@ -971,7 +980,7 @@ function FileGrid({ files }: { files: WorkspaceFile[] }) {
                   fontFamily: MONO,
                   fontSize: 9.5,
                   letterSpacing: "0.08em",
-                  color: "rgba(232,237,246,0.4)",
+                  color: "rgba(232,237,246,0.55)",
                   textTransform: "uppercase",
                 }}
               >
@@ -1005,7 +1014,7 @@ function EmptyPanel({ title, detail }: { title: string; detail: string }) {
           fontFamily: MONO,
           fontSize: 10,
           letterSpacing: "0.1em",
-          color: "rgba(232,237,246,0.4)",
+          color: "rgba(232,237,246,0.55)",
         }}
       >
         {detail}
@@ -1065,7 +1074,7 @@ function ConnectPanel({
           fontFamily: MONO,
           fontSize: 9.5,
           letterSpacing: "0.1em",
-          color: "rgba(232,237,246,0.35)",
+          color: "rgba(232,237,246,0.55)",
         }}
       >
         READ-ONLY ACCESS &middot; DISCONNECT ANY TIME

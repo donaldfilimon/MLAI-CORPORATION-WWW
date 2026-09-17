@@ -69,7 +69,7 @@ export function FounderProfile() {
 
   if (!member) {
     return (
-      <div className="container-custom pt-32 pb-20 min-h-screen font-sans" role="main">
+      <div className="container-custom pt-32 pb-20 min-h-screen font-sans">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase">
             404 — Profile not found
@@ -93,7 +93,6 @@ export function FounderProfile() {
   return (
     <article
       className="container-custom pt-32 pb-24 min-h-screen font-sans overflow-hidden"
-      role="main"
       aria-labelledby="founder-heading"
     >
       <div className="mx-auto max-w-5xl">

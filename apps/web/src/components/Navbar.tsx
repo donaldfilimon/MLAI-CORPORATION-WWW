@@ -143,15 +143,14 @@ export const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/login">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-text-dim hover:text-white"
-                >
-                  Invited? Sign in
-                </Button>
-              </Link>
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-text-dim hover:text-white"
+              >
+                <Link to="/login">Invited? Sign in</Link>
+              </Button>
             )}
 
             <Magnetic>
@@ -176,7 +175,7 @@ export const Navbar = () => {
             <SheetContent
               id="mobile-navigation"
               side="right"
-              className="bg-surface border-white/10 w-full sm:max-w-sm gap-0 p-0"
+              className="bg-surface border-white/10 w-full sm:max-w-sm gap-0 p-0 overflow-y-auto"
             >
               <SheetHeader className="border-b border-white/10 px-6 py-4">
                 <SheetTitle className="text-white">Menu</SheetTitle>
@@ -233,11 +232,11 @@ export const Navbar = () => {
                       </Button>
                     </>
                   ) : (
-                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full h-12">
+                    <Button asChild variant="outline" className="w-full h-12">
+                      <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                         Invited? Sign in
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   )}
                   <Button asChild className="w-full bg-white text-black font-bold h-12">
                     <Link to="/get-started" onClick={() => setIsMobileMenuOpen(false)}>Get started</Link>

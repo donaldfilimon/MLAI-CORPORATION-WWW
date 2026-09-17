@@ -37,3 +37,21 @@ describe("reflow — single-column grids use minmax(0, 1fr)", () => {
     expect(math.match(/overflow-x-auto/g)?.length).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe("reflow — the mobile menu sheet scrolls when zoomed", () => {
+  it("SheetContent in the navbar is overflow-y-auto", () => {
+    // At 200-400% zoom the 558px menu no longer fits the fixed full-height
+    // sheet; without scrolling, the lower links are unreachable (WCAG 1.4.10).
+    expect(read("src/components/Navbar.tsx")).toMatch(
+      /id="mobile-navigation"[\s\S]{0,120}overflow-y-auto/,
+    );
+  });
+});
+
+describe("film engine keyboard — Space on a focused button", () => {
+  it("leaves Space to the button instead of toggling playback", () => {
+    expect(read("src/film/engine.tsx")).toContain(
+      'e.code === "Space" && target?.closest("button, [role=button]")',
+    );
+  });
+});

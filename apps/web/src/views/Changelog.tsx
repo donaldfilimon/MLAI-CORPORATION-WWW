@@ -43,7 +43,7 @@ export const Changelog = () => {
                   <h2 className="text-lg font-display font-bold text-white">
                     {entry.title}
                   </h2>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/50">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/80">
                     {entry.date}
                   </span>
                 </div>

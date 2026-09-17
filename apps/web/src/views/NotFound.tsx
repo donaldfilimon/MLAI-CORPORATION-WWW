@@ -85,7 +85,6 @@ export function NotFound() {
   return (
     <div
       className="container-custom pt-32 pb-24 min-h-screen font-sans flex items-center"
-      role="main"
       aria-labelledby="notfound-heading"
     >
       <div className="mx-auto max-w-2xl text-center">
