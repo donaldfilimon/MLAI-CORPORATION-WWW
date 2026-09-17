@@ -77,7 +77,8 @@ These three recovery/installation receipts share the exact runtime digest above.
 Durable receipts are `research-completion-clean-install.json`,
 `research-completion-integrations.json`, `research-completion-agent.json`,
 `research-completion-source-parity.json` and `research-completion-acceptance.json`.
-Candidate screenshots are in `research-completion-screenshots/`. The prior generic
+Candidate screenshots were in `research-completion-screenshots/`; they were removed from the
+tree on 2026-09-16 and remain in git history (present through `fe41894`). The prior generic
 receipts and historical screenshots were preserved after capturing the new results.
 
 Artifact build ID: `v027-oySa7lbdvqjlLX-u`; Bun lock SHA-256:
