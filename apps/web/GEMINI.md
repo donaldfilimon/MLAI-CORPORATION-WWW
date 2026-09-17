@@ -10,7 +10,7 @@ Production website and invite-only private AI operations console for Quesar by M
 The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. Do not extend or restore those stacks; active work belongs in TypeScript/TSX under `app/` and `src/`.
 
 ## Essential Commands
-- `bun install` — Install dependencies with the checked-in `bun.lock`
+- `bun install` — Run from the repository root; every app shares the root `bun.lock`
 - `bun run dev` — Next.js dev server on port 3000
 - `bun run lint` — Type-check with `tsc --noEmit`
 - `bun run test` — Vitest suite
