@@ -28,14 +28,14 @@ specific belongs to an app and runs from that app's own directory. Use Bun
 1.4, never npm, pnpm, or yarn.
 
 ```bash
-bun run install:all      # root packages, then web, mobile, quasar, website-app (non-frozen)
+bun run install:all      # bun install at the root: every workspace, one bun.lock (non-frozen)
 bun run check            # check:topology, check:workflows, check:tooling, then web, then mobile, then quasar, then website-app, then research-sites
 bun run check:topology   # bun packages/tooling/src/check-topology.ts
 bun run check:workflows  # pinned Actionlint 1.7.12 via Go (requires Go 1.25+)
 bun run check:tooling    # repository wrapper regression tests
 bun run check:web        # cd apps/web && lint && test && build
 bun run check:mobile     # cd apps/mobile && typecheck && test && lint && expo export
-bun run check:quasar     # cd apps/quasar && typecheck && test && expo export
+bun run check:quasar     # apps/quasar typecheck && test, then export:web in apps/quasar/apps/quasar
 bun run check:website-app # isolated data wrapper: db:migrate, then check
 bun run check:research-sites # cd apps/research-sites && bun test && build (manifest-verified)
 bun run dev:web          # also dev:mobile, dev:quasar, dev:website-app
@@ -51,6 +51,18 @@ is not a signed CloudKit run, and no local gate is a hosted deployment.
 Each of these takes several files to reconstruct, so they are recorded here
 rather than inside one app's docs.
 
+- **One root Bun workspace, isolated linker.** Every app except
+  `apps/research-sites` and the Quasar template installs from the root
+  `bun.lock`; `bunfig.toml` sets `linker = "isolated"`. Install at the root,
+  never inside an app (there are no app lockfiles, and `check:topology`
+  rejects them). Only declared dependencies resolve, so an import that worked
+  through another package's dependencies fails; declare it. The Next and Expo
+  apps still use different React types: the root `package.json` pins the Next
+  side's `@types/react`, `bunfig.toml`'s `hoistPattern` makes undeclared
+  `react` type imports fall through to that pin, and each Expo app typechecks
+  through its `tsconfig.typecheck.json`, which maps `react` to its own SDK 53
+  types. `AGENTS.md` explains both; keep both.
+
 - **The test runner differs per app, and the wrong invocation fails quietly.**
   `bun run test` is Vitest in `apps/web` and Jest in `apps/mobile`; a bare
   `bun test` in either one invokes Bun's own runner instead and does not run
@@ -59,10 +71,11 @@ rather than inside one app's docs.
 - **`check:topology` requires this file to exist.**
   `packages/tooling/src/check-topology.ts` lists root `AGENTS.md`,
   `CLAUDE.md`, and `README.md` among its required paths, so renaming or
-  removing one fails the first gate in `bun run check`. It is an existence
-  check only; it compiles no contracts and validates no content.
+  removing one fails the first gate in `bun run check`. Beyond required paths
+  it only rejects app lockfiles, nested `workspaces` fields and a non-isolated
+  linker; it compiles no contracts and validates no content.
 - **`@mlai/contracts` is a type-only vocabulary shared by two apps.** Web and
-  mobile each consume it through a `file:../../packages/contracts` dependency,
+  mobile each consume it through a `workspace:*` dependency,
   and every use in app source is an `import type`
   (`apps/web/src/components/site/accent.ts`,
   `apps/mobile/lib/brand.ts`, `apps/mobile/lib/theme.ts`). By contrast
@@ -70,17 +83,19 @@ rather than inside one app's docs.
   cross-platform Lab colors while semantic tokens stay app-local, so a change
   there does not reach a running app on its own. `@mlai/trailer-engine` is
   the one shared package with **runtime** code: `apps/web` depends on it via
-  `file:../../packages/trailer-engine`, it exports raw `.ts` source, and the
+  `workspace:*`, it exports raw `.ts` source, and the
   film/trailer code in `apps/web/src/film` and `apps/web/src/abbey-trailer`
   plus their `film-*`/`abbey-trailer` tests import it. A change there is web
   behavior, so run `check:web`, not only `check:tooling`.
 - **A green local `bun run check` does not prove CI's install step.**
   `.github/workflows/ci.yml` runs topology, web, mobile, quasar, website-app,
   and research-sites as six independent jobs. The four app jobs with
-  dependencies each do `bun install --frozen-lockfile` from their own app
-  directory (research-sites has no install step by design), while
-  `install:all` is deliberately non-frozen. Lockfile
-  drift therefore surfaces in CI and not locally.
+  dependencies each run a frozen install at the repository root, filtered to
+  `@mlai/platform` plus their own workspaces (research-sites has no install
+  step by design), and the topology job runs
+  `bun install --frozen-lockfile --lockfile-only` as the drift check, while
+  `install:all` is deliberately non-frozen. Lockfile drift therefore surfaces
+  in CI, or locally only if you run that same command.
 - **`apps/web/site/` is a separately published artifact, not a build output.**
   GitHub Pages publishes it from `.github/workflows/pages.yml` with Actions as
   the source; the legacy `gh-pages` branch is retired and must not be

@@ -68,14 +68,16 @@ Three gate behaviors have already cost sessions time; `docs/IMPLEMENTATION.md` r
   type globs are already listed, so those two directories no longer trigger the rewrite.
 
 CI runs a subset of that gate: the root `.github/workflows/ci.yml` website-app job
-(the imported `.github/workflows/check.yml` is retained as historical source) does a frozen-lockfile install,
-then `typecheck`, `format:check`, `verify:research`, `test`, `db:migrate` and `build`, on every
-push to `main` and every pull request. It does not deploy. The worker's pytest suite remains
-a local gate because it needs uv, Python and the `setup` downloads.
-Bun is pinned to 1.4.0 there to match `packageManager`: 1.3.x cannot parse this repo's
-`lockfileVersion: 2` and, rather than failing, rewrites the lockfile and resolves a different
+(the imported `.github/workflows/check.yml` is retained as historical source) does a frozen
+install of the repository's root `bun.lock` at the repository root
+(`--filter @mlai/platform --filter mlai-website-app`), then `typecheck`, `format:check`,
+`verify:research`, `test`, `db:migrate` and `build`, on every push to `main` and every pull
+request. It does not deploy. The worker's pytest suite remains a local gate because it needs
+uv, Python and the `setup` downloads.
+Bun is pinned to 1.4.0 there to match the root `packageManager`: 1.3.x cannot parse the root
+lockfile's `lockfileVersion: 2` and, rather than failing, rewrites it and resolves a different
 dependency tree — which locally produced one phantom test failure and six unrelated Turbopack
-errors. So CI green is narrower than `bun run check` green; it does not cover the parser
+errors. This app has no lockfile of its own; install at the repository root. So CI green is narrower than `bun run check` green; it does not cover the parser
 suite, the browser suites, or `verify:agent`.
 
 Read the exit code from the command itself, never through a pipe — `bun run check | tail` reports
