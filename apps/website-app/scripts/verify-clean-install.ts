@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import assert from "node:assert/strict";
 import { createServer } from "node:net";
 import { releaseSource } from "./release-source";
+import { workspaceSlice } from "./workspace-slice";
 import { portAvailable, stopProcessTree } from "./verification-process";
 import {
   runVerificationCommand,
@@ -17,9 +18,20 @@ const origin = process.cwd(),
   retain = process.env.MLAI_KEEP_RELEASE === "1";
 const model = selectedLocalModel(process.env);
 const source = releaseSource(origin);
+const slice = workspaceSlice(origin);
 const parent = retain ? resolve(".data/releases") : tmpdir();
 mkdirSync(parent, { recursive: true });
-const clean = mkdtempSync(join(parent, "mlai-clean-"));
+// The app installs through the repository's root Bun workspace, so the fresh
+// copy mirrors that layout: the root lockfile, linker settings, every
+// workspace manifest and packages/ at the copy's root, and this app at its
+// repository path beneath it.
+const workspace = mkdtempSync(join(parent, "mlai-clean-"));
+const clean = join(workspace, slice.appPath);
+for (const file of slice.files) {
+  const destination = join(workspace, file);
+  mkdirSync(dirname(destination), { recursive: true });
+  copyFileSync(join(slice.root, file), destination);
+}
 for (const { file } of source.files) {
   const destination = join(clean, file);
   mkdirSync(dirname(destination), { recursive: true });
@@ -82,14 +94,27 @@ async function startServer(development = false) {
   );
 }
 try {
-  for (const args of [
-    ["install", "--frozen-lockfile"],
-    ["run", "setup"],
-    ["run", "check"],
-  ]) {
+  const steps: [string[], string][] = [
+    // The root workspace (@mlai/platform) holds the @types/react fallback
+    // that dependency declarations resolve through; see the root bunfig.toml.
+    [
+      [
+        "install",
+        "--filter",
+        "@mlai/platform",
+        "--filter",
+        "mlai-website-app",
+        "--frozen-lockfile",
+      ],
+      workspace,
+    ],
+    [["run", "setup"], clean],
+    [["run", "check"], clean],
+  ];
+  for (const [args, cwd] of steps) {
     console.log(`Clean install: bun ${args.join(" ")}`);
     await runVerificationCommand("bun", args, {
-      cwd: clean,
+      cwd,
       env: verificationCommandEnvironment(args, env),
       stdio: "inherit",
     });
@@ -154,6 +179,7 @@ try {
     {
       checkedAt: new Date().toISOString(),
       source,
+      workspaceSlice: { files: slice.files, sha256: slice.sha256 },
       freshSourceCopy: true,
       frozenBunInstall: true,
       frozenPythonInstall: true,
@@ -179,8 +205,12 @@ try {
 } finally {
   await stopServer();
   if (!cleanupConfirmed)
-    console.error("Retained artifact because command cleanup failed:", clean);
-  else if (!retain || !passed) rmSync(clean, { recursive: true, force: true });
+    console.error(
+      "Retained artifact because command cleanup failed:",
+      workspace,
+    );
+  else if (!retain || !passed)
+    rmSync(workspace, { recursive: true, force: true });
   else
     console.log(
       "Retained verified source, locked runtime and production build:",
