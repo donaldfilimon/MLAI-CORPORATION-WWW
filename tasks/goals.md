@@ -1346,3 +1346,26 @@ status: done
   0 deletes). Validate exit 0, render check 41/41 clean (5 deliberate floor cards). Details in
   `apps/web/.design-sync/NOTES.md`. A separate "MLAI Lab" Design System artifact
   (https://claude.ai/artifact/Y3kiSrwLA7XYaS3DJitkGq) was built the same evening from `apps/web`.
+
+## Unify MLAI into one root Bun workspace and clean up
+status: in_progress
+
+Captured 2026-09-16 20:3x EDT on Donald's request ("merge all into main and into one
+project mega project and cleanup codebase ... /design-sync mlai"). He chose a single
+root Bun workspace with one `bun.lock` over folding apps together, and approved the
+cleanup of stale docs, the Dockerfile bug, unused web components, tracked screenshots
+and `docs/sources` duplicates. Plan: `~/.claude/plans/merge-all-into-main-synchronous-beacon.md`.
+
+- **Branches, 2026-09-16 20:4x:** PR #70 squash-merged as `fe41894`. Five remote
+  branches whose tips were ancestors of `origin/main` (checked with
+  `git merge-base --is-ancestor` before each delete) were removed:
+  `claude/filimon-audit-web-stack-nqgaf9`, `console-workspace-files`,
+  `console-workspace-handlers`, `workspace-oauth-deploy-wiring`,
+  `revert-58-integrate/mlai-site-review`. `git ls-remote --heads origin` now lists
+  only `main`.
+- **Real bug found while surveying:** `apps/web/Dockerfile` copied only
+  `packages/contracts` although web depends on `@mlai/trailer-engine`, so the Cloud Run
+  image build would have failed at install. It never surfaced because the deploy job
+  is skipped (no WIF credentials). Fixed as part of the workspace migration.
+- Workspace migration and cleanup run in two isolated worktrees in parallel; design
+  sync runs after both land.
