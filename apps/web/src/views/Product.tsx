@@ -202,7 +202,7 @@ export function Product() {
                   SplitSection's prose column is `text-text-dim`. Without it every
                   equation renders a step dimmer than it did before. */}
               {section.equations && (
-                <div className="grid gap-5 text-foreground md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-5 text-foreground md:grid-cols-2">
                   {section.equations.map((eq) => (
                     <CardPanel key={eq.tex} gap="sm" className="h-full">
                       <BlockMath tex={eq.tex} />
@@ -239,7 +239,7 @@ export function Product() {
               {section.pillars && (
                 <div
                   className={cn(
-                    "grid gap-5",
+                    "grid grid-cols-1 gap-5",
                     section.pillars.length === 4 ? "sm:grid-cols-2" : "md:grid-cols-3",
                   )}
                 >

@@ -1504,3 +1504,25 @@ coordinator reviews, gates and commits.
   - **Not changed, by design:** the preview `next dev` is deliberately
     LAN-reachable so a phone can open it (Quasar README), so it was not bound to
     loopback.
+- **Browser zoom, 2026-09-17 05:1x EDT (Chromium, production build).**
+  - Coverage: 320 px reflow and 200% text (font-size setting plus a 640 px viewport)
+    on 32 routes.
+  - One defect: `/products/abi` measured 463 px wide at 320 px. An unbreakable KaTeX
+    equation inside an implicit `auto` grid track widened the band. `grid-cols-1`
+    on `SplitSection` and on the product equation and pillar grids lets the equation
+    scroll inside `BlockMath` instead, and `reflow.test.ts` pins that.
+  - After the fix all 32 routes pass. `check:web` exit 0 (55 files, 474 tests,
+    build).
+  - A forced root font-size of 200% at 1280 px overflowed every page through the
+    desktop navbar. That is a test artifact: the breakpoints do not track a forced
+    root size, and the real browser setting switches to the hamburger menu. Nothing
+    was changed for it.
+  - Unmeasured: Firefox text-only zoom, WebKit, `overflow: hidden` clipping, the
+    authenticated console and the showcase canvases.
+  - `apps/web/CLAUDE.md` route counts corrected (31 registered, 24 in the sitemap,
+    six showcase sub-routes).
+- **App-local docs:** PR #77. The mobile run skill's `metro.config.js` overwrite hazard
+  and a Quasar command that exited 1 were among six corrected files. The
+  research-sites export is recorded as generated from `2718e0c` and needing
+  regeneration.
+- **Dependency slice:** PR #76, merged 2026-09-17 09:16Z.

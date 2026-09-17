@@ -76,7 +76,10 @@ export interface SplitSectionProps {
 
 /**
  * Two-column editorial band — sticky heading on the left, prose on the right.
- * Collapses to a single stacked column below `lg`.
+ * Collapses to a single stacked column below `lg`. That column is an explicit
+ * `grid-cols-1` (`minmax(0, 1fr)`), not the implicit `auto` track: an `auto`
+ * track grows to its widest child's min-content, so one unbreakable KaTeX
+ * equation widened the whole band past a 320px viewport (WCAG 1.4.10).
  */
 export function SplitSection({
   kicker,
@@ -87,7 +90,7 @@ export function SplitSection({
 }: SplitSectionProps) {
   return (
     <section className={cn("section-y", className)}>
-      <div className="container-custom grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
+      <div className="container-custom grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           {kicker && <Eyebrow accent={accent}>{kicker}</Eyebrow>}
           <h2 className="section-title mt-4 mb-0 text-h4 sm:text-h3 md:text-h2">{title}</h2>
