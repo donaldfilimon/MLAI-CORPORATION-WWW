@@ -27,7 +27,6 @@ export function ProjectPage({ slug }: { slug: string }) {
   return (
     <article
       className="container-custom pt-32 pb-24 min-h-screen font-sans overflow-hidden"
-      role="main"
       aria-labelledby="project-heading"
     >
       <div className="mx-auto max-w-3xl">

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 // Interactive vector-angle visualization of cosine similarity — the core
 // comparison primitive of vector search. Pure math; nothing to overclaim.
 export function CosineSimDemo() {
   const [a, setA] = useState(25);
   const [b, setB] = useState(115);
+  const idA = useId();
+  const idB = useId();
   const ar = (a * Math.PI) / 180;
   const br = (b * Math.PI) / 180;
   const cos = Math.cos(ar - br);
@@ -32,14 +34,16 @@ export function CosineSimDemo() {
           {cos.toFixed(3)}
         </div>
         <div className="mb-5 text-xs text-text-dim">cosine similarity (a · b / ‖a‖‖b‖)</div>
-        <label className="mb-1 block text-xs text-cyan-300">Vector a — {a}°</label>
+        <label htmlFor={idA} className="mb-1 block text-xs text-cyan-300">Vector a — {a}°</label>
         <input
+          id={idA}
           type="range" min={0} max={360} value={a}
           onChange={(e) => setA(+e.target.value)}
           className="mb-4 w-full accent-cyan-400"
         />
-        <label className="mb-1 block text-xs text-sky-300">Vector b — {b}°</label>
+        <label htmlFor={idB} className="mb-1 block text-xs text-sky-300">Vector b — {b}°</label>
         <input
+          id={idB}
           type="range" min={0} max={360} value={b}
           onChange={(e) => setB(+e.target.value)}
           className="w-full accent-sky-400"

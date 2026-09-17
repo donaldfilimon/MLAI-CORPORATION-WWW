@@ -54,7 +54,7 @@ export function ArticleSections({ body }: { body: ArticleSection[] }) {
               {section.code.map((block, c) => (
                 <figure key={c} className="overflow-hidden rounded-lg border border-white/5 bg-white/2">
                   {block.file && (
-                    <figcaption className="border-b border-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-dim/60">
+                    <figcaption className="border-b border-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-dim/80">
                       {block.file}
                     </figcaption>
                   )}
@@ -102,7 +102,7 @@ export function ArticleNotFound({
   backLabel: string;
 }) {
   return (
-    <div className="container-custom pt-32 pb-20 min-h-screen font-sans" role="main">
+    <div className="container-custom pt-32 pb-20 min-h-screen font-sans">
       <div className="mx-auto max-w-2xl text-center">
         <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase">
           {eyebrow}
@@ -160,7 +160,6 @@ export function ArticleLayout({
   return (
     <article
       className="container-custom pt-32 pb-24 min-h-screen font-sans overflow-hidden"
-      role="main"
       aria-labelledby={headingId}
     >
       <div className="mx-auto max-w-3xl">
@@ -180,11 +179,11 @@ export function ArticleLayout({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3 mb-6">
             {tag}
             <Separator orientation="vertical" className="h-3 bg-white/20" />
-            <span className="text-sm font-mono text-text-dim/60 uppercase tracking-widest">
+            <span className="text-sm font-mono text-text-dim/80 uppercase tracking-widest">
               {date}
             </span>
             <Separator orientation="vertical" className="h-3 bg-white/20" />
-            <span className="text-sm font-mono text-text-dim/60 uppercase tracking-widest">
+            <span className="text-sm font-mono text-text-dim/80 uppercase tracking-widest">
               {readTime}
             </span>
           </div>
@@ -196,7 +195,7 @@ export function ArticleLayout({
           </h1>
           <p className="text-lg md:text-xl text-text-dim leading-relaxed">{lede}</p>
           {meta && (
-            <p className="mt-6 text-sm font-mono uppercase tracking-widest text-text-dim/50">
+            <p className="mt-6 text-sm font-mono uppercase tracking-widest text-text-dim/80">
               {meta}
             </p>
           )}
@@ -209,7 +208,7 @@ export function ArticleLayout({
 
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-mono uppercase tracking-widest text-text-dim/50 mb-2">
+            <p className="text-sm font-mono uppercase tracking-widest text-text-dim/80 mb-2">
               {inquiryLabel}
             </p>
             <Button
@@ -223,7 +222,7 @@ export function ArticleLayout({
 
           {next && (
             <Link to={next.to} className="group max-w-sm text-right">
-              <span className="text-sm font-mono uppercase tracking-widest text-text-dim/50">
+              <span className="text-sm font-mono uppercase tracking-widest text-text-dim/80">
                 {next.label}
               </span>
               <span className="mt-2 flex items-center justify-end gap-2 text-sm font-bold text-white group-hover:text-cyan-400 transition-colors leading-snug">

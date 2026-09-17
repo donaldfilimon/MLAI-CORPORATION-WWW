@@ -259,7 +259,7 @@ export function Console() {
   }
 
   return (
-    <main className="container-custom min-h-screen pb-24 pt-32 font-sans">
+    <div className="container-custom min-h-screen pb-24 pt-32 font-sans">
       <m.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <header className="mb-10 grid gap-6 border-b border-white/10 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-3xl">
@@ -317,6 +317,6 @@ export function Console() {
           </section>
         </div>
       </m.div>
-    </main>
+    </div>
   );
 }

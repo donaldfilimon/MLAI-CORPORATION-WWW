@@ -102,7 +102,7 @@ export function WdbxLiveDemo() {
                     style={{ width: `${Math.max(4, (h.score / topScore) * 100)}%` }}
                   />
                 </div>
-                <div className="mt-2 flex gap-4 font-mono text-[10px] uppercase tracking-widest text-text-dim/50">
+                <div className="mt-2 flex gap-4 font-mono text-[10px] uppercase tracking-widest text-text-dim/80">
                   <span>modeled partition {h.partition}</span>
                   <span>{h.doc.tag}</span>
                   <span>cosine</span>
@@ -120,7 +120,7 @@ export function WdbxLiveDemo() {
             ].map((s) => (
               <div key={s.k} className="rounded-xl border border-white/5 bg-white/2 p-3.5">
                 <div className="font-mono text-lg font-bold text-white">{s.v}</div>
-                <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-text-dim/50">{s.k}</div>
+                <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-text-dim/80">{s.k}</div>
               </div>
             ))}
           </div>
@@ -128,7 +128,7 @@ export function WdbxLiveDemo() {
 
         {/* block chain */}
         <div className="mt-6 border-t border-white/5 pt-5">
-          <div className="mb-3 font-mono text-[10px] uppercase tracking-widest text-text-dim/50">
+          <div className="mb-3 font-mono text-[10px] uppercase tracking-widest text-text-dim/80">
             query block chain — each block hashes its parent
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -143,7 +143,7 @@ export function WdbxLiveDemo() {
                   <span className="block font-mono text-[10px] text-cyan-300">
                     #{b.height} · 0x{b.hash}
                   </span>
-                  <span className="block max-w-40 truncate font-mono text-[10px] text-text-dim/60">
+                  <span className="block max-w-40 truncate font-mono text-[10px] text-text-dim/80">
                     {b.query}
                   </span>
                 </span>

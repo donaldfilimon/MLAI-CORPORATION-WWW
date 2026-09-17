@@ -386,7 +386,7 @@ export function Docs() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-4xl pl-0 md:pl-12 flex">
+        <div className="flex-1 max-w-4xl pl-0 md:pl-12 flex">
         <Separator orientation="vertical" className="hidden md:block mr-8 h-auto bg-white/10" />
         <div className="flex-1">
           <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -428,12 +428,12 @@ export function Docs() {
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
-                <code className="text-gray-500"># Validate the Rust workspace</code><br />
+                <code className="text-gray-400"># Validate the Rust workspace</code><br />
                 <code className="text-cyan-400">./tools/check.sh</code><br />
-                <code className="text-gray-500"># Build the CLI and MCP server</code><br />
+                <code className="text-gray-400"># Build the CLI and MCP server</code><br />
                 <code className="text-cyan-400">./tools/cargo.sh</code> <code className="text-white">build -p abi-cli -p abi-mcp</code><br />
                 <br />
-                <code className="text-gray-500"># Inspect capabilities and terminal surfaces</code><br />
+                <code className="text-gray-400"># Inspect capabilities and terminal surfaces</code><br />
                 <code className="text-cyan-400">./target/debug/abi</code> <code className="text-white">backends</code><br />
                 <code className="text-cyan-400">./target/debug/abi</code> <code className="text-white">dashboard --pane system --once --json</code><br />
                 <code className="text-cyan-400">./target/debug/abi</code> <code className="text-white">agent tui</code>
@@ -664,7 +664,7 @@ export function Docs() {
 
           </m.div>
         </div>
-        </main>
+        </div>
       </div>
     </div>
   );
