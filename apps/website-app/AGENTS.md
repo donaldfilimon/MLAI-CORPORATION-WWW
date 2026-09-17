@@ -18,7 +18,7 @@ Run `bun install --frozen-lockfile` at the repository root, then `bun run setup`
 
 ## Runtime traps
 
-- The root `package.json` pins Bun 1.4.0 for package management; runtime
+- The root `package.json` pins Bun 1.4.2 for package management; runtime
   scripts use `node --import tsx`. Use `bun run <script>`, not
   `bun scripts/<file>.ts`. Keep native `better-sqlite3` on Node and preserve
   `serverExternalPackages`.

@@ -30,7 +30,7 @@ Root `install:all`, `check`, `check:website-app`, `dev:website-app` and the topo
 gate include the imported app. Since 2026-09-16 its JavaScript dependencies are
 locked by the repository's root `bun.lock` (one root workspace, isolated
 linker); its Python worker keeps `worker/uv.lock`.
-Root CI has a website-app job with Node 24, Bun 1.4.0, a frozen root install, TypeScript,
+Root CI has a website-app job with Node 24, Bun 1.4.2, a frozen root install, TypeScript,
 formatting, research verification, unit tests, serial database migration and build.
 The nested source workflow is retained for provenance; GitHub runs the root job.
 

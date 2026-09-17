@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.2"
       - run: bun run check:topology
       # Lockfile drift: a manifest change without the matching bun.lock update
       # fails here ("lockfile had changes, but lockfile is frozen").
@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.2"
       - run: bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/web
       - run: bun run lint
         working-directory: apps/web
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.2"
       - run: bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/mobile
       - run: bun run typecheck
         working-directory: apps/mobile
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.2"
       - run: bun install --frozen-lockfile --filter @mlai/platform --filter quasar --filter '@quasar/*' --filter quasar-app
       - run: bun run typecheck
         working-directory: apps/quasar
@@ -94,7 +94,7 @@ jobs:
           node-version: "24"
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.2"
       - run: bun install --frozen-lockfile --filter @mlai/platform --filter mlai-website-app
         working-directory: ${{ github.workspace }}
       - run: bun run typecheck
@@ -114,7 +114,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.2"
       # Zero dependencies by design: no install step. build verifies the
       # manifest and every file hash before copying public/ to out/.
       - run: bun run check

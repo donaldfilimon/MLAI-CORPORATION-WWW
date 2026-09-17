@@ -81,7 +81,7 @@ acceptance does not establish semantic correctness for every model answer.
 
 ## Reproduce
 
-Use Node 24.x and Bun 1.4.0 plus the app's documented uv/Python, Java and
+Use Node 24.x and Bun 1.4.2 plus the app's documented uv/Python, Java and
 LibreOffice prerequisites. Since 2026-09-16 every app installs through one root
 Bun workspace and `bun.lock` (isolated linker); keep app authentication and data
 stores independent. From the repository root:

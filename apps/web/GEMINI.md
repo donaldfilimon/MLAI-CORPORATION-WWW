@@ -26,7 +26,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 - Required production secrets live in Google Secret Manager: WorkOS credentials, `SESSION_SECRET` (**≥32 chars**), Cloud SQL password, Cloudflare AI Gateway token, audit pepper, Turnstile secret, and `ADMIN_EMAILS`
 - Stable `gemini-3.7-flash` is fixed behind the authenticated Cloudflare AI Gateway; payload logging and caching are disabled and there is no direct provider bypass
 - Admin reads use `ADMIN_EMAILS`; `ADMIN_REQUIRE_MFA=true` adds fail-closed organization and signed-`auth_time` freshness checks, plus either a verified WorkOS TOTP policy/factor for non-SSO users or a separately attested IdP-MFA policy for SSO users
-- Requires Bun 1.4+ (`packageManager: bun@1.4.0`)
+- Requires Bun 1.4+ (`packageManager: bun@1.4.2`)
 
 ## Architecture Overview
 - **Frontend**: App Router files in `app/` render client views from `src/views/` via per-route `app/<route>/client.tsx` re-exports. Never recreate `src/pages/`. `client.tsx` is a plain re-export for standard routes, but a `next/dynamic(..., { ssr: false })` wrapper for browser-only views (`/showcase/*`, `/tf-pose-demo`).

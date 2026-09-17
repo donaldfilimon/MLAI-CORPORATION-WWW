@@ -9,7 +9,7 @@ The original verification receipts below predate this import; see
 
 ## Start locally
 
-Requirements: Node 24.x (the CI and release-verification runtime), Bun 1.4.0, uv, Python 3.11–3.13, LibreOffice (`soffice` on PATH), and Java 21+. On Apple silicon, `bun run model` can start a dedicated MLX runtime. Existing MLX Core or another local OpenAI-compatible runtime can also be used.
+Requirements: Node 24.x (the CI and release-verification runtime), Bun 1.4.2, uv, Python 3.11–3.13, LibreOffice (`soffice` on PATH), and Java 21+. On Apple silicon, `bun run model` can start a dedicated MLX runtime. Existing MLX Core or another local OpenAI-compatible runtime can also be used.
 
 ```sh
 (cd ../.. && bun install --frozen-lockfile)   # one root workspace and bun.lock
