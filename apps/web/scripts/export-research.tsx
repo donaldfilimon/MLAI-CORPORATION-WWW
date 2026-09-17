@@ -659,7 +659,7 @@ try {
   );
   await writeFile(
     path.join(stage, "README.md"),
-    `# MLAI Research private review\n\nGenerated from canonical MLAI source ${revision}.\n\nThe public/ directory contains the exact approved structured research collection and shared renderers. No runtime secrets, production APIs or independent prose. Rebuild with the canonical scripts/export-research.tsx; see public/research-manifest.json for provenance.\n\nRun bun run build to stage the unchanged static bytes into out/ for Sites packaging. Configure .openai/hosting.json static.directory as out. The out/ directory is disposable build output.\n`,
+    `# MLAI Research private review\n\nGenerated from canonical MLAI source ${revision}.\n\nThe public/ directory contains the exact approved structured research collection and shared renderers. No runtime secrets, production APIs or independent prose. Rebuild with the canonical exporter, apps/web/scripts/export-research.tsx in the MLAI repository; see public/research-manifest.json for provenance.\n\nRun bun run build to stage the unchanged static bytes into out/ for Sites packaging. Configure .openai/hosting.json static.directory as out. The out/ directory is disposable build output.\n`,
   );
   // Publish only a completely generated artifact; keep the previous usable tree on failure.
   const backup = path.join(stage, "previous-public");

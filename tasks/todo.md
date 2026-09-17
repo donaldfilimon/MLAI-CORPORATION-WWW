@@ -89,3 +89,21 @@ Goal: see `goals.md`. Measured and executed 2026-09-16 from `~/dev/active/mlai`.
 - After this session ends: `~/dev/active/mlai-website-app/` holds only the
   memory hook's `.remember/` and a `.claude/launch.json` copy the preview tool
   needed; both can go.
+
+## Corrections, 2026-09-17 05:0x EDT (appended; the lines above are left as written)
+
+- **Stale: "Dependabot alert 5 ... the lock stays."** `d1d76ae` (2026-09-16 21:5x)
+  bumped `accelerate` to 1.15.0 on Donald's choice, and
+  `gh api 'repos/donaldfilimon/MLAI-CORPORATION-WWW/dependabot/alerts?state=open' --jq length`
+  now returns `0`. The "Dismissing or accepting the `accelerate` alert" item under
+  *Still Donald's* is therefore closed. The reasoning above (1.15.0 contains
+  neither upstream fix PR) is not re-verified here.
+- **Stale: "`~/dev/active/mlai-website-app/` holds only ... both can go."** That
+  git-less shell was moved to `~/Archive/2026-09-16-mlai-website-app-residual/` at
+  2026-09-16 18:2x (recorded in `~/CLAUDE.md`).
+- [x] **`apps/research-sites/README.md` named the old exporter location** (a
+      residual of the workspace goal). The README and the template in
+      `apps/web/scripts/export-research.tsx` now name
+      `apps/web/scripts/export-research.tsx`. The generator rewrites the README
+      only for a fresh (not already exported) destination, so the committed README
+      is maintained by hand, and the two texts already differed before this fix.

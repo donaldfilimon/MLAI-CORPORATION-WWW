@@ -807,6 +807,19 @@ be verified. Measured before acting:
   is the lock, not the code; `check:topology` passed locally on that commit.
 - Nothing about this goal is agent-actionable until the lock is cleared.
 
+### Re-measured 2026-09-17 05:0x EDT: still blocked, nothing moved
+
+- `gcloud billing accounts list`: all four accounts still `False` (closed).
+- CI run `35172701557` and Cloud Run run `35172708998` on `f80c733` (the current
+  `origin/main`, 0/0 after `git fetch`): the first job's check-run annotation
+  still reads "The job was not started because your account is locked due to a
+  billing issue." Pages run `35172708935` was `skipped` because CI never passed.
+- Repository variables: `0`. `production` environment variables: `0`.
+- Open Dependabot alerts: `0`. The alert-5 note above ("There is no fixed
+  version yet") is superseded by `d1d76ae`.
+- `status:` stays `blocked`. The unblock order recorded above still applies:
+  billing account first, then the GitHub Actions lock.
+
 ## Productionize the MLAI & Abbey cinematic trailer
 status: done
 opened: 2026-09-08 16:5x EDT
