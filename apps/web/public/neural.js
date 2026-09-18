@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   MLAI — signature neural canvases, precompiled vanilla JS.
+   Quesar — signature neural canvases, precompiled vanilla JS.
    No React/Babel. Auto-mounts into:
      [data-neural="galaxy"] — tri-persona embedding galaxy (hero)
      [data-neural="net"]    — drifting node constellation (backdrops)
