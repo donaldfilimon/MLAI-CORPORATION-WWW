@@ -34,14 +34,14 @@ export default function SignIn() {
       <View style={styles.body}>
         <Animated.View entering={FadeIn.duration(500)} style={styles.brand}>
           <LogoMark size={40} />
-          <Txt style={[t.h3, { letterSpacing: 6, color: color.white }]}>MLAI</Txt>
+          <Txt style={[t.h3, { letterSpacing: 6, color: color.white }]}>Quesar</Txt>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(120).duration(500).springify().damping(18)}>
           <Txt variant="h1" color={color.white}>Your data,</Txt>
           <GradientText variant="h1">your iCloud.</GradientText>
           <Txt variant="body" color={color.textDim} style={{ marginTop: space.lg, maxWidth: 340 }}>
-            Sign in with Apple. What you save lives in your own private iCloud database via CloudKit — there is no MLAI
+            Sign in with Apple. What you save lives in your own private iCloud database via CloudKit — there is no Quesar
             server in the path, and nothing to phone home to.
           </Txt>
         </Animated.View>

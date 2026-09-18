@@ -1,10 +1,10 @@
-# MLAI — mobile
+# Quesar — mobile
 
-This app lives at `apps/mobile/` in the MLAI integration repository. Run its
+This app lives at `apps/mobile/` in the Quesar integration repository. Run its
 commands here, or use the root `bun run check:mobile` gate. The website and
 Quasar are sibling applications with independent validation boundaries.
 
-An Expo + React 19 mobile app for MLAI, powered by Bun and written entirely in
+An Expo + React 19 mobile app for Quesar, powered by Bun and written entirely in
 TypeScript / TSX. A modern, reactive companion to the web site: file-based
 routing, Reanimated motion, gradient masking, haptic press feedback, and the
 same chip-stack identity.

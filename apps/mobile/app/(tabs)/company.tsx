@@ -11,7 +11,7 @@ import { company, investorHighlights, links } from "@/lib/brand";
 export default function CompanyScreen() {
   return (
     <Screen>
-      <Section eyebrow="Company" title="Why MLAI exists" accent="abbey">
+      <Section eyebrow="Company" title="Why Quesar exists" accent="abbey">
         <Txt variant="body" color={color.textDim}>
           The most capable AI is also the most opaque and least private. The bet behind {company.short} is that Apple
           Silicon finally makes the alternative practical — capable AI that runs where you can see it.

@@ -26,7 +26,7 @@ export function Hero() {
 
       <Animated.View entering={FadeIn.duration(500)} style={styles.brandRow}>
         <LogoMark size={30} />
-        <Txt style={[t.h3, { letterSpacing: 6, color: color.white }]}>MLAI</Txt>
+        <Txt style={[t.h3, { letterSpacing: 6, color: color.white }]}>Quesar</Txt>
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(120).duration(500).springify().damping(18)}>

@@ -1,4 +1,4 @@
-/* MLAI mobile — design tokens. The "Lab" identity, shared with www: near-black
+/* Quesar mobile — design tokens. The "Lab" identity, shared with www: near-black
    surfaces, three product accents, Spectral / Geist / JetBrains Mono.
 
    Every value below is traceable to `apps/web/src/index.css` `:root`. Raw hex tokens
