@@ -37,9 +37,9 @@ export function ResearchLanding() {
         <span className="eyeline abbey">
           Evidence, methods, and applications
         </span>
-        <h1>MLAI Research</h1>
+        <h1>Quesar Research</h1>
         <p className="hero-description">
-          Explore the ideas behind MLAI&apos;s AI systems, memory, evidence
+          Explore the ideas behind Quesar&apos;s AI systems, memory, evidence
           selection, and developer tools. Start with the practical application,
           then examine the research and its limits.
         </p>
@@ -266,7 +266,7 @@ export function ResearchArticle({
         <h1>{p.title}</h1>
         <p>{p.abstract}</p>
         <div className={styles.metrics}>
-          <span>{p.authors || "MLAI Research"}</span>
+          <span>{p.authors || "Quesar Research"}</span>
           <span>{p.date}</span>
           <span>
             Source review <time dateTime={p.reviewedAt}>{p.reviewedAt}</time>

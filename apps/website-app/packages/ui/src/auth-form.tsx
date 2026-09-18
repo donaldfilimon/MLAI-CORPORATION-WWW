@@ -89,7 +89,7 @@ export function AuthForm({
           <p className="muted">
             {signup
               ? "A local account. A private place to begin."
-              : "Sign in to your MLAI workspace."}
+              : "Sign in to your Quesar workspace."}
           </p>
           {signup && (
             <label>
@@ -140,7 +140,7 @@ export function AuthForm({
             <ArrowRight size={17} />
           </button>
           <p>
-            {signup ? "Already have an account? " : "New to MLAI? "}
+            {signup ? "Already have an account? " : "New to Quesar? "}
             <Link href={signup ? signInHref : signUpHref}>
               {signup ? "Sign in" : "Create an account"}
             </Link>

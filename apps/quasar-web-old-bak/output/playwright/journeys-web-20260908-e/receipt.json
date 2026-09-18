@@ -1,0 +1,74 @@
+{
+  "sourceSha256": "87c2a6362a11e8ea50bb09f9603f34acd2262177b5b865b4ff1e2843e353bc15",
+  "checkedAt": "2026-09-08T13:16:59.941Z",
+  "baseCommit": "50ebcf168561c834d51ad922227b1097c95a7acc",
+  "base": "http://127.0.0.1:3130",
+  "staticBase": "http://127.0.0.1:3131",
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Successful navigation and visible heading: /products",
+        "Keyboard navigation reaches and opens Get started (Tab)",
+        "Successful navigation and visible heading: /get-started",
+        "Mobile menu contains all destinations and restores focus on Escape",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /products",
+        "Product index → abi → research → product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index → abbey → research → product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index → wdbx → research → product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index → quasar → research → product links activated",
+        "Successful navigation and visible heading: /research",
+        "Research filtering and documentation search retain results",
+        "Successful navigation and visible heading: /research/wdbx-weighted-backtrace-memory-store",
+        "Research product backlink and original PDF HTTP bytes verified",
+        "Standalone Pages navigation activated at 390/768/1440 with four source setup paths and no server-only links"
+      ],
+      "uncaughtErrors": [],
+      "passed": true
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Successful navigation and visible heading: /products",
+        "Keyboard navigation reaches and opens Get started (Tab)",
+        "Successful navigation and visible heading: /get-started",
+        "Mobile menu contains all destinations and restores focus on Escape",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /get-started",
+        "Successful navigation and visible heading: /products",
+        "Product index → abi → research → product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index → abbey → research → product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index → wdbx → research → product links activated",
+        "Successful navigation and visible heading: /products",
+        "Product index → quasar → research → product links activated",
+        "Successful navigation and visible heading: /research",
+        "Research filtering and documentation search retain results",
+        "Successful navigation and visible heading: /research/wdbx-weighted-backtrace-memory-store",
+        "Research product backlink and original PDF HTTP bytes verified",
+        "Standalone Pages navigation activated at 390/768/1440 with four source setup paths and no server-only links"
+      ],
+      "uncaughtErrors": [
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)",
+        "Loading chunk 7330 failed.\n(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)"
+      ]
+    }
+  ],
+  "limitations": [
+    "Native screen-reader and actual browser zoom are not evaluated by this harness."
+  ],
+  "failure": "firefox: uncaught browser errors\n+ actual - expected\n\n+ [\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)',\n+   'Loading chunk 7330 failed.\\n' +\n+     '(error: http://127.0.0.1:3130/_next/static/chunks/d3ac728e.be32df96cbc7d034.js)'\n+ ]\n- []\n",
+  "stableSource": true
+}

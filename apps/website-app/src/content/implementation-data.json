@@ -2,7 +2,7 @@
   {
     "title": "A six-layer architecture for evidence-aware AI systems",
     "slug": "six-layer-evidence-aware-platform",
-    "summary": "MLAI organizes interface, orchestration, retrieval, acceleration, storage, and audit as distinct layers so that evidence and runtime claims can be traced to the component that actually supports them.",
+    "summary": "Quesar organizes interface, orchestration, retrieval, acceleration, storage, and audit as distinct layers so that evidence and runtime claims can be traced to the component that actually supports them.",
     "relatedTopics": [
       "ai",
       "wdbx",
@@ -16,7 +16,7 @@
         "heading": "Architecture",
         "paragraphs": [
           "The platform model places user-facing interfaces at L6, orchestration at L5, retrieval and learning at L4, acceleration at L3, durable storage at L2, and provenance and audit at L1. The separation is practical: an MCP or TUI surface can coordinate work without being mistaken for the storage engine, and a GPU path can accelerate computation without becoming the source of record.",
-          "The accompanying platform catalog maps concrete MLAI systems onto those layers. ABI spans orchestration and interface concerns, WDBX supplies storage and retrieval primitives, SEA contributes evidence-sensitive learning, GPU backends are acceleration paths, and MCP and TUI expose bounded control surfaces."
+          "The accompanying platform catalog maps concrete Quesar systems onto those layers. ABI spans orchestration and interface concerns, WDBX supplies storage and retrieval primitives, SEA contributes evidence-sensitive learning, GPU backends are acceleration paths, and MCP and TUI expose bounded control surfaces."
         ]
       },
       {
@@ -29,7 +29,7 @@
     ],
     "sources": [
       {
-        "title": "MLAI platform catalog",
+        "title": "Quesar platform catalog",
         "url": "https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/73721dba44afd14a081150a020127a7dec1dbb9e/apps/web/src/data/categories/platform.ts",
         "revision": "73721dba44afd14a081150a020127a7dec1dbb9e",
         "sha256": "97f1fae66478a318af88088d80b32e1e3d2e8bc11c0763b32c8a4b768c78d319"
@@ -43,7 +43,7 @@
   {
     "title": "A private document pipeline with explicit fallback behavior",
     "slug": "private-document-intelligence-pipeline",
-    "summary": "The private MLAI application implements bounded ingestion, workspace-scoped extraction and search, and consent-gated model access while making degraded retrieval behavior visible instead of silently changing providers.",
+    "summary": "The private Quesar application implements bounded ingestion, workspace-scoped extraction and search, and consent-gated model access while making degraded retrieval behavior visible instead of silently changing providers.",
     "relatedTopics": [
       "ai",
       "wdbx"
@@ -92,7 +92,7 @@
   {
     "title": "Mobile Vault persistence across CloudKit and local fallback",
     "slug": "mobile-vault-cloudkit-local-fallback",
-    "summary": "The MLAI mobile Vault keeps one CRUD contract while selecting either the user's private CloudKit database or an encrypted local SecureStore fallback and exposing the selected backend to the application.",
+    "summary": "The Quesar mobile Vault keeps one CRUD contract while selecting either the user's private CloudKit database or an encrypted local SecureStore fallback and exposing the selected backend to the application.",
     "relatedTopics": [
       "ai",
       "wdbx"
@@ -303,7 +303,7 @@
   {
     "title": "Deterministic research exports with citation gates",
     "slug": "deterministic-research-provenance-exports",
-    "summary": "The MLAI research export pipeline converts validated publication records into stable JSON and static HTML, verifies and copies declared attachments, and records content digests while enforcing unique identifiers, public source URLs, and canonical links.",
+    "summary": "The Quesar research export pipeline converts validated publication records into stable JSON and static HTML, verifies and copies declared attachments, and records content digests while enforcing unique identifiers, public source URLs, and canonical links.",
     "relatedTopics": [
       "ai",
       "wdbx"
@@ -313,7 +313,7 @@
         "heading": "Validated public records",
         "paragraphs": [
           "Before export, the pipeline parses every research record through its schema, rejects duplicate slugs, and checks public citations for HTTPS URLs that are not localhost. Public PDF paths are constrained to the research download namespace.",
-          "The export projects only stable public fields into a versioned index. Internal rendering details do not become accidental API surface, and canonical publication URLs are rooted at the configured MLAI origin."
+          "The export projects only stable public fields into a versioned index. Internal rendering details do not become accidental API surface, and canonical publication URLs are rooted at the configured Quesar origin."
         ]
       },
       {
