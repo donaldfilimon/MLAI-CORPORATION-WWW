@@ -20,7 +20,7 @@ export const about: About = ({
     },
     {
       title: "Human-Centered Control",
-      description: "MLAI systems keep escalation, review, and override flows visible so subject-matter experts remain in control of critical outcomes."
+      description: "Quesar systems keep escalation, review, and override flows visible so subject-matter experts remain in control of critical outcomes."
     },
     {
       title: "Research-To-Runtime Discipline",

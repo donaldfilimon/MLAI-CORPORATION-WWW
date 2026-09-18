@@ -1,0 +1,13 @@
+{
+  "sourceSha256": "5524be8c1b8b496b430936f537ddd4d0696905ffbf145b6d8b2e4fb98d7b27d4",
+  "checkedAt": "2026-09-08T13:15:52.443Z",
+  "baseCommit": "50ebcf168561c834d51ad922227b1097c95a7acc",
+  "base": "http://127.0.0.1:3130",
+  "staticBase": "http://127.0.0.1:3131",
+  "engines": [],
+  "limitations": [
+    "Native screen-reader and actual browser zoom are not evaluated by this harness."
+  ],
+  "failure": "Cannot read properties of undefined (reading 'launch')",
+  "stableSource": true
+}
