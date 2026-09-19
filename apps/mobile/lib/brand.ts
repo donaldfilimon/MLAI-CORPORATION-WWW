@@ -3,7 +3,7 @@ import type { Provenance } from "@mlai/contracts";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Facts source of truth for the mobile app. Mirrors the web lib/brand.ts.
-   Every metric carries provenance: "measured" (reproduced on MLAI hardware),
+   Every metric carries provenance: "measured" (reproduced on Quesar hardware),
    "target" (engineering goal), or "reported" (cited research figure). The
    three are never conflated, and the only Apple framing permitted is
    "Built on Apple's public frameworks — Metal, Accelerate, Core ML."
@@ -19,7 +19,7 @@ export type Stat = {
 
 export const company = {
   name: "Machine Learning Advanced Innovations, Inc.",
-  short: "MLAI",
+  short: "Quesar",
   tagline: "Privacy-first AI infrastructure for Apple Silicon.",
   appleFraming: "Built on Apple's public frameworks — Metal, Accelerate, Core ML.",
   location: "Orlando, FL",

@@ -8,14 +8,14 @@ export interface BrandProps {
 }
 export function Brand({
   href = "/",
-  label = "MLAI home",
+  label = "Quesar home",
   mark = "/brand/mlai-mark.svg",
   Link = Anchor,
 }: BrandProps) {
   return (
     <Link href={href} className="brand" aria-label={label}>
       <img src={mark} alt="" width="34" height="34" />
-      <span>MLAI</span>
+      <span>Quesar</span>
     </Link>
   );
 }

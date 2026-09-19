@@ -5,7 +5,7 @@ import * as schema from "./schema";
 import { appUrl, authSecret } from "./config";
 import { randomUUID } from "node:crypto";
 export const auth = betterAuth({
-  appName: "MLAI",
+  appName: "Quesar",
   baseURL: appUrl,
   secret: authSecret,
   database: drizzleAdapter(db, { provider: "sqlite", schema }),
