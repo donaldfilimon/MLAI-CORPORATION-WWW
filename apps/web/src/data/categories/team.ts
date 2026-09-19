@@ -76,7 +76,7 @@ export const team: Team = ([
       {
         heading: "Building close to the metal",
         paragraphs: [
-          "Donald is a polyglot systems engineer who works deliberately low in the stack. His public projects span Zig, Rust, Swift, TypeScript, and Python — databases, GPU-oriented runtimes, agent frameworks, and the tooling that holds them together — because the guarantees MLAI cares about (latency, provenance, data residency) are won or lost at that level.",
+          "Donald is a polyglot systems engineer who works deliberately low in the stack. His public projects span Zig, Rust, Swift, TypeScript, and Python — databases, GPU-oriented runtimes, agent frameworks, and the tooling that holds them together — because the guarantees Quesar cares about (latency, provenance, data residency) are won or lost at that level.",
           "That range is intentional, not scattered. Each language is chosen for where it pays off: Zig for the performance-critical core of the ABI runtime and WDBX, Rust for safe systems surfaces, Swift and MLX for on-device inference on Apple Silicon, and TypeScript for the operator-facing layers. The same instinct runs down to the compiler itself — projects like Cellstrap extend Zig toward MLIR, in line with his stated focus on AI-driven compiler optimization.",
         ],
       },
@@ -90,7 +90,7 @@ export const team: Team = ([
       {
         heading: "Autonomy with a boundary",
         paragraphs: [
-          "On top of retrieval, MLAI's orchestration layer adds the Abbey–Aviva–Abi persona system — Abbey the empathetic polymath, Aviva the direct expert, and Abi the adaptive router — operating under one motto: \"Care first. Clarity always. Competence throughout.\"",
+          "On top of retrieval, Quesar's orchestration layer adds the Abbey–Aviva–Abi persona system — Abbey the empathetic polymath, Aviva the direct expert, and Abi the adaptive router — operating under one motto: \"Care first. Clarity always. Competence throughout.\"",
           "It is built around bounded execution and explicit approvals: no autonomous write action without an observable policy boundary, and escalation, review, and override flows kept visible so the people responsible stay in control. Safety before scale is the founding constraint, not a later addition.",
         ],
       },

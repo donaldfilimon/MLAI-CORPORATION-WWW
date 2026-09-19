@@ -13,7 +13,7 @@ import { DocsSchema, type Docs } from '../schemas';
  */
 const DOC_SOURCES = {
   platform: {
-    title: 'MLAI platform README',
+    title: 'Quesar platform README',
     url: 'https://github.com/donaldfilimon/MLAI-CORPORATION-WWW/blob/f08203c58ce1c1ab5ce69f5790597a72d1bad830/README.md',
     scope: 'Repository structure; reviewed at the pinned source revision.',
   },
@@ -107,7 +107,7 @@ const raw = [
         heading: "Interface and identity",
         paragraphs: [
           "Abbey is the primary companion profile described by the source. Aviva is a direct expert mode, while ABI also names the orchestration/governance layer. These identity roles should not be mistaken for separate, independently verified models or repositories.",
-          "The existing MLAI platform also separates product and persona visual identities. For example, an ABI product accent does not define the color of an Abi persona. The distinction matters in content models as well as interface design.",
+          "The existing Quesar platform also separates product and persona visual identities. For example, an ABI product accent does not define the color of an Abi persona. The distinction matters in content models as well as interface design.",
         ],
       },
       {

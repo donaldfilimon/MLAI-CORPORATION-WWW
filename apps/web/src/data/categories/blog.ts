@@ -253,7 +253,7 @@ export const blog: Blog = ([
       {
         paragraphs: [
           "When an autonomous workflow does something surprising in production, the first question is never \"what is the model?\" It is \"what just happened?\" Most AI stacks cannot answer that question, because the only durable artifact they keep is the final response. The retrieval that fed it, the policy checks that passed, the tool calls that fired, and the operator who approved the run are all gone by the time anyone goes looking.",
-          "MLAI's Trace Layer is built around the opposite default: every orchestration step emits an inspectable event before it is allowed to change state. The trace is the system of record, not a debug log you remember to turn on.",
+          "Quesar's Trace Layer is built around the opposite default: every orchestration step emits an inspectable event before it is allowed to change state. The trace is the system of record, not a debug log you remember to turn on.",
         ],
       },
       {

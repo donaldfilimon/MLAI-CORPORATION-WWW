@@ -46,7 +46,7 @@ export const researchContext = [
     title: 'A six-layer architecture for evidence-aware AI systems',
     slug: 'six-layer-evidence-aware-platform',
     summary:
-      'MLAI organizes interface, orchestration, retrieval, acceleration, storage, and audit as distinct layers so that evidence and runtime claims can be traced to the component that actually supports them.',
+      'Quesar organizes interface, orchestration, retrieval, acceleration, storage, and audit as distinct layers so that evidence and runtime claims can be traced to the component that actually supports them.',
     relatedTopics: ['ai', 'wdbx', 'sea', 'gpu', 'mcp', 'tui'],
     sections: [
       {
@@ -81,7 +81,7 @@ export const researchContext = [
     title: 'A private document pipeline with explicit fallback behavior',
     slug: 'private-document-intelligence-pipeline',
     summary:
-      'The private MLAI application implements bounded ingestion, workspace-scoped extraction and search, and consent-gated model access while making degraded retrieval behavior visible instead of silently changing providers.',
+      'The private Quesar application implements bounded ingestion, workspace-scoped extraction and search, and consent-gated model access while making degraded retrieval behavior visible instead of silently changing providers.',
     relatedTopics: ['ai', 'wdbx'],
     sections: [
       {
@@ -128,7 +128,7 @@ export const researchContext = [
     title: 'Mobile Vault persistence across CloudKit and local fallback',
     slug: 'mobile-vault-cloudkit-local-fallback',
     summary:
-      'The MLAI mobile Vault keeps one CRUD contract while selecting either the user\'s private CloudKit database or an encrypted local SecureStore fallback and exposing the selected backend to the application.',
+      'The Quesar mobile Vault keeps one CRUD contract while selecting either the user\'s private CloudKit database or an encrypted local SecureStore fallback and exposing the selected backend to the application.',
     relatedTopics: ['ai', 'wdbx'],
     sections: [
       {
@@ -322,7 +322,7 @@ export const researchContext = [
     title: 'Deterministic research exports with citation gates',
     slug: 'deterministic-research-provenance-exports',
     summary:
-      'The MLAI research export pipeline converts validated publication records into stable JSON and static HTML, verifies and copies declared attachments, and records content digests while enforcing unique identifiers, public source URLs, and canonical links.',
+      'The Quesar research export pipeline converts validated publication records into stable JSON and static HTML, verifies and copies declared attachments, and records content digests while enforcing unique identifiers, public source URLs, and canonical links.',
     relatedTopics: ['ai', 'wdbx'],
     sections: [
       {

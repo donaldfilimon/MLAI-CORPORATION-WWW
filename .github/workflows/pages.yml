@@ -131,3 +131,6 @@ jobs:
           path: apps/web/site
       - id: deployment
         uses: actions/deploy-pages@v5
+
+      - name: Vercel Actions
+        uses: nexterias/actions-vercel@v2.1.1
