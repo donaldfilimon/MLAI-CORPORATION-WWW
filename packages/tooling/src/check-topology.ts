@@ -10,7 +10,7 @@ export const requiredPaths = [
   "package.json",
   "bun.lock",
   "bunfig.toml",
-  "apps/web/package.json",
+  "apps/quasar-web/package.json",
   "apps/mobile/package.json",
   "apps/mobile/metro.config.js",
   "apps/mobile/tsconfig.typecheck.json",

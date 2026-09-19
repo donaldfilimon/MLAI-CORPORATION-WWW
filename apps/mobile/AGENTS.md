@@ -43,7 +43,7 @@ bunx eas build --profile development --platform ios   # cloud build
 
 ## Sibling applications in the integration repository
 
-This app now lives at `apps/mobile/` in the MLAI integration repository. The
+This app now lives at `apps/mobile/` in the Quesar integration repository. The
 other surfaces are siblings, not children of the Expo project:
 
 | Path | What it is | Its own gates |

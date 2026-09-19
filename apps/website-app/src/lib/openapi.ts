@@ -413,7 +413,7 @@ export function openapi() {
   return {
     openapi: "3.1.0",
     info: {
-      title: "MLAI Local Application API",
+      title: "Quesar Local Application API",
       version: "1.0.0",
       description:
         "Server-side workspace/engagement authorization applies to every resource. Bearer keys have read/write/chat/documents/console scopes and cannot perform owner-session or staff operations. Cookie mutations require a same-origin Origin header. Authentication endpoints under /api/auth follow Better Auth's email/password and session API.",

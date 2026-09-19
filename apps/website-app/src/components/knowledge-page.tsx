@@ -9,7 +9,7 @@ export function KnowledgePage() {
       <section className="marketing-hero">
         <div>
           <span className="eyeline abbey">Knowledge base</span>
-          <h1>Everything MLAI holds to be true.</h1>
+          <h1>Everything Quesar holds to be true.</h1>
           <p className="hero-description">
             The motto, taglines per surface, personas, routing prior, substrate
             invariant, and operating principles — consolidated from the
@@ -27,7 +27,7 @@ export function KnowledgePage() {
         <aside className="callout-card abbey">
           <strong>Brand split · architecture freeze 2026-09-02</strong>
           <p>
-            Lab tokens are shared across MLAI. Product narratives are not.
+            Lab tokens are shared across Quesar. Product narratives are not.
             &ldquo;Intelligence Without Limits&rdquo; belongs to Abbey, Abbey
             Bot, and ABI — gated by the claims ledger. Quesar never carries it.
           </p>
