@@ -249,6 +249,12 @@ public design system.
 The imported `implementation-data.json` is byte-identical to the source export
 at `../mlai-research-sites/public/implementation-data.json` (SHA-256
 `c9e7b8cb39e88ad6379de3aa022f051adc5914b6c30b50fd3b79991e61abc651`).
+The 2026-09-18 Quesar rebrand (`2656e33`) edited that prose, so the recorded
+`implementationDataSha256` is now
+`9e50db8abbb1a8d466a919203cc403540c38c2457c2ad369a843e1883295a47a`, and
+`apps/quasar-web/src/data/categories/research-context.ts` was aligned to the
+same bytes so a fresh export reproduces them. `sourceRevision` and
+`generatedAt` still describe the September 8 export.
 `docs/research-merge/published-review-manifest.json` records the clean source
 revision `419f08b24753c024c6d40a720ea5a417d8192251`, generation timestamp and
 collection counts without replacing the original September 6 source manifest.

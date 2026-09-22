@@ -79,7 +79,7 @@ it("loads the built UI through native ESM and preserves interactive client bound
     ],
     { encoding: "utf8" },
   );
-  expect(output).toContain("MLAI");
+  expect(output).toContain("Quesar");
   for (const name of [
     "auth-form",
     "contact-form",
