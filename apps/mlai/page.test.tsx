@@ -4,6 +4,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import Page from "./app/page.tsx";
 
 const banned = [
+  "customer",
+  "customers",
   "testimonial",
   "benchmark",
   "partnership",
