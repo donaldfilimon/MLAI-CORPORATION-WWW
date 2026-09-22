@@ -105,6 +105,13 @@ describe("a11y source guards", () => {
     }
   });
 
+  it("site KaTeX emits MathML for screen readers, with the stylesheet that hides it visually", () => {
+    const math = read("src/components/Math.tsx");
+    expect(math).toContain('output: "htmlAndMathml"');
+    expect(math).not.toContain('output: "html",');
+    expect(read("app/layout.tsx")).toContain('import "katex/dist/katex.min.css";');
+  });
+
   it("flagged small metadata text does not drop below text-dim/80", () => {
     for (const file of ["src/components/article.tsx", "src/views/Changelog.tsx", "src/components/demos/WdbxLiveDemo.tsx"]) {
       expect(read(file), file).not.toMatch(/(?<!placeholder:)text-text-dim\/[5-7]0\b/);

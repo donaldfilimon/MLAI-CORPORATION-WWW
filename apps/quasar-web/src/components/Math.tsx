@@ -49,17 +49,21 @@ export function BlockMath({ tex }: { tex: string }) {
     );
   }
 
+  // htmlAndMathml: the visible HTML is aria-hidden and screen readers get the
+  // MathML copy, which katex.min.css (imported in app/layout.tsx) hides
+  // visually. Plain "html" gave assistive tech nothing but glyph soup. The
+  // research export already renders the same way.
   const html = katex.renderToString(tex, {
     displayMode: true,
     throwOnError: false,
-    output: "html",
+    output: "htmlAndMathml",
   });
   return (
     <div
       tabIndex={0}
       className="my-1 overflow-x-auto rounded-lg border border-white/5 bg-white/2 px-5 py-4 text-[0.95em] text-cyan-50/90"
       // KaTeX output generated from trusted in-repo LaTeX strings, rendered
-      // with output:"html" and throwOnError:false — no user input reaches this.
+      // with output:"htmlAndMathml" and throwOnError:false — no user input reaches this.
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
