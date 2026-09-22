@@ -128,6 +128,17 @@ footer revision; `assets/lab.css` really changed (utilities from the legacy land
 components deleted in `fb2037c` dropped out, and classes from `9a67562`'s Products/GetStarted
 views came in). No exported page uses any of the changed classes.
 
+Regenerated 2026-09-22 from `3326c87c5a6c4468a01b48c583618808d3f09a98` (then `origin/main`;
+`generatedAt` 2026-09-22T03:17:32Z, that commit's time). The canonical checkout held untracked
+leftovers, so the export ran from a clean detached worktree of that commit under
+`/private/tmp`, removed afterwards. Against the `07fe5fb` export: `research-data.json`,
+`contentSha256`, the 108-file inventory, PDFs, fonts and scripts were identical.
+`implementation-data.json` moved from `c9e7b8cb…` to `9e50db8a…` (the Quesar rebrand), which
+now matches `apps/website-app`'s recorded snapshot; its `verify-research.ts --site-root` parity
+check passes against this `public/`. The HTML pages changed in the footer revision and in that
+rebranded study prose, `mlai-mark.svg` in its `aria-label`, and `lab.css` in five utilities out
+and three in, none used by an exported page.
+
 ## Regenerating this export
 
 The exporter refuses any destination inside the repository, so
