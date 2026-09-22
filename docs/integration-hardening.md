@@ -5,7 +5,7 @@
 Implementation and bounded local acceptance are complete on canonical `main` in
 `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`. Implementation commits are
 `e9f228c` and `3ce1f0c`. Four apps remain independent: production `apps/quasar-web`,
-Expo `apps/mobile`, nested Bun `apps/quasar`, and local `apps/website-app`.
+Expo `apps/mobile`, nested Bun `apps/quasar`, and local `apps/website-app`. **Superseded 2026-09-22:** the four apps are being merged into one Next 16 + Capacitor app (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history.
 Existing installations, private data, authentication and provider configuration
 were preserved. Historical imported receipts below other ledgers are not current
 acceptance evidence.
@@ -132,8 +132,9 @@ results above are independent evidence. Read the [app setup guide](../apps/websi
 for details. The root install helper is non-frozen. Clean-install and CI run
 frozen installs of the root lockfile, filtered to `@mlai/platform` and the
 workspaces under test, and CI's topology job fails on lockfile drift. CI now has
-six jobs (topology, web, mobile, Quasar, website-app, research-sites); the
-five-job results below predate the research-sites job.
+seven jobs (topology, web, mobile, Quasar, website-app, research-sites, and
+`check (self-hosted)`); the five-job results below predate the research-sites
+and self-hosted jobs.
 
 ## Hosted delivery and remaining boundaries
 
