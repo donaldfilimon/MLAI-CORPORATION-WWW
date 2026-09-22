@@ -68,6 +68,8 @@ export function DesignHub() {
           return (
             <button
               key={t.key}
+              type="button"
+              aria-pressed={active}
               onClick={() => setBoard(t.key)}
               style={{
                 padding: "8px 16px", borderRadius: 999, cursor: "pointer", border: "none", whiteSpace: "nowrap",

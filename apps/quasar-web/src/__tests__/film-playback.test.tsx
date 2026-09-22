@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { REDUCED_MOTION_QUERY, prefersReducedMotion } from "../film/engine";
+import { REDUCED_MOTION_QUERY, prefersReducedMotion, resolveSeek } from "../film/engine";
 
 /**
  * The Stage clock in `src/film/engine.tsx` holds its playhead while the OS asks
@@ -59,5 +59,30 @@ describe("prefersReducedMotion", () => {
         throw new Error("unsupported");
       }),
     ).toBe(false);
+  });
+});
+
+describe("resolveSeek", () => {
+  // The scrubber's End key and a drag to the far right both seek to `duration`.
+  // Before this helper the Stage set the time and left `playing` alone, so a
+  // looping film's next frame wrapped to 0 and End read as "jump to start".
+  it("clamps into [0, duration]", () => {
+    expect(resolveSeek(-2, 10).time).toBe(0);
+    expect(resolveSeek(12, 10).time).toBe(10);
+    expect(resolveSeek(4.5, 10).time).toBe(4.5);
+  });
+
+  it("holds (pauses) on a seek onto the end instead of letting the loop wrap", () => {
+    expect(resolveSeek(10, 10)).toEqual({ time: 10, atEnd: true });
+    expect(resolveSeek(99, 10)).toEqual({ time: 10, atEnd: true });
+  });
+
+  it("keeps playing for any seek short of the end", () => {
+    expect(resolveSeek(9.99, 10).atEnd).toBe(false);
+    expect(resolveSeek(0, 10).atEnd).toBe(false);
+  });
+
+  it("never reports the end of a zero-length film", () => {
+    expect(resolveSeek(0, 0)).toEqual({ time: 0, atEnd: false });
   });
 });

@@ -46,6 +46,40 @@ describe("a11y source guards", () => {
     expect(read("src/components/Math.tsx").match(/tabIndex=\{0\}/g)?.length).toBe(2);
   });
 
+  it("the voice toggle keeps its real size: it portals to the Stage's unscaled root and exposes its state", () => {
+    // Inside the scaled picture the toggle measured 22×7 px at a 320 px viewport
+    // (2026-09-17 acceptance). The Stage publishes its unscaled root as `chrome`
+    // on the timeline context and the toggle renders there through a portal.
+    const engine = read("src/film/engine.tsx");
+    expect(engine).toMatch(/chrome: HTMLElement \| null;/);
+    expect(engine).toMatch(/setChrome\(el\)/);
+    const narration = read("src/film/narration.tsx");
+    expect(narration).toContain('import { createPortal } from "react-dom";');
+    expect(narration).toMatch(/return chrome \? createPortal\(button, chrome\) : button;/);
+    expect(narration).toMatch(/<button type="button" onClick=\{toggle\}[^>]*aria-pressed=\{on\}/);
+  });
+
+  it("the scrubber seeks through resolveSeek, so End holds at the last frame", () => {
+    const engine = read("src/film/engine.tsx");
+    expect(engine).toMatch(/onSeek=\{seekTo\}/);
+    expect(engine).toMatch(/if \(r\.atEnd\) setPlaying\(false\);/);
+    expect(engine).not.toMatch(/onSeek=\{\(t\) => setTime\(t\)\}/);
+  });
+
+  it("the PREPARING VOICE pulse honors prefers-reduced-motion", () => {
+    expect(read("src/film/engine.tsx")).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)\{\.mlai-voice-pulse\{animation:none/,
+    );
+  });
+
+  it("design-lab toggle buttons expose aria-pressed", () => {
+    // The board switcher, the before/after segmented control and the token tabs
+    // all style an active state that assistive tech could not otherwise read.
+    expect(read("src/design/DesignHub.tsx")).toMatch(/aria-pressed=\{active\}/);
+    expect(read("src/design/board/core.tsx")).toMatch(/aria-pressed=\{selected\}/);
+    expect(read("src/design/board/depth.tsx")).toMatch(/aria-pressed=\{tab === t\}/);
+  });
+
   it("flagged small metadata text does not drop below text-dim/80", () => {
     for (const file of ["src/components/article.tsx", "src/views/Changelog.tsx", "src/components/demos/WdbxLiveDemo.tsx"]) {
       expect(read(file), file).not.toMatch(/(?<!placeholder:)text-text-dim\/[5-7]0\b/);

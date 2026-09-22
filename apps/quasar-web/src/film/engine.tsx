@@ -17,9 +17,13 @@ interface TimelineValue {
   time: number; clock: number; duration: number; playing: boolean;
   setTime: (t: number | ((t: number) => number)) => void;
   setPlaying: (p: boolean | ((p: boolean) => boolean)) => void;
+  // The Stage's unscaled root. Chrome that must keep its real pixel size (the
+  // voice toggle) portals here instead of rendering inside the scaled picture,
+  // which shrinks a 90×28 button to 22×7 at a 320 px viewport.
+  chrome: HTMLElement | null;
 }
 const TimelineContext = createContext<TimelineValue>({
-  time: 0, clock: 0, duration: 10, playing: false, setTime: () => {}, setPlaying: () => {},
+  time: 0, clock: 0, duration: 10, playing: false, setTime: () => {}, setPlaying: () => {}, chrome: null,
 });
 export const useTime = () => useContext(TimelineContext).time;
 export const useTimeline = () => useContext(TimelineContext);
@@ -111,6 +115,20 @@ export function prefersReducedMotion(
   }
 }
 
+/* ── seeking ──────────────────────────────────────────────────── */
+
+/**
+ * Where a seek lands. A seek onto the end pauses: the clock's next frame would
+ * otherwise wrap a looping film to 0, so End on the scrubber (and dragging it
+ * to the far right) read as "jump to start". Resuming from the end still wraps,
+ * exactly as reaching it by playback does. `atEnd` is never true for a
+ * zero-length film, which has no last frame to hold.
+ */
+export function resolveSeek(t: number, duration: number): { time: number; atEnd: boolean } {
+  const time = clamp(t, 0, duration);
+  return { time, atEnd: duration > 0 && time >= duration };
+}
+
 /* ── stage ────────────────────────────────────────────────────── */
 
 export function Stage({ width = 1920, height = 1080, duration = 10, background = "#040406",
@@ -125,7 +143,9 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
   const [playing, setPlaying] = useState(autoplay);
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [scale, setScale] = useState(1);
+  const [chrome, setChrome] = useState<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const stageRefCb = useCallback((el: HTMLDivElement | null) => { stageRef.current = el; setChrome(el); }, []);
   const rafRef = useRef(0);
   const lastTsRef = useRef<number | null>(null);
   const timeRef = useRef(time);
@@ -198,6 +218,12 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
+  const seekTo = useCallback((t: number) => {
+    const r = resolveSeek(t, duration);
+    setHoverTime(null); setTime(r.time);
+    if (r.atEnd) setPlaying(false);
+  }, [duration]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -210,19 +236,19 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
       // hovered frame when the pointer is resting on the track (mouseleave never fires).
       if (e.code === "Space") { e.preventDefault(); setHoverTime(null); setPlaying((p) => !p); }
       else if (e.code === "ArrowLeft") { setHoverTime(null); setTime((t) => clamp(t - (e.shiftKey ? 1 : 0.1), 0, duration)); }
-      else if (e.code === "ArrowRight") { setHoverTime(null); setTime((t) => clamp(t + (e.shiftKey ? 1 : 0.1), 0, duration)); }
+      else if (e.code === "ArrowRight") { seekTo(timeRef.current + (e.shiftKey ? 1 : 0.1)); }
       else if (e.key === "0" || e.code === "Home") { setHoverTime(null); setTime(0); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [duration]);
+  }, [duration, seekTo]);
 
   const displayTime = hoverTime != null ? hoverTime : time;
-  const ctxValue = useMemo<TimelineValue>(() => ({ time: displayTime, clock: time, duration, playing, setTime, setPlaying }),
-    [displayTime, time, duration, playing]);
+  const ctxValue = useMemo<TimelineValue>(() => ({ time: displayTime, clock: time, duration, playing, setTime, setPlaying, chrome }),
+    [displayTime, time, duration, playing, chrome]);
 
   return (
-    <div ref={stageRef} style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+    <div ref={stageRefCb} style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column",
       alignItems: "center", background: "#0a0a0a", fontFamily: "Inter, 'Geist Variable', system-ui, sans-serif" }}>
       <div style={{ flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 0 }}>
         <div style={{ width, height, background, position: "relative", transform: `scale(${scale})`, transformOrigin: "center",
@@ -232,13 +258,14 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
       </div>
       <PlaybackBar time={displayTime} duration={duration} playing={playing}
         onPlayPause={() => setPlaying((p) => !p)} onReset={() => setTime(0)}
-        onSeek={(t) => setTime(t)} onHover={(t) => setHoverTime(t)} />
+        onSeek={seekTo} onHover={(t) => setHoverTime(t)} />
       {!ready && (
         <div style={{ position: "absolute", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center",
           background: "rgba(4,4,6,0.5)", backdropFilter: "blur(2px)", color: "rgba(220,220,228,0.85)",
           fontFamily: "JetBrains Mono, ui-monospace, monospace", fontSize: 13, letterSpacing: "0.34em" }}>
-          <span style={{ animation: "mlaiVoicePulse 1.2s ease-in-out infinite" }}>PREPARING&nbsp;VOICE…</span>
-          <style>{`@keyframes mlaiVoicePulse{0%,100%{opacity:.4}50%{opacity:1}}`}</style>
+          <span className="mlai-voice-pulse">PREPARING&nbsp;VOICE…</span>
+          {/* The only animation that runs while the clock holds, so it too must honor reduced motion. */}
+          <style>{`@keyframes mlaiVoicePulse{0%,100%{opacity:.4}50%{opacity:1}}.mlai-voice-pulse{animation:mlaiVoicePulse 1.2s ease-in-out infinite}@media (prefers-reduced-motion: reduce){.mlai-voice-pulse{animation:none;opacity:.8}}`}</style>
         </div>
       )}
     </div>

@@ -11,6 +11,7 @@
 // the toggle, controller, and caption bar stay in sync without prop-drilling.
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { C, FONT, PERSONAS, clamp, type PersonaKey } from "./tokens";
 import { step, fade } from "./easing";
 import { useTimeline } from "./engine";
@@ -236,6 +237,10 @@ export function Narrator() {
 
 export function VoiceToggle() {
   const c = useSettings();
+  // Render into the Stage's unscaled root when there is one: inside the scaled
+  // picture the toggle shrank with it (22×7 px at a 320 px viewport). Outside a
+  // Stage it renders in place, as before.
+  const { chrome } = useTimeline();
   useEffect(() => {
     // browsers gate the AudioContext behind a user gesture — use the first
     // interaction to start downloading the neural model.
@@ -251,12 +256,13 @@ export function VoiceToggle() {
     if (!next) stopSpeech();
   };
   const on = c.voiceOn;
-  return (
-    <button onClick={toggle} title="Agent voiceover" style={{ position: "absolute", top: 14, right: 14, zIndex: 9998, display: "flex", alignItems: "center", gap: 9, padding: "9px 15px 9px 11px", borderRadius: 999, cursor: "pointer", background: on ? "rgba(52,211,153,0.16)" : "rgba(20,20,28,0.8)", border: `1px solid ${on ? C.green + "88" : C.line}`, color: on ? C.green : C.dim, fontFamily: FONT.mono, fontSize: 13, letterSpacing: "0.12em", backdropFilter: "blur(10px)" }}>
-      <span style={{ fontSize: 15 }}>{on ? "🔊" : "🔇"}</span>
+  const button = (
+    <button type="button" onClick={toggle} title="Agent voiceover" aria-pressed={on} style={{ position: "absolute", top: 14, right: 14, zIndex: 9998, display: "flex", alignItems: "center", gap: 9, minHeight: 36, padding: "9px 15px 9px 11px", borderRadius: 999, cursor: "pointer", background: on ? "rgba(52,211,153,0.16)" : "rgba(20,20,28,0.8)", border: `1px solid ${on ? C.green + "88" : C.line}`, color: on ? C.green : C.dim, fontFamily: FONT.mono, fontSize: 13, letterSpacing: "0.12em", backdropFilter: "blur(10px)" }}>
+      <span style={{ fontSize: 15 }} aria-hidden="true">{on ? "🔊" : "🔇"}</span>
       VOICE {on ? "ON" : "OFF"}
     </button>
   );
+  return chrome ? createPortal(button, chrome) : button;
 }
 
 export { PERSONAS };

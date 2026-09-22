@@ -262,7 +262,7 @@ export function TokensSection(): ReactNode {
                 ? { background: "linear-gradient(90deg,#22d3ee,#3b82f6)", color: "#fff", boxShadow: "0 4px 14px -4px rgba(59,130,246,0.6)" }
                 : { background: "rgba(255,255,255,0.05)", color: "#94a3b8", border: "1px solid rgba(255,255,255,0.08)" };
               return (
-                <button key={t} type="button" onClick={() => setTab(t)}
+                <button key={t} type="button" aria-pressed={tab === t} onClick={() => setTab(t)}
                   className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-300"
                   style={style}>
                   {t}

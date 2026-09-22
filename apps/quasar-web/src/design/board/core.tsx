@@ -105,6 +105,7 @@ export function BeforeAfter({
           <button
             key={l}
             type="button"
+            aria-pressed={selected}
             onClick={() => onChange(i === 1)}
             className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
             style={style}
