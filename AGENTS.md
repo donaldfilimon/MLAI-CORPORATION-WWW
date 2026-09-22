@@ -4,18 +4,11 @@ This is the canonical MLAI integration guide; `CLAUDE.md` points here. Read
 `apps/mlai/AGENTS.md` for the Next app and `apps/quasar/README.md` for the
 Quasar service sidecar.
 
-> **Merged and read-only (2026-09-22):** every mlai surface (site, console, admin,
-> workspace connectors, profile/billing, demos, Quasar screens, docs, sidecars,
-> native shell) was merged into quesar.cloud at `8077dd1`; see
-> `quesar.cloud/docs/merge/gap-matrix.md`. Do not develop here.
->
-> **Superseded 2026-09-22:** Donald made
-> [`donaldfilimon/quesar.cloud`](https://github.com/donaldfilimon/quesar.cloud)
-> (TanStack Start + Vite, local `~/dev/active/quesar.cloud`) the main site
-> repository. This repo is now the port source. The cinematic showcase
-> (`apps/mlai/src/{film,trailer,abbey-trailer,explainer,mega,design}` and
-> `packages/trailer-engine`) was ported there from `d988c66`. Nothing here is
-> archived or deleted; do new site work in quesar.cloud.
+> **Merged and read-only (2026-09-22):** quesar.cloud
+> ([`donaldfilimon/quesar.cloud`](https://github.com/donaldfilimon/quesar.cloud),
+> local `~/dev/active/quesar.cloud`) is the main site. Every mlai surface was
+> merged there at `8077dd1` (row-by-row record: `docs/merge/gap-matrix.md`
+> in that repo). Nothing here is archived or deleted; do not develop here.
 
 ## Boundaries
 
