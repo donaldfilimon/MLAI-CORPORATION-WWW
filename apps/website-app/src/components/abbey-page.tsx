@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button, Card } from "@mlai/ui";
 
 const capabilities = [
   {
@@ -77,12 +78,14 @@ export function AbbeyPage() {
             hardware you control.
           </p>
           <div className="button-row">
-            <Link className="button primary" href="/app/abbey">
-              Open IWL workspace <ArrowRight size={18} />
-            </Link>
-            <Link className="button secondary" href="/docs/models">
-              Model setup
-            </Link>
+            <Button asChild className="button primary">
+              <Link href="/app/abbey">
+                Open IWL workspace <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild className="button secondary">
+              <Link href="/docs/models">Model setup</Link>
+            </Button>
           </div>
         </div>
         <aside className="persona-panel" aria-label="Persona roster">
@@ -112,10 +115,10 @@ export function AbbeyPage() {
         </div>
         <div className="feature-grid">
           {capabilities.map((item) => (
-            <article className="feature-card abbey" key={item.title}>
+            <Card className="feature-card abbey" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>

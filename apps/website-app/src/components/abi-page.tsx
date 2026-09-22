@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button, Card } from "@mlai/ui";
 import { figures } from "@/content/provenance";
 import { ProvLegend, ProvTag } from "@/components/prov-tag";
 
@@ -61,27 +62,30 @@ export function AbiPage() {
             cannot prove stays labeled incomplete.
           </p>
           <div className="button-row">
-            <Link className="button primary" href="/docs/abi">
-              Connect ABI <ArrowRight size={18} />
-            </Link>
-            <Link
-              className="button secondary"
-              href="https://github.com/donaldfilimon/abi"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              ABI repository
-            </Link>
+            <Button asChild className="button primary">
+              <Link href="/docs/abi">
+                Connect ABI <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild className="button secondary">
+              <Link
+                href="https://github.com/donaldfilimon/abi"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ABI repository
+              </Link>
+            </Button>
           </div>
         </div>
-        <aside className="callout-card abi integrity-callout">
+        <Card className="callout-card abi integrity-callout">
           <strong>Integrity note</strong>
           <p>
             Linked features and accelerators are reported as distinct states. A
             green path in the console means the configured executable answered —
             not that every optional capability is present.
           </p>
-        </aside>
+        </Card>
       </section>
 
       <section className="system-section marketing-section">
@@ -91,10 +95,10 @@ export function AbiPage() {
         </div>
         <div className="feature-grid">
           {capabilities.map((item) => (
-            <article className="feature-card abi" key={item.title}>
+            <Card className="feature-card abi" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>

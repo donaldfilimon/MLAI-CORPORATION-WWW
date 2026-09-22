@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button, Card } from "@mlai/ui";
 import { figures } from "@/content/provenance";
 import { ProvLegend, ProvTag } from "@/components/prov-tag";
 
@@ -41,17 +42,20 @@ export function WdbxPage() {
             value stays an em dash and the row stays a target.
           </p>
           <div className="button-row">
-            <Link className="button primary" href="/docs/wdbx">
-              Gateway integration <ArrowRight size={18} />
-            </Link>
-            <Link
-              className="button secondary"
-              href="https://github.com/donaldfilimon/wdbx"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              WDBX repository
-            </Link>
+            <Button asChild className="button primary">
+              <Link href="/docs/wdbx">
+                Gateway integration <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild className="button secondary">
+              <Link
+                href="https://github.com/donaldfilimon/wdbx"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                WDBX repository
+              </Link>
+            </Button>
           </div>
         </div>
         <div className="table-scroll ledger-hero-table">
@@ -117,10 +121,10 @@ export function WdbxPage() {
         </div>
         <div className="feature-grid">
           {features.map((item) => (
-            <article className="feature-card wdbx" key={item.title}>
+            <Card className="feature-card wdbx" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>

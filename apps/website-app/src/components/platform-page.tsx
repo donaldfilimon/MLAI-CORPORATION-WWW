@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button, Card } from "@mlai/ui";
 
 const layers = [
   {
@@ -112,12 +113,14 @@ export function PlatformPage() {
             how it was tested, and where it runs.
           </p>
           <div className="button-row">
-            <Link className="button primary" href="/architecture">
-              Read the architecture <ArrowRight size={18} />
-            </Link>
-            <Link className="button secondary" href="/app">
-              Open workspace
-            </Link>
+            <Button asChild className="button primary">
+              <Link href="/architecture">
+                Read the architecture <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild className="button secondary">
+              <Link href="/app">Open workspace</Link>
+            </Button>
           </div>
         </div>
         <aside className="trace-panel" aria-label="Illustrative trace">
@@ -144,13 +147,10 @@ export function PlatformPage() {
         </div>
         <div className="feature-grid">
           {layers.map((layer) => (
-            <article
-              className={`feature-card ${layer.accent}`}
-              key={layer.title}
-            >
+            <Card className={`feature-card ${layer.accent}`} key={layer.title}>
               <h3>{layer.title}</h3>
               <p>{layer.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>
@@ -162,10 +162,10 @@ export function PlatformPage() {
         </div>
         <div className="feature-grid">
           {refusals.map((item) => (
-            <aside className={`callout-card ${item.accent}`} key={item.label}>
+            <Card className={`callout-card ${item.accent}`} key={item.label}>
               <strong>{item.label}</strong>
               <p>{item.body}</p>
-            </aside>
+            </Card>
           ))}
         </div>
       </section>
@@ -177,10 +177,10 @@ export function PlatformPage() {
         </div>
         <div className="feature-grid">
           {audiences.map((item) => (
-            <article className="feature-card abi" key={item.title}>
+            <Card className="feature-card abi" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>

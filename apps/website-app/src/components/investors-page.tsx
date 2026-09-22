@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button, Card } from "@mlai/ui";
 
 const thesis = [
   {
@@ -38,22 +39,24 @@ export function InvestorsPage() {
             invented metrics.
           </p>
           <div className="button-row">
-            <Link className="button primary" href="/contact">
-              Request the deck <ArrowRight size={18} />
-            </Link>
-            <Link className="button secondary" href="/architecture">
-              Technical architecture
-            </Link>
+            <Button asChild className="button primary">
+              <Link href="/contact">
+                Request the deck <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild className="button secondary">
+              <Link href="/architecture">Technical architecture</Link>
+            </Button>
           </div>
         </div>
-        <aside className="callout-card abi">
+        <Card className="callout-card abi">
           <strong>Claims discipline</strong>
           <p>
             No customers, partners, funding rounds, TAM tables, or team beyond
             the founder are stated on public surfaces unless a repository
             artifact proves them. Evidence before projections.
           </p>
-        </aside>
+        </Card>
       </section>
 
       <section className="system-section marketing-section">
@@ -63,10 +66,10 @@ export function InvestorsPage() {
         </div>
         <div className="feature-grid three">
           {thesis.map((item) => (
-            <article className="feature-card wdbx" key={item.title}>
+            <Card className="feature-card wdbx" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>
@@ -88,7 +91,7 @@ export function InvestorsPage() {
               </div>
             ))}
           </dl>
-          <aside className="callout-card wdbx">
+          <Card className="callout-card wdbx">
             <strong>What ships today</strong>
             <p>
               The local release combines a public technical website, an AI
@@ -96,7 +99,7 @@ export function InvestorsPage() {
               Billing and public production deployment are separate milestones —
               not claimed as live here.
             </p>
-          </aside>
+          </Card>
         </div>
       </section>
 
@@ -106,20 +109,20 @@ export function InvestorsPage() {
           <h2>Where diligence starts.</h2>
         </div>
         <div className="feature-grid">
-          <article className="feature-card abbey">
+          <Card className="feature-card abbey">
             <h3>Research library</h3>
             <p>
               Source-reviewed publications with pinned revisions — figures carry
               their receipts, or they are omitted.
             </p>
-          </article>
-          <article className="feature-card abi">
+          </Card>
+          <Card className="feature-card abi">
             <h3>Architecture</h3>
             <p>
               Runtime, memory, and control boundaries described without
               inventing throughput or accuracy scores.
             </p>
-          </article>
+          </Card>
         </div>
       </section>
 

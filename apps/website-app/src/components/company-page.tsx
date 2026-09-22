@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button, Card } from "@mlai/ui";
 
 const principles = [
   {
@@ -85,22 +86,24 @@ export function CompanyPage() {
             memory, ABI for compute, and IWL for the assistant workspace.
           </p>
           <div className="button-row">
-            <Link className="button primary" href="/contact">
-              Contact <ArrowRight size={18} />
-            </Link>
-            <Link className="button secondary" href="/research">
-              Research
-            </Link>
+            <Button asChild className="button primary">
+              <Link href="/contact">
+                Contact <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild className="button secondary">
+              <Link href="/research">Research</Link>
+            </Button>
           </div>
         </div>
-        <aside className="callout-card abbey">
+        <Card className="callout-card abbey">
           <strong>How we talk about progress</strong>
           <p>
             Investors and partners get evidence before projections. Numeric
             market claims (TAM, raise amounts, fabricated traction) stay off
             this site until they ship with provenance.
           </p>
-        </aside>
+        </Card>
       </section>
 
       <section className="split-section abbey">
@@ -133,10 +136,10 @@ export function CompanyPage() {
         </div>
         <div className="feature-grid three">
           {principles.map((item) => (
-            <article className="feature-card abbey" key={item.title}>
+            <Card className="feature-card abbey" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>
@@ -148,10 +151,10 @@ export function CompanyPage() {
         </div>
         <div className="feature-grid three">
           {pillars.map((item) => (
-            <article className="feature-card wdbx" key={item.title}>
+            <Card className="feature-card wdbx" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>
