@@ -76,7 +76,7 @@ export function PersonaRouterDemo() {
           </span>
         </div>
       </div>
-      <p className="mt-4 font-mono text-xs text-text-dim/70">
+      <p className="mt-4 font-mono text-xs text-text-dim/80">
         R_final = α·R_Abbey + (1 − α)·R_Aviva
       </p>
     </div>

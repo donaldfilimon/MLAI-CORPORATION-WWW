@@ -172,7 +172,7 @@ export function FounderProfile() {
               </p>
             )}
             {member.location && (
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-text-dim/60 mb-6">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-text-dim/80 mb-6">
                 <MapPin className="h-3 w-3" /> {member.location}
               </div>
             )}
@@ -225,7 +225,7 @@ export function FounderProfile() {
                       </span>
                       <span className="flex items-center gap-2">
                         {project.lang && (
-                          <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/50">
+                          <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/80">
                             {project.lang}
                           </span>
                         )}
@@ -267,7 +267,7 @@ export function FounderProfile() {
 
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest text-text-dim/50 mb-2">
+            <p className="text-xs font-mono uppercase tracking-widest text-text-dim/80 mb-2">
               Building something aligned?
             </p>
             <Button

@@ -290,7 +290,7 @@ function DataRow({ label, periods, get, kind = "money", style = "normal", indent
             key={p.label}
             className={`whitespace-nowrap px-3 py-1.5 text-right font-mono text-xs tabular-nums ${valCls} ${p.isActual ? "bg-cyan-500/[0.04]" : ""}`}
           >
-            {v === null ? <span className="text-text-dim/40">—</span> : fmt(v, kind)}
+            {v === null ? <span className="text-text-dim/80">—</span> : fmt(v, kind)}
           </td>
         );
       })}

@@ -215,7 +215,7 @@ export function Showcase() {
                     />
                     {/* sprocket strip — film-frame chrome */}
                     <div className="relative flex items-center justify-between border-b border-white/8 px-5 py-2.5">
-                      <span className="font-mono text-[10px] tracking-[0.3em] text-text-dim/60">
+                      <span className="font-mono text-[10px] tracking-[0.3em] text-text-dim/80">
                         REEL {s.index}
                       </span>
                       <span aria-hidden="true" className="flex gap-1.5">
@@ -259,7 +259,7 @@ export function Showcase() {
                         <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
                           {s.title}
                         </h2>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim/70">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim/80">
                           {s.duration}
                         </span>
                       </div>
@@ -302,7 +302,7 @@ export function Showcase() {
                     to a server. The first playback downloads the model; if
                     your browser can&apos;t run it, captions carry the words.
                   </p>
-                  <p className="mt-auto border-t border-white/8 pt-4 font-mono text-[11px] leading-relaxed text-text-dim/70">
+                  <p className="mt-auto border-t border-white/8 pt-4 font-mono text-[11px] leading-relaxed text-text-dim/80">
                     space play/pause · ←/→ scrub · 0 restart
                   </p>
                 </div>

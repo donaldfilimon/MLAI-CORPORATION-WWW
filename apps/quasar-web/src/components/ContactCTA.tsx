@@ -35,7 +35,7 @@ export const ContactCTA = ({
               customized orchestration roadmap tailored for your organization's
               specific challenges.
             </p>
-            <p className="text-xs text-text-dim/60 mb-10 flex items-center justify-center gap-2">
+            <p className="text-xs text-text-dim/80 mb-10 flex items-center justify-center gap-2">
               <Shield className="w-3.5 h-3.5" aria-hidden="true" />
               All inquiries are protected under NDA by default
             </p>

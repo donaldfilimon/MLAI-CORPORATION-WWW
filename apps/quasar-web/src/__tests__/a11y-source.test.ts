@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
@@ -112,9 +112,26 @@ describe("a11y source guards", () => {
     expect(read("app/layout.tsx")).toContain('import "katex/dist/katex.min.css";');
   });
 
-  it("flagged small metadata text does not drop below text-dim/80", () => {
-    for (const file of ["src/components/article.tsx", "src/views/Changelog.tsx", "src/components/demos/WdbxLiveDemo.tsx"]) {
-      expect(read(file), file).not.toMatch(/(?<!placeholder:)text-text-dim\/[5-7]0\b/);
+  it("small metadata text does not drop below text-dim/80 anywhere in the app", () => {
+    // Pixel-sampled contrast audit, 2026-09-22 (39 routes x 1280/375, next dev):
+    // text-dim at /50 measured 2.68:1, /60 3.39:1 and /70 4.26:1 on the site's
+    // darkest surfaces, all under the 4.5:1 floor for small text; /80 is >= 5.02:1.
+    // Exempt: placeholder text (kept by the earlier audit) and non-text icons.
+    const files = ["src", "app"].flatMap((dir) =>
+      readdirSync(resolve(ROOT, dir), { recursive: true, encoding: "utf8" })
+        .filter((p) => p.endsWith(".tsx") && !p.includes("__tests__"))
+        .map((p) => `${dir}/${p}`),
+    );
+    expect(files.length).toBeGreaterThan(50);
+    const offenders: string[] = [];
+    for (const file of files) {
+      read(file)
+        .split("\n")
+        .forEach((line, i) => {
+          if (/<ArrowUpRight/.test(line)) return;
+          if (/(?<!placeholder:)text-text-dim\/[1-7]\d\b/.test(line)) offenders.push(`${file}:${i + 1}`);
+        });
     }
+    expect(offenders).toEqual([]);
   });
 });

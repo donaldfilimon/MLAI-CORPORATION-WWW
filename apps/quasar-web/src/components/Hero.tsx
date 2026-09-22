@@ -222,14 +222,14 @@ export const Hero = () => {
           animate={shouldReduceMotion ? undefined : "visible"}
           className="mt-10 border-t border-white/5 pt-6"
         >
-          <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/60">
+          <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/80">
             Production boundary
           </p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
             {TRUSTED_LOGOS.map((name) => (
               <span
                 key={name}
-                className="text-sm font-medium text-text-dim/45 transition-colors hover:text-text-dim/80"
+                className="text-sm font-medium text-text-dim/80 transition-colors hover:text-text-dim"
               >
                 {name}
               </span>

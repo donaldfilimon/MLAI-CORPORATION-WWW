@@ -46,7 +46,7 @@ export function ShardingLatencyDemo() {
                 className={`w-full rounded-t-md transition-all ${b === n ? "bg-linear-to-t from-sky-600 to-sky-300" : "bg-white/15 group-hover:bg-white/25"}`}
                 style={{ height: `${pct}%` }}
               />
-              <span className={`text-[10px] ${b === n ? "text-sky-400" : "text-text-dim/60"}`}>{b}</span>
+              <span className={`text-[10px] ${b === n ? "text-sky-400" : "text-text-dim/80"}`}>{b}</span>
             </button>
           );
         })}

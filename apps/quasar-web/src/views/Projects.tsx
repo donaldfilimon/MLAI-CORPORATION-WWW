@@ -30,7 +30,7 @@ export function Projects() {
                 <CardPanel gap="sm" className="h-full transition-colors group-hover:border-cyan-400/25">
                   <Icon className="h-5 w-5 text-cyan-300" aria-hidden="true" />
                   <div>
-                    <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-text-dim/60 uppercase">
+                    <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-text-dim/80 uppercase">
                       {project.kind}
                     </span>
                     <h2 className="mt-2 font-display text-xl font-semibold text-white">

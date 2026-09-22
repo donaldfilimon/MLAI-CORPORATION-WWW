@@ -18,7 +18,7 @@ export default function Loading() {
             <span className="h-2 w-2 rounded-full bg-cyan-400" />
           </span>
         </span>
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-text-dim/70">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-text-dim/80">
           Loading
         </span>
       </div>

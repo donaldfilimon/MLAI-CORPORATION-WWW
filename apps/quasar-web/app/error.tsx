@@ -43,7 +43,7 @@ export default function RouteError({
           The rest of the site is fine — this route failed to render. You can
           retry the page, or head back to solid ground.
           {error.digest ? (
-            <span className="mt-3 block font-mono text-xs text-text-dim/60">
+            <span className="mt-3 block font-mono text-xs text-text-dim/80">
               Reference: {error.digest}
             </span>
           ) : null}

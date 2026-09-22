@@ -243,25 +243,25 @@ export const Footer = () => {
         <Separator className="bg-white/10 mb-8" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest">
+          <p className="text-[10px] font-mono text-text-dim/80 uppercase tracking-widest">
             © {new Date().getFullYear()} MLAI CORPORATION. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-8">
             <Link
               to="/privacy"
-              className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors"
+              className="text-[10px] font-mono text-text-dim/80 uppercase tracking-widest hover:text-white transition-colors"
             >
               Privacy Policy
             </Link>
             <Link
               to="/terms"
-              className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors"
+              className="text-[10px] font-mono text-text-dim/80 uppercase tracking-widest hover:text-white transition-colors"
             >
               Terms of Service
             </Link>
             <Link
               to="/security"
-              className="text-[10px] font-mono text-text-dim/60 uppercase tracking-widest hover:text-white transition-colors"
+              className="text-[10px] font-mono text-text-dim/80 uppercase tracking-widest hover:text-white transition-colors"
             >
               Security
             </Link>

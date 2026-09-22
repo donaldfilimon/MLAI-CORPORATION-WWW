@@ -175,7 +175,7 @@ function LinkCard({ item }: { item: LinkItem }) {
   const external = item.href.startsWith("http");
   const inner = (
     <>
-      <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-text-dim/50">
+      <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-text-dim/80">
         {external ? "External" : "Internal"}
       </span>
       <h3 className="mt-2 text-base font-bold text-white group-hover:text-cyan-400 transition-colors">

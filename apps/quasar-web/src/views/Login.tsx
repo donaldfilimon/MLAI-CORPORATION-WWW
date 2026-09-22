@@ -62,7 +62,7 @@ export function Login() {
               {requesting ? <Button onClick={openInquiry} className="w-full py-6 text-base font-semibold">Start an inquiry <ArrowRight className="h-5 w-5" /></Button> : <Button id="workos-primary-auth-btn" onClick={() => login("/console")} className="w-full py-6 text-base font-semibold">Sign in to Quesar <ArrowRight className="h-5 w-5" /></Button>}
               <Button asChild variant="outline" className="w-full py-6 text-base font-semibold"><Link to={requesting ? "/login" : "/login?mode=request-access"}>{requesting ? "I already have an invitation" : "Request beta access"}</Link></Button>
             </div>}
-            <p className="pt-3 text-center font-mono text-[10px] tracking-wide text-text-dim/70">No public account creation. Membership is managed in WorkOS.</p>
+            <p className="pt-3 text-center font-mono text-[10px] tracking-wide text-text-dim/80">No public account creation. Membership is managed in WorkOS.</p>
           </div>
 
           <div className="flex justify-center border-t border-white/5 pt-6"><p className="text-xs text-text-dim">By continuing you agree to our <Link to="/terms" className="text-primary underline underline-offset-2 hover:text-white">Terms of Service</Link>.</p></div>

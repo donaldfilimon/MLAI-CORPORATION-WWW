@@ -111,7 +111,7 @@ export function NotFound() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8">
-          <p className="text-xs font-mono uppercase tracking-widest text-text-dim/50 mb-4">
+          <p className="text-xs font-mono uppercase tracking-widest text-text-dim/80 mb-4">
             Or jump to
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">

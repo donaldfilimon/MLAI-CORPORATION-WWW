@@ -506,7 +506,7 @@ export function Docs() {
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: p.accent }} aria-hidden="true" />
                       <span className="text-base font-bold text-white">{p.name}</span>
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/60">{p.role}</span>
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-text-dim/80">{p.role}</span>
                     </div>
                     <p className="text-sm leading-relaxed text-text-dim">{p.description}</p>
                   </CardPanel>
@@ -596,7 +596,7 @@ export function Docs() {
                   >
                     <div className="mb-1 flex items-center justify-between">
                       <span className="text-sm font-bold text-white">{doc.label}</span>
-                      <span className="font-mono text-[10px] text-text-dim/60 group-hover:text-sky-400">.md ↓</span>
+                      <span className="font-mono text-[10px] text-text-dim/80 group-hover:text-sky-400">.md ↓</span>
                     </div>
                     <p className="text-xs leading-relaxed text-text-dim">{doc.text}</p>
                   </a>

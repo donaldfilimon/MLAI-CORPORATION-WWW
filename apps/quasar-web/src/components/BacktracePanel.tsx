@@ -96,14 +96,14 @@ export const BacktracePanel = () => {
         <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-300">
           wdbx · backtrace
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim/50">
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim/80">
           chain verified
         </span>
       </div>
 
       {/* The answer being explained — the head of the chain. */}
       <m.div variants={reduce ? undefined : link} className="px-5 pt-5 pb-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/60">
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/80">
           Answer
         </p>
         <p className="mt-2 font-display text-lg leading-snug text-white">
@@ -168,7 +168,7 @@ export const BacktracePanel = () => {
                     />
                   </div>
 
-                  <div className="mt-2 flex items-center gap-3 font-mono text-[10px] text-text-dim/45">
+                  <div className="mt-2 flex items-center gap-3 font-mono text-[10px] text-text-dim/80">
                     <span>{block.id}</span>
                     <span aria-hidden="true">←</span>
                     <span>parent {block.parent}</span>
@@ -183,7 +183,7 @@ export const BacktracePanel = () => {
         </ul>
       </div>
 
-      <figcaption className="border-t border-white/8 px-5 py-3 font-mono text-[10px] leading-relaxed tracking-wide text-text-dim/50">
+      <figcaption className="border-t border-white/8 px-5 py-3 font-mono text-[10px] leading-relaxed tracking-wide text-text-dim/80">
         Illustrative trace. Every answer keeps the weighted, hash-chained path
         back to the records that produced it.
       </figcaption>
