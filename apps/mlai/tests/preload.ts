@@ -12,6 +12,9 @@ mock.module("next/navigation", () => ({
   useSelectedLayoutSegments: () => [],
   redirect() {},
   notFound() {},
+  unauthorized() {
+    throw new Error("Sign in required.");
+  },
 }));
 
 mock.module("next/link", () => ({

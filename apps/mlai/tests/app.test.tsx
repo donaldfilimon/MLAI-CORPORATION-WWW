@@ -10,12 +10,12 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createStoredSession, readEpisode, readReceipt, readVector, sharedAuth, sharedPoolsCreated } from "@mlai/store";
-import { renderWorkspace } from "../lib/workspace.ts";
+import { loadWorkspaceFromCookie } from "../lib/workspace.ts";
 import { probeSidecar } from "../lib/sidecars.ts";
 import { buildCsp } from "../src/lib/csp.ts";
 import { buildResearchExport } from "../lib/research-export.ts";
 import { Providers } from "../app/providers.tsx";
-import { GET } from "../app/app/[[...slug]]/route.ts";
+import { SignedConsole } from "../app/app/[[...slug]]/page.tsx";
 import Page from "../app/page.tsx";
 import SettingsPage from "../app/quasar/settings/page.tsx";
 import { QuasarSettings } from "../lib/quasar-screens.tsx";
@@ -63,34 +63,24 @@ describe("apps/mlai shipped behavior", () => {
 
   test("refuses an unsigned workspace route and renders it when the session is present", async () => {
     const email = `workspace-${Date.now()}@mlai.local`;
-    const { auth, token, pool } = await createStoredSession(databaseUrl, email, "correct-horse-battery");
-    const refused = await renderWorkspace(auth, null);
-    expect(refused.status).toBe(401);
-    expect(refused.body).toBe("Sign in required.");
-    expect(refused.body).not.toContain("Workspace");
-    const allowed = await renderWorkspace(auth, token);
-    expect(allowed.status).toBe(200);
-    expect(allowed.body).toContain("Workspace");
-    expect(allowed.body).toContain(email);
+    const { token, pool } = await createStoredSession(databaseUrl, email, "correct-horse-battery");
     process.env.DATABASE_URL = databaseUrl;
     const beforePools = sharedPoolsCreated();
-    const unsigned = new Request("http://127.0.0.1/app/workspace");
-    const first = await GET(unsigned);
-    const second = await GET(unsigned);
-    expect(first.status).toBe(401);
-    expect(await first.text()).toBe("Sign in required.");
-    expect(second.status).toBe(401);
+    const first = await loadWorkspaceFromCookie(null);
+    const second = await loadWorkspaceFromCookie(null);
+    expect(first).toBeNull();
+    expect(second).toBeNull();
     expect(sharedPoolsCreated() - beforePools).toBe(1);
     const held = sharedAuth(databaseUrl);
     expect(sharedAuth(databaseUrl).pool).toBe(held.pool);
     expect(held.pool.ended).toBe(false);
-    const signed = await GET(
-      new Request("http://127.0.0.1/app/workspace", {
-        headers: { cookie: `better-auth.session_token=${token}` },
-      }),
-    );
-    expect(signed.status).toBe(200);
-    expect(await signed.text()).toContain(email);
+    const signed = await loadWorkspaceFromCookie(`better-auth.session_token=${token}`);
+    expect(signed?.email).toBe(email);
+    const signedBody = renderToStaticMarkup(createElement(SignedConsole, { email: signed!.email }));
+    expect(signedBody).toContain("Files");
+    expect(signedBody).toContain("Loading");
+    expect(signedBody).toContain(email);
+    expect(signedBody).not.toContain("<h1>Workspace</h1>");
     expect(sharedPoolsCreated() - beforePools).toBe(1);
     await pool.end();
   });

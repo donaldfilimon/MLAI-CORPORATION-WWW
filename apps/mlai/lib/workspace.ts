@@ -1,14 +1,15 @@
-import { readStoredSession, type createAuth } from "@mlai/store";
+import { readStoredSession, sharedAuth } from "@mlai/store";
 
-type Auth = ReturnType<typeof createAuth>["auth"];
+export function sessionToken(cookie: string | null) {
+  return cookie?.match(/(?:^|;\s*)better-auth\.session_token=([^;]+)/)?.[1] ?? null;
+}
 
-export async function renderWorkspace(auth: Auth, token: string | null) {
-  const session = await readStoredSession(auth, token);
-  if (!session?.user?.email) {
-    return { status: 401 as const, body: "Sign in required." };
-  }
-  return {
-    status: 200 as const,
-    body: `<main><h1>Workspace</h1><p>${session.user.email}</p></main>`,
-  };
+/** Resolves the Better Auth session for `/app/*`. One shared pool per database URL. */
+export async function loadWorkspaceFromCookie(cookie: string | null) {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) return null;
+  const { auth } = sharedAuth(connectionString);
+  const session = await readStoredSession(auth, sessionToken(cookie));
+  if (!session?.user?.email) return null;
+  return { email: session.user.email };
 }

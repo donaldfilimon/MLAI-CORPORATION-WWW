@@ -42,6 +42,10 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Lets `/app/*` answer 401 through `unauthorized()` instead of a generic error page.
+    authInterrupts: true,
+  },
   reactStrictMode: true,
   // Next 16 writes agent-rules files into the project on `next dev`; this app
   // keeps its own AGENTS.md/CLAUDE.md pair, which check-topology validates.
