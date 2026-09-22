@@ -129,12 +129,15 @@ rather than inside one app's docs.
 
 ## Local preview
 
-`.claude/launch.json` defines two preview servers whose names differ from the
-`dev:*` scripts: `mlai-web` (`apps/quasar-web`, port 3000) and
-`mlai-website-app` (`apps/website-app`, port 3100, from `scripts/dev.ts`).
-Another desktop session can leave a `next dev --port 3000` running in this
-checkout; check `lsof -i :3000` before starting a second one. The Quasar
-service listens on 4700 and is not started by `dev:quasar` (see `AGENTS.md`).
+`.claude/launch.json` is local to this machine (listed in `.git/info/exclude`,
+not tracked). It names two preview servers that differ from the `dev:*`
+scripts. `mlai-web` runs `next dev` in `apps/quasar-web` with `autoPort`, so a
+second session gets its own port instead of colliding; it bypasses the `dev`
+script because that script hardcodes `--port 3000`. `mlai-website-app` runs
+`apps/website-app`'s `dev` on 3100, taken from `scripts/dev.ts`. A real WorkOS
+sign-in returns to `APP_URL` (default `http://localhost:3000`), so use
+`bun run dev:web` on 3000 for that flow. The Quasar service listens on 4700 and
+is not started by `dev:quasar` (see `AGENTS.md`).
 
 <!-- machine-git-policy -->
 ## Git workflow (machine policy, 2026-08-27)
