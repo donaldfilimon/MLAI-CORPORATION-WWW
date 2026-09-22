@@ -1,5 +1,0 @@
-[install]
-linker = "hoisted"
-
-[run]
-bun = true

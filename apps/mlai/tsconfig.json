@@ -1,35 +1,60 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
     "lib": [
       "ES2022",
       "DOM",
       "DOM.Iterable"
     ],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "strict": true,
-    "noEmit": true,
-    "isolatedModules": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "incremental": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "react-router-dom": [
+        "./src/lib/router-compat.tsx"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": [
+      "node"
+    ],
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "allowJs": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true
   },
   "include": [
     "app",
     "next-env.d.ts",
+    "next.config.ts",
+    "src",
     ".next/types/**/*.ts",
+    ".next-gate/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "dist",
+    "node_modules",
+    ".next",
+    "server",
+    "server.ts",
+    "rust"
   ]
 }

@@ -1,6 +1,6 @@
 name: Deploy static landing page to GitHub Pages
 
-# Publishes the self-contained static page in apps/quasar-web/site to GitHub Pages.
+# Publishes the self-contained static page in apps/mlai/site to GitHub Pages.
 # This is a lightweight landing page only — the full Next.js app (pages +
 # /api/* route handlers) is deployed separately to Cloud Run (see
 # deploy-cloudrun.yml). The Next app is NOT statically exported here.
@@ -123,12 +123,12 @@ jobs:
       # One root workspace: install at the repository root (see ci.yml).
       - run: bun install --frozen-lockfile --filter @mlai/platform --filter @quesar/web
       - run: bunx vitest run src/__tests__/landing-page.test.ts
-        working-directory: apps/quasar-web
+        working-directory: apps/mlai
 
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: apps/quasar-web/site
+          path: apps/mlai/site
       - id: deployment
         uses: actions/deploy-pages@v5
 

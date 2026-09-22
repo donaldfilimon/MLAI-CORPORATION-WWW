@@ -5,15 +5,9 @@
   "packageManager": "bun@1.4.2",
   "workspaces": [
     "packages/*",
-    "apps/quasar-web",
-    "apps/mobile",
-    "apps/quasar",
-    "apps/quasar/packages/*",
-    "apps/quasar/apps/*",
     "apps/mlai",
-    "apps/website-app",
-    "apps/website-app/packages/*",
-    "apps/website-app/mlai-website-agent"
+    "apps/quasar",
+    "apps/quasar/packages/*"
   ],
   "devDependencies": {
     "@types/react": "^19.3.0",
@@ -21,17 +15,11 @@
   },
   "scripts": {
     "install:all": "bun install",
-    "check": "bun run check:topology && bun run check:workflows && bun run check:tooling && bun run check:web && bun run check:mobile && bun run check:quasar && bun run check:website-app && bun run check:research-sites",
+    "check": "bun run check:topology && bun run check:workflows && bun run check:tooling && bun run check:web && bun run check:quasar",
     "check:topology": "bun packages/tooling/src/check-topology.ts",
-    "check:web": "cd apps/quasar-web && bun run lint && bun run test && bun run build",
-    "check:mobile": "cd apps/mobile && bun run typecheck && bun run test -- --runInBand && bun run lint && bunx expo export --platform web",
-    "check:quasar": "bun run --cwd apps/quasar typecheck && bun run --cwd apps/quasar test && bun run --cwd apps/quasar/apps/quasar export:web",
-    "dev:web": "cd apps/quasar-web && bun run dev",
-    "dev:mobile": "cd apps/mobile && bun run start",
-    "dev:quasar": "cd apps/quasar/apps/quasar && bun run start",
-    "check:website-app": "sh packages/tooling/scripts/check-website-app.sh",
-    "dev:website-app": "cd apps/website-app && bun run dev",
-    "check:research-sites": "cd apps/research-sites && bun run check",
+    "check:web": "cd apps/mlai && bun run lint && bun run test && bun run build",
+    "check:quasar": "bun run --cwd apps/quasar typecheck && bun run --cwd apps/quasar test",
+    "dev:web": "cd apps/mlai && bun run dev",
     "check:workflows": "go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 -shellcheck= -pyflakes=",
     "check:tooling": "bun test packages/tooling/src",
     "tokens:generate": "bun packages/design-tokens/src/generate.ts"

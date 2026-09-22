@@ -2,24 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-`AGENTS.md` is the canonical repository-wide map: the boundaries between the
-five apps, the root commands, and what each gate does and does not prove.
+`AGENTS.md` is the canonical repository-wide map: the one Next app, the Quasar
+service sidecar, the root commands, and what each gate does and does not prove.
 Read it first, then the guidance for the surface you are changing. Do not
 duplicate their detailed instructions here.
 
 | Surface | Read before editing |
 |---|---|
-| `apps/quasar-web` | `apps/quasar-web/AGENTS.md`, `apps/quasar-web/CLAUDE.md`, and `apps/quasar-web/infra/README.md` for OpenTofu |
-| `apps/mobile` | `apps/mobile/AGENTS.md`, `apps/mobile/CLAUDE.md` |
-| `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
-| `apps/website-app` | `apps/website-app/AGENTS.md`, `apps/website-app/CLAUDE.md`, and `apps/website-app/README.md` |
-| `apps/research-sites` | `apps/research-sites/AGENTS.md`, `apps/research-sites/CLAUDE.md` (generated export; never hand-edit `public/`) |
+| `apps/mlai` | `apps/mlai/AGENTS.md`, `apps/mlai/CLAUDE.md`, and `apps/mlai/infra/README.md` for OpenTofu |
+| `apps/quasar` | `apps/quasar/README.md` — the service sidecar has no `AGENTS.md` or `CLAUDE.md` |
+| `sidecars/python-worker` | `sidecars/python-worker/README.md` |
 | `packages/*` | that package's own `README.md`; `packages/trailer-engine` has none, so read its `src/index.ts` exports |
 
-`apps/quasar-web` is the canonical production Next.js website; `apps/website-app` is
-the independently configured local Next.js application. Other trees
-by that name exist elsewhere on this machine (`~/CLAUDE.md` maps them), so
-confirm which one a request means before editing.
+`apps/mlai` is the production Next.js app. Other trees by older names exist
+elsewhere on this machine (`~/CLAUDE.md` maps them), so confirm which one a
+request means before editing.
 
 ## Root commands
 
@@ -29,16 +26,13 @@ specific belongs to an app and runs from that app's own directory. Use Bun
 
 ```bash
 bun run install:all      # bun install at the root: every workspace, one bun.lock (non-frozen)
-bun run check            # check:topology, check:workflows, check:tooling, then web, then mobile, then quasar, then website-app, then research-sites
+bun run check            # check:topology, check:workflows, check:tooling, then web, then quasar
 bun run check:topology   # bun packages/tooling/src/check-topology.ts
 bun run check:workflows  # pinned Actionlint 1.7.12 via Go (requires Go 1.25+)
 bun run check:tooling    # repository wrapper regression tests
-bun run check:web        # cd apps/quasar-web && lint && test && build
-bun run check:mobile     # cd apps/mobile && typecheck && test && lint && expo export
-bun run check:quasar     # apps/quasar typecheck && test, then export:web in apps/quasar/apps/quasar
-bun run check:website-app # isolated data wrapper: db:migrate, then check
-bun run check:research-sites # cd apps/research-sites && bun test && build (manifest-verified)
-bun run dev:web          # also dev:mobile, dev:quasar, dev:website-app
+bun run check:web        # cd apps/mlai && lint && test && build
+bun run check:quasar     # apps/quasar typecheck && bun test packages
+bun run dev:web          # cd apps/mlai && bun run dev
 ```
 
 `AGENTS.md` (*Gate boundaries*) records what each gate does and does not

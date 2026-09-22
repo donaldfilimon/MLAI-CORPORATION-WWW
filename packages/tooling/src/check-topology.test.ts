@@ -40,8 +40,8 @@ test("a complete single-workspace layout passes", () => {
 
 test("reports a missing required path", () => {
   const root = fixture();
-  rmSync(join(root, "apps/mobile/metro.config.js"));
-  expect(checkTopology(root)).toEqual(["missing: apps/mobile/metro.config.js"]);
+  rmSync(join(root, "apps/mlai/package.json"));
+  expect(checkTopology(root)).toEqual(["missing: apps/mlai/package.json"]);
 });
 
 test("rejects every app-level lockfile", () => {
@@ -65,41 +65,41 @@ test("requires the isolated linker", () => {
 
 test("accepts a canonical guide paired with a pointer, in either direction", () => {
   const root = fixture();
-  writeGuides(root, "apps/mobile", canonicalAgents, pointerClaude);
-  writeGuides(root, "apps/website-app", "# AGENTS.md\n\n`CLAUDE.md` is the canonical guide.\n", "# CLAUDE.md\n\nCanonical guidance.\n");
+  writeGuides(root, "apps/mlai", canonicalAgents, pointerClaude);
+  writeGuides(root, "apps/quasar", "# AGENTS.md\n\n`CLAUDE.md` is the canonical guide.\n", "# CLAUDE.md\n\nCanonical guidance.\n");
   expect(checkTopology(root)).toEqual([]);
 });
 
 test("accepts a directory with one guide or none", () => {
   const root = fixture();
-  writeGuides(root, "apps/mobile", canonicalAgents);
-  writeGuides(root, "apps/research-sites", undefined, "# CLAUDE.md\n");
+  writeGuides(root, "apps/mlai", canonicalAgents);
+  writeGuides(root, "apps/quasar", undefined, "# CLAUDE.md\n");
   expect(checkTopology(root)).toEqual([]);
 });
 
 test("rejects two guides that both claim to be canonical", () => {
   const root = fixture();
-  writeGuides(root, "apps/mobile", canonicalAgents, "# CLAUDE.md\n\nCanonical guidance for this app.\n");
-  expect(checkTopology(root)).toEqual([guideProblem("apps/mobile", "AGENTS.md, CLAUDE.md")]);
+  writeGuides(root, "apps/mlai", canonicalAgents, "# CLAUDE.md\n\nCanonical guidance for this app.\n");
+  expect(checkTopology(root)).toEqual([guideProblem("apps/mlai", "AGENTS.md, CLAUDE.md")]);
 });
 
 test("rejects two guides where neither declares a canonical file", () => {
   const root = fixture();
-  writeGuides(root, "apps/quasar-web", "# Repository Guide\n", "# CLAUDE.md\n\nRead AGENTS.md too.\n");
-  expect(checkTopology(root)).toEqual([guideProblem("apps/quasar-web", "none")]);
+  writeGuides(root, "apps/mlai", "# Repository Guide\n", "# CLAUDE.md\n\nRead AGENTS.md too.\n");
+  expect(checkTopology(root)).toEqual([guideProblem("apps/mlai", "none")]);
 });
 
 test("rejects a canonical guide whose sibling does not name it", () => {
   const root = fixture();
-  writeGuides(root, "apps/mobile", canonicalAgents, "# CLAUDE.md\n\nSee the other file.\n");
-  expect(checkTopology(root)).toEqual([guideProblem("apps/mobile", "AGENTS.md")]);
+  writeGuides(root, "apps/mlai", canonicalAgents, "# CLAUDE.md\n\nSee the other file.\n");
+  expect(checkTopology(root)).toEqual([guideProblem("apps/mlai", "AGENTS.md")]);
 });
 
 test("reads only the opening lines of each guide", () => {
   const root = fixture();
   const late = "\n".repeat(20) + "`AGENTS.md` is canonical.\n";
-  writeGuides(root, "apps/mobile", canonicalAgents, "# CLAUDE.md\n" + late);
-  expect(checkTopology(root)).toEqual([guideProblem("apps/mobile", "AGENTS.md")]);
+  writeGuides(root, "apps/mlai", canonicalAgents, "# CLAUDE.md\n" + late);
+  expect(checkTopology(root)).toEqual([guideProblem("apps/mlai", "AGENTS.md")]);
 });
 
 test("the real repository passes and the CLI exits zero", () => {

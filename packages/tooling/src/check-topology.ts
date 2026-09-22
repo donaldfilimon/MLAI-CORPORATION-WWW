@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Every app installs through the one root Bun workspace (root bun.lock plus the
-// isolated linker in bunfig.toml). These paths must exist for that layout.
+// The one Next app, the Quasar URL sidecar, and the shared packages install
+// through the root Bun workspace (root bun.lock plus the isolated linker).
+// These paths must exist for that layout.
 export const requiredPaths = [
   "AGENTS.md",
   "CLAUDE.md",
@@ -10,23 +11,16 @@ export const requiredPaths = [
   "package.json",
   "bun.lock",
   "bunfig.toml",
-  "apps/quasar-web/package.json",
-  "apps/mobile/package.json",
-  "apps/mobile/metro.config.js",
-  "apps/mobile/tsconfig.typecheck.json",
+  "apps/mlai/package.json",
+  "apps/mlai/capacitor.config.json",
+  "apps/mlai/research/public/research-manifest.json",
   "apps/quasar/package.json",
   "apps/quasar/packages/shared/package.json",
   "apps/quasar/packages/service/package.json",
-  "apps/quasar/apps/quasar/package.json",
-  "apps/quasar/apps/quasar/metro.config.js",
-  "apps/quasar/apps/quasar/tsconfig.typecheck.json",
-  "apps/website-app/package.json",
-  "apps/website-app/packages/ui/package.json",
-  "apps/website-app/mlai-website-agent/package.json",
-  "apps/website-app/worker/pyproject.toml",
-  "apps/website-app/worker/uv.lock",
-  "apps/research-sites/package.json",
-  "apps/research-sites/public/research-manifest.json",
+  "sidecars/python-worker/pyproject.toml",
+  "sidecars/python-worker/uv.lock",
+  "packages/store/package.json",
+  "packages/capacitor-cloudkit/package.json",
   "packages/contracts/package.json",
   "packages/design-tokens/package.json",
   "packages/trailer-engine/package.json",
@@ -34,12 +28,7 @@ export const requiredPaths = [
 
 // A second lockfile would silently resolve a different tree from the root one.
 // (apps/quasar/templates/next-site stays outside the workspace and keeps its own.)
-export const forbiddenPaths = [
-  "apps/quasar-web/bun.lock",
-  "apps/mobile/bun.lock",
-  "apps/quasar/bun.lock",
-  "apps/website-app/bun.lock",
-];
+export const forbiddenPaths = ["apps/mlai/bun.lock", "apps/quasar/bun.lock"];
 
 // Only the root manifest may declare workspaces; Bun ignores nested ones and
 // their presence would suggest an install boundary that no longer exists.
@@ -49,7 +38,7 @@ export const nestedManifests = requiredPaths.filter(
 
 // Directories whose agent guides must name one canonical file. The list is
 // explicit (never an apps/* glob, which would also walk leftover build trees).
-export const guideDirs = [".", "apps/quasar-web", "apps/mobile", "apps/quasar", "apps/website-app", "apps/research-sites"];
+export const guideDirs = [".", "apps/mlai", "apps/quasar"];
 const guideFiles = ["AGENTS.md", "CLAUDE.md"] as const;
 const guideHeadLines = 15;
 
