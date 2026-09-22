@@ -1,6 +1,9 @@
 import { execFileSync } from "node:child_process";
 import { createServer, type IncomingMessage } from "node:http";
-import { createElement } from "react";
+import { act, createElement } from "react";
+import { createRoot } from "react-dom/client";
+import { Window } from "happy-dom";
+import { DEFAULT_ORIGIN } from "@quasar/shared";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -14,14 +17,18 @@ import { buildResearchExport } from "../lib/research-export.ts";
 import { Providers } from "../app/providers.tsx";
 import { GET } from "../app/app/[[...slug]]/route.ts";
 import Page from "../app/page.tsx";
+import { QuasarSettings } from "../lib/quasar-screens.tsx";
 import {
+  beginColdLoad,
   createSite,
   editSite,
+  getBaseUrl,
   getEvents,
   listSites,
   previewStart,
   previewStop,
   setBaseUrl,
+  storedOrigin,
 } from "../lib/quasar-api.ts";
 
 const databaseUrl = process.env.DATABASE_URL ?? "postgres://donaldfilimon@127.0.0.1:5432/mlai";
@@ -211,6 +218,53 @@ describe("apps/mlai shipped behavior", () => {
       expect(seen.some((line) => line.startsWith("POST /api/sites"))).toBe(true);
       expect(seen.some((line) => line.includes("/preview/start"))).toBe(true);
       expect(childCount()).toBe(before);
+
+      const remembered = `http://127.0.0.1:${address.port}`;
+      await setBaseUrl(remembered);
+      beginColdLoad();
+      expect(getBaseUrl()).toBe(DEFAULT_ORIGIN);
+      const previousDocument = globalThis.document;
+      const previousWindow = globalThis.window;
+      const previousHtml = globalThis.HTMLElement;
+      const win = new Window();
+      const previousAct = (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT;
+      Object.assign(globalThis, {
+        window: win,
+        document: win.document,
+        HTMLElement: win.HTMLElement,
+        IS_REACT_ACT_ENVIRONMENT: true,
+      });
+      const host = win.document.createElement("div");
+      win.document.body.appendChild(host);
+      const root = createRoot(host);
+      try {
+        await act(async () => {
+          root.render(createElement(QuasarSettings));
+          await new Promise((resolve) => setTimeout(resolve, 30));
+        });
+        const input = host.querySelector("input");
+        const save = [...host.querySelectorAll("button")].find((button) => button.textContent === "Save");
+        expect(input?.value).toBe(remembered);
+        expect(input?.value).not.toBe(DEFAULT_ORIGIN);
+        expect(save?.hasAttribute("disabled")).toBe(false);
+        await act(async () => {
+          save?.click();
+          await new Promise((resolve) => setTimeout(resolve, 30));
+        });
+        expect(host.textContent).toContain("Saved on this device.");
+        expect(await storedOrigin()).toBe(remembered);
+        expect(getBaseUrl()).toBe(remembered);
+      } finally {
+        await act(async () => {
+          root.unmount();
+        });
+        Object.assign(globalThis, {
+          window: previousWindow,
+          document: previousDocument,
+          HTMLElement: previousHtml,
+          IS_REACT_ACT_ENVIRONMENT: previousAct,
+        });
+      }
     } finally {
       server.close();
     }

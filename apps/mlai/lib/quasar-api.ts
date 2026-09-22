@@ -1,4 +1,4 @@
-import { Connection, type GenerationEvent, type PreviewStatus, type Site } from "@quasar/shared";
+import { Connection, ORIGIN_KEY, type GenerationEvent, type PreviewStatus, type Site } from "@quasar/shared";
 
 const memory = new Map<string, string>();
 
@@ -17,23 +17,38 @@ const storage = {
 };
 
 /** Talks to @quasar/service only through the configured origin. Never spawns it. */
-export const quasarConnection = new Connection(storage);
+let connection = new Connection(storage);
+
+/** A new document: storage is unchanged, and the origin is unread until hydrate. */
+export function beginColdLoad() {
+  connection = new Connection(storage);
+}
+
+/** Reads the saved origin before a screen displays it. */
+export async function hydrateOrigin() {
+  await connection.hydrate();
+  return connection.origin;
+}
+
+export function storedOrigin() {
+  return storage.getItem(ORIGIN_KEY);
+}
 
 export function getBaseUrl() {
-  return quasarConnection.origin;
+  return connection.origin;
 }
 
 export function setBaseUrl(url: string) {
-  return quasarConnection.save(url);
+  return connection.save(url);
 }
 
 export function listSites() {
-  return quasarConnection.request<Site[]>("/api/sites");
+  return connection.request<Site[]>("/api/sites");
 }
 
 export function createSite(body: { name: string; prompt: string }) {
-  return quasarConnection.mutate(null, () =>
-    quasarConnection.request<Site>("/api/sites", {
+  return connection.mutate(null, () =>
+    connection.request<Site>("/api/sites", {
       method: "POST",
       body: JSON.stringify(body),
     }),
@@ -41,12 +56,12 @@ export function createSite(body: { name: string; prompt: string }) {
 }
 
 export function getSite(id: string) {
-  return quasarConnection.request<Site>(`/api/sites/${encodeURIComponent(id)}`);
+  return connection.request<Site>(`/api/sites/${encodeURIComponent(id)}`);
 }
 
 export function editSite(id: string, prompt: string) {
-  return quasarConnection.mutate(id, () =>
-    quasarConnection.request<Site>(`/api/sites/${encodeURIComponent(id)}/edit`, {
+  return connection.mutate(id, () =>
+    connection.request<Site>(`/api/sites/${encodeURIComponent(id)}/edit`, {
       method: "POST",
       body: JSON.stringify({ prompt }),
     }),
@@ -54,18 +69,18 @@ export function editSite(id: string, prompt: string) {
 }
 
 export function getEvents(id: string, since: number) {
-  return quasarConnection.request<{ events: GenerationEvent[]; next: number }>(
+  return connection.request<{ events: GenerationEvent[]; next: number }>(
     `/api/sites/${encodeURIComponent(id)}/events?since=${since}`,
   );
 }
 
 export function previewStatus(id: string) {
-  return quasarConnection.request<PreviewStatus>(`/api/sites/${encodeURIComponent(id)}/preview`);
+  return connection.request<PreviewStatus>(`/api/sites/${encodeURIComponent(id)}/preview`);
 }
 
 export function previewStart(id: string) {
-  return quasarConnection.mutate(id, () =>
-    quasarConnection.request<PreviewStatus>(
+  return connection.mutate(id, () =>
+    connection.request<PreviewStatus>(
       `/api/sites/${encodeURIComponent(id)}/preview/start`,
       { method: "POST" },
       120_000,
@@ -74,8 +89,8 @@ export function previewStart(id: string) {
 }
 
 export function previewStop(id: string) {
-  return quasarConnection.mutate(id, () =>
-    quasarConnection.request<PreviewStatus>(
+  return connection.mutate(id, () =>
+    connection.request<PreviewStatus>(
       `/api/sites/${encodeURIComponent(id)}/preview/stop`,
       { method: "POST" },
       15_000,

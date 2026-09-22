@@ -8,6 +8,7 @@ import {
   getBaseUrl,
   getEvents,
   getSite,
+  hydrateOrigin,
   listSites,
   previewStart,
   previewStatus,
@@ -101,13 +102,31 @@ export function QuasarNewSite() {
 }
 
 export function QuasarSettings() {
-  const [url, setUrl] = useState(getBaseUrl());
+  const [url, setUrl] = useState("");
+  const [ready, setReady] = useState(false);
   const [message, setMessage] = useState("");
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
 
+  useEffect(() => {
+    let cancelled = false;
+    hydrateOrigin().then(
+      (origin) => {
+        if (cancelled) return;
+        setUrl(origin);
+        setReady(true);
+      },
+      () => {
+        if (!cancelled) setReady(true);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function save(test = false) {
-    if (pending) return;
+    if (!ready || pending) return;
     setPending(true);
     setMessage("");
     setSaved(false);
@@ -132,16 +151,17 @@ export function QuasarSettings() {
         Server base URL
         <input
           value={url}
+          disabled={!ready || pending}
           onChange={(event) => {
             setUrl(event.target.value);
             setSaved(false);
           }}
         />
       </label>
-      <button type="button" disabled={pending} onClick={() => save(false)}>
+      <button type="button" disabled={!ready || pending} onClick={() => save(false)}>
         Save
       </button>
-      <button type="button" disabled={pending} onClick={() => save(true)}>
+      <button type="button" disabled={!ready || pending} onClick={() => save(true)}>
         {pending ? "Connecting…" : "Save and test connection"}
       </button>
       {message ? <p>{message}</p> : null}
