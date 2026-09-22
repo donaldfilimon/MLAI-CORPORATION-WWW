@@ -81,7 +81,7 @@ export const Hero = () => {
 
   return (
     <section
-      className="relative flex min-h-[calc(100svh-5rem)] items-center overflow-hidden noise-overlay"
+      className="home-hero relative flex min-h-[calc(100svh-5rem)] items-center overflow-hidden noise-overlay"
       aria-labelledby="hero-heading"
     >
       <div
@@ -106,11 +106,11 @@ export const Hero = () => {
       />
 
       <div className="container-custom relative z-10 py-12 md:py-16">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.68fr)] lg:items-center">
-          <m.div variants={stagger} initial="hidden" animate="visible" className="min-w-0">
+        <div className="home-hero-grid grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.68fr)] lg:items-center">
+          <m.div variants={stagger} initial="hidden" animate="visible" className="home-hero-enter min-w-0">
             <m.div variants={fadeUp} className="label-chip mb-5">
               <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                <span className="home-hero-ping absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
               </span>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
@@ -143,7 +143,7 @@ export const Hero = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50"
+                  className="home-primary h-12 gap-2 rounded-full bg-white px-6 font-bold text-black hover:bg-cyan-50"
                 >
                   <Link to="/get-started">
                     Get started
@@ -181,7 +181,7 @@ export const Hero = () => {
                 return (
                   <div
                     key={signal.label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 backdrop-blur-md"
+                    className="home-surface"
                   >
                     <div className="mb-3 flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">
                       <Icon className="h-3.5 w-3.5" aria-hidden="true" />

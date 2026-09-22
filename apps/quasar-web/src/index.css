@@ -154,6 +154,57 @@
     letter-spacing: 0.22em;
     font-family: var(--font-mono);
   }
+
+  /* Home is one composition: the same surface, type, and rhythm from the
+     first screen through the control plane, request path, substrate, and
+     product boundary. Scoped so other routes keep their own cards. */
+  .home-page .glass-card,
+  .home-page .home-surface {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.016));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    padding: 1.35rem 1.4rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+  }
+
+  .home-page .glass-card:hover,
+  .home-page .home-surface:hover {
+    transform: none;
+    border-color: rgba(34, 211, 238, 0.28);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  }
+
+  .home-page .home-primary:focus-visible {
+    outline: 2px solid #67e8f9;
+    outline-offset: 4px;
+  }
+}
+
+/* Phone widths: the first screen is one column, and neither column can
+   force the page wider than the viewport. */
+@media (max-width: 420px) {
+  .home-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-page {
+    overflow-x: clip;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-enter,
+  .home-hero-enter * {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .home-hero-ping {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 @layer utilities {

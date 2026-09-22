@@ -67,15 +67,15 @@ export function Home() {
 
       <section className="relative w-full border-y border-white/6 bg-surface/20 section-y noise-overlay" id="request-path" aria-labelledby="request-path-heading">
         <Reveal width="100%">
-          <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-            <div className="lg:sticky lg:top-32">
+          <div className="container-custom relative z-10 grid gap-10 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:items-start">
+            <div className="min-w-0 lg:sticky lg:top-32">
               <Eyebrow className="mb-5">ONE REQUEST</Eyebrow>
               <h2 id="request-path-heading" className="section-title">Five control points. One return condition.</h2>
-              <p className="mt-5 text-base leading-relaxed text-text-dim">Authenticate → Consent → Generate → Encrypt → Commit. If any control point fails, Quesar does not return an unaudited response.</p>
-              <Button asChild variant="outline" className="mt-7 rounded-full"><Link to="/security">Inspect the security model <ArrowRight className="h-4 w-4" /></Link></Button>
+              <p className="section-subtitle mt-5 mb-0">Authenticate → Consent → Generate → Encrypt → Commit. If any control point fails, Quesar does not return an unaudited response.</p>
+              <Button asChild variant="outline" className="home-primary mt-7 rounded-full"><Link to="/security">Inspect the security model <ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
-            <ol className="grid gap-3">
-              {requestPath.map(([number, title, body]) => <li key={number} className="grid gap-4 rounded-3xl border border-white/8 bg-bg/70 p-5 sm:grid-cols-[3rem_1fr]"><span className="font-mono text-sm font-semibold text-cyan-300">{number}</span><div><h3 className="font-display text-xl font-semibold text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-text-dim">{body}</p></div></li>)}
+            <ol className="grid min-w-0 gap-4">
+              {requestPath.map(([number, title, body]) => <li key={number} className="home-surface grid gap-4 sm:grid-cols-[3rem_minmax(0,1fr)]"><span className="font-mono text-sm font-semibold text-cyan-300">{number}</span><div className="min-w-0"><h3 className="font-display text-xl font-semibold text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-text-dim">{body}</p></div></li>)}
             </ol>
           </div>
         </Reveal>
@@ -89,14 +89,14 @@ export function Home() {
           title="Retrieval facts, sourced from the implementation."
           lead="Quesar is backed by MLAI's WDBX work. The active Rust crate—not the frozen Zig-era documentation mirror—is authoritative for architecture. These are configuration facts, not benchmark claims."
         >
-          <div className="grid gap-8 lg:grid-cols-[1fr_0.82fr]">
-            <div className="relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_15%_10%,rgba(34,211,238,0.13),transparent_55%),rgba(4,8,18,0.82)] p-7 md:p-9">
-              <Network className="mb-7 h-8 w-8 text-cyan-300" />
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.82fr)]">
+            <div className="home-surface min-w-0">
+              <Network className="mb-6 h-8 w-8 text-cyan-300" />
               <h3 className="font-display text-2xl font-semibold text-white">Inspectable nearest-neighbor retrieval.</h3>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-dim">The substrate implements a real layered HNSW graph, validates graph structure, rebuilds against real vectors in tests, and pairs retrieval with MVCC. It does not claim production multi-host sharding.</p>
-              <div className="mt-7 flex flex-wrap gap-3"><Button asChild><Link to="/benchmarks">Review evidence</Link></Button><Button asChild variant="outline"><Link to="/docs">Read architecture</Link></Button></div>
+              <div className="mt-7 flex flex-wrap gap-3"><Button asChild className="home-primary"><Link to="/benchmarks">Review evidence</Link></Button><Button asChild variant="outline"><Link to="/docs">Read architecture</Link></Button></div>
             </div>
-            <SpecList rows={wdbxFacts} />
+            <SpecList rows={wdbxFacts} className="home-surface h-fit" />
           </div>
         </Section>
       </Reveal>
@@ -110,11 +110,11 @@ export function Home() {
           lead="Quesar is for teams that need organization access, explicit consent, and encrypted conversation records on one request path. It is not a free-for-all chat UI and it does not invent compliance certifications."
         >
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-3xl border border-white/8 bg-bg/70 p-6">
+            <div className="home-surface min-w-0">
               <h3 className="font-display text-xl font-semibold text-white">What it is</h3>
               <p className="mt-3 text-sm leading-relaxed text-text-dim">A governed generation path with WorkOS membership, consent gates, a metadata-only provider gateway, and user-controlled KMS-wrapped audits.</p>
             </div>
-            <div className="rounded-3xl border border-white/8 bg-bg/70 p-6">
+            <div className="home-surface min-w-0">
               <h3 className="font-display text-xl font-semibold text-white">What it is not</h3>
               <p className="mt-3 text-sm leading-relaxed text-text-dim">A consumer chatbot, a benchmark scoreboard, or a place for unaudited model output. Lab demos and evidence stay linked—not in the primary marketing nav.</p>
             </div>
@@ -158,11 +158,11 @@ export function Home() {
       <section className="w-full px-5 section-y" aria-labelledby="quesar-cta-heading">
         <Reveal width="100%">
           <div className="container-custom">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-linear-to-br from-cyan-600/20 via-bg to-violet-500/10 p-8 md:p-14">
+            <div className="home-surface relative overflow-hidden p-8 md:p-14">
               <AccentGlow accent="wdbx" />
               <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div className="max-w-3xl"><Eyebrow className="mb-6">INVITE-ONLY</Eyebrow><h2 id="quesar-cta-heading" className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">Put one governed workflow through Quesar.</h2><p className="mt-5 text-lg leading-relaxed text-text-dim">Invited organization members can enter the console. Others can request a scoped evaluation with the workflow, failure modes, and data boundary made explicit.</p><div className="mt-6 flex flex-wrap gap-3 text-xs text-text-dim"><span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-300" /> WorkOS org access</span><span className="inline-flex items-center gap-2"><LockKeyhole className="h-4 w-4 text-cyan-300" /> Metadata-only gateway</span><span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-violet-300" /> Audits you control</span></div></div>
-                <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><Button asChild size="lg" className="rounded-full bg-white px-7 text-black hover:bg-cyan-50"><Link to="/get-started">Get started <ArrowRight className="h-4 w-4" /></Link></Button><Button onClick={openInquiry} size="lg" variant="outline" className="rounded-full">Start an inquiry</Button></div>
+                <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><Button asChild size="lg" className="home-primary rounded-full bg-white px-7 text-black hover:bg-cyan-50"><Link to="/get-started">Get started <ArrowRight className="h-4 w-4" /></Link></Button><Button onClick={openInquiry} size="lg" variant="outline" className="rounded-full">Start an inquiry</Button></div>
               </div>
             </div>
           </div>
