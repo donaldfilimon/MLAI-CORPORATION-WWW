@@ -5,6 +5,13 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
 
 ## Boundaries
 
+> **Superseded 2026-09-22.** The website-vs-Expo, CloudKit-vs-local and
+> "root is orchestration only" boundaries below are replaced by the single-app
+> decision in `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`: one Next 16 + Capacitor app,
+> Better Auth, `@mlai/store` (WDBX for episodes and vectors, Postgres for
+> relational state). The bullets stay as history until the merge phases
+> remove the apps they describe.
+
 - `apps/quasar-web` is the canonical Next.js website. Do not restore the retired
   mobile `www/` snapshot or collapse the website into an Expo static mock.
 - `apps/mobile` is the Expo companion. Preserve its native CloudKit versus

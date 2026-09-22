@@ -12,7 +12,7 @@ This record tracks the 2026-09-08 user-approved roadmap independently of histori
 
 Each milestone receives a scoped commit, affected-app gate, all-five-job hosted CI check,
 and observed automatic Pages / Cloud Run outcomes. The final pass reran all four app gates.
-Authentication and storage stay independent. Since 2026-09-16 the apps share one root Bun
+Authentication and storage stay independent. **Superseded 2026-09-22:** one identity (Better Auth) and one store contract (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history. Since 2026-09-16 the apps share one root Bun
 workspace and `bun.lock` (isolated linker), and CI has six jobs, adding research-sites; the
 "CI 5/5" and "all five jobs" results in this record predate both changes. The active local
 installation and provider settings are preserved. No cutover, provisioning, Vercel removal or agent deployment.

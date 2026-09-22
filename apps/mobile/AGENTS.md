@@ -104,7 +104,7 @@ This is the most important thing to understand. **Two layers detect whether nati
 
 2. **Data** (`lib/cloud.ts` + `modules/mlai-cloudkit/`) — `requireOptionalNativeModule<MlaiCloudKitNative>("MlaiCloudKit")` returns `null` in Expo Go / web / Android. `cloud.ts` exposes a `backend: "cloudkit" | "local"` flag and a repository (`listItems` / `addItem` / `removeItem`) that hits the user's **private** CloudKit DB when the module exists, and an encrypted `SecureStore` store otherwise. The active backend is surfaced to the UI via `getStatus()` / `describeStatus()`. Every repository function branches on `getCloudKit()` — keep that branch intact when extending it.
 
-There is no shared MLAI backend in either path; data lives on the user's hardware (their private CloudKit DB or on-device keychain).
+There is no shared MLAI backend in either path; data lives on the user's hardware (their private CloudKit DB or on-device keychain). **Superseded 2026-09-22:** accounts and workspaces become shared in the merged app; Vault data stays on-device (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history.
 
 Adding a CloudKit field touches four places: the Swift module (`modules/mlai-cloudkit/ios/MlaiCloudKitModule.swift`), the `CloudFields`/`CloudRecord` types (`modules/mlai-cloudkit/src/MlaiCloudKit.types.ts`), the `VaultItem` mapping in `cloud.ts`, and the `VaultItem` record type in CloudKit Dashboard (see README for schema: `title`, `body`, `createdAt` — `createdAt` must be Sortable + Queryable).
 

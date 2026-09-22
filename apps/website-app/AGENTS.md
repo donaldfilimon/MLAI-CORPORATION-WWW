@@ -6,7 +6,7 @@ This is the MLAI website and local application, integrated under `apps/website-a
 It keeps an independent runtime, but its JavaScript dependencies (including
 `packages/ui` and `mlai-website-agent`) are members of the repository's root Bun
 workspace and are locked by the root `bun.lock`. `apps/quasar-web` is the canonical
-production website. ABI, Abbey, and WDBX remain external services.
+production website. ABI, Abbey, and WDBX remain external services. **Superseded 2026-09-22:** this app merges into `apps/mlai`; WDBX becomes one `@mlai/store` backend, still an external service (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history.
 
 ## Architecture
 
@@ -48,7 +48,7 @@ Run `bun install --frozen-lockfile` at the repository root, then `bun run setup`
 ## Required invariants
 
 - Authorize workspace membership or explicitly assigned service engagement on every resource access, including downloads and citations.
-- Local AI never silently falls back to hosted AI. Hosted processing requires a stored, explicit workspace choice.
+- Local AI never silently falls back to hosted AI. Hosted processing requires a stored, explicit workspace choice. **Superseded 2026-09-22:** the merged app keeps the explicit per-workspace choice but allows hosted as a default (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history.
 - No raw prompts, document bodies, or secrets in operational traces. No fake successful generation or service requests.
 - WDBX connections are workspace-exclusive and use the existing gRPC contract. No arbitrary shell or user-supplied service URL execution.
 - Document deletion removes artifacts, index entries, embeddings, and derived interpretation. Historic citations show source removed.

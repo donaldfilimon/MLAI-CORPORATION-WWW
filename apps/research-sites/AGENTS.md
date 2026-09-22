@@ -33,7 +33,7 @@ standalone copy.
   origin, content hashes, publication attachments, and per-file hashes. Preserve
   provenance on regeneration; do not replace evidence with a new claimed hash.
 - This artifact is distinct from the independent `mlai-website-app` application.
-  Nothing here runs its accounts, private document pipeline, or WDBX gateway.
+  Nothing here runs its accounts, private document pipeline, or WDBX gateway. **Superseded 2026-09-22:** this export becomes a build output of the merged app once publication from the new path is approved (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history.
 
 ## Local command boundary
 

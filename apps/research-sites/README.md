@@ -1,6 +1,6 @@
 # MLAI Research private review
 
-Generated from canonical MLAI source 2718e0cc61dfa969cb7d30ade1af1fd826652b22.
+Generated from canonical MLAI source 3326c87c5a6c4468a01b48c583618808d3f09a98.
 
 The public/ directory contains the exact approved structured research collection and shared renderers. No runtime secrets, production APIs or independent prose. Rebuild with the canonical exporter, apps/quasar-web/scripts/export-research.tsx in this repository; see public/research-manifest.json for provenance.
 

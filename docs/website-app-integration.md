@@ -24,7 +24,7 @@ credentials, documents, model weights, environments and build outputs were not c
 its independent Next.js runtime, SQLite/Better Auth, shared UI package, Python
 worker and non-deployable Eve scaffold. Their authentication, data stores and
 public routes remain distinct. This is a repository integration, not a runtime
-migration or a deployment change.
+migration or a deployment change. **Superseded 2026-09-22:** the runtime migration into one app is now the plan (see `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`); this text stays as history.
 
 Root `install:all`, `check`, `check:website-app`, `dev:website-app` and the topology
 gate include the imported app. Since 2026-09-16 its JavaScript dependencies are
