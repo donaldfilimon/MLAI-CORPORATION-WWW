@@ -114,9 +114,10 @@ rather than inside one app's docs.
   GitHub's 24-hour queue limit (both observed 2026-09-19). Re-measure with
   `gh api repos/donaldfilimon/MLAI-CORPORATION-WWW/actions/runners --jq .total_count`
   (0 on 2026-09-22). Because CI then never concludes `success`, `pages.yml`
-  and `deploy-cloudrun.yml` never fire: both gate on `workflow_run` with
-  `conclusion == 'success'` from a same-repository push, and Cloud Run
-  additionally soft-skips through its `readiness` job until
+  and `deploy-cloudrun.yml` never publish or deploy: `workflow_run` fires
+  them on any CI completion, but their jobs gate on
+  `conclusion == 'success'` from a same-repository push and are skipped, and
+  Cloud Run additionally soft-skips through its `readiness` job until
   `vars.WIF_PROVIDER` and `vars.GCP_PROJECT_ID` exist. An un-republished
   Pages site or a skipped deploy is expected; never change code to satisfy
   either.
