@@ -122,7 +122,7 @@ export function Product() {
   ];
 
   const reveal = shouldReduceMotion
-    ? { initial: false as const }
+    ? { initial: false as const, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
     : {
         initial: { opacity: 0, y: 28 },
         whileInView: { opacity: 1, y: 0 },
@@ -154,7 +154,7 @@ export function Product() {
             <div>
               <m.h1
                 {...(shouldReduceMotion
-                  ? { initial: false }
+                  ? { initial: false, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
                   : {
                       initial: { opacity: 0, y: 26 },
                       animate: { opacity: 1, y: 0 },
@@ -167,7 +167,7 @@ export function Product() {
               </m.h1>
               <m.p
                 {...(shouldReduceMotion
-                  ? { initial: false }
+                  ? { initial: false, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
                   : {
                       initial: { opacity: 0, y: 20 },
                       animate: { opacity: 1, y: 0 },

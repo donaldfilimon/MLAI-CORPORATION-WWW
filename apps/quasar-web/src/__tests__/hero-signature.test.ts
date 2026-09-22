@@ -38,9 +38,13 @@ describe("hero signature — BacktracePanel", () => {
 
   it("degrades correctly under prefers-reduced-motion", () => {
     expect(panel).toContain("useReducedMotion");
-    // Variants must be skipped (not merely shortened) when motion is reduced,
-    // so the chain renders settled rather than stuck in its hidden state.
+    // The entrance is skipped (initial={false}) when motion is reduced, so the
+    // chain renders settled rather than stuck in its hidden state. `animate`
+    // must still target "visible": the server renders the hidden variant
+    // (opacity 0), and with animate undefined nothing lifted it on a
+    // reduced-motion client (measured 2026-09-22).
     expect(panel).toMatch(/initial=\{reduce \? false :/);
+    expect(panel).toMatch(/animate="visible"/);
   });
 
   it("labels the trace as illustrative (external-claims discipline)", () => {

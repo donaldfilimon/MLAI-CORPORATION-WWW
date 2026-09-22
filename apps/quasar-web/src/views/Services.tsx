@@ -75,7 +75,7 @@ export const Services = () => {
         <CardGrid cols={3}>
           {services.map((service, i) => {
             const motionProps = shouldReduceMotion
-              ? { initial: false }
+              ? { initial: false, animate: { opacity: 1, scale: 1 }, transition: { duration: 0 } }
               : {
                   initial: { opacity: 0, scale: 0.95 },
                   whileInView: { opacity: 1, scale: 1 },

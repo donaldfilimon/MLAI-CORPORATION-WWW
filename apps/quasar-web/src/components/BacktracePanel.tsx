@@ -86,9 +86,9 @@ export const BacktracePanel = () => {
 
   return (
     <m.figure
-      variants={reduce ? undefined : chain}
+      variants={chain}
       initial={reduce ? false : "hidden"}
-      animate={reduce ? undefined : "visible"}
+      animate="visible"
       className="relative m-0 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#070914]/80 backdrop-blur-sm"
     >
       {/* Panel chrome — reads as an instrument, not a marketing card. */}
@@ -102,7 +102,7 @@ export const BacktracePanel = () => {
       </div>
 
       {/* The answer being explained — the head of the chain. */}
-      <m.div variants={reduce ? undefined : link} className="px-5 pt-5 pb-4">
+      <m.div variants={link} className="px-5 pt-5 pb-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/80">
           Answer
         </p>
@@ -124,7 +124,7 @@ export const BacktracePanel = () => {
             return (
               <m.li
                 key={block.id}
-                variants={reduce ? undefined : link}
+                variants={link}
                 className="relative flex gap-3.5"
               >
                 {/* Chain node */}
@@ -163,7 +163,7 @@ export const BacktracePanel = () => {
                       className={`h-full rounded-full ${persona.meter}`}
                       style={{ width: `${block.weight * 100}%`, transformOrigin: "left" }}
                       initial={reduce ? false : { scaleX: 0 }}
-                      animate={reduce ? undefined : { scaleX: 1 }}
+                      animate={{ scaleX: 1 }}
                       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
                     />
                   </div>

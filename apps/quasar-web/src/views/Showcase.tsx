@@ -99,7 +99,7 @@ export function Showcase() {
 
   const enter = (i: number) =>
     shouldReduceMotion
-      ? { initial: false as const }
+      ? { initial: false as const, animate: { opacity: 1, y: 0, rotate: 0 }, transition: { duration: 0 } }
       : {
           initial: { opacity: 0, y: 36, rotate: i % 2 ? 0.6 : -0.6 },
           whileInView: { opacity: 1, y: 0, rotate: 0 },
@@ -131,7 +131,7 @@ export function Showcase() {
             <div className="max-w-4xl">
             <m.p
               {...(shouldReduceMotion
-                ? { initial: false }
+                ? { initial: false, animate: { opacity: 1 }, transition: { duration: 0 } }
                 : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.6 } })}
               className="mb-5 font-mono text-[11px] uppercase tracking-[0.42em] text-cyan-300/80"
             >
@@ -139,7 +139,7 @@ export function Showcase() {
             </m.p>
             <m.h1
               {...(shouldReduceMotion
-                ? { initial: false }
+                ? { initial: false, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
                 : {
                     initial: { opacity: 0, y: 24 },
                     animate: { opacity: 1, y: 0 },
@@ -153,7 +153,7 @@ export function Showcase() {
             </m.h1>
             <m.p
               {...(shouldReduceMotion
-                ? { initial: false }
+                ? { initial: false, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
                 : {
                     initial: { opacity: 0, y: 20 },
                     animate: { opacity: 1, y: 0 },
@@ -168,7 +168,7 @@ export function Showcase() {
             </div>
             <m.div
               {...(shouldReduceMotion
-                ? { initial: false }
+                ? { initial: false, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
                 : {
                     initial: { opacity: 0, y: 18 },
                     animate: { opacity: 1, y: 0 },

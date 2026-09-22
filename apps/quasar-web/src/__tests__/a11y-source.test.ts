@@ -112,6 +112,31 @@ describe("a11y source guards", () => {
     expect(read("app/layout.tsx")).toContain('import "katex/dist/katex.min.css";');
   });
 
+  it("reduced motion never leaves server-rendered hidden content un-animated", () => {
+    // 2026-09-22: Hero's lower block and BacktracePanel rendered `initial="hidden"`
+    // (opacity 0) on the server, then set `animate` to undefined when
+    // useReducedMotion() was true on the client, so they stayed invisible for
+    // every reduced-motion visitor. MotionConfig reducedMotion="user" in
+    // app/providers.tsx already makes transforms instant; always animate.
+    // The same shape hid Reveal (every page using it), Product, Services and
+    // Showcase: a bare `{ initial: false }` branch with no `animate` target.
+    // PageHeader's branch is the pattern: initial false, animate to the visible
+    // state, duration 0.
+    const files = ["src", "app"].flatMap((dir) =>
+      readdirSync(resolve(ROOT, dir), { recursive: true, encoding: "utf8" })
+        .filter((p) => p.endsWith(".tsx") && !p.includes("__tests__"))
+        .map((p) => `${dir}/${p}`),
+    );
+    for (const file of files) {
+      const src = read(file);
+      expect(src, file).not.toMatch(/animate=\{\s*\w+\s*\?\s*undefined/);
+      expect(src, file).not.toMatch(/variants=\{\s*\w+\s*\?\s*undefined/);
+      expect(src, file).not.toMatch(/\{\s*initial:\s*false(\s+as\s+const)?\s*\}/);
+    }
+    expect(read("src/components/Reveal.tsx")).toMatch(/initial: false, animate: \{ opacity: 1, y: 0 \}/);
+    expect(read("app/providers.tsx")).toContain('<MotionConfig reducedMotion="user">');
+  });
+
   it("small metadata text does not drop below text-dim/80 anywhere in the app", () => {
     // Pixel-sampled contrast audit, 2026-09-22 (39 routes x 1280/375, next dev):
     // text-dim at /50 measured 2.68:1, /60 3.39:1 and /70 4.26:1 on the site's

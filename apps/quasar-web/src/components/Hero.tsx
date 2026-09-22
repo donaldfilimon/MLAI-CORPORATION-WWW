@@ -219,7 +219,7 @@ export const Hero = () => {
         <m.div
           variants={fadeUp}
           initial={shouldReduceMotion ? false : "hidden"}
-          animate={shouldReduceMotion ? undefined : "visible"}
+          animate="visible"
           className="mt-10 border-t border-white/5 pt-6"
         >
           <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim/80">
