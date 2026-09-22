@@ -33,38 +33,38 @@ bun run check:tooling    # repository wrapper regression tests
 bun run check:web        # cd apps/mlai && lint && test && build
 bun run check:quasar     # apps/quasar typecheck && bun test packages
 bun run dev:web          # cd apps/mlai && bun run dev
+bun run tokens:generate  # bun packages/design-tokens/src/generate.ts
 ```
 
 `AGENTS.md` (*Gate boundaries*) records what each gate does and does not
 prove, plus how to focus a single test in each app. Read it before reporting
-any gate result: a green web gate is not mobile evidence, a green Expo export
-is not a signed CloudKit run, and no local gate is a hosted deployment.
+any gate result: a green `check:web` is not a signed-device CloudKit sync, a
+green `check:quasar` is not a live provider acceptance pass, and no local
+gate is a hosted deployment.
 
 ## Cross-app facts
 
 Each of these takes several files to reconstruct, so they are recorded here
 rather than inside one app's docs.
 
-- **One root Bun workspace, isolated linker.** Every app except
-  `apps/research-sites` and the Quasar template installs from the root
-  `bun.lock`; `bunfig.toml` sets `linker = "isolated"`. Install at the root,
-  never inside an app (there are no app lockfiles, and `check:topology`
-  rejects them). Only declared dependencies resolve, so an import that worked
-  through another package's dependencies fails; declare it. The Next and Expo
-  apps still use different React types: the root `package.json` pins the Next
-  side's `@types/react`, `bunfig.toml`'s `hoistPattern` makes undeclared
-  `react` type imports fall through to that pin, and each Expo app typechecks
-  through its `tsconfig.typecheck.json`, which maps `react` to its own SDK 53
-  types. `AGENTS.md` explains both; keep both.
+- **One root Bun workspace, isolated linker.** The workspace list is
+  `packages/*`, `apps/mlai`, `apps/quasar`, `apps/quasar/packages/*` (deliberately
+  no `apps/*` glob); `apps/quasar/templates/next-site` stays outside it with its
+  own lockfile because it is copied per generated site. `bunfig.toml` sets
+  `linker = "isolated"`. Install at the root, never inside an app (there are no
+  app lockfiles, and `check:topology` rejects them). Only declared dependencies
+  resolve, so an import that worked through another package's dependencies
+  fails; declare it. `bunfig.toml`'s `hoistPattern` keeps `@types/react` and
+  `@types/react-dom` out of Bun's hidden fallback so third-party `react` type
+  imports resolve to the root `package.json`'s pin; don't switch the linker to
+  `hoisted` without re-running typecheck.
 
-- **The test runner differs per app, and the wrong invocation fails quietly.**
-  `bun run test` is Vitest in `apps/quasar-web` and Jest in `apps/mobile`; a bare
-  `bun test` in either one invokes Bun's own runner instead and does not run
-  the suite you meant. `apps/quasar` is the exception: its `test` script
-  genuinely is `bun test packages`. `apps/website-app` adds a runtime trap:
-  Bun is its package manager only, and every script runs on Node through
-  `node --import tsx` (`better-sqlite3` is a native Node addon), so use
-  `bun run <script>`, never `bun scripts/<x>.ts`.
+- **The test runner differs per app.** `apps/mlai`'s `test` script runs Vitest
+  (`vitest run`) then `bun test --preload ./tests/preload.ts ./tests/app.test.tsx`
+  for the store/workspace/sidecar/research checks; a bare `bun test` in that
+  directory invokes Bun's own runner instead and skips the Vitest half.
+  `apps/quasar`'s `test` script is `bun run --cwd apps/quasar typecheck && test`
+  (typecheck first, then `bun test packages`).
 - **`check:topology` requires this file to exist.**
   `packages/tooling/src/check-topology.ts` lists root `AGENTS.md`,
   `CLAUDE.md`, and `README.md` among its required paths, so renaming or
@@ -73,53 +73,48 @@ rather than inside one app's docs.
   linker, and a directory whose two guides do not name exactly one canonical
   file in their opening lines; it compiles no contracts and validates no
   content.
-- **`@mlai/contracts` is a type-only vocabulary shared by two apps.** Web and
-  mobile each consume it through a `workspace:*` dependency,
-  and every use in app source is an `import type`
-  (`apps/quasar-web/src/components/site/accent.ts`,
-  `apps/mobile/lib/brand.ts`, `apps/mobile/lib/theme.ts`).
-  `@mlai/design-tokens` holds the five raw Lab hex colors (`labColor`) and is
-  a **runtime** import in both Expo `lib/theme.ts` files, so a change there
-  reaches mobile and Quasar. Web keeps the same values in `src/index.css`;
-  `apps/quasar-web/src/__tests__/design-tokens.test.ts` fails if the two drift, so
-  change both together and run `check:web`, `check:mobile` and
-  `check:quasar`. Semantic tokens stay app-local. `@mlai/trailer-engine` is
-  the shared package with the most runtime code: `apps/quasar-web` depends on it via
-  `workspace:*`, it exports raw `.ts` source, and the
-  film/trailer code in `apps/quasar-web/src/film` and `apps/quasar-web/src/abbey-trailer`
-  plus their `film-*`/`abbey-trailer` tests import it. A change there is web
-  behavior, so run `check:web`, not only `check:tooling`.
+- **`@mlai/contracts` is a type-only vocabulary, currently consumed only by
+  `apps/mlai`** (`src/index.css`, `src/components/site/accent.ts`, and the
+  `design-sync`/`design-tokens` tests under `src/__tests__/`), all as
+  `import type`. `@mlai/design-tokens` (`packages/design-tokens`) holds the raw
+  Lab palette; per its own README, web maps it to static Tailwind class names,
+  and mobile used to map it to React Native theme values before the mobile app
+  was folded into the single-app merge — that mapping is currently unused.
+  `apps/mlai/src/__tests__/design-tokens.test.ts` still pins web's copy against
+  the package, so change both together and run `check:web`. `@mlai/trailer-engine`
+  is the shared package with the most runtime code: `apps/mlai` depends on it via
+  `workspace:*`, it exports raw `.ts` source, and the film/trailer code under
+  `apps/mlai/src/film` and `apps/mlai/src/abbey-trailer` (plus their
+  `film-*`/`abbey-trailer` tests) import it. A change there is web behavior, so
+  run `check:web`, not only `check:tooling`.
 - **A green local `bun run check` does not prove CI's install step.**
-  `.github/workflows/ci.yml` runs topology, web, mobile, quasar, website-app,
-  and research-sites as six independent hosted jobs, plus a seventh,
-  `check (self-hosted)`, that runs the full `bun run check` on the runner
-  labelled `self-hosted, macOS, ARM64, mlai` for same-repository pushes,
-  dispatches and PRs only (`.github/self-hosted-runner.md`). The four app jobs with
-  dependencies each run a frozen install at the repository root, filtered to
-  `@mlai/platform` plus their own workspaces (research-sites has no install
-  step by design), and the topology job runs
+  `.github/workflows/ci.yml` runs four jobs: `topology`, `web`, `quasar`, and
+  `check (self-hosted)` (the full `bun run check` on the runner labelled
+  `self-hosted, macOS, ARM64, mlai`, same-repository pushes/dispatches/PRs only
+  — `.github/self-hosted-runner.md`). `web` and `quasar` each run a frozen
+  install at the repository root filtered to `@mlai/platform` plus their own
+  workspace, and `topology` runs
   `bun install --frozen-lockfile --lockfile-only` as the drift check, while
   `install:all` is deliberately non-frozen. Lockfile drift therefore surfaces
   in CI, or locally only if you run that same command.
-- **Two CI states are unmeasured, not red.** Hosted jobs fail in 2–3 seconds
-  with zero steps under the account billing lock (since 2026-09-08). While no
-  runner is registered, `check (self-hosted)` sits `queued`, then ends
-  `cancelled`: by the next push to `main` (`cancel-in-progress`) or by
-  GitHub's 24-hour queue limit (both observed 2026-09-19). Re-measure with
+- **CI's hosted jobs and the self-hosted queue can both be unmeasured, not
+  red.** Hosted jobs have failed in 2–3 seconds with zero steps under an
+  account billing lock in the past; that state means the run is unmeasured,
+  not that the gate failed — re-check with
   `gh api repos/donaldfilimon/MLAI-CORPORATION-WWW/actions/runners --jq .total_count`
-  (0 on 2026-09-22). Because CI then never concludes `success`, `pages.yml`
-  and `deploy-cloudrun.yml` never publish or deploy: `workflow_run` fires
-  them on any CI completion, but their jobs gate on
-  `conclusion == 'success'` from a same-repository push and are skipped, and
-  Cloud Run additionally soft-skips through its `readiness` job until
-  `vars.WIF_PROVIDER` and `vars.GCP_PROJECT_ID` exist. An un-republished
-  Pages site or a skipped deploy is expected; never change code to satisfy
-  either.
-- **`apps/quasar-web/site/` is a separately published artifact, not a build output.**
+  before trusting either a red hosted check or a `check (self-hosted)` stuck
+  `queued`/`cancelled`. Because CI then never concludes `success`, `pages.yml`
+  and `deploy-cloudrun.yml` never publish or deploy: `workflow_run` fires them
+  on any CI completion, but their jobs gate on `conclusion == 'success'` from a
+  same-repository push and are skipped, and Cloud Run additionally soft-skips
+  through its `readiness` job until `vars.WIF_PROVIDER` and `vars.GCP_PROJECT_ID`
+  exist. An un-republished Pages site or a skipped deploy is expected in that
+  state; never change code to satisfy either.
+- **`apps/mlai/site/` is a separately published artifact, not a build output.**
   GitHub Pages publishes it from `.github/workflows/pages.yml` with Actions as
   the source; the legacy `gh-pages` branch is retired and must not be
-  recreated. Some brand assets exist in both `apps/quasar-web/public/` and
-  `apps/quasar-web/site/`, and regenerating the `public/` copies does not touch the
+  recreated. Some brand assets exist in both `apps/mlai/public/` and
+  `apps/mlai/site/`, and regenerating the `public/` copies does not touch the
   `site/` ones.
 
 ## Trees that are not apps
@@ -136,22 +131,24 @@ rather than inside one app's docs.
   `apps/*` glob so it is not mistaken for one. Do not extend it, build in it,
   or remove it on your own.
 - **Two `GEMINI.md` files, two roles.** The root one is a short redirect to
-  `AGENTS.md`; keep it that way. `apps/quasar-web/GEMINI.md` is a full app guide
-  kept aligned with that app's `AGENTS.md`/`CLAUDE.md`/`README.md` by its
-  `ai-tooling-sync` skill, so a durable web change lands in all four.
-  `check:topology` inspects neither file, so drift there is not gated.
+  `AGENTS.md`; keep it that way. `apps/mlai/GEMINI.md` is meant to be a full app
+  guide kept aligned with that app's `AGENTS.md`/`CLAUDE.md` by its
+  `ai-tooling-sync` skill, but as of the single-app merge it still names the old
+  `apps/quasar-web` path and branding — treat it as stale until synced, and
+  don't copy path references from it. `check:topology` inspects neither
+  `GEMINI.md` file, so drift there is not gated.
 
 ## Local preview
 
 `.claude/launch.json` is local to this machine (listed in `.git/info/exclude`,
-not tracked). It names two preview servers that differ from the `dev:*`
-scripts. `mlai-web` runs `next dev` in `apps/quasar-web` with `autoPort`, so a
-second session gets its own port instead of colliding; it bypasses the `dev`
-script because that script hardcodes `--port 3000`. `mlai-website-app` runs
-`apps/website-app`'s `dev` on 3100, taken from `scripts/dev.ts`. A real WorkOS
-sign-in returns to `APP_URL` (default `http://localhost:3000`), so use
-`bun run dev:web` on 3000 for that flow. The Quasar service listens on 4700 and
-is not started by `dev:quasar` (see `AGENTS.md`).
+not tracked). It names one preview server, `mlai-web`, which runs `next dev` in
+`apps/mlai` with `autoPort` so a second session gets its own port instead of
+colliding with `bun run dev:web`'s fixed `--port 3000`. Sign-in flows redirect
+back to whatever origin the app is configured for; see `apps/mlai/AGENTS.md`
+for the current auth setup rather than assuming a specific provider here — that
+app's own docs are mid-sync after the single-app merge (see *Trees that are not
+apps*). The Quasar service listens on 4700 and is not started by `dev:quasar`
+(see `AGENTS.md`).
 
 <!-- machine-git-policy -->
 ## Git workflow (machine policy, 2026-08-27)
