@@ -72,8 +72,10 @@ rather than inside one app's docs.
   `packages/tooling/src/check-topology.ts` lists root `AGENTS.md`,
   `CLAUDE.md`, and `README.md` among its required paths, so renaming or
   removing one fails the first gate in `bun run check`. Beyond required paths
-  it only rejects app lockfiles, nested `workspaces` fields and a non-isolated
-  linker; it compiles no contracts and validates no content.
+  it only rejects app lockfiles, nested `workspaces` fields, a non-isolated
+  linker, and a directory whose two guides do not name exactly one canonical
+  file in their opening lines; it compiles no contracts and validates no
+  content.
 - **`@mlai/contracts` is a type-only vocabulary shared by two apps.** Web and
   mobile each consume it through a `workspace:*` dependency,
   and every use in app source is an `import type`

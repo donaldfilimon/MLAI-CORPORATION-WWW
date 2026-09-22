@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+`AGENTS.md` is canonical for this app; defer to it on any conflict. This file adds
+commands and context it does not carry.
+
 This application lives at `apps/quasar-web/` in the MLAI integration repository. Run
 app-local commands from this directory or use `bun run check:web` at the
 repository root; web-specific OpenTofu also lives here under `infra/`.

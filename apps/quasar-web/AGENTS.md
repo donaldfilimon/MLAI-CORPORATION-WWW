@@ -1,5 +1,8 @@
 # Repository Guide
 
+This is the canonical guide for `apps/quasar-web`; `CLAUDE.md` adds Claude-specific
+detail and defers to this file on any conflict.
+
 This application lives at `apps/quasar-web/` in the MLAI integration repository. Run
 app-local commands from this directory or use `bun run check:web` at the
 repository root; web-specific OpenTofu also lives here under `infra/`.

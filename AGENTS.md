@@ -81,8 +81,12 @@ local build alone.
 - `check:topology` checks that required paths exist (root `bun.lock` and
   `bunfig.toml`, every workspace manifest, both Metro configs and both Expo
   typecheck configs), that no app lockfile exists, that no nested manifest
-  declares `workspaces`, and that the isolated linker is set. It does not
-  compile contracts or validate content, lockfile drift, or app behavior.
+  declares `workspaces`, and that the isolated linker is set. For the root and
+  each app directory holding both `AGENTS.md` and `CLAUDE.md`, it also requires
+  that exactly one declares itself canonical within its first 15 lines and the
+  other names it (`` `AGENTS.md` is canonical ``); a directory with one guide or
+  none passes (`apps/quasar` keeps only `README.md`). It does not compile
+  contracts or validate content, lockfile drift, or app behavior.
 - `check:workflows` runs pinned Actionlint 1.7.12 via Go (Go 1.25+ required;
   first run downloads the module). It checks workflow syntax and expressions,
   with optional ShellCheck and Pyflakes disabled.

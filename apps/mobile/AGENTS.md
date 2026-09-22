@@ -1,6 +1,7 @@
 # AGENTS.md
 
-This file provides guidance to coding agents working in this repository.
+This file provides guidance to coding agents working in this repository. It is
+the canonical guide for `apps/mobile`; `CLAUDE.md` points here.
 
 ## What this is
 
