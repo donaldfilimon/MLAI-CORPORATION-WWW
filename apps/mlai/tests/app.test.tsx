@@ -146,7 +146,7 @@ describe("apps/mlai shipped behavior", () => {
     expect(childCount()).toBe(before);
   });
 
-  test("Quasar screens list, create, configure, and drive feed preview and edit by URL", async () => {
+  test("Quasar screens list, create, feed, preview, and edit by URL, and the settings screen first paint omits the default origin and save keeps the stored origin", async () => {
     const seen: string[] = [];
     const sites: { id: string; name: string; slug: string; createdAt: string; status: "idle"; previewPort: null; promptHistory: { prompt: string; at: string }[] }[] = [];
     const server = createServer((req, res) => {
