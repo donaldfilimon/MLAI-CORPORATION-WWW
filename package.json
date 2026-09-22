@@ -10,6 +10,7 @@
     "apps/quasar",
     "apps/quasar/packages/*",
     "apps/quasar/apps/*",
+    "apps/mlai",
     "apps/website-app",
     "apps/website-app/packages/*",
     "apps/website-app/mlai-website-agent"

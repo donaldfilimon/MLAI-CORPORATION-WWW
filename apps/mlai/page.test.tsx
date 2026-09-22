@@ -1,0 +1,26 @@
+import { describe, expect, test } from "bun:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import Page from "./app/page.tsx";
+
+const banned = [
+  "testimonial",
+  "benchmark",
+  "partnership",
+  "partner logo",
+  "unhackable",
+  "military-grade",
+  "completely secure",
+];
+
+describe("apps/mlai home", () => {
+  test("renders the shipped page without invented claims", () => {
+    const markup = renderToStaticMarkup(createElement(Page));
+    expect(markup.length).toBeGreaterThan(0);
+    expect(markup).toContain("MLAI");
+    const lower = markup.toLowerCase();
+    for (const phrase of banned) {
+      expect(lower).not.toContain(phrase);
+    }
+  });
+});
