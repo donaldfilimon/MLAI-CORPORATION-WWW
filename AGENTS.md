@@ -4,6 +4,14 @@ This is the canonical MLAI integration guide; `CLAUDE.md` points here. Read
 `apps/mlai/AGENTS.md` for the Next app and `apps/quasar/README.md` for the
 Quasar service sidecar.
 
+> **Superseded 2026-09-22:** Donald made
+> [`donaldfilimon/quesar.cloud`](https://github.com/donaldfilimon/quesar.cloud)
+> (TanStack Start + Vite, local `~/dev/active/quesar.cloud`) the main site
+> repository. This repo is now the port source. The cinematic showcase
+> (`apps/mlai/src/{film,trailer,abbey-trailer,explainer,mega,design}` and
+> `packages/trailer-engine`) was ported there from `d988c66`. Nothing here is
+> archived or deleted; do new site work in quesar.cloud.
+
 ## Boundaries
 
 One Next 16 app at `apps/mlai` serves the public site, `/app/*`, and the Quasar

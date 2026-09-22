@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Superseded 2026-09-22:** Donald made
+> [`donaldfilimon/quesar.cloud`](https://github.com/donaldfilimon/quesar.cloud)
+> (TanStack Start + Vite, local `~/dev/active/quesar.cloud`) the main site
+> repository. This repo is now the port source. The cinematic showcase
+> (`apps/mlai/src/{film,trailer,abbey-trailer,explainer,mega,design}` and
+> `packages/trailer-engine`) was ported there from `d988c66`. Nothing here is
+> archived or deleted; do new site work in quesar.cloud.
+
 `AGENTS.md` is the canonical repository-wide map: the one Next app, the Quasar
 service sidecar, the root commands, and what each gate does and does not prove.
 Read it first, then the guidance for the surface you are changing. Do not
