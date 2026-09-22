@@ -15,6 +15,10 @@ const banned = [
   "completely secure",
 ];
 
+function rendered() {
+  return renderToStaticMarkup(createElement(Page)).toLowerCase();
+}
+
 describe("apps/mlai home", () => {
   test("renders the shipped page without invented claims", () => {
     const markup = renderToStaticMarkup(createElement(Page));
@@ -24,5 +28,13 @@ describe("apps/mlai home", () => {
     for (const phrase of banned) {
       expect(lower).not.toContain(phrase);
     }
+  });
+
+  test("rendered markup rejects customer", () => {
+    expect(rendered()).not.toContain("customer");
+  });
+
+  test("rendered markup rejects customers", () => {
+    expect(rendered()).not.toContain("customers");
   });
 });
