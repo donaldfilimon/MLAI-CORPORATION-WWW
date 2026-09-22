@@ -9,7 +9,7 @@ app-local commands from this directory or use `bun run check:web` at the
 repository root; web-specific OpenTofu also lives here under `infra/`.
 
 Production website and invite-only private AI operations console for **Quesar
-by MLAI** at `quesar.cloud`. The active stack is **Next.js 15 App Router + React
+by MLAI** at `quesar.cloud`. The active stack is **Next.js 16 App Router + React
 19 + TailwindCSS v4**, served as one Bun-managed application with `/api/*`
 route handlers in the same process.
 
@@ -17,7 +17,7 @@ The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. 
 
 ## Tech Stack
 
-- **Frontend:** Next.js 15 App Router, React 19, TailwindCSS v4, Framer Motion, Lucide React.
+- **Frontend:** Next.js 16 App Router, React 19, TailwindCSS v4, Framer Motion, Lucide React.
 - **Backend:** Next route handlers in `app/api/*`, shared server utilities in `src/lib/server/*`.
 - **Runtime and package manager:** Bun 1.4+; installed from the repository root, locked by the root `bun.lock`.
 - **Auth:** WorkOS AuthKit with active membership in one invited organization and encrypted `mlai_session` cookies.

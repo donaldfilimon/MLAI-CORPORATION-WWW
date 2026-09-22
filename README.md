@@ -11,7 +11,7 @@ Current journey delivery and acceptance limits: [four-app delivery ledger](docs/
 
 | Path | Purpose | Native gate |
 |---|---|---|
-| `apps/quasar-web/` | Next.js 15 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
+| `apps/quasar-web/` | Next.js 16 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
 | `apps/mobile/` | Expo SDK 53 mobile companion and native CloudKit module | `bun run check:mobile` |
 | `apps/quasar/` | Local AI site builder: service, shared package, Expo app, and a separately locked Next template | `bun run check:quasar` |
 | `apps/website-app/` | Next.js local application, Abbey workspace, SQLite/Better Auth, Python worker, and agent package | `bun run check:website-app` |

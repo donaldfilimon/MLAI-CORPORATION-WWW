@@ -5,7 +5,7 @@
 This application lives at `apps/quasar-web/` in the MLAI integration repository. Run app-local commands here or use `bun run check:web` at the repository root; web-specific OpenTofu lives under `infra/`.
 
 ## Project Context
-Production website and invite-only private AI operations console for Quesar by MLAI. **Next.js 15 App Router + React 19 + TailwindCSS v4, run on Bun** — one process serves pages and `/api/*` route handlers for WorkOS organization access, Gemini through Cloudflare AI Gateway, consent/audits, inquiries, telemetry, and admin reads.
+Production website and invite-only private AI operations console for Quesar by MLAI. **Next.js 16 App Router + React 19 + TailwindCSS v4, run on Bun** — one process serves pages and `/api/*` route handlers for WorkOS organization access, Gemini through Cloudflare AI Gateway, consent/audits, inquiries, telemetry, and admin reads.
 
 The previous Vite SPA, Hono server, and Rust/Axum migration plan are abandoned. Do not extend or restore those stacks; active work belongs in TypeScript/TSX under `app/` and `src/`.
 

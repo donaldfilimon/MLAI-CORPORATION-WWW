@@ -1,4 +1,4 @@
-# Next.js 15 (App Router) on Bun — one process serves pages and API routes.
+# Next.js 16 (App Router) on Bun — one process serves pages and API routes.
 #
 # The build context is the repository root: every app installs through the one
 # root Bun workspace (root bun.lock + bunfig.toml, isolated linker). A frozen

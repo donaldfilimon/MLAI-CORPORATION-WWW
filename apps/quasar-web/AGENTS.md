@@ -9,9 +9,9 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 
 ## Runtime And Boundaries
 
-- The active application is Bun 1.4 + Next.js 15 App Router + React 19 + TailwindCSS v4. Next serves pages and `app/api/*` route handlers in one process. Vite, Hono, Rust/Axum, `server.ts`, and `src/pages/` are retired; do not restore them.
+- The active application is Bun 1.4 + Next.js 16 App Router + React 19 + TailwindCSS v4. Next serves pages and `app/api/*` route handlers in one process. Vite, Hono, Rust/Axum, `server.ts`, and `src/pages/` are retired; do not restore them.
 - Route `page.tsx` files are thin server components. Standard pages expose `src/views/*` through a per-route `client.tsx` (`"use client"` re-export). Browser-only views use `next/dynamic(..., { ssr: false })`; copy that form from `/showcase/*` or `/tf-pose-demo` only when the view needs browser APIs.
-- Ported views still import `react-router-dom`, but TypeScript, webpack, and Turbopack alias it to `src/lib/router-compat.tsx`. The package is intentionally absent. Do not add it or introduce `BrowserRouter`/`Routes`; route structure belongs in `app/`.
+- Ported views still import `react-router-dom`, but TypeScript and Turbopack alias it to `src/lib/router-compat.tsx`. The package is intentionally absent. Do not add it or introduce `BrowserRouter`/`Routes`; route structure belongs in `app/`.
 - Shared server logic is in `src/lib/server/`. Content-backed marketing, blog, research, team, and product copy lives in `src/data/categories/*`, aggregated by `src/data/index.ts`; edit those surfaces there rather than baking copy into views.
 
 ## Commands And Gates

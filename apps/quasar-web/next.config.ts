@@ -3,10 +3,11 @@ import path from "node:path";
 import { buildCsp } from "./src/lib/csp";
 
 /**
- * Next.js 15 App Router config (the Vite + Hono stack is retired).
+ * Next.js 16 App Router config (the Vite + Hono stack is retired).
  * - "react-router-dom" is aliased to the compat shim so the 25 SPA files
- *   keep their imports unchanged (tsconfig paths covers type-checking; this
- *   alias covers the bundler).
+ *   keep their imports unchanged (tsconfig paths covers type-checking; the
+ *   Turbopack alias covers the bundler; Next 16 builds with Turbopack and
+ *   refuses a custom webpack block, so there is none).
  * - node:sqlite / iron-session / WorkOS run inside route handlers; node:*
  *   builtins are externalized by Next automatically.
  */
@@ -42,6 +43,9 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Next 16 writes agent-rules files into the project on `next dev`; this app
+  // keeps its own AGENTS.md/CLAUDE.md pair, which check-topology validates.
+  agentRules: false,
   // `next build` and `next dev` cannot share a dist directory: a build run
   // beside a live dev server "succeeds" with a route table of zeros and an
   // empty app-build-manifest. NEXT_DIST_DIR lets a gate build into its own
@@ -56,13 +60,6 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: REPO_ROOT,
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
-  },
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      "react-router-dom": path.resolve(__dirname, "src/lib/router-compat.tsx"),
-    };
-    return config;
   },
   turbopack: {
     root: REPO_ROOT,
