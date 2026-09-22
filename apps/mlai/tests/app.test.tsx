@@ -17,6 +17,7 @@ import { buildResearchExport } from "../lib/research-export.ts";
 import { Providers } from "../app/providers.tsx";
 import { GET } from "../app/app/[[...slug]]/route.ts";
 import Page from "../app/page.tsx";
+import SettingsPage from "../app/quasar/settings/page.tsx";
 import { QuasarSettings } from "../lib/quasar-screens.tsx";
 import {
   beginColdLoad,
@@ -223,6 +224,10 @@ describe("apps/mlai shipped behavior", () => {
       await setBaseUrl(remembered);
       beginColdLoad();
       expect(getBaseUrl()).toBe(DEFAULT_ORIGIN);
+      const firstPaint = renderToStaticMarkup(createElement(SettingsPage));
+      expect(firstPaint).not.toContain(DEFAULT_ORIGIN);
+      expect(firstPaint).not.toContain(remembered);
+      expect(firstPaint).toContain("disabled");
       const previousDocument = globalThis.document;
       const previousWindow = globalThis.window;
       const previousHtml = globalThis.HTMLElement;
