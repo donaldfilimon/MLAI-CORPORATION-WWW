@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
  * `glass` variant is a translucent fill with a 1px inset top highlight — neither exists on a
  * white ground. maxWidth = the old 360 card measure + the 28px ink padding on each side.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 416 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 416 };
 
 export const Basic = () => (
   <div style={ink}>

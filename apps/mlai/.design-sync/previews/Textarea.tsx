@@ -6,7 +6,7 @@ import { Textarea, Label } from "mlai-corporation-www";
  * `color`, matching `<body className="text-text">` in the real app.
  */
 const ink = {
-  background: "#05070d",
+  background: "#0c0c09",
   padding: 28,
   borderRadius: 12,
   color: "var(--foreground)",

@@ -10,7 +10,8 @@ import type { ProductAccent } from "@mlai/contracts";
 
 /** Raw Lab colors. The only place the five brand hex values are written. */
 export const labColor = {
-  ink: "#05070D",
+  /** Preset b6VP9Bgmwr dark olive canvas (oklch(0.153 0.006 107.1)). */
+  ink: "#0C0C09",
   cyan: "#22D3EE",
   violet: "#A855F7",
   emerald: "#34D399",
@@ -59,42 +60,45 @@ export const typeScale = {
 } as const;
 
 /**
- * shadcn semantic tokens for the web. OKLCH where a value is a tuned
- * lightness step; `var(--cyan)` where the value *is* the brand colour, so the
- * rendered primary equals the token the Expo apps use (the previous
- * `oklch(0.79 0.13 207)` rendered ≈#25D1E5 against a documented #22D3EE).
+ * shadcn semantic tokens for the web, from preset b6VP9Bgmwr (mira / olive /
+ * cyan, dark values). The site is dark-only (`html.dark`), so `:root` carries
+ * the preset's `.dark` olive neutrals. Primary, ring, and sidebar-primary stay
+ * `var(--cyan)`: the preset's dark primary (oklch 0.45) fails WCAG as link text
+ * on this canvas, and persona/product cyan is the light brand mark.
+ * Secondary is the olive muted/accent pair, not the preset's zinc hue 286.
+ * Chart 2–5 are the preset's orange ramp.
  */
 export const semantic = {
-  background: "oklch(0.07 0.012 260)",
-  foreground: "oklch(0.94 0.008 255)",
-  card: "oklch(0.13 0.014 260 / 0.80)",
-  "card-foreground": "oklch(0.96 0.006 255)",
-  popover: "oklch(0.11 0.014 260)",
-  "popover-foreground": "oklch(0.96 0.006 255)",
+  background: "oklch(0.153 0.006 107.1)",
+  foreground: "oklch(0.988 0.003 106.5)",
+  card: "oklch(0.228 0.013 107.4)",
+  "card-foreground": "oklch(0.988 0.003 106.5)",
+  popover: "oklch(0.228 0.013 107.4)",
+  "popover-foreground": "oklch(0.988 0.003 106.5)",
   primary: "var(--cyan)",
   "primary-foreground": "oklch(0.10 0.015 260)",
-  secondary: "oklch(0.18 0.014 260)",
-  "secondary-foreground": "oklch(0.95 0.006 255)",
-  muted: "oklch(0.18 0.014 260 / 0.80)",
-  "muted-foreground": "oklch(0.70 0.025 255)",
-  accent: "oklch(0.30 0.045 215)",
-  "accent-foreground": "oklch(0.95 0.02 210)",
-  destructive: "oklch(0.68 0.21 25)",
+  secondary: "oklch(0.286 0.016 107.4)",
+  "secondary-foreground": "oklch(0.988 0.003 106.5)",
+  muted: "oklch(0.286 0.016 107.4)",
+  "muted-foreground": "oklch(0.737 0.021 106.9)",
+  accent: "oklch(0.286 0.016 107.4)",
+  "accent-foreground": "oklch(0.988 0.003 106.5)",
+  destructive: "oklch(0.704 0.191 22.216)",
   "destructive-foreground": "oklch(0.15 0.02 25)",
   border: "oklch(1 0 0 / 10%)",
-  input: "oklch(1 0 0 / 12%)",
+  input: "oklch(1 0 0 / 15%)",
   ring: "var(--cyan)",
   "chart-1": "var(--cyan)",
-  "chart-2": "oklch(0.62 0.22 305)",
-  "chart-3": "oklch(0.78 0.14 165)",
-  "chart-4": "oklch(0.83 0.16 85)",
-  "chart-5": "oklch(0.72 0.13 235)",
-  sidebar: "oklch(0.11 0.014 260)",
-  "sidebar-foreground": "oklch(0.96 0.006 255)",
+  "chart-2": "oklch(0.705 0.213 47.604)",
+  "chart-3": "oklch(0.646 0.222 41.116)",
+  "chart-4": "oklch(0.553 0.195 38.402)",
+  "chart-5": "oklch(0.47 0.157 37.304)",
+  sidebar: "oklch(0.228 0.013 107.4)",
+  "sidebar-foreground": "oklch(0.988 0.003 106.5)",
   "sidebar-primary": "var(--cyan)",
   "sidebar-primary-foreground": "oklch(0.10 0.015 260)",
-  "sidebar-accent": "oklch(0.18 0.014 260)",
-  "sidebar-accent-foreground": "oklch(0.95 0.006 255)",
+  "sidebar-accent": "oklch(0.286 0.016 107.4)",
+  "sidebar-accent-foreground": "oklch(0.988 0.003 106.5)",
   "sidebar-border": "oklch(1 0 0 / 10%)",
   "sidebar-ring": "var(--cyan)",
 } as const;
@@ -102,15 +106,15 @@ export const semantic = {
 /** Legacy web utility colours (`bg-bg`, `text-text-dim`, `hover:bg-primary-hover`). */
 export const legacyWeb = {
   bg: labColor.ink,
-  surface: "#0A0E16",
+  surface: "#1D1D16",
   "primary-hover": "#06B6D4",
-  text: "#E8EDF6",
-  "text-dim": "#94A3B8",
+  text: "#FBFBF9",
+  "text-dim": "#ABAB9C",
 } as const;
 
 /** Web radius: the shadcn base and the multiplier scale Tailwind reads. */
 export const radius = {
-  base: "0.7rem",
+  base: "0.625rem",
   scale: { sm: 0.6, md: 0.8, lg: 1, xl: 1.4, "2xl": 1.8, "3xl": 2.2, "4xl": 2.6 },
 } as const;
 

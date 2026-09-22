@@ -85,7 +85,7 @@ Links: github.com/donaldfilimon · x.com/donaldfilimonx · donaldfilimon.com
 
 > Shipped "Lab" brand hexes (from `public/neural.js` `DEFAULTS` + `src/index.css`):
 > cyan `#22d3ee` · violet `#a855f7` · emerald `#34d399`, on near-black ink
-> `#05070d`, with a cyan→blue→violet `grad-text` signature.
+> `#0c0c09`, with a cyan→blue→violet `grad-text` signature.
 
 ---
 
@@ -303,7 +303,7 @@ $50K–250K → WDBX Cloud (usage-based).
   **JetBrains Mono** (code). *(This is the shipped WWW stack — the bun-site
   prototype used Sora/Manrope.)*
 - **Brand colors (shipped Lab):** cyan `#22d3ee` · violet `#a855f7` · emerald
-  `#34d399` on ink `#05070d`. WDBX→cyan, ABI→violet, Abbey→emerald; personas
+  `#34d399` on ink `#0c0c09`. WDBX→cyan, ABI→violet, Abbey→emerald; personas
   Abbey→emerald, Aviva→violet, Abi→cyan.
 
 ---

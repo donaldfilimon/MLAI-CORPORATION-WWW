@@ -4,7 +4,7 @@
  * compare the committed files against these renderers, so a hand edit to a
  * generated file fails the gate until the model changes instead.
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import {
   font,
@@ -25,7 +25,7 @@ const rgba = (hex: string, alpha: number) => {
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha.toFixed(2)})`;
 };
 
-/** `apps/quasar-web/src/tokens.generated.css`: Tailwind theme + shadcn :root. */
+/** `apps/mlai/src/tokens.generated.css`: Tailwind theme + shadcn :root. */
 export function renderWebTokensCss(): string {
   const theme = [
     `  --font-sans: ${font.sans};`,
@@ -206,17 +206,20 @@ export function renderWebsiteAppTokensTs(): string {
 
 /** Repository-relative outputs, in the order they are written. */
 export const outputs = [
-  { path: "apps/quasar-web/src/tokens.generated.css", render: renderWebTokensCss },
+  { path: "apps/mlai/src/tokens.generated.css", render: renderWebTokensCss },
   { path: "apps/website-app/packages/ui/src/styles/tokens.css", render: renderWebsiteAppTokensCss },
   { path: "apps/website-app/packages/ui/src/tokens.ts", render: renderWebsiteAppTokensTs },
 ] as const;
 
 export function writeAll(repoRoot: string): string[] {
-  return outputs.map(({ path: rel, render }) => {
+  const written: string[] = [];
+  for (const { path: rel, render } of outputs) {
     const target = path.join(repoRoot, rel);
+    if (!existsSync(path.dirname(target))) continue;
     writeFileSync(target, render());
-    return target;
-  });
+    written.push(target);
+  }
+  return written;
 }
 
 if (import.meta.main) {

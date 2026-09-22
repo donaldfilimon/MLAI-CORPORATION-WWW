@@ -80,7 +80,7 @@ describe("site/index.html — GitHub Pages landing page", () => {
   });
 
   it("uses the brand ink canvas and cyan primary", () => {
-    expect(html).toContain("#05070d");
+    expect(html).toContain("#0c0c09");
     expect(html.toLowerCase()).toContain("#22d3ee");
   });
 

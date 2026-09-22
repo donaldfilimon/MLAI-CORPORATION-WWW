@@ -4,7 +4,7 @@ import { Callout } from "mlai-corporation-www";
  * Dark-only DS: the accent edge and low-alpha fill only read on the ink canvas.
  * Width is held near the prose measure the aside is set beside.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 700 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 700 };
 
 export const Integrity = () => (
   <div style={ink}>

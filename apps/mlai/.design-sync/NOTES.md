@@ -56,7 +56,7 @@ DialogTrigger, …) stay in the bundle for composition without becoming separate
 ## Preview authoring conventions (this repo)
 
 - **Wrap EVERY preview — both layers — in the Lab ink ground**:
-  `<div style={{ background: "#05070d", padding: 28, borderRadius: 12 }}>`, hoisted to a
+  `<div style={{ background: "#0c0c09", padding: 28, borderRadius: 12 }}>`, hoisted to a
   module-level `const ink` per file with any `maxWidth` folded in.
   The converter's preview template hardcodes `body{background:#fff}` (`lib/emit.mjs` — do
   not fork it). This DS is **dark-only**, so without the wrapper `text-white` content is
@@ -73,7 +73,7 @@ DialogTrigger, …) stay in the bundle for composition without becoming separate
   no text-color class of its own then goes from "black on white, washed out" to "black on
   near-black, **invisible**" — strictly worse. Use:
   ```js
-  const ink = { background: "#05070d", color: "var(--foreground)",
+  const ink = { background: "#0c0c09", color: "var(--foreground)",
                 fontFamily: "var(--font-sans)", padding: 28, borderRadius: 12 };
   ```
   which reproduces `<body className="…text-text">` from `app/layout.tsx`. Verified

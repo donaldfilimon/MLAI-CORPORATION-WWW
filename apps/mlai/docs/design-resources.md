@@ -13,7 +13,7 @@ wins. This index exists so design/website resources don't drift across projects.
 |---|---|
 | **Live website** (marketing + console) | `app/` (routes/handlers) + `src/views/` (page views) — Next 15 App Router on Bun |
 | **Design system / tokens** | `src/index.css` — TailwindCSS v4 tokens (OKLCH `:root` + legacy `@theme` hex), utilities (`.glass-card`, `.section-y`, `.grad-text`, `.eyebrow`, …). Narrated in `CLAUDE.md` → *Styling*. |
-| **Brand identity ("Lab")** | Cyan primary `#22d3ee` · blue/sky secondary · violet/emerald/amber persona accents · near-black ink `#05070d` · **serif (Spectral)** display + Geist body + JetBrains Mono. See `CLAUDE.md` → *Brand*. |
+| **Brand identity ("Lab")** | Cyan primary `#22d3ee` · blue/sky secondary · violet/emerald/amber persona accents · near-black ink `#0c0c09` · **serif (Spectral)** display + Geist body + JetBrains Mono. See `CLAUDE.md` → *Brand*. |
 | **Logo / wordmark** | `src/components/Logo.tsx` (node-graph mark, cyan→sky) + `public/logo.svg`, `public/mlai-mark.svg`, `public/mlai-logo-lockup.svg`, `public/favicon.svg` |
 | **Hero signature** | tri-persona embedding **galaxy** + `net` constellation in `public/neural.js` (`data-neural` hosts; `mount()`/`unmount()`), mounted by `src/components/Hero.tsx` |
 | **Persona colors** | `src/components/site/PersonaCard.tsx` `PERSONA_CLASSES` (Abbey emerald · Aviva violet · Abi cyan) |

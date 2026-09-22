@@ -1,8 +1,8 @@
 import { Prose } from "mlai-corporation-www";
 
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 720 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 720 };
 // Near-card-width, so the `measured={false}` line length visibly differs.
-const inkWide = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 840 };
+const inkWide = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 840 };
 
 export const Architecture = () => (
   <div style={ink}>

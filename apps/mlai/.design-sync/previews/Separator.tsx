@@ -6,7 +6,7 @@ import { Separator } from "mlai-corporation-www";
  * invisible. Surrounding copy inherits its color, so the ground supplies it.
  */
 const ink = {
-  background: "#05070d",
+  background: "#0c0c09",
   padding: 28,
   borderRadius: 12,
   color: "var(--foreground)",

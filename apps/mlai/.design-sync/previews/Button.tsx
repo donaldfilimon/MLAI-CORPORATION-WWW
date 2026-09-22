@@ -4,7 +4,7 @@ import { Button } from "mlai-corporation-www";
  * Dark-only DS: `outline`/`ghost`/`link` are transparent-ground variants and the primary is a
  * LIGHT cyan with a dark foreground — the whole set only reads on the Lab ink canvas.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 700 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 700 };
 const row = { display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" };
 
 export const Variants = () => (

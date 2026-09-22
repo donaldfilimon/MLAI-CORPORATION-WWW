@@ -1,6 +1,6 @@
 import { DataTable } from "mlai-corporation-www";
 
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 760 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 760 };
 
 export const IndexLayers = () => (
   <div style={ink}>

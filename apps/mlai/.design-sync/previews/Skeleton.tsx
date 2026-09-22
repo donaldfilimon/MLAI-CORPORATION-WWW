@@ -8,7 +8,7 @@ import { Skeleton } from "mlai-corporation-www";
  * lands at the trough looks fainter than the component really is.
  */
 const ink = {
-  background: "#05070d",
+  background: "#0c0c09",
   padding: 28,
   borderRadius: 12,
   color: "var(--foreground)",

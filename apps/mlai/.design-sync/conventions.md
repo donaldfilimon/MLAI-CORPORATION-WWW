@@ -1,8 +1,8 @@
 # MLAI "Lab" UI — conventions for building with this design system
 
 These are the shadcn-style primitives behind the MLAI Corporation site, styled with the
-**"Lab"** brand: **cyan** primary on a **near-black ink** canvas (`--background` ≈
-`oklch(0.07 0.012 260)`), with **violet / emerald / amber** as fixed persona accents and a
+**"Lab"** brand: **cyan** primary on an **olive ink** canvas (`--background` ≈
+`oklch(0.153 0.006 107.1)`, `#0c0c09`), with **violet / emerald / amber** as fixed persona accents and a
 **Spectral serif** display face (`--font-display`) on headings. Body text is **Geist**.
 
 ## Setup
@@ -104,4 +104,4 @@ elements by default and accept an optional `linkComponent` for client-side routi
 ### Dark-only
 
 There is no light theme. Render these on the ink canvas (`background: var(--background)`,
-≈ `#05070d`) — components built for that canvas look washed out or invisible on white.
+≈ `#0c0c09`) — components built for that canvas look washed out or invisible on white.

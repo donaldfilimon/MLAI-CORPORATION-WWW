@@ -2,9 +2,9 @@ import { Section, FeatureCard } from "mlai-corporation-www";
 
 /**
  * The Lab DS is dark-only — every story is mounted on the ink canvas
- * (`--background` ≈ `#05070d`) the components were designed for.
+ * (`--background` ≈ `#0c0c09`) the components were designed for.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12 };
 
 export const VectorStore = () => (
   <div style={ink}>

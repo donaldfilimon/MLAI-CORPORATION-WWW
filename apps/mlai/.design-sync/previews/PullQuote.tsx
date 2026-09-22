@@ -4,7 +4,7 @@ import { PullQuote } from "mlai-corporation-www";
  * Dark-only DS: the quote is set in white Spectral, so it only reads on the ink
  * canvas. Width is held near the article measure it interrupts.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 700 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 700 };
 
 export const Privacy = () => (
   <div style={ink}>

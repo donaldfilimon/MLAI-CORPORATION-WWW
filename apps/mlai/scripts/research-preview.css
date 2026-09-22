@@ -2,8 +2,8 @@
    use the canonical Lab utilities compiled from src/index.css. */
 html {
   color-scheme: dark;
-  --preview-bg: #05070d;
-  --preview-panel: #0e1218;
+  --preview-bg: #0c0c09;
+  --preview-panel: #1d1d16;
   --preview-text: #e8edf6;
   --preview-muted: #a9b9cd;
   --preview-accent: #67e8f9;
@@ -33,7 +33,7 @@ html {
   width: 100%;
   min-height: 3rem;
   padding: 0.65rem;
-  background: #0b1420;
+  background: #1d1d16;
   color: #e8edf6;
   border: 1px solid #334155;
   border-radius: 0.4rem;
@@ -47,7 +47,7 @@ html {
   gap: 0.6rem;
   padding: 1.4rem;
   border-left: 2px solid #67e8f9;
-  background: #0b1420;
+  background: #1d1d16;
   margin: 2rem 0;
 }
 .preview-article a,
@@ -88,14 +88,14 @@ select:focus-visible {
 }
 body {
   margin: 0;
-  background: #05070d;
+  background: #0c0c09;
   color: #e8edf6;
   font-family: "Geist Variable", sans-serif;
   font-size: 1rem;
 }
 .preview-banner {
   border-bottom: 1px solid #1b3140;
-  background: #09131c;
+  background: #1d1d16;
   padding: 0.65rem 1.5rem;
   color: #a5b7c9;
   text-align: center;
@@ -189,7 +189,7 @@ body {
   padding: 0.65rem 1rem;
   border: 1px solid #334155;
   border-radius: 99rem;
-  background: #0b111c;
+  background: #1d1d16;
   color: #b8c6d9;
   cursor: pointer;
 }
@@ -301,7 +301,7 @@ body {
   left: 1rem;
   top: -5rem;
   padding: 0.8rem 1.2rem;
-  color: #05070d;
+  color: #0c0c09;
   background: #67e8f9;
 }
 .preview-skip:focus {

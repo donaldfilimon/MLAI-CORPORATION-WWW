@@ -2,7 +2,7 @@ import { FAQList } from "mlai-corporation-www";
 
 // The converter's preview template hardcodes a white body; this DS is dark-only,
 // so every card renders on the Lab ink ground it was designed for.
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 720 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 720 };
 
 /**
  * FAQList has no `open`/`defaultOpen` prop, so the expanded answer state can only
