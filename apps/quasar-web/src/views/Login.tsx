@@ -65,7 +65,7 @@ export function Login() {
             <p className="pt-3 text-center font-mono text-[10px] tracking-wide text-text-dim/70">No public account creation. Membership is managed in WorkOS.</p>
           </div>
 
-          <div className="flex justify-center border-t border-white/5 pt-6"><p className="text-xs text-text-dim">By continuing you agree to our <Link to="/terms" className="text-primary hover:text-white">Terms of Service</Link>.</p></div>
+          <div className="flex justify-center border-t border-white/5 pt-6"><p className="text-xs text-text-dim">By continuing you agree to our <Link to="/terms" className="text-primary underline underline-offset-2 hover:text-white">Terms of Service</Link>.</p></div>
         </section>
       </m.div>
     </div>

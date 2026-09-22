@@ -80,6 +80,15 @@ describe("a11y source guards", () => {
     expect(read("src/design/board/depth.tsx")).toMatch(/aria-pressed=\{tab === t\}/);
   });
 
+  it("the Terms link inside the login/signup footer sentence is not distinguished by color alone", () => {
+    // axe link-in-text-block on /login and /signup (both render Login): a link
+    // inside running text needs a non-color cue, so it is underlined.
+    const login = read("src/views/Login.tsx");
+    const terms = login.match(/<Link to="\/terms"[^>]*>/)?.[0];
+    expect(terms).toBeDefined();
+    expect(terms).toMatch(/\bunderline\b/);
+  });
+
   it("flagged small metadata text does not drop below text-dim/80", () => {
     for (const file of ["src/components/article.tsx", "src/views/Changelog.tsx", "src/components/demos/WdbxLiveDemo.tsx"]) {
       expect(read(file), file).not.toMatch(/(?<!placeholder:)text-text-dim\/[5-7]0\b/);
