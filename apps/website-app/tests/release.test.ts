@@ -93,7 +93,7 @@ it("loads the built UI through native ESM and preserves interactive client bound
 
 it("stops a wrapper and its listening grandchild before reusing the verification port", async () => {
   const listener =
-    'const s=require("node:net").createServer(); s.listen(0,"127.0.0.1",()=>console.log(s.address().port));';
+    'const s=require("node:net").createServer(); s.listen(0,"127.0.0.1",()=>process.stdout.write(s.address().port+"\\n"));';
   const wrapper = `require("node:child_process").spawn(process.execPath,["-e",${JSON.stringify(listener)}],{stdio:"inherit"});`;
   const child = spawn(process.execPath, ["-e", wrapper], {
     detached: process.platform !== "win32",
