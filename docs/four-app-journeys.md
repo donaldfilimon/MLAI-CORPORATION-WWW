@@ -54,7 +54,7 @@ Public `https://quesar.cloud/` returned HTTP 200 and matched the committed stati
 
 ## Public website acceptance
 
-The [browser receipt](../apps/web/docs/verification/journeys-web-20260908.json) records
+The [browser receipt](../apps/quasar-web/docs/verification/journeys-web-20260908.json) records
 Chromium, Firefox and WebKit navigation, research filtering/search, original PDF bytes,
 mobile menu focus, and standalone Pages at 390/768/1440 pixels. Production CSP stayed
 enabled through a temporary HTTPS loopback proxy; only its self-signed test certificate

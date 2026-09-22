@@ -1,5 +1,5 @@
-/* The "Lab" identity, shared with apps/web and apps/mobile. Values trace to
-   `apps/web/src/index.css` `:root`; the oklch-only tokens were converted to sRGB
+/* The "Lab" identity, shared with apps/quasar-web and apps/mobile. Values trace to
+   `apps/quasar-web/src/index.css` `:root`; the oklch-only tokens were converted to sRGB
    with gamut clipping (converter validated against known Lab values). The raw
    hex tokens come from @mlai/design-tokens. */
 import { labColor } from "@mlai/design-tokens";

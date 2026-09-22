@@ -9,14 +9,14 @@ duplicate their detailed instructions here.
 
 | Surface | Read before editing |
 |---|---|
-| `apps/web` | `apps/web/AGENTS.md`, `apps/web/CLAUDE.md`, and `apps/web/infra/README.md` for OpenTofu |
+| `apps/quasar-web` | `apps/quasar-web/AGENTS.md`, `apps/quasar-web/CLAUDE.md`, and `apps/quasar-web/infra/README.md` for OpenTofu |
 | `apps/mobile` | `apps/mobile/AGENTS.md`, `apps/mobile/CLAUDE.md` |
 | `apps/quasar` | `apps/quasar/README.md` — this app has no `AGENTS.md` or `CLAUDE.md` |
 | `apps/website-app` | `apps/website-app/AGENTS.md`, `apps/website-app/CLAUDE.md`, and `apps/website-app/README.md` |
 | `apps/research-sites` | `apps/research-sites/AGENTS.md`, `apps/research-sites/CLAUDE.md` (generated export; never hand-edit `public/`) |
 | `packages/*` | that package's own `README.md`; `packages/trailer-engine` has none, so read its `src/index.ts` exports |
 
-`apps/web` is the canonical production Next.js website; `apps/website-app` is
+`apps/quasar-web` is the canonical production Next.js website; `apps/website-app` is
 the independently configured local Next.js application. Other trees
 by that name exist elsewhere on this machine (`~/CLAUDE.md` maps them), so
 confirm which one a request means before editing.
@@ -33,7 +33,7 @@ bun run check            # check:topology, check:workflows, check:tooling, then 
 bun run check:topology   # bun packages/tooling/src/check-topology.ts
 bun run check:workflows  # pinned Actionlint 1.7.12 via Go (requires Go 1.25+)
 bun run check:tooling    # repository wrapper regression tests
-bun run check:web        # cd apps/web && lint && test && build
+bun run check:web        # cd apps/quasar-web && lint && test && build
 bun run check:mobile     # cd apps/mobile && typecheck && test && lint && expo export
 bun run check:quasar     # apps/quasar typecheck && test, then export:web in apps/quasar/apps/quasar
 bun run check:website-app # isolated data wrapper: db:migrate, then check
@@ -64,7 +64,7 @@ rather than inside one app's docs.
   types. `AGENTS.md` explains both; keep both.
 
 - **The test runner differs per app, and the wrong invocation fails quietly.**
-  `bun run test` is Vitest in `apps/web` and Jest in `apps/mobile`; a bare
+  `bun run test` is Vitest in `apps/quasar-web` and Jest in `apps/mobile`; a bare
   `bun test` in either one invokes Bun's own runner instead and does not run
   the suite you meant. `apps/quasar` is the exception: its `test` script
   genuinely is `bun test packages`.
@@ -77,17 +77,17 @@ rather than inside one app's docs.
 - **`@mlai/contracts` is a type-only vocabulary shared by two apps.** Web and
   mobile each consume it through a `workspace:*` dependency,
   and every use in app source is an `import type`
-  (`apps/web/src/components/site/accent.ts`,
+  (`apps/quasar-web/src/components/site/accent.ts`,
   `apps/mobile/lib/brand.ts`, `apps/mobile/lib/theme.ts`).
   `@mlai/design-tokens` holds the five raw Lab hex colors (`labColor`) and is
   a **runtime** import in both Expo `lib/theme.ts` files, so a change there
   reaches mobile and Quasar. Web keeps the same values in `src/index.css`;
-  `apps/web/src/__tests__/design-tokens.test.ts` fails if the two drift, so
+  `apps/quasar-web/src/__tests__/design-tokens.test.ts` fails if the two drift, so
   change both together and run `check:web`, `check:mobile` and
   `check:quasar`. Semantic tokens stay app-local. `@mlai/trailer-engine` is
-  the shared package with the most runtime code: `apps/web` depends on it via
+  the shared package with the most runtime code: `apps/quasar-web` depends on it via
   `workspace:*`, it exports raw `.ts` source, and the
-  film/trailer code in `apps/web/src/film` and `apps/web/src/abbey-trailer`
+  film/trailer code in `apps/quasar-web/src/film` and `apps/quasar-web/src/abbey-trailer`
   plus their `film-*`/`abbey-trailer` tests import it. A change there is web
   behavior, so run `check:web`, not only `check:tooling`.
 - **A green local `bun run check` does not prove CI's install step.**
@@ -99,11 +99,11 @@ rather than inside one app's docs.
   `bun install --frozen-lockfile --lockfile-only` as the drift check, while
   `install:all` is deliberately non-frozen. Lockfile drift therefore surfaces
   in CI, or locally only if you run that same command.
-- **`apps/web/site/` is a separately published artifact, not a build output.**
+- **`apps/quasar-web/site/` is a separately published artifact, not a build output.**
   GitHub Pages publishes it from `.github/workflows/pages.yml` with Actions as
   the source; the legacy `gh-pages` branch is retired and must not be
-  recreated. Some brand assets exist in both `apps/web/public/` and
-  `apps/web/site/`, and regenerating the `public/` copies does not touch the
+  recreated. Some brand assets exist in both `apps/quasar-web/public/` and
+  `apps/quasar-web/site/`, and regenerating the `public/` copies does not touch the
   `site/` ones.
 
 <!-- machine-git-policy -->

@@ -20,7 +20,7 @@ credentials, documents, model weights, environments and build outputs were not c
 
 ## Architecture and commands
 
-`apps/web` remains the canonical production website. `apps/website-app` retains
+`apps/quasar-web` remains the canonical production website. `apps/website-app` retains
 its independent Next.js runtime, SQLite/Better Auth, shared UI package, Python
 worker and non-deployable Eve scaffold. Their authentication, data stores and
 public routes remain distinct. This is a repository integration, not a runtime
@@ -63,7 +63,7 @@ UUID-isolated synthetic data/build directories. Private source-checkout state
 was not used. Research tests verified keyboard navigation, search persistence,
 clear-button focus, narrow reflow, PDF downloads and absence of page errors.
 
-The pre-existing edit to `apps/web/scripts/crawl-links.mjs` was preserved outside
+The pre-existing edit to `apps/quasar-web/scripts/crawl-links.mjs` was preserved outside
 the merge commit. Hosted CI, Node 24 execution, public deployment, the complete
 authenticated browser suite and live ABI/WDBX/model integration were not run for
 this import. Historical receipts carried from the source are not new acceptance

@@ -2,7 +2,7 @@
 // The single source of truth for easing across the graph (fx, engine, scenes).
 //
 // Framework-agnostic by construction, so it lives in the trailer engine package
-// rather than beside the React bindings. apps/web/src/film/easing.ts re-exports
+// rather than beside the React bindings. apps/quasar-web/src/film/easing.ts re-exports
 // it, which is why the ~13 `../easing` importers there need no change.
 
 export type EaseFn = (t: number) => number;

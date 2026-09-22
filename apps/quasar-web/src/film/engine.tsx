@@ -85,6 +85,32 @@ export function RectSprite({ x = 0, y = 0, width = 100, height = 100, color = "#
     opacity, transform: `scale(${scale})`, transformOrigin: "center", ...(render ? render(ctx) : {}) }} />;
 }
 
+/* ── reduced motion ───────────────────────────────────────────── */
+
+export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+type MatchMediaLike = (query: string) => { matches: boolean };
+
+/**
+ * True when the environment asks for reduced motion, in which case the Stage
+ * clock holds instead of advancing. Takes the matchMedia function as a
+ * parameter so the gating is testable in the Node-only Vitest setup; the
+ * default reads `window.matchMedia` and answers false with no DOM or when the
+ * browser lacks matchMedia.
+ */
+export function prefersReducedMotion(
+  matchMedia: MatchMediaLike | undefined = typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia.bind(window)
+    : undefined,
+): boolean {
+  if (!matchMedia) return false;
+  try {
+    return matchMedia(REDUCED_MOTION_QUERY).matches === true;
+  } catch {
+    return false;
+  }
+}
+
 /* ── stage ────────────────────────────────────────────────────── */
 
 export function Stage({ width = 1920, height = 1080, duration = 10, background = "#040406",
@@ -138,8 +164,9 @@ export function Stage({ width = 1920, height = 1080, duration = 10, background =
     if (!playing || !ready) { lastTsRef.current = null; return; }
     const stepFrame = (ts: number) => {
       if (lastTsRef.current == null) lastTsRef.current = ts;
-      // reduced-motion check: if enabled, stop the clock
-      if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // reduced-motion check: if enabled, hold the clock (keep polling so a
+      // change in the OS setting resumes playback without a remount).
+      if (prefersReducedMotion()) {
         lastTsRef.current = ts;
         rafRef.current = requestAnimationFrame(stepFrame);
         return;

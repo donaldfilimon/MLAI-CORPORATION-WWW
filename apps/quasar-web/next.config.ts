@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
   // directory (the isolated-check script uses `.next-gate`), mirroring
   // apps/website-app.
   distDir: process.env.NEXT_DIST_DIR || ".next",
-  // apps/web is one workspace of the repository-root Bun install: its
+  // apps/quasar-web is one workspace of the repository-root Bun install: its
   // dependencies are symlinks into <repo>/node_modules/.bun and the shared
   // packages live in <repo>/packages. Tracing and Turbopack must both see the
   // repository root, and the Dockerfile runs the traced standalone server.

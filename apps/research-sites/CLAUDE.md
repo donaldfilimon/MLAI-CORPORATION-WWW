@@ -101,7 +101,7 @@ than assumed. Run this from the repository root, not from `apps/research-sites`:
 git cat-file -t <sourceRevision>                        # it is a real commit
 git merge-base --is-ancestor <sourceRevision> main      # it is on the canonical line
 git diff --name-only <sourceRevision>..main -- \
-  apps/web/app/research apps/web/src/components/research apps/web/scripts/export-research.tsx
+  apps/quasar-web/app/research apps/quasar-web/src/components/research apps/quasar-web/scripts/export-research.tsx
 ```
 
 Empty output from the last command means the research surface has not moved and this
@@ -116,8 +116,8 @@ that point, and a re-export would have produced the same bytes. Re-measure rathe
 trusting this line; it dates the moment, not the repository.
 
 The path list above is not the whole input set. The exporter builds `assets/lab.css` with
-Tailwind over all of `apps/web` (`base: root`), so a class added or removed anywhere in
-`apps/web` changes exported bytes even when no research path moved. A re-export plus diff
+Tailwind over all of `apps/quasar-web` (`base: root`), so a class added or removed anywhere in
+`apps/quasar-web` changes exported bytes even when no research path moved. A re-export plus diff
 (below) is the only complete freshness test.
 
 Regenerated 2026-09-17 from `07fe5fbc549bd0143f8047a299b77a916a8d0f06` (then `origin/main`,
@@ -134,7 +134,7 @@ The exporter refuses any destination inside the repository, so
 `--output apps/research-sites` throws by design. Export to scratch, then copy:
 
 ```sh
-# from apps/web, in a CLEAN checkout (a dirty tree sets sourceDirty and marks every footer)
+# from apps/quasar-web, in a CLEAN checkout (a dirty tree sets sourceDirty and marks every footer)
 bun scripts/export-research.tsx --output /private/tmp/<scratch> --generated-at <ISO>
 diff -r /private/tmp/<scratch>/public apps/research-sites/public   # from the repo root
 rm -rf apps/research-sites/public && ditto /private/tmp/<scratch>/public apps/research-sites/public
@@ -161,7 +161,7 @@ the exporter's templates and would overwrite this package's scripts.
 Page layout mirrors it: `public/index.html` is the collection landing page,
 `public/research/index.html` the index, and `public/research/<slug>/index.html` one page per
 publication. Every page loads `assets/discovery.js` (exported from
-`apps/web/scripts/research-discovery.js`) with `defer`; no page loads a `filter.js`, and
+`apps/quasar-web/scripts/research-discovery.js`) with `defer`; no page loads a `filter.js`, and
 `src/filter.ts` is historical. It is progressive enhancement, and every article link works
 without JavaScript.
 
@@ -173,9 +173,9 @@ offline-complete. AGENTS.md's "bundled locally" describes the local half.
 
 Prose, HTML, PDFs, CSS, and JavaScript under `public/` are exporter output. Fixing content by
 hand here fixes the review copy and diverges it from source. Route content changes to
-`apps/web` and its exporter, `apps/web/scripts/export-research.tsx`, in this same repository;
+`apps/quasar-web` and its exporter, `apps/quasar-web/scripts/export-research.tsx`, in this same repository;
 the local `build` is not a regeneration path.
 
 Since 2026-09-16 this artifact lives inside the MLAI monorepo as `apps/research-sites`. It is
-not `apps/web` (the source it is exported from) and not `apps/website-app` (the independent
+not `apps/quasar-web` (the source it is exported from) and not `apps/website-app` (the independent
 Next.js application). Confirm which MLAI tree a request means before editing.

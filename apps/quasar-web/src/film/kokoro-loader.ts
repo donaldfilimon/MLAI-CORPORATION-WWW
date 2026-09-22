@@ -1,4 +1,4 @@
-// kokoro-loader.ts — the one place apps/web knows about Kokoro and ONNX Runtime.
+// kokoro-loader.ts — the one place apps/quasar-web knows about Kokoro and ONNX Runtime.
 //
 // AudioEngine (@mlai/trailer-engine) takes a `LoadTTS` function and owns the
 // retries; this file owns one attempt: the CDN import, device detection, the

@@ -5,7 +5,7 @@ Canonical project guidance; `CLAUDE.md` adds source-level detail and commands.
 This is the MLAI website and local application, integrated under `apps/website-app`.
 It keeps an independent runtime, but its JavaScript dependencies (including
 `packages/ui` and `mlai-website-agent`) are members of the repository's root Bun
-workspace and are locked by the root `bun.lock`. `apps/web` is the canonical
+workspace and are locked by the root `bun.lock`. `apps/quasar-web` is the canonical
 production website. ABI, Abbey, and WDBX remain external services.
 
 ## Architecture

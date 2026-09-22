@@ -205,7 +205,7 @@ bun scripts/verify-journeys.ts --output /absolute/new-revision-receipt.json
 ```
 
 The verifier requires the existing Playwright 1.63.0 tooling in the sibling
-`apps/web/.ds-sync` environment and its Chromium installation. It does not install
+`apps/quasar-web/.ds-sync` environment and its Chromium installation. It does not install
 browser tooling silently. It serves the exported Expo app, copies the real Next
 template, requires a frozen install, and uses disposable service/data directories
 and available ports. It tests connection persistence, origin switching, preview

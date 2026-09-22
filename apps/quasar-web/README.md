@@ -4,7 +4,7 @@
 
 # Quesar by MLAI
 
-This application lives at `apps/web/` in the MLAI integration repository. Run
+This application lives at `apps/quasar-web/` in the MLAI integration repository. Run
 app-local commands from this directory or use `bun run check:web` at the
 repository root; web-specific OpenTofu also lives here under `infra/`.
 

@@ -2,7 +2,7 @@
 
 # Quesar by MLAI
 
-This application lives at `apps/web/` in the MLAI integration repository. Run app-local commands here or use `bun run check:web` at the repository root; web-specific OpenTofu lives under `infra/`.
+This application lives at `apps/quasar-web/` in the MLAI integration repository. Run app-local commands here or use `bun run check:web` at the repository root; web-specific OpenTofu lives under `infra/`.
 
 ## Project Context
 Production website and invite-only private AI operations console for Quesar by MLAI. **Next.js 15 App Router + React 19 + TailwindCSS v4, run on Bun** — one process serves pages and `/api/*` route handlers for WorkOS organization access, Gemini through Cloudflare AI Gateway, consent/audits, inquiries, telemetry, and admin reads.

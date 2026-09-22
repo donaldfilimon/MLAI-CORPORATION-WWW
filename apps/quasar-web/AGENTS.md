@@ -1,6 +1,6 @@
 # Repository Guide
 
-This application lives at `apps/web/` in the MLAI integration repository. Run
+This application lives at `apps/quasar-web/` in the MLAI integration repository. Run
 app-local commands from this directory or use `bun run check:web` at the
 repository root; web-specific OpenTofu also lives here under `infra/`.
 
@@ -13,9 +13,9 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 
 ## Commands And Gates
 
-- Install from the repository root: this app is one workspace of the root Bun workspace, locked by the root `bun.lock` (no app lockfile). CI runs `bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/web` there. `@mlai/contracts` and `@mlai/trailer-engine` are `workspace:*` dependencies.
+- Install from the repository root: this app is one workspace of the root Bun workspace, locked by the root `bun.lock` (no app lockfile). CI runs `bun install --frozen-lockfile --filter @mlai/platform --filter @quesar/web` there. `@mlai/contracts` and `@mlai/trailer-engine` are `workspace:*` dependencies.
 - Declare every package the app or its scripts import. The isolated linker exposes only declared dependencies, so a package that was only reachable through another package's dependencies (as `postcss` once was for `scripts/export-research.tsx`) fails to resolve.
-- `next.config.ts` sets `output: "standalone"` and points `outputFileTracingRoot` and `turbopack.root` at the repository root. The Dockerfile builds from the repository root and runs `.next/standalone/apps/web/server.js`.
+- `next.config.ts` sets `output: "standalone"` and points `outputFileTracingRoot` and `turbopack.root` at the repository root. The Dockerfile builds from the repository root and runs `.next/standalone/apps/quasar-web/server.js`.
 - `bun run dev` starts the complete app on port 3000. `bun run start` honors an injected `PORT`.
 - `bun run lint` is TypeScript checking (`tsc --noEmit`), not ESLint or formatting.
 - `bun run test` runs Vitest in a Node-only environment. There is no jsdom/component-test setup. Focus with `bunx vitest run src/__tests__/file.test.ts` or `bunx vitest run -t "name"`; do not use `bun test`, which invokes Bun's runner.

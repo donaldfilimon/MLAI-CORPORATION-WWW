@@ -6,7 +6,7 @@ Lab tokens are shared across MLAI. Product narratives are not. One tagline per s
 
 Tagline: **Private AI operations.**
 
-Never put **Intelligence Without Limits** on the Quesar hero, default Open Graph card, or `apps/web/site/` companion. Quesar is invite-only private AI ops with an audit trail — not the Abbey/ABI claim.
+Never put **Intelligence Without Limits** on the Quesar hero, default Open Graph card, or `apps/quasar-web/site/` companion. Quesar is invite-only private AI ops with an audit trail — not the Abbey/ABI claim.
 
 ## Abbey Bot, Abbey, and ABI
 

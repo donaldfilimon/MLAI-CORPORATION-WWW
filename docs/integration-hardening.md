@@ -4,7 +4,7 @@
 
 Implementation and bounded local acceptance are complete on canonical `main` in
 `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`. Implementation commits are
-`e9f228c` and `3ce1f0c`. Four apps remain independent: production `apps/web`,
+`e9f228c` and `3ce1f0c`. Four apps remain independent: production `apps/quasar-web`,
 Expo `apps/mobile`, nested Bun `apps/quasar`, and local `apps/website-app`.
 Existing installations, private data, authentication and provider configuration
 were preserved. Historical imported receipts below other ledgers are not current

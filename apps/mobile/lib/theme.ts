@@ -1,7 +1,7 @@
 /* Quesar mobile — design tokens. The "Lab" identity, shared with www: near-black
    surfaces, three product accents, Spectral / Geist / JetBrains Mono.
 
-   Every value below is traceable to `apps/web/src/index.css` `:root`. Raw hex tokens
+   Every value below is traceable to `apps/quasar-web/src/index.css` `:root`. Raw hex tokens
    (--ink, --cyan, --violet, --emerald, --amber) come from @mlai/design-tokens. The three
    that exist only as oklch (--foreground, --muted-foreground, --secondary) were
    converted to sRGB with gamut clipping; the converter was validated against

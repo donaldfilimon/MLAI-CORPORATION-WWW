@@ -17,7 +17,7 @@ only the static `site/` companion. Cloud Run is the application runtime.
 ## GitHub Pages companion domain boundary
 
 The Pages workflow intentionally publishes only the static companion at the
-repository's default project Pages URL. Do not point `quesar.cloud` or `www.quesar.cloud` at GitHub Pages, add `apps/web/site/CNAME`, or set either hostname as the repository's Pages custom domain. Those hostnames must continue through Cloudflare to the Google HTTPS load balancer because the production Next.js process also owns `/api/*`, WorkOS callbacks, cookies, Turnstile, and scheduled retention requests.
+repository's default project Pages URL. Do not point `quesar.cloud` or `www.quesar.cloud` at GitHub Pages, add `apps/quasar-web/site/CNAME`, or set either hostname as the repository's Pages custom domain. Those hostnames must continue through Cloudflare to the Google HTTPS load balancer because the production Next.js process also owns `/api/*`, WorkOS callbacks, cookies, Turnstile, and scheduled retention requests.
 
 Hostinger remains the registrar until the documented Cloudflare nameserver
 cutover. The four GitHub Pages apex IPs are therefore not part of this

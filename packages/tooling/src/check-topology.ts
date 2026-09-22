@@ -35,7 +35,7 @@ export const requiredPaths = [
 // A second lockfile would silently resolve a different tree from the root one.
 // (apps/quasar/templates/next-site stays outside the workspace and keeps its own.)
 export const forbiddenPaths = [
-  "apps/web/bun.lock",
+  "apps/quasar-web/bun.lock",
   "apps/mobile/bun.lock",
   "apps/quasar/bun.lock",
   "apps/website-app/bun.lock",

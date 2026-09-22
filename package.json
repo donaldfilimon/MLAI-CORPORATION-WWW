@@ -29,7 +29,7 @@
     "dev:mobile": "cd apps/mobile && bun run start",
     "dev:quasar": "cd apps/quasar/apps/quasar && bun run start",
     "check:website-app": "sh packages/tooling/scripts/check-website-app.sh",
-    "dev:website-app": "cd apps/quasar-website-app && bun run dev",
+    "dev:website-app": "cd apps/website-app && bun run dev",
     "check:research-sites": "cd apps/research-sites && bun run check",
     "check:workflows": "go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 -shellcheck= -pyflakes=",
     "check:tooling": "bun test packages/tooling/src"

@@ -3,7 +3,7 @@
 # The build context is the repository root: every app installs through the one
 # root Bun workspace (root bun.lock + bunfig.toml, isolated linker). A frozen
 # install needs the root manifest, the lockfile, the linker settings and every
-# workspace manifest the lockfile names, even though only @mlai/web and its
+# workspace manifest the lockfile names, even though only @quesar/web and its
 # workspace dependencies (packages/*) are installed. The root .dockerignore
 # keeps other apps' sources, data and build output out of the context.
 FROM oven/bun:1.4-slim AS builder
@@ -12,7 +12,7 @@ ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 
 COPY package.json bun.lock bunfig.toml ./
-COPY apps/web/package.json apps/web/
+COPY apps/quasar-web/package.json apps/quasar-web/
 COPY apps/mobile/package.json apps/mobile/
 COPY apps/quasar/package.json apps/quasar/
 COPY apps/quasar/packages/shared/package.json apps/quasar/packages/shared/
@@ -21,16 +21,16 @@ COPY apps/quasar/apps/quasar/package.json apps/quasar/apps/quasar/
 COPY apps/website-app/package.json apps/website-app/
 COPY apps/website-app/packages/ui/package.json apps/website-app/packages/ui/
 COPY apps/website-app/mlai-website-agent/package.json apps/website-app/mlai-website-agent/
-# Shared workspace packages in full: @mlai/web imports @mlai/contracts types
+# Shared workspace packages in full: @quesar/web imports @mlai/contracts types
 # and the @mlai/trailer-engine runtime source.
 COPY packages ./packages
 # @mlai/platform (the root workspace) is filtered in too: its @types/react pin
 # is the fallback that next's own declarations resolve through (bunfig.toml
 # explains why), and `next build` type-checks against it.
-RUN bun install --filter @mlai/platform --filter @mlai/web --frozen-lockfile
+RUN bun install --filter @mlai/platform --filter @quesar/web --frozen-lockfile
 
-COPY apps/web ./apps/web
-WORKDIR /workspace/apps/web
+COPY apps/quasar-web ./apps/quasar-web
+WORKDIR /workspace/apps/quasar-web
 RUN bun run build
 
 FROM oven/bun:1.4-slim AS runner
@@ -45,14 +45,14 @@ RUN groupadd --system app && useradd --system --gid app --home-dir /app app \
     && chown app:app /app
 
 # output: "standalone" with the tracing root at the repository root emits the
-# server at .next/standalone/apps/web/server.js beside a pruned node_modules
+# server at .next/standalone/apps/quasar-web/server.js beside a pruned node_modules
 # tree. Static assets and public/ are not traced and are copied beside it.
-COPY --from=builder --chown=app:app /workspace/apps/web/.next/standalone ./
-COPY --from=builder --chown=app:app /workspace/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=app:app /workspace/apps/web/public ./apps/web/public
+COPY --from=builder --chown=app:app /workspace/apps/quasar-web/.next/standalone ./
+COPY --from=builder --chown=app:app /workspace/apps/quasar-web/.next/static ./apps/quasar-web/.next/static
+COPY --from=builder --chown=app:app /workspace/apps/quasar-web/public ./apps/quasar-web/public
 
 USER app
-WORKDIR /app/apps/web
+WORKDIR /app/apps/quasar-web
 EXPOSE 3000
 
 # Bun has fetch built in, so the slim image needs no curl/wget dependency.

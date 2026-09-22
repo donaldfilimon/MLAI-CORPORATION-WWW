@@ -1,57 +1,63 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, act } from "@testing-library/react";
-import { Stage } from "../film/engine";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { REDUCED_MOTION_QUERY, prefersReducedMotion } from "../film/engine";
 
-describe("Stage Reduced Motion Gating", () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
+/**
+ * The Stage clock in `src/film/engine.tsx` holds its playhead while the OS asks
+ * for reduced motion. The gate is `prefersReducedMotion`, which takes the
+ * matchMedia function as a parameter precisely so this can be pinned in the
+ * Node-only Vitest environment (no jsdom, no component rendering — see
+ * AGENTS.md "Commands And Gates"). Rendering `<Stage>` itself would need a DOM,
+ * ResizeObserver and requestAnimationFrame, none of which exist here.
+ */
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe("prefersReducedMotion", () => {
+  it("asks for the standard reduced-motion media query", () => {
+    const matchMedia = vi.fn().mockReturnValue({ matches: false });
+    prefersReducedMotion(matchMedia);
+    expect(matchMedia).toHaveBeenCalledTimes(1);
+    expect(matchMedia).toHaveBeenCalledWith(REDUCED_MOTION_QUERY);
+    expect(REDUCED_MOTION_QUERY).toBe("(prefers-reduced-motion: reduce)");
   });
 
-  it("stops animations when prefers-reduced-motion is reduce", async () => {
-    // Mock matchMedia to return matches: true
-    const matchMediaMock = vi.fn().mockReturnValue({
-      matches: true,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    });
-    vi.stubGlobal("window", {
-      ...window,
-      matchMedia: matchMediaMock,
-    });
-
-    // We need to monitor if setTime is called or if the time advances.
-    // Since Stage is a complex component, we can check if the playhead moves.
-    // However, the internal state is private. We might need to export the 
-    // internal state for testing or use a helper.
-    
-    // For now, let's just verify that the matchMedia was called.
-    render(<Stage duration={10} autoplay={true} />);
-    
-    // Since it's an async loop, we wait a bit.
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
-
-    expect(matchMediaMock).toHaveBeenCalledWith("(prefers-reduced-motion: reduce)");
+  it("holds the clock when the query matches", () => {
+    expect(prefersReducedMotion(() => ({ matches: true }))).toBe(true);
   });
 
-  it("allows animations when prefers-reduced-motion is not reduce", async () => {
-    const matchMediaMock = vi.fn().mockReturnValue({
-      matches: false,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    });
-    vi.stubGlobal("window", {
-      ...window,
-      matchMedia: matchMediaMock,
-    });
+  it("lets the clock run when the query does not match", () => {
+    expect(prefersReducedMotion(() => ({ matches: false }))).toBe(false);
+  });
 
-    render(<Stage duration={10} autoplay={true} />);
-    
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
+  it("treats a non-boolean `matches` as not reduced rather than truthy", () => {
+    // A broken polyfill returning e.g. a string must not freeze the film.
+    expect(prefersReducedMotion(() => ({ matches: "yes" as unknown as boolean }))).toBe(false);
+  });
 
-    expect(matchMediaMock).toHaveBeenCalledWith("(prefers-reduced-motion: reduce)");
+  it("answers false with no DOM (server render, Node tests)", () => {
+    expect(typeof window).toBe("undefined");
+    expect(prefersReducedMotion()).toBe(false);
+  });
+
+  it("answers false when the browser has no matchMedia", () => {
+    vi.stubGlobal("window", {});
+    expect(prefersReducedMotion()).toBe(false);
+  });
+
+  it("reads window.matchMedia by default when present", () => {
+    const matchMedia = vi.fn().mockReturnValue({ matches: true });
+    vi.stubGlobal("window", { matchMedia });
+    expect(prefersReducedMotion()).toBe(true);
+    expect(matchMedia).toHaveBeenCalledWith(REDUCED_MOTION_QUERY);
+  });
+
+  it("fails open (clock runs) when matchMedia throws", () => {
+    expect(
+      prefersReducedMotion(() => {
+        throw new Error("unsupported");
+      }),
+    ).toBe(false);
   });
 });

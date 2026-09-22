@@ -5,7 +5,7 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
 
 ## Boundaries
 
-- `apps/web` is the canonical Next.js website. Do not restore the retired
+- `apps/quasar-web` is the canonical Next.js website. Do not restore the retired
   mobile `www/` snapshot or collapse the website into an Expo static mock.
 - `apps/mobile` is the Expo companion. Preserve its native CloudKit versus
   encrypted-local fallback distinction and its signed-device acceptance gap.
@@ -18,7 +18,7 @@ app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for
 - `apps/research-sites` is the generated static export of the research
   collection, imported with its history on 2026-09-16. It has zero
   dependencies and no install step. Never hand-edit its `public/`: regenerate it
-  with `apps/web/scripts/export-research.tsx` and keep the manifest provenance.
+  with `apps/quasar-web/scripts/export-research.tsx` and keep the manifest provenance.
 - `packages/contracts` contains names and types, not publishable benchmark
   values. App content sources remain authoritative for copy and figures.
 - `packages/tooling` holds repository checks and the isolated website-app gate
@@ -61,7 +61,7 @@ bun run check:mobile
 bun run check:quasar
 bun run check:website-app
 
-bun run dev:web          # cd apps/web && bun run dev
+bun run dev:web          # cd apps/quasar-web && bun run dev
 bun run dev:mobile       # cd apps/mobile && bun run start
 bun run dev:website-app  # cd apps/website-app && bun run dev
 bun run dev:quasar       # cd apps/quasar/apps/quasar && bun run start
@@ -89,7 +89,7 @@ local build alone.
 - `check:tooling` runs `bun test packages/tooling/src` for repository wrapper
   regressions; the aggregate gate and CI topology job include it.
 - `check:web`: `lint` is `tsc --noEmit`, then Node-only Vitest, then sitemap/llms
-  generation and Next build. From `apps/web`, focus with
+  generation and Next build. From `apps/quasar-web`, focus with
   `bun run test src/__tests__/landing-page.test.ts`; do not substitute `bun test`.
 - `check:mobile`: TypeScript, Jest in-band, Expo lint, Expo **web** export.
   From `apps/mobile`: `bun run test __tests__/cloud.test.ts --runInBand`.
@@ -160,4 +160,4 @@ called done. Full policy: `~/.claude/CLAUDE.md` (*Git discipline*).
 
 ## GitHub Pages
 
-- **GitHub Pages** publishes the static companion in `apps/web/site/` via `.github/workflows/pages.yml` (Actions only). The legacy `gh-pages` branch is retired; do not recreate it for deploys.
+- **GitHub Pages** publishes the static companion in `apps/quasar-web/site/` via `.github/workflows/pages.yml` (Actions only). The legacy `gh-pages` branch is retired; do not recreate it for deploys.

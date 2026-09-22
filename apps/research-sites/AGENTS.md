@@ -6,7 +6,7 @@ Since 2026-09-16 this artifact lives at `apps/research-sites` inside the MLAI
 monorepo (`donaldfilimon/MLAI-CORPORATION-WWW`), merged with its full history
 from the former standalone `~/dev/active/mlai-research-sites` checkout (kept at
 `~/dev/archive/mlai-research-sites-merged-20260916`). The
-exporter is `apps/web/scripts/export-research.tsx` in this same repository. Run
+exporter is `apps/quasar-web/scripts/export-research.tsx` in this same repository. Run
 `bun run check:research-sites` from the repository root, or `bun run check` here.
 This checkout's origin is `donaldfilimon/MLAI-CORPORATION-WWW`; the
 `git.chatgpt-team.site` origin recorded in older notes belongs to the retired
@@ -17,12 +17,12 @@ standalone copy.
 - `README.md` and `package.json` identify this as an export of canonical MLAI
   research. Do not hand-edit generated prose, HTML, PDFs, CSS, or JavaScript in
   `public/` to fix source behavior.
-- Route source changes to `apps/web` and its exporter,
-  `apps/web/scripts/export-research.tsx`, in this same repository.
+- Route source changes to `apps/quasar-web` and its exporter,
+  `apps/quasar-web/scripts/export-research.tsx`, in this same repository.
   Regeneration is that exporter, not the local `build` command.
 - The exporter refuses any destination inside the repository, so
   `--output apps/research-sites` throws by design. Regenerate from a clean
-  checkout: run the exporter from `apps/web` with `--output` set to an absolute,
+  checkout: run the exporter from `apps/quasar-web` with `--output` set to an absolute,
   non-symlinked scratch directory outside the repo (for example under
   `/private/tmp`), `diff -r` its `public/` against this `public/`, replace
   `public/` as a whole tree (so removed files go too), then run
@@ -58,7 +58,7 @@ standalone copy.
 
 - `public/index.html` and `public/research/` contain the review pages;
   `research-data.json` is the structured collection and `assets/` is bundled locally.
-- Canonical `apps/web/scripts/research-discovery.js` is exported as
+- Canonical `apps/quasar-web/scripts/research-discovery.js` is exported as
   `public/assets/discovery.js`, loaded with `defer`. Historical `src/filter.ts`
   utilities remain tested but are no longer loaded by the exported pages.
   Article links work without JavaScript.

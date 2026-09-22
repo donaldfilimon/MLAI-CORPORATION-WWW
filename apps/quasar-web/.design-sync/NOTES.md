@@ -494,11 +494,11 @@ writes-only as always. Nothing about the writes-only constraint changes.
 0 variantsIdentical**.
 
 - **⚠️ (Second checkout archived to `~/Archive/experimental-2026-09-18/MLAI-CORPORATION-WWW` on 2026-09-18; never sync from there.) THIS REPO HAS A SECOND CHECKOUT, AND IT CARRIES A TRACKED COPY OF `.design-sync/`
-  POINTING AT THE SAME `projectId`.** `~/dev/active/MLAI-CORPORATION-WWW/apps/web/.design-sync/`
+  POINTING AT THE SAME `projectId`.** `~/dev/active/MLAI-CORPORATION-WWW/apps/quasar-web/.design-sync/`
   has a **byte-identical `config.json` and `NOTES.md`** (both are in the durable set, so git
   carries them to every clone). Syncing from there would push *that* checkout's DS source to
   **project `6d97fa83`** — the same project this one anchors. **Always sync from
-  `~/dev/active/mlai/apps/web`.** Two independent tells that this one is the working tree:
+  `~/dev/active/mlai/apps/quasar-web`.** Two independent tells that this one is the working tree:
   it holds the gitignored machine state (`.cache/`, the `node_modules` fork symlink, and
   `lab-compiled.css`), and it is the canonical checkout in `~/CLAUDE.md`. The two checkouts
   are on different commits and neither has fetched the other, so they are not interchangeable.
@@ -546,7 +546,7 @@ stale-tree hazard did not apply).
   (`empty_worklist`), `anchor: "ok"`. **41 unchanged, 0 changed/added/removed**, `pendingGrade: []`.
   Render check (full) **41/41 clean**, same 5 floor cards. Only warn: the known `[TOKENS_MISSING]` 5.
 - **`upload.any` was true with `styling: true` only.** `lab-compiled.css` moved (`f882f98c…` →
-  `66f0cd59…`) because 12 commits under `apps/web/src` since 09-08 (e.g. `786ad8e`) added
+  `66f0cd59…`) because 12 commits under `apps/quasar-web/src` since 09-08 (e.g. `786ad8e`) added
   utilities; no DS source or render hash moved. Tailwind scans all of `src/`, so page-level
   commits alone are enough to require an upload. Uploaded **222 files** writes-only, **0 deletes**.
 - **The local `ds-bundle/_ds_sync.json` can stand in for the fetched anchor** when the last upload
@@ -562,7 +562,7 @@ stale-tree hazard did not apply).
 
 ## Re-sync run (2026-09-16 21:3x) — first run under the root Bun workspace, uploaded writes-only
 
-Run from `~/dev/active/mlai/apps/web` at `64ff43b`, right after the repo moved every app into one
+Run from `~/dev/active/mlai/apps/quasar-web` at `64ff43b`, right after the repo moved every app into one
 root `bun.lock` with `linker = "isolated"` (PR #75) and removed five unreferenced web components.
 
 - **Invocation needs explicit arguments.** A bare `node .ds-sync/resync.mjs --remote` exits 2 with a
@@ -572,7 +572,7 @@ root `bun.lock` with `linker = "isolated"` (PR #75) and removed five unreference
   `4dfed15b…`). The fetched remote `_ds_sync.json` matched `ds-bundle/_ds_sync.json` field for field,
   so the local file was copied over the cache (old copy kept as `remote-sync.json.pre-20260917`).
 - **The isolated linker silently dropped the Geist fonts.** `@import "@fontsource-variable/geist"`
-  now realpaths into `<repo>/node_modules/.bun/…`, outside `apps/web`, so `extractFonts` skipped
+  now realpaths into `<repo>/node_modules/.bun/…`, outside `apps/quasar-web`, so `extractFonts` skipped
   the five `.woff2` files and validate warned `[FONT_DANGLING]`; `_ds_bundle.css` dropped 5 faces.
   Rewriting the compiled CSS urls to the app-local symlink did not help (the converter realpaths
   too). **Fix: `extraFonts: ["node_modules/@fontsource-variable/geist/index.css"]` in

@@ -72,13 +72,13 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/web
+      - run: bun install --frozen-lockfile --filter @mlai/platform --filter @quesar/web
       - run: bun run lint
-        working-directory: apps/web
+        working-directory: apps/quasar-web
       - run: bun run test
-        working-directory: apps/web
+        working-directory: apps/quasar-web
       - run: bun run build
-        working-directory: apps/web
+        working-directory: apps/quasar-web
 
   mobile:
     runs-on: ubuntu-latest
