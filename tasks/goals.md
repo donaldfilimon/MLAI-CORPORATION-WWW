@@ -1601,7 +1601,8 @@ coordinator reviews, gates and commits.
     unreachable; they are left until upstream ranges move.
 
 ## Run CI on a self-hosted runner while hosted Actions are billing-locked
-status: in_progress
+status: blocked
+- **2026-09-22 01:3x EDT (session ed2df7), re-measured:** still waiting on the registration token. `~/actions-runner-mlai` has `run.sh`/`svc.sh` but no `.runner` or `.credentials`, and `launchctl list` shows only the abbey and abi runner labels. `ci.yml` line 34 still targets `[self-hosted, macOS, ARM64, mlai]`. Status set to `blocked`: named stop, Donald enters the token (`.github/self-hosted-runner.md`).
 
 Captured 2026-09-17 05:5x EDT on Donald's choice ("Register a macOS runner"), in the
 same exchange where he skipped `docker build` and took the VoiceOver pass, the
@@ -1624,6 +1625,7 @@ neither present) and a real zoom-control pass himself.
 
 ## Extend web acceptance to zoom emulation, cinematic routes and the signed-in console
 status: in_progress
+- **2026-09-22 01:3x EDT, `a8e100d` (session ed2df7, `/goal continue`):** three cinematic-route items closed. Voice toggle now portals to the Stage's unscaled root (measured 128×43 px at 375 px on `next dev`, was 22×7 at 320), carries `aria-pressed`; End on the scrubber holds at the last frame (`resolveSeek`, measured 69/69 still after 2 s, paused) instead of wrapping; the PREPARING VOICE pulse honors reduced motion; design-lab board switcher, before/after control and token tabs expose `aria-pressed`. Stale text corrected by measurement: "only /showcase/abbey honors reduced motion" was true at capture but `6ea254e` (2026-09-21 21:42) made the shared Stage clock hold under the query, pinned in `film-playback.test.tsx`, so all five films honor it now. `check:web` EXIT 0: lint, 58 files / 510 tests, build (baseline on 8efae45 was 502). Not taken: "every film downloads the voice model on load" is by design (the Stage holds until the voice is ready; the download starts on first pointerdown), so changing it is Donald's call; KaTeX MathML output changes the research export bytes and needs a research-sites regeneration in the same slice. Next: link-in-text on `/login` and `/signup`, then heading-order (needs an axe run).
 
 Opened 2026-09-17 by the previous goal's "still unmeasured" list. Slices close
 one at a time; the signed-in console and the showcase canvases are still open.
