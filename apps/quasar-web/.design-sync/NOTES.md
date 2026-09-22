@@ -493,7 +493,7 @@ writes-only as always. Nothing about the writes-only constraint changes.
 (220 content + sentinel + anchor), **0 deletes**. Render check **41 total, 0 bad, 0 thin,
 0 variantsIdentical**.
 
-- **⚠️ THIS REPO NOW HAS A SECOND CHECKOUT, AND IT CARRIES A TRACKED COPY OF `.design-sync/`
+- **⚠️ (Second checkout archived to `~/Archive/experimental-2026-09-18/MLAI-CORPORATION-WWW` on 2026-09-18; never sync from there.) THIS REPO HAS A SECOND CHECKOUT, AND IT CARRIES A TRACKED COPY OF `.design-sync/`
   POINTING AT THE SAME `projectId`.** `~/dev/active/MLAI-CORPORATION-WWW/apps/web/.design-sync/`
   has a **byte-identical `config.json` and `NOTES.md`** (both are in the durable set, so git
   carries them to every clone). Syncing from there would push *that* checkout's DS source to

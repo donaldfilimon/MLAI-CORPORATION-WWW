@@ -124,14 +124,14 @@ app architecture and commands. Avoid copying long app instructions into the
 root; link to the authoritative file so the copies cannot drift.
 
 <!-- machine-git-policy -->
-## Two permanent checkouts of this repository exist
+## A second full checkout of this repository exists (archived since 2026-09-18)
 
-`~/dev/active/mlai` and `~/dev/active/MLAI-CORPORATION-WWW` are **two full
-checkouts of this same repository**, both tracking `origin/main`. The second was
-created deliberately, on Donald's explicit choice; it is not a worktree and not a
-mistake to clean up. `~/dev/active/mlai` stays the canonical one for ordinary work.
-
-The consequences are easy to get wrong and expensive:
+`~/dev/active/mlai` is the canonical checkout. A second full checkout, created
+deliberately on Donald's explicit choice (not a worktree, not a mistake to clean
+up), was moved with 22 other projects from `~/dev/active/MLAI-CORPORATION-WWW` to
+`~/Archive/experimental-2026-09-18/MLAI-CORPORATION-WWW` on 2026-09-18. It is
+restore-only there: do not develop in it. If it is ever restored, the rules below
+apply again, so they stay recorded:
 
 - A commit made in one checkout is **invisible to the other until it is pushed and
   fetched**. Always `git fetch` in the other before trusting any ahead/behind

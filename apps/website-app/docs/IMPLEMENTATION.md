@@ -21,7 +21,8 @@ activation, schema/auth migration or provider configuration change occurred.
 
 ## Integrated application acceptance (2026-09-08)
 
-Canonical checkout is `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`,
+Canonical checkout at the time was `/Users/donaldfilimon/dev/active/MLAI-CORPORATION-WWW`
+(archived 2026-09-18; the canonical checkout is now `~/dev/active/mlai`),
 with this app under `apps/website-app` alongside independent web/mobile/Quasar.
 Implementation `3ce1f0c` passed Node 24.20.0 / Bun 1.4.0 acceptance at runtime
 SHA-256 `77e2ed9dbd2bdef05869ef3491d633b53caa67e8d2b50c5888c326eb234d5de9`.
