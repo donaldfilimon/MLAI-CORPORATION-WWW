@@ -1,4 +1,4 @@
-import { createAuth } from "@mlai/store";
+import { sharedAuth } from "@mlai/store";
 import { renderWorkspace } from "../../../lib/workspace";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ function refused() {
 export async function GET(request: Request) {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) return refused();
-  const { auth } = createAuth(connectionString);
+  const { auth } = sharedAuth(connectionString);
   const cookie = request.headers.get("cookie") ?? "";
   const token = cookie.match(/(?:^|;\s*)better-auth\.session_token=([^;]+)/)?.[1] ?? null;
   const result = await renderWorkspace(auth, token);

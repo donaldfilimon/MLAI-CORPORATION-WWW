@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "bun scripts/generate-sitemap.ts && bun scripts/build-research.ts && next build && bun scripts/stage-capacitor-www.ts",
+    "build": "bun scripts/generate-sitemap.ts && bun scripts/build-research.ts && next build && bun scripts/stage-capacitor-www.ts && bunx cap sync",
     "start": "next start",
     "sitemap": "bun scripts/generate-sitemap.ts",
     "clean": "rm -rf .next dist",
@@ -27,6 +27,9 @@
     "@mlai/contracts": "workspace:*",
     "@mlai/store": "workspace:*",
     "@mlai/trailer-engine": "workspace:*",
+    "@quasar/shared": "workspace:*",
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/ios": "^7.4.3",
     "capacitor-secure-storage-plugin": "0.12.0",
     "@base-ui/react": "^1.8.0",
     "@fontsource-variable/geist": "^5.3.0",

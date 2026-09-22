@@ -1,24 +1,39 @@
 import { execFileSync } from "node:child_process";
-import { createServer } from "node:http";
+import { createServer, type IncomingMessage } from "node:http";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createStoredSession, readEpisode, readReceipt, readVector } from "@mlai/store";
+import { createStoredSession, readEpisode, readReceipt, readVector, sharedAuth, sharedPoolsCreated } from "@mlai/store";
 import { renderWorkspace } from "../lib/workspace.ts";
 import { probeSidecar } from "../lib/sidecars.ts";
 import { buildCsp } from "../src/lib/csp.ts";
 import { buildResearchExport } from "../lib/research-export.ts";
 import { Providers } from "../app/providers.tsx";
+import { GET } from "../app/app/[[...slug]]/route.ts";
 import Page from "../app/page.tsx";
-import QuasarHome from "../app/quasar/page.tsx";
-import QuasarNew from "../app/quasar/new/page.tsx";
-import QuasarSettingsPage from "../app/quasar/settings/page.tsx";
-import QuasarSitePage from "../app/quasar/site/[id]/page.tsx";
+import {
+  createSite,
+  editSite,
+  getEvents,
+  listSites,
+  previewStart,
+  previewStop,
+  setBaseUrl,
+} from "../lib/quasar-api.ts";
 
 const databaseUrl = process.env.DATABASE_URL ?? "postgres://donaldfilimon@127.0.0.1:5432/mlai";
+
+function readBody(req: IncomingMessage) {
+  return new Promise<string>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on("data", (chunk: Buffer | string) => chunks.push(Buffer.from(chunk)));
+    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    req.on("error", reject);
+  });
+}
 
 function childCount() {
   try {
@@ -49,6 +64,26 @@ describe("apps/mlai shipped behavior", () => {
     expect(allowed.status).toBe(200);
     expect(allowed.body).toContain("Workspace");
     expect(allowed.body).toContain(email);
+    process.env.DATABASE_URL = databaseUrl;
+    const beforePools = sharedPoolsCreated();
+    const unsigned = new Request("http://127.0.0.1/app/workspace");
+    const first = await GET(unsigned);
+    const second = await GET(unsigned);
+    expect(first.status).toBe(401);
+    expect(await first.text()).toBe("Sign in required.");
+    expect(second.status).toBe(401);
+    expect(sharedPoolsCreated() - beforePools).toBe(1);
+    const held = sharedAuth(databaseUrl);
+    expect(sharedAuth(databaseUrl).pool).toBe(held.pool);
+    expect(held.pool.ended).toBe(false);
+    const signed = await GET(
+      new Request("http://127.0.0.1/app/workspace", {
+        headers: { cookie: `better-auth.session_token=${token}` },
+      }),
+    );
+    expect(signed.status).toBe(200);
+    expect(await signed.text()).toContain(email);
+    expect(sharedPoolsCreated() - beforePools).toBe(1);
     await pool.end();
   });
 
@@ -103,13 +138,82 @@ describe("apps/mlai shipped behavior", () => {
     expect(childCount()).toBe(before);
   });
 
-  test("Quasar screens render their primary labels", () => {
-    expect(renderToStaticMarkup(createElement(QuasarHome))).toContain("No sites yet");
-    expect(renderToStaticMarkup(createElement(QuasarNew))).toContain("Name");
-    expect(renderToStaticMarkup(createElement(QuasarNew))).toContain("Prompt");
-    expect(renderToStaticMarkup(createElement(QuasarSettingsPage))).toContain("Server base URL");
-    expect(renderToStaticMarkup(createElement(QuasarSitePage))).toContain("Feed");
-    expect(renderToStaticMarkup(createElement(QuasarSitePage))).toContain("Preview");
+  test("Quasar screens list, create, configure, and drive feed preview and edit by URL", async () => {
+    const seen: string[] = [];
+    const sites: { id: string; name: string; slug: string; createdAt: string; status: "idle"; previewPort: null; promptHistory: { prompt: string; at: string }[] }[] = [];
+    const server = createServer((req, res) => {
+      void (async () => {
+      const url = new URL(req.url ?? "/", "http://127.0.0.1");
+      seen.push(`${req.method} ${url.pathname}${url.search}`);
+      const send = (status: number, body?: unknown) => {
+        res.writeHead(status, body === undefined ? undefined : { "content-type": "application/json" });
+        res.end(body === undefined ? undefined : JSON.stringify(body));
+      };
+      if (req.method === "GET" && url.pathname === "/api/sites") return send(200, sites);
+      if (req.method === "POST" && url.pathname === "/api/sites") {
+        const body = JSON.parse(await readBody(req)) as { name: string; prompt: string };
+        const site = {
+          id: "site-1",
+          name: body.name,
+          slug: body.name.toLowerCase(),
+          createdAt: new Date().toISOString(),
+          status: "idle" as const,
+          previewPort: null,
+          promptHistory: [{ prompt: body.prompt, at: new Date().toISOString() }],
+        };
+        sites.push(site);
+        return send(200, site);
+      }
+      if (req.method === "GET" && url.pathname === "/api/sites/site-1") return send(200, sites[0]);
+      if (req.method === "POST" && url.pathname === "/api/sites/site-1/edit") {
+        const body = JSON.parse(await readBody(req)) as { prompt: string };
+        sites[0]?.promptHistory.push({ prompt: body.prompt, at: new Date().toISOString() });
+        return send(200, sites[0]);
+      }
+      if (req.method === "GET" && url.pathname === "/api/sites/site-1/events") {
+        return send(200, { events: [{ type: "text", text: "generated" }], next: 1 });
+      }
+      if (req.method === "GET" && url.pathname === "/api/sites/site-1/preview") {
+        return send(200, { state: "stopped", port: null, url: null, logTail: [] });
+      }
+      if (req.method === "POST" && url.pathname === "/api/sites/site-1/preview/start") {
+        return send(200, { state: "running", port: 4710, url: "http://127.0.0.1:4710", logTail: [] });
+      }
+      if (req.method === "POST" && url.pathname === "/api/sites/site-1/preview/stop") {
+        return send(200, { state: "stopped", port: null, url: null, logTail: [] });
+      }
+      send(404, { error: "missing" });
+      })().catch((err: unknown) => {
+        res.writeHead(500);
+        res.end(err instanceof Error ? err.message : String(err));
+      });
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", () => resolve()));
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("listener has no port");
+    const before = childCount();
+    try {
+      await setBaseUrl(`http://127.0.0.1:${address.port}`);
+      expect(await listSites()).toEqual([]);
+      const created = await createSite({ name: "Harbor", prompt: "A quiet landing page" });
+      expect(created.name).toBe("Harbor");
+      expect(created.promptHistory[0]?.prompt).toBe("A quiet landing page");
+      expect((await listSites()).map((site) => site.name)).toEqual(["Harbor"]);
+      const feed = await getEvents(created.id, 0);
+      expect(feed.events).toEqual([{ type: "text", text: "generated" }]);
+      const started = await previewStart(created.id);
+      expect(started.state).toBe("running");
+      const edited = await editSite(created.id, "Add a colophon");
+      expect(edited.promptHistory.map((entry) => entry.prompt)).toContain("Add a colophon");
+      const stopped = await previewStop(created.id);
+      expect(stopped.state).toBe("stopped");
+      await expect(setBaseUrl("http://127.0.0.1:9").then(() => listSites())).rejects.toThrow();
+      expect(seen.some((line) => line.startsWith("POST /api/sites"))).toBe(true);
+      expect(seen.some((line) => line.includes("/preview/start"))).toBe(true);
+      expect(childCount()).toBe(before);
+    } finally {
+      server.close();
+    }
   });
 
   test("research export matches the manifest inventory and hashes", async () => {

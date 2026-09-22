@@ -3,8 +3,22 @@ import { Pool } from "pg";
 
 const secret = "mlai-dev-secret-must-be-32-characters-long";
 
+let createdPools = 0;
+let sharedConstructions = 0;
+
+/** How many pg Pools this process has constructed. */
+export function poolsCreated() {
+  return createdPools;
+}
+
+/** How many pools the shared workspace auth has constructed. */
+export function sharedPoolsCreated() {
+  return sharedConstructions;
+}
+
 export function createAuth(connectionString: string) {
-  const pool = new Pool({ connectionString });
+  createdPools += 1;
+  const pool = new Pool({ connectionString, max: 4 });
   const auth = betterAuth({
     appName: "MLAI",
     baseURL: "http://127.0.0.1:3478",
@@ -13,6 +27,18 @@ export function createAuth(connectionString: string) {
     emailAndPassword: { enabled: true, minPasswordLength: 12 },
   });
   return { auth, pool };
+}
+
+const shared = new Map<string, ReturnType<typeof createAuth>>();
+
+/** One pool and Better Auth instance per connection string, reused by /app/*. */
+export function sharedAuth(connectionString: string) {
+  const existing = shared.get(connectionString);
+  if (existing) return existing;
+  sharedConstructions += 1;
+  const created = createAuth(connectionString);
+  shared.set(connectionString, created);
+  return created;
 }
 
 export async function migrateAuth(connectionString: string) {
