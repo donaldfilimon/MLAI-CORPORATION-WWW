@@ -53,7 +53,7 @@ export const researchContext = [
         heading: 'Architecture',
         paragraphs: [
           'The platform model places user-facing interfaces at L6, orchestration at L5, retrieval and learning at L4, acceleration at L3, durable storage at L2, and provenance and audit at L1. The separation is practical: an MCP or TUI surface can coordinate work without being mistaken for the storage engine, and a GPU path can accelerate computation without becoming the source of record.',
-          'The accompanying platform catalog maps concrete MLAI systems onto those layers. ABI spans orchestration and interface concerns, WDBX supplies storage and retrieval primitives, SEA contributes evidence-sensitive learning, GPU backends are acceleration paths, and MCP and TUI expose bounded control surfaces.',
+          'The accompanying platform catalog maps concrete Quesar systems onto those layers. ABI spans orchestration and interface concerns, WDBX supplies storage and retrieval primitives, SEA contributes evidence-sensitive learning, GPU backends are acceleration paths, and MCP and TUI expose bounded control surfaces.',
         ],
       },
       {
@@ -66,8 +66,8 @@ export const researchContext = [
     ],
     sources: [
       {
-        title: 'MLAI platform catalog',
-        url: mlaiSource('apps/quasar-web/src/data/categories/platform.ts'),
+        title: 'Quesar platform catalog',
+        url: mlaiSource('apps/web/src/data/categories/platform.ts'),
         revision: MLAI_REVISION,
         sha256: '97f1fae66478a318af88088d80b32e1e3d2e8bc11c0763b32c8a4b768c78d319',
       },
@@ -329,7 +329,7 @@ export const researchContext = [
         heading: 'Validated public records',
         paragraphs: [
           'Before export, the pipeline parses every research record through its schema, rejects duplicate slugs, and checks public citations for HTTPS URLs that are not localhost. Public PDF paths are constrained to the research download namespace.',
-          'The export projects only stable public fields into a versioned index. Internal rendering details do not become accidental API surface, and canonical publication URLs are rooted at the configured MLAI origin.',
+          'The export projects only stable public fields into a versioned index. Internal rendering details do not become accidental API surface, and canonical publication URLs are rooted at the configured Quesar origin.',
         ],
       },
       {
@@ -343,19 +343,19 @@ export const researchContext = [
     sources: [
       {
         title: 'Research export validation and stable projection',
-        url: mlaiSource('apps/quasar-web/src/lib/research-export.ts'),
+        url: mlaiSource('apps/web/src/lib/research-export.ts'),
         revision: MLAI_REVISION,
         sha256: '635a4de5c32ef8e3c5e633d3c8847c45903764e46f3cb57056fca21943dd3a24',
       },
       {
         title: 'Research artifact export script',
-        url: mlaiSource('apps/quasar-web/scripts/export-research.tsx'),
+        url: mlaiSource('apps/web/scripts/export-research.tsx'),
         revision: MLAI_REVISION,
         sha256: 'cb5cace0e42052022f5d0b508a399f2f8b4ae0dba92499d0070b89f0137cb0e7',
       },
       {
         title: 'Research content inventory',
-        url: mlaiSource('apps/quasar-web/docs/research-inventory.md'),
+        url: mlaiSource('apps/web/docs/research-inventory.md'),
         revision: MLAI_REVISION,
         sha256: '338bc4f82b45143280b7efc444aa73f2a510711d04a70be8152d34d04e09b727',
       },
