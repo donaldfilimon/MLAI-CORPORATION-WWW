@@ -5,7 +5,7 @@ import { SplitSection } from "mlai-corporation-www";
  * band at a page-like measure — the sticky two-column layout itself only
  * engages at `lg` (1024px) and above.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 880, margin: "0 auto" };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 880, margin: "0 auto" };
 
 export const Retrieval = () => (
   <div style={ink}>

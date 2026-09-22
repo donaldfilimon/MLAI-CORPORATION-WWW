@@ -4,7 +4,7 @@ import { Badge } from "mlai-corporation-www";
  * Dark-only DS: `outline` is a border-only chip on `text-foreground` and `success` is a
  * 10%-alpha cyan tint — both are invisible on white, so the cells render on the Lab ink ground.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 620 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 620 };
 const row = { display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" };
 
 export const Variants = () => (

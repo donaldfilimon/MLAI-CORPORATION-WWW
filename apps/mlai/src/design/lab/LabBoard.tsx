@@ -242,7 +242,7 @@ function Nav(): ReactNode {
     return () => removeEventListener("keydown", h);
   }, []);
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/10">
+    <header className="sticky top-0 z-50 bg-[#0c0c09]/80 backdrop-blur-md border-b border-white/10">
       <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-linear-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center">
@@ -517,7 +517,7 @@ function useCanvas(draw: CanvasDraw) {
 
 const Phyllotaxis = (): ReactNode => {
   const ref = useCanvas((ctx, w, h, t) => {
-    ctx.fillStyle = "rgba(2,6,23,0.12)";
+    ctx.fillStyle = "rgba(12,12,9,0.12)";
     ctx.fillRect(0, 0, w, h);
     const n = 1 + ((t * 2) % 900);
     const cx = w / 2;
@@ -542,7 +542,7 @@ const Harmonograph = (): ReactNode => {
   const ref = useCanvas((ctx, w, h, t, rawState) => {
     const s = rawState as HarmonographState;
     if (!s.init) {
-      ctx.fillStyle = "#020617";
+      ctx.fillStyle = "#0c0c09";
       ctx.fillRect(0, 0, w, h);
       s.init = true;
       s.p = [1.001, 2.002, 3.003, 2.001].map((x) => x + Math.random() * 0.004);
@@ -552,7 +552,7 @@ const Harmonograph = (): ReactNode => {
     const ph = s.ph ?? [0, 0, 0, 0];
     const [p0, p1, p2, p3] = [p[0] ?? 1, p[1] ?? 2, p[2] ?? 3, p[3] ?? 2];
     const [ph0, ph1, ph2, ph3] = [ph[0] ?? 0, ph[1] ?? 0, ph[2] ?? 0, ph[3] ?? 0];
-    ctx.fillStyle = "rgba(2,6,23,0.03)";
+    ctx.fillStyle = "rgba(12,12,9,0.03)";
     ctx.fillRect(0, 0, w, h);
     const cx = w / 2;
     const cy = h / 2;
@@ -636,7 +636,7 @@ const Life = (): ReactNode => {
       );
       s.stale = 0;
     }
-    ctx.fillStyle = "#020617";
+    ctx.fillStyle = "#0c0c09";
     ctx.fillRect(0, 0, w, h);
     const grid = s.grid;
     for (let y = 0; y < rows; y++) {
@@ -776,7 +776,7 @@ type LabCardProps = { title: string; tag?: string; desc: string; children: React
 function LabCard({ title, tag, desc, children }: LabCardProps): ReactNode {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/3 overflow-hidden flex flex-col hover:border-white/20 transition-colors">
-      <div className="relative h-48 flex items-center justify-center overflow-hidden border-b border-white/10 bg-slate-950/50">
+      <div className="relative h-48 flex items-center justify-center overflow-hidden border-b border-white/10 bg-[#1d1d16]/50">
         {children}
       </div>
       <div className="p-4">
@@ -811,7 +811,7 @@ const LAB_CSS = `
 
 const PAGE_BG: CSSProperties = {
   background:
-    "radial-gradient(125% 85% at 50% -8%, #0a1530 0%, #05091c 44%, #01030c 100%)",
+    "#0c0c09",
 };
 
 const EQUALIZER_BARS = [0, 1, 2, 3, 4, 5] as const;
@@ -819,7 +819,7 @@ const EQUALIZER_BARS = [0, 1, 2, 3, 4, 5] as const;
 function Lab(): ReactNode {
   const year = new Date().getFullYear();
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-[#0c0c09] text-white">
       <Nav />
       <div
         id="lab"

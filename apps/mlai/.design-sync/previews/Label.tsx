@@ -10,7 +10,7 @@ import { Label, Input, Textarea } from "mlai-corporation-www";
  * reproduces what `<body className="text-text">` does in the real app.
  */
 const ink = {
-  background: "#05070d",
+  background: "#0c0c09",
   padding: 28,
   borderRadius: 12,
   color: "var(--foreground)",

@@ -59,7 +59,7 @@ export async function renderOgImage({ kicker, title, subtitle }: OgImageProps) {
           flexDirection: "column",
           justifyContent: "center",
           padding: "88px 96px",
-          background: "linear-gradient(135deg, #05070d 0%, #0b0d1a 100%)",
+          background: "linear-gradient(135deg, #0c0c09 0%, #1d1d16 100%)",
           position: "relative",
         }}
       >

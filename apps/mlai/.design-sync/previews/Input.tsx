@@ -5,7 +5,7 @@ import { Input, Label } from "mlai-corporation-www";
  * text — on white it reads as an empty rectangle. maxWidth = the old 280 field measure + the
  * 28px ink padding on each side.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 336 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 336 };
 
 export const Default = () => (
   <div style={ink}>

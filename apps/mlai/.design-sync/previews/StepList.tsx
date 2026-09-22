@@ -1,6 +1,6 @@
 import { StepList } from "mlai-corporation-www";
 
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 680 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 680 };
 
 export const RequestLifecycle = () => (
   <div style={ink}>

@@ -1,7 +1,7 @@
 import { ProvTag } from "mlai-corporation-www";
 
 /** The Lab canvas these components are designed for. */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12 } as const;
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12 } as const;
 
 export const AllThree = () => (
   <div style={ink}>

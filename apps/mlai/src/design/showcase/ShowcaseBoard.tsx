@@ -12,8 +12,7 @@ import {
    Babel prototype into a typed React 19 module.
    ────────────────────────────────────────────────────────────────────────── */
 
-const PAGE_BACKGROUND =
-  "radial-gradient(125% 85% at 50% -8%,#0c1730 0%,#06091a 44%,#02030a 100%)";
+const PAGE_BACKGROUND = "#0c0c09";
 
 type ColorTuple = readonly [string, string];
 
@@ -23,7 +22,7 @@ const PALETTE: readonly ColorTuple[] = [
   ["Violet", "#a855f7"],
   ["Emerald", "#34d399"],
   ["Amber", "#fbbf24"],
-  ["Ink", "#020510"],
+  ["Ink", "#0c0c09"],
 ];
 
 type PersonaTuple = readonly [string, string, string];
@@ -131,8 +130,8 @@ function Field() {
         h * 0.45,
         Math.max(w, h) * 0.7,
       );
-      bg.addColorStop(0, "#0a1224");
-      bg.addColorStop(1, "#020510");
+      bg.addColorStop(0, "#1d1d16");
+      bg.addColorStop(1, "#0c0c09");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
@@ -250,7 +249,7 @@ function Poster() {
                 >
                   <span
                     className={`absolute inset-0 flex items-center justify-center text-[10px] font-mono ${
-                      ["#020510", "#a855f7"].includes(hex)
+                      ["#0c0c09", "#a855f7"].includes(hex)
                         ? "text-white"
                         : "text-slate-900"
                     } ${hover === hex ? "opacity-100" : "opacity-0"}`}
@@ -343,7 +342,7 @@ function Generative() {
       c.width = w * dpr;
       c.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = "#020510";
+      ctx.fillStyle = "#0c0c09";
       ctx.fillRect(0, 0, w, h);
       const num = Math.floor(120 + pr.current.count * 12);
       if (mode === "Flow field") {
@@ -381,7 +380,7 @@ function Generative() {
       const sp = speed / 50;
       const tr = trail / 100;
       t += 0.004 * sp;
-      ctx.fillStyle = `rgba(2,5,16,${0.02 + (1 - tr) * 0.5})`;
+      ctx.fillStyle = `rgba(12,12,9,${0.02 + (1 - tr) * 0.5})`;
       ctx.fillRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
 
@@ -686,7 +685,7 @@ export default function ShowcaseBoard(): ReactNode {
   return (
     <div className="showcase-board text-white" style={rootStyle}>
       <style>{BOARD_STYLES}</style>
-      <header className="sticky top-0 z-30 bg-[#020510]/85 backdrop-blur border-b border-white/10 px-6 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-[#0c0c09]/85 backdrop-blur border-b border-white/10 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <Mark size={30} />
           <span className="font-bold tracking-widest text-white text-sm">

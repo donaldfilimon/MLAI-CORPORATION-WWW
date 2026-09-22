@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "mlai-corporation-www";
  * inherits — the ground supplies `color` or the panel copy is invisible on ink.
  */
 const ink = {
-  background: "#05070d",
+  background: "#0c0c09",
   padding: 28,
   borderRadius: 12,
   color: "var(--foreground)",

@@ -1,6 +1,6 @@
 import { Glossary } from "mlai-corporation-www";
 
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 720 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 720 };
 
 export const Vocabulary = () => (
   <div style={ink}>

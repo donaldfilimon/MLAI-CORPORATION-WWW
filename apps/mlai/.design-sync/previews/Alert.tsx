@@ -4,7 +4,7 @@ import { Alert, AlertTitle, AlertDescription } from "mlai-corporation-www";
  * Dark-only DS: every Alert variant is a low-alpha tint over the canvas, so the fills read
  * as pale grey-on-white unless they sit on the Lab ink ground.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 620 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 620 };
 
 const Info = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>

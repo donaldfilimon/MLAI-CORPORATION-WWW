@@ -207,7 +207,7 @@ try {
             name="description"
             content="MLAI research, implementation guides, and the evidence behind systems for memory, agents, and local computing."
           />
-          <meta name="theme-color" content="#05070d" />
+          <meta name="theme-color" content="#0c0c09" />
           <link
             rel="canonical"
             href={`${RESEARCH_CANONICAL_ORIGIN}${canonicalPath}`}

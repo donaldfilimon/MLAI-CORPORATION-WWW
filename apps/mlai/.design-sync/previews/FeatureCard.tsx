@@ -4,7 +4,7 @@ import { FeatureCard } from "mlai-corporation-www";
  * Dark-only DS: every story sits on the ink canvas. The card is a grid child on
  * the site, so the ground is capped near one column's width.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 436 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 436 };
 
 export const Wdbx = () => (
   <div style={ink}>

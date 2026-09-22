@@ -12,9 +12,9 @@
 
 /*
   MLAI "Lab" brand system (serif + cyan redesign).
-  Identity: a SERIF display face over a near-black ink canvas (#05070d), with
-  CYAN primary and a cyan→blue→violet signature gradient; violet/emerald/amber
-  are the fixed persona colors. Replaces the prior indigo "Signal" identity.
+  Identity: a SERIF display face over the mira olive canvas (preset b6VP9Bgmwr,
+  #0c0c09), with CYAN primary and a cyan→blue→violet signature gradient;
+  violet/emerald/amber are the fixed persona colors.
   Brand color is driven by the tokens in @mlai/design-tokens, rendered into
   tokens.generated.css (edit packages/design-tokens/src/index.ts, then run
   `bun run tokens:generate`). Components still reach for `cyan`/`violet`
@@ -217,7 +217,6 @@
   }
 }
 
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -248,8 +247,6 @@
   z-index: 0;
   mix-blend-mode: overlay;
 }
-
-
 
 .dark {
   color-scheme: dark;

@@ -5,7 +5,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "ml
  * text is `text-foreground` — both disappear on a white ground, so every cell renders on
  * the Lab ink canvas. maxWidth = the old 420 measure + the 28px ink padding on each side.
  */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12, maxWidth: 476 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12, maxWidth: 476 };
 
 export const Faq = () => (
   <div style={ink}>

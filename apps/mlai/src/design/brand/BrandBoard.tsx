@@ -318,8 +318,8 @@ const SUPPORT: readonly SwatchData[] = [
   { name: "Red", hex: "#f87171", sub: "error / Aviva edge", ink: true },
 ];
 const NEUTRAL: readonly SwatchData[] = [
-  { name: "Ink", hex: "#020510", sub: "background", ink: true },
-  { name: "Slate 950", hex: "#020617", sub: "surface", ink: true },
+  { name: "Ink", hex: "#0c0c09", sub: "background", ink: true },
+  { name: "Surface", hex: "#1d1d16", sub: "surface", ink: true },
   { name: "Slate 800", hex: "#1e293b", sub: "borders", ink: true },
   { name: "Slate 400", hex: "#94a3b8", sub: "body text", ink: true },
   { name: "White", hex: "#ffffff", sub: "headings" },
@@ -524,7 +524,7 @@ export default function BrandBoard(): ReactNode {
       className="bb-root h-screen overflow-y-auto text-white"
       style={{
         fontFamily: "system-ui, sans-serif",
-        background: "radial-gradient(125% 85% at 50% -8%,#0c1730 0%,#06091a 44%,#02030a 100%)",
+        background: "#0c0c09",
       }}
     >
       <style>{BOARD_CSS}</style>
@@ -550,7 +550,7 @@ export default function BrandBoard(): ReactNode {
         </div>
       </header>
 
-      <div className="sticky top-0 z-30 bg-[#020510]/85 backdrop-blur border-b border-white/10 px-6 sm:px-10 py-3 flex gap-2 flex-wrap">
+      <div className="sticky top-0 z-30 bg-[#0c0c09]/85 backdrop-blur border-b border-white/10 px-6 sm:px-10 py-3 flex gap-2 flex-wrap">
         {NAV.map((n) => (
           <button
             key={n}

@@ -4,7 +4,7 @@
  * Global error boundary — the last-resort catch when `app/layout.tsx` itself
  * fails. It must render its own <html>/<body> and cannot rely on the global
  * stylesheet having loaded, so everything here is inline-styled with the raw
- * brand tokens (ink #05070d canvas, cyan #22d3ee primary).
+ * brand tokens (olive ink #0c0c09 canvas, cyan #22d3ee primary).
  */
 
 export default function GlobalError({
@@ -23,7 +23,7 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#05070d",
+          background: "#0c0c09",
           color: "#e6e9ef",
           fontFamily:
             "Geist, 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif",

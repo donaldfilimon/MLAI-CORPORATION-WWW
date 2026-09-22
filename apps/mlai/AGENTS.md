@@ -41,7 +41,7 @@ repository root; web-specific OpenTofu also lives here under `infra/`.
 
 - Build primitives from `src/components/ui/` and section-level page blocks from `src/components/site/`. `site/` blocks take content as props, keep router dependencies out, and require `measured | target | reported` provenance on figures.
 - `src/components/ds.ts` is bundled for claude.ai/design. Anything reachable from it must be transitively free of `react-router-dom` and `next/*`; those imports crash the standalone browser bundle. `LogoMark` is exported, while router-dependent `Logo` is intentionally excluded.
-- Tailwind v4 has no `tailwind.config.js`; canonical tokens and custom utilities live in `src/index.css`. Preserve the current Lab identity: cyan/sky brand chrome, near-black ink, Spectral display type, and violet/emerald/amber persona accents. Do not revive the retired indigo/fuchsia Signal palette.
+- Tailwind v4 has no `tailwind.config.js`; canonical tokens and custom utilities live in `src/index.css`. Preserve the current Lab identity: cyan/sky brand chrome, olive ink (`#0c0c09`, preset b6VP9Bgmwr), Spectral display type, and violet/emerald/amber persona accents. Do not revive the retired indigo/fuchsia Signal palette.
 - `src/design/` is real `/showcase/design` source. It is distinct from partially tracked `.design-sync/`, ignored `ds-bundle/` output, and ignored `.ds-sync/` staging. `src/design/mlai-ds-tokens.css` stays scoped under `.mlai-ds` through `CinematicShell`; do not promote it to global `:root`.
 - Keep route-heavy code isolated: TensorFlow belongs only to `/tf-pose-demo`, and `src/film/neural-voice.ts` must retain its lazy CDN import so Kokoro/ONNX does not enter server or initial marketing bundles.
 

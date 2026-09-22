@@ -17,7 +17,7 @@ import {
  * human-readable — "Abbey", not "abbey".
  */
 const ink = {
-  background: "#05070d",
+  background: "#0c0c09",
   padding: 28,
   borderRadius: 12,
   color: "var(--foreground)",

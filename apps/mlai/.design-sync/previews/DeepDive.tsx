@@ -1,7 +1,7 @@
 import { DeepDive } from "mlai-corporation-www";
 
 /** Dark-only DS: mounted on the ink canvas the cards were designed for. */
-const ink = { background: "#05070d", padding: 28, borderRadius: 12 };
+const ink = { background: "#0c0c09", padding: 28, borderRadius: 12 };
 
 export const StorageInternals = () => (
   <div style={ink}>

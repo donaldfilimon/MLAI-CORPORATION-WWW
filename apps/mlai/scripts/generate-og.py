@@ -38,8 +38,8 @@ PUBLIC = ROOT / "public"
 CACHE = ROOT / ".cache" / "fonts"
 
 # ── Brand tokens (mirror src/index.css + public/logo.svg) ────────────────────
-INK = (5, 7, 13)  # #05070d canvas
-INK_2 = (11, 13, 26)  # #0B0D1A canvas gradient end
+INK = (12, 12, 9)  # #0c0c09 olive canvas
+INK_2 = (29, 29, 22)  # #1d1d16 surface gradient end
 CYAN = (34, 211, 238)  # #22d3ee primary
 SKY = (14, 165, 233)  # #0EA5E9 mark gradient end
 BLUE = (96, 165, 250)  # #60a5fa mark gradient start

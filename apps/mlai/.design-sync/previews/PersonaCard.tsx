@@ -3,7 +3,7 @@ import { PersonaCard } from "mlai-corporation-www";
 
 /** The Lab ink ground the design system is built for. */
 const Ground = ({ children }: { children: ReactNode }) => (
-  <div style={{ background: "#05070d", padding: 28, borderRadius: 12 }}>{children}</div>
+  <div style={{ background: "#0c0c09", padding: 28, borderRadius: 12 }}>{children}</div>
 );
 
 /** The full roster, as it appears beside the routing explainer. */
