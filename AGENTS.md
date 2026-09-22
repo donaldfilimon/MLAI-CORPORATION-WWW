@@ -113,10 +113,13 @@ local build alone.
 - The root workspace lists Quasar's `packages/*` and `apps/*`;
   `templates/next-site` has its own lockfile and is not built by that aggregate
   gate.
-- CI covers six jobs: topology, web, mobile, quasar, website-app and
-  research-sites. Hosted runs have been blocked by a billing lock since
-  2026-09-08, so a red hosted check after that date is unmeasured, not a
-  failing gate.
+- CI covers seven jobs: topology, web, mobile, quasar, website-app,
+  research-sites, and `check (self-hosted)` (full gate on the `mlai`-labelled
+  macOS runner; same-repository events only). Hosted runs have been blocked
+  by a billing lock since 2026-09-08, so a red hosted check after that date
+  is unmeasured, not a failing gate; while no runner is registered the
+  self-hosted job queues and is then cancelled (next push, or the 24-hour
+  queue limit), which is equally unmeasured.
 - `dev:quasar` starts only the Expo app. Start the service separately from
   `apps/quasar` with `bun run --filter '@quasar/service' start`; see its README
   for the unauthenticated LAN listener and provider-dependent acceptance flow.
