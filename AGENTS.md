@@ -8,9 +8,11 @@ Quasar service sidecar.
 
 One Next 16 app at `apps/mlai` serves the public site, `/app/*`, and the Quasar
 screens. A Capacitor shell loads that app. Better Auth sessions use the Postgres
-side of `@mlai/store`. Episode, receipt, and vector reads use the WDBX side and
-fail closed when the gateway is absent. The decision record is
-`docs/superpowers/specs/2026-09-22-single-app-merge-design.md`.
+side of `@mlai/store`, gating `/app/*` only — WorkOS remains the identity
+system for the rest of the app (login/console/admin) until the design record's
+retirement decision is actually executed in code. Episode, receipt, and vector
+reads use the WDBX side and fail closed when the gateway is absent. The
+decision record is `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`.
 
 - `apps/mlai` is the only Next.js app. Do not add a second one.
 - `apps/quasar` keeps `@quasar/service` and `@quasar/shared`. The service is an

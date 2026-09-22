@@ -131,24 +131,24 @@ rather than inside one app's docs.
   `apps/*` glob so it is not mistaken for one. Do not extend it, build in it,
   or remove it on your own.
 - **Two `GEMINI.md` files, two roles.** The root one is a short redirect to
-  `AGENTS.md`; keep it that way. `apps/mlai/GEMINI.md` is meant to be a full app
-  guide kept aligned with that app's `AGENTS.md`/`CLAUDE.md` by its
-  `ai-tooling-sync` skill, but as of the single-app merge it still names the old
-  `apps/quasar-web` path and branding — treat it as stale until synced, and
-  don't copy path references from it. `check:topology` inspects neither
-  `GEMINI.md` file, so drift there is not gated.
+  `AGENTS.md`; keep it that way. `apps/mlai/GEMINI.md` is a full app guide kept
+  aligned with that app's `AGENTS.md`/`CLAUDE.md` by its `ai-tooling-sync`
+  skill — content-synced, not byte-identical, so a durable change gets ported
+  into each file's own voice rather than pasted verbatim. `check:topology`
+  inspects neither `GEMINI.md` file, so drift there is not gated.
 
 ## Local preview
 
 `.claude/launch.json` is local to this machine (listed in `.git/info/exclude`,
 not tracked). It names one preview server, `mlai-web`, which runs `next dev` in
 `apps/mlai` with `autoPort` so a second session gets its own port instead of
-colliding with `bun run dev:web`'s fixed `--port 3000`. Sign-in flows redirect
-back to whatever origin the app is configured for; see `apps/mlai/AGENTS.md`
-for the current auth setup rather than assuming a specific provider here — that
-app's own docs are mid-sync after the single-app merge (see *Trees that are not
-apps*). The Quasar service listens on 4700 and is not started by `dev:quasar`
-(see `AGENTS.md`).
+colliding with `bun run dev:web`'s fixed `--port 3000`. Two separate identity
+systems gate different parts of the app: WorkOS for the public-site login and
+console/admin surfaces (redirects to `APP_URL`, default `http://localhost:3000`),
+and Better Auth (via `@mlai/store`, needs a reachable local Postgres at
+`DATABASE_URL`) for `/app/*` only — see `apps/mlai/AGENTS.md` for the full
+detail on both. The Quasar service listens on 4700 and is not started by
+`dev:quasar` (see `AGENTS.md`).
 
 <!-- machine-git-policy -->
 ## Git workflow (machine policy, 2026-08-27)
