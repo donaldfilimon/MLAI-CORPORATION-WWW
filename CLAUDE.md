@@ -67,7 +67,10 @@ rather than inside one app's docs.
   `bun run test` is Vitest in `apps/quasar-web` and Jest in `apps/mobile`; a bare
   `bun test` in either one invokes Bun's own runner instead and does not run
   the suite you meant. `apps/quasar` is the exception: its `test` script
-  genuinely is `bun test packages`.
+  genuinely is `bun test packages`. `apps/website-app` adds a runtime trap:
+  Bun is its package manager only, and every script runs on Node through
+  `node --import tsx` (`better-sqlite3` is a native Node addon), so use
+  `bun run <script>`, never `bun scripts/<x>.ts`.
 - **`check:topology` requires this file to exist.**
   `packages/tooling/src/check-topology.ts` lists root `AGENTS.md`,
   `CLAUDE.md`, and `README.md` among its required paths, so renaming or
@@ -94,13 +97,30 @@ rather than inside one app's docs.
   behavior, so run `check:web`, not only `check:tooling`.
 - **A green local `bun run check` does not prove CI's install step.**
   `.github/workflows/ci.yml` runs topology, web, mobile, quasar, website-app,
-  and research-sites as six independent jobs. The four app jobs with
+  and research-sites as six independent hosted jobs, plus a seventh,
+  `check (self-hosted)`, that runs the full `bun run check` on the runner
+  labelled `self-hosted, macOS, ARM64, mlai` for same-repository pushes,
+  dispatches and PRs only (`.github/self-hosted-runner.md`). The four app jobs with
   dependencies each run a frozen install at the repository root, filtered to
   `@mlai/platform` plus their own workspaces (research-sites has no install
   step by design), and the topology job runs
   `bun install --frozen-lockfile --lockfile-only` as the drift check, while
   `install:all` is deliberately non-frozen. Lockfile drift therefore surfaces
   in CI, or locally only if you run that same command.
+- **Two CI states are unmeasured, not red.** Hosted jobs fail in 2–3 seconds
+  with zero steps under the account billing lock (since 2026-09-08). While no
+  runner is registered, `check (self-hosted)` sits `queued`, then ends
+  `cancelled`: by the next push to `main` (`cancel-in-progress`) or by
+  GitHub's 24-hour queue limit (both observed 2026-09-19). Re-measure with
+  `gh api repos/donaldfilimon/MLAI-CORPORATION-WWW/actions/runners --jq .total_count`
+  (0 on 2026-09-22). Because CI then never concludes `success`, `pages.yml`
+  and `deploy-cloudrun.yml` never publish or deploy: `workflow_run` fires
+  them on any CI completion, but their jobs gate on
+  `conclusion == 'success'` from a same-repository push and are skipped, and
+  Cloud Run additionally soft-skips through its `readiness` job until
+  `vars.WIF_PROVIDER` and `vars.GCP_PROJECT_ID` exist. An un-republished
+  Pages site or a skipped deploy is expected; never change code to satisfy
+  either.
 - **`apps/quasar-web/site/` is a separately published artifact, not a build output.**
   GitHub Pages publishes it from `.github/workflows/pages.yml` with Actions as
   the source; the legacy `gh-pages` branch is retired and must not be
