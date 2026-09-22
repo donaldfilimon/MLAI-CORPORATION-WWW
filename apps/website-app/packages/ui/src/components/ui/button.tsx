@@ -37,21 +37,45 @@ const buttonVariants = cva(
   },
 );
 
+function isNativeButtonSlot(slot: ButtonPrimitive.Props["render"]): boolean {
+  return React.isValidElement(slot) && slot.type === "button";
+}
+
+function slotWithoutForcedButtonRole(
+  slot: ButtonPrimitive.Props["render"],
+): ButtonPrimitive.Props["render"] {
+  if (!React.isValidElement(slot) || isNativeButtonSlot(slot)) return slot;
+  const existingRole = (slot.props as { role?: unknown }).role;
+  if (existingRole != null) return slot;
+  return React.cloneElement(
+    slot as React.ReactElement<{ role?: string | undefined }>,
+    { role: undefined },
+  );
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
   render,
+  nativeButton,
   children,
   ...props
 }: ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
   }) {
-  const slot =
+  const slot = slotWithoutForcedButtonRole(
     render ??
-    (asChild && React.isValidElement(children) ? children : undefined);
+      (asChild && React.isValidElement(children) ? children : undefined),
+  );
+  const resolvedNativeButton =
+    nativeButton !== undefined
+      ? nativeButton
+      : slot != null && !isNativeButtonSlot(slot)
+        ? false
+        : undefined;
 
   return (
     <ButtonPrimitive
@@ -60,6 +84,7 @@ function Button({
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
       render={slot}
+      nativeButton={resolvedNativeButton}
       {...props}
     >
       {slot ? undefined : children}

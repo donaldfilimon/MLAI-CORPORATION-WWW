@@ -14,6 +14,7 @@ import {
 } from "../packages/ui/src/components/ui/dialog";
 import {
   NavigationMenu,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
@@ -60,6 +61,22 @@ describe("@mlai/ui Base UI primitives", () => {
     expect(typeof NavigationMenuLink).toBe("function");
 
     expect(renderToStaticMarkup(<Button>Open</Button>)).toContain("Open");
+    const linkButton = renderToStaticMarkup(
+      <Button asChild>
+        <a href="/docs">Docs</a>
+      </Button>,
+    );
+    expect(linkButton).toContain('href="/docs"');
+    expect(linkButton).toContain(">Docs</a>");
+    expect(linkButton).not.toContain('type="button"');
+    expect(linkButton).not.toContain('role="button"');
+    const forcedNative = renderToStaticMarkup(
+      <Button asChild nativeButton>
+        <a href="/forced">Forced</a>
+      </Button>,
+    );
+    expect(forcedNative).toContain('type="button"');
+    expect(forcedNative).toContain('href="/forced"');
     expect(renderToStaticMarkup(<Badge>Live</Badge>)).toContain("Live");
     const separator = renderToStaticMarkup(
       <Separator orientation="vertical" />,
@@ -101,6 +118,14 @@ describe("@mlai/ui Base UI primitives", () => {
     );
     expect(nav).toContain("Docs");
     expect(nav).toContain('data-slot="navigation-menu"');
+    const indicator = renderToStaticMarkup(
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuIndicator />
+        </NavigationMenuList>
+      </NavigationMenu>,
+    );
+    expect(indicator).toContain('data-slot="navigation-menu-indicator"');
   });
 
   it("rejects a radix-ui import or direct dependency in @mlai/ui", () => {
