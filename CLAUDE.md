@@ -108,6 +108,34 @@ rather than inside one app's docs.
   `apps/quasar-web/site/`, and regenerating the `public/` copies does not touch the
   `site/` ones.
 
+## Trees that are not apps
+
+- **`docs/sources/` is frozen reference, never a place to edit.** It holds the
+  MLAI prototype trees consolidated on 2026-09-16, with their manifests,
+  lockfiles and agent guides renamed to `*.source` so nothing there installs,
+  builds, lints or raises dependency alerts. Its `README.md` and `SHA256SUMS`
+  record provenance and removals. A fix belongs in `apps/`, not in a copy here.
+- **`apps/quasar-web-old-bak/` is tracked evidence, not an app.** It holds only
+  `output/playwright/journeys-web-20260908-*` receipts and screenshots from the
+  four-app journey acceptance, committed 2026-09-18. It is not a workspace
+  member, no gate reads it, and `check:topology` deliberately avoids an
+  `apps/*` glob so it is not mistaken for one. Do not extend it, build in it,
+  or remove it on your own.
+- **Two `GEMINI.md` files, two roles.** The root one is a short redirect to
+  `AGENTS.md`; keep it that way. `apps/quasar-web/GEMINI.md` is a full app guide
+  kept aligned with that app's `AGENTS.md`/`CLAUDE.md`/`README.md` by its
+  `ai-tooling-sync` skill, so a durable web change lands in all four.
+  `check:topology` inspects neither file, so drift there is not gated.
+
+## Local preview
+
+`.claude/launch.json` defines two preview servers whose names differ from the
+`dev:*` scripts: `mlai-web` (`apps/quasar-web`, port 3000) and
+`mlai-website-app` (`apps/website-app`, port 3100, from `scripts/dev.ts`).
+Another desktop session can leave a `next dev --port 3000` running in this
+checkout; check `lsof -i :3000` before starting a second one. The Quasar
+service listens on 4700 and is not started by `dev:quasar` (see `AGENTS.md`).
+
 <!-- machine-git-policy -->
 ## Git workflow (machine policy, 2026-08-27)
 
