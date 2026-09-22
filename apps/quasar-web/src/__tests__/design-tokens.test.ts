@@ -1,33 +1,61 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { labColor } from "@mlai/design-tokens";
+import { labColor, semantic } from "@mlai/design-tokens";
+import { renderWebTokensCss } from "@mlai/design-tokens/generate";
 
-// Web keeps the Lab palette in CSS (Tailwind v4 reads it there), while the
-// Expo apps import the same raw hex values from @mlai/design-tokens. This test
-// is what keeps the two copies from drifting apart.
-const css = readFileSync(path.resolve(__dirname, "../index.css"), "utf8");
+// The web token sheet is generated from @mlai/design-tokens, the same package
+// the Expo apps import at runtime. These tests keep the committed sheet equal
+// to the generator's output, keep index.css free of token declarations of its
+// own, and pin the effective values (the previous hand-written sheet declared
+// --color-primary twice and the test only saw the shadowed copy).
+const generated = readFileSync(path.resolve(__dirname, "../tokens.generated.css"), "utf8");
+const index = readFileSync(path.resolve(__dirname, "../index.css"), "utf8");
 
-function declared(name: string): string[] {
-  const pattern = new RegExp(`^\\s*${name}:\\s*(#[0-9a-fA-F]{6})\\s*;`, "gm");
-  return [...css.matchAll(pattern)].map((m) => (m[1] ?? "").toUpperCase());
+function declarations(css: string): Map<string, string[]> {
+  const out = new Map<string, string[]>();
+  for (const m of css.matchAll(/^\s*(--[a-z0-9-]+):\s*([^;]+);/gm)) {
+    const name = m[1] ?? "";
+    out.set(name, [...(out.get(name) ?? []), (m[2] ?? "").trim()]);
+  }
+  return out;
 }
 
-describe("Lab raw colors", () => {
+const decl = declarations(generated);
+
+describe("web token sheet", () => {
+  it("is the generator's output (run `bun run tokens:generate` after editing the model)", () => {
+    expect(generated).toBe(renderWebTokensCss());
+  });
+
+  it("is imported by index.css, which declares no token of its own", () => {
+    expect(index).toContain('@import "./tokens.generated.css";');
+    for (const name of ["--ink", "--cyan", "--primary", "--color-primary", "--color-border", "--radius"]) {
+      expect(declarations(index).has(name), `${name} declared in index.css`).toBe(false);
+    }
+  });
+
+  it("declares every custom property exactly once", () => {
+    const duplicates = [...decl.entries()].filter(([, v]) => v.length > 1).map(([k]) => k);
+    expect(duplicates).toEqual([]);
+  });
+
   it.each([
     ["--ink", labColor.ink],
     ["--cyan", labColor.cyan],
     ["--violet", labColor.violet],
     ["--emerald", labColor.emerald],
     ["--amber", labColor.amber],
-  ])("index.css %s equals @mlai/design-tokens", (token, expected) => {
-    const values = declared(token);
-    expect(values.length).toBeGreaterThan(0);
-    for (const value of values) expect(value).toBe(expected.toUpperCase());
+  ])("%s equals @mlai/design-tokens", (token, expected) => {
+    expect(decl.get(token)).toEqual([expected.toLowerCase()]);
   });
 
-  it("keeps the legacy @theme hex block on the same palette", () => {
-    expect(declared("--color-bg")).toEqual([labColor.ink.toUpperCase()]);
-    expect(declared("--color-primary")).toEqual([labColor.cyan.toUpperCase()]);
+  it("renders primary, ring and chart-1 from the cyan token, not an OKLCH approximation", () => {
+    for (const name of ["--primary", "--ring", "--chart-1", "--sidebar-primary"]) {
+      expect(decl.get(name), name).toEqual(["var(--cyan)"]);
+      expect(semantic[name.slice(2) as keyof typeof semantic]).toBe("var(--cyan)");
+    }
+    expect(decl.get("--color-primary")).toEqual(["var(--primary)"]);
+    expect(decl.get("--color-bg")).toEqual([labColor.ink.toLowerCase()]);
   });
 });

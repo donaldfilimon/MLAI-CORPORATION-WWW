@@ -1,10 +1,14 @@
 {
   "name": "@mlai/design-tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./generate": "./src/generate.ts"
+  },
+  "scripts": {
+    "generate": "bun src/generate.ts"
   },
   "dependencies": {
     "@mlai/contracts": "workspace:*"

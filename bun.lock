@@ -178,6 +178,7 @@
         "zod": "^4.5.4",
       },
       "devDependencies": {
+        "@mlai/design-tokens": "workspace:*",
         "@playwright/test": "^1.63.0",
         "@tailwindcss/postcss": "^4.3.3",
         "@types/better-sqlite3": "^9.6.0",
@@ -239,7 +240,7 @@
     },
     "packages/design-tokens": {
       "name": "@mlai/design-tokens",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@mlai/contracts": "workspace:*",
       },

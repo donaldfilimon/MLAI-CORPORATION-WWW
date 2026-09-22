@@ -28,7 +28,12 @@ const cfg = JSON.parse(readFileSync(resolve(ROOT, ".design-sync/config.json"), "
 const mappedSources = Object.entries(cfg.componentSrcMap).filter(
   (e): e is [string, string] => typeof e[1] === "string",
 );
-const indexCss = readFileSync(resolve(ROOT, "src/index.css"), "utf8");
+// Tokens live in the sheet index.css imports (generated from @mlai/design-tokens),
+// so the guard reads the pair as one stylesheet.
+const indexCss = [
+  readFileSync(resolve(ROOT, "src/index.css"), "utf8"),
+  readFileSync(resolve(ROOT, "src/tokens.generated.css"), "utf8"),
+].join("\n");
 const uiDir = resolve(ROOT, "src/components/ui");
 
 describe("design-sync config", () => {

@@ -1,24 +1,24 @@
 /* Quesar mobile — design tokens. The "Lab" identity, shared with www: near-black
    surfaces, three product accents, Spectral / Geist / JetBrains Mono.
 
-   Every value below is traceable to `apps/quasar-web/src/index.css` `:root`. Raw hex tokens
-   (--ink, --cyan, --violet, --emerald, --amber) come from @mlai/design-tokens. The three
-   that exist only as oklch (--foreground, --muted-foreground, --secondary) were
-   converted to sRGB with gamut clipping; the converter was validated against
-   known values first (oklch(0.79 0.13 207) -> #25D1E5 vs the documented
-   #22D3EE). Two values are extrapolated because mobile needs a surface Lab does
-   not define — both are marked below. */
+   Every value below comes from @mlai/design-tokens, the one source every
+   surface renders from: raw hex (--ink, --cyan, --violet, --emerald, --amber) as
+   `labColor`, and the sRGB conversions of the web's OKLCH semantics as
+   `nativeColor` (converted with gamut clipping; the converter was validated
+   against known values first). `panelRaised`, `lineStrong` and the text ramp
+   below `textDim` extend the Lab ramp because mobile needs surfaces Lab does
+   not define; they live in the package so Quasar and mobile agree. */
 
 import { Platform } from "react-native";
 import type { ProductAccent } from "@mlai/contracts";
-import { labColor } from "@mlai/design-tokens";
+import { gradient as labGradient, labColor, nativeColor } from "@mlai/design-tokens";
 
 export const color = {
-  ink: labColor.ink, // Lab --ink, from @mlai/design-tokens
-  panel: "#0E1218", // Lab --secondary, oklch(0.18 0.014 260)
-  panelRaised: "#171B21", // extrapolated: one Lab step (+0.04 L) above --secondary
-  line: "rgba(255,255,255,0.10)", // Lab --border
-  lineStrong: "rgba(255,255,255,0.16)", // no Lab equivalent; mobile-only emphasis
+  ink: labColor.ink, // Lab --ink
+  panel: nativeColor.panel, // Lab --secondary
+  panelRaised: nativeColor.panelRaised, // one Lab step (+0.04 L) above --secondary
+  line: nativeColor.line, // Lab --border
+  lineStrong: nativeColor.lineStrong, // mobile-only emphasis
 
   /* Accents are Lab's raw hex. Keep these 6-digit — `tint()` and four call
      sites concatenate a 2-char alpha suffix directly onto them. */
@@ -28,14 +28,14 @@ export const color = {
   warn: labColor.amber, // Lab --amber
 
   white: "#FFFFFF",
-  text: "#E8EBF1", // Lab --foreground, oklch(0.94 0.008 255)
-  textDim: "#94A0AE", // Lab --muted-foreground, oklch(0.70 0.025 255)
-  textMute: "#717B89", // ramp continuation, oklch(0.58 0.025 255)
-  textFaint: "#505964", // ramp continuation, oklch(0.46 0.022 255)
+  text: nativeColor.text, // Lab --foreground
+  textDim: nativeColor.textDim, // Lab --muted-foreground
+  textMute: nativeColor.textMute, // ramp continuation
+  textFaint: nativeColor.textFaint, // ramp continuation
 } as const;
 
 /** Lab's signature gradient (--grad: cyan -> blue -> violet). */
-export const gradient: [string, string, string] = [labColor.cyan, "#60A5FA", labColor.violet];
+export const gradient: [string, string, string] = [...labGradient];
 
 export type Accent = ProductAccent;
 
