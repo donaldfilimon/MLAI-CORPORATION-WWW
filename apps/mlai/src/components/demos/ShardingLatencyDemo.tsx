@@ -19,7 +19,7 @@ export function ShardingLatencyDemo() {
     <div className="glass-card p-6">
       <div className="mb-1 flex items-end justify-between">
         <div>
-          <div className="text-4xl font-black text-sky-400">
+          <div className="text-4xl font-black text-cyan-400">
             {L.toFixed(0)}
             <span className="text-lg text-text-dim"> ms</span>
           </div>
@@ -27,14 +27,14 @@ export function ShardingLatencyDemo() {
         </div>
         <span className="label-chip">{n} partitions (modeled)</span>
       </div>
-      <div className="my-4 rounded-lg bg-black/30 px-3 py-2 font-mono text-xs text-sky-300/80">
+      <div className="my-4 rounded-lg bg-card/60 px-3 py-2 font-mono text-xs text-cyan-300/80">
         L(n) = {alpha} + {betaS}/{n} = {L.toFixed(1)} ms
       </div>
       <input
         type="range" min={1} max={32} value={n}
         aria-label="Modeled partition count"
-        onChange={(e) => setN(+e.target.value)}
-        className="w-full accent-sky-400"
+        onChange={(e) => setN(+e.currentTarget.value)}
+        className="w-full accent-cyan-400"
       />
       <div className="mt-4 flex h-24 items-end gap-2">
         {bars.map((b) => {
@@ -43,10 +43,10 @@ export function ShardingLatencyDemo() {
           return (
             <button key={b} onClick={() => setN(b)} className="group flex flex-1 flex-col items-center gap-1">
               <div
-                className={`w-full rounded-t-md transition-all ${b === n ? "bg-linear-to-t from-sky-600 to-sky-300" : "bg-white/15 group-hover:bg-white/25"}`}
+                className={`w-full rounded-t-md transition-all ${b === n ? "bg-linear-to-t from-cyan-600 to-cyan-300" : "bg-white/15 group-hover:bg-white/25"}`}
                 style={{ height: `${pct}%` }}
               />
-              <span className={`text-[10px] ${b === n ? "text-sky-400" : "text-text-dim/80"}`}>{b}</span>
+              <span className={`text-[10px] ${b === n ? "text-cyan-400" : "text-text-dim/80"}`}>{b}</span>
             </button>
           );
         })}

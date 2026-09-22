@@ -102,8 +102,8 @@ export async function renderOgImage({ kicker, title, subtitle }: OgImageProps) {
           >
             M
           </div>
-          <div style={{ display: "flex", fontSize: 22, fontWeight: 700, color: "#98a2b0" }}>
-            MLAI&nbsp;<span style={{ color: "#fff" }}>CORPORATION</span>
+              <div style={{ display: "flex", fontSize: 22, fontWeight: 700, color: "#94a3b8" }}>
+            MLAI&nbsp;<span style={{ color: "#fafafa" }}>CORPORATION</span>
           </div>
         </div>
 
