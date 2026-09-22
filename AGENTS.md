@@ -1,45 +1,41 @@
 # AGENTS.md
 
-This is the canonical MLAI integration guide; `CLAUDE.md` points here. Read the
-app-local `AGENTS.md` for web/mobile/website-app and `apps/quasar/README.md` for Quasar.
+This is the canonical MLAI integration guide; `CLAUDE.md` points here. Read
+`apps/mlai/AGENTS.md` for the Next app and `apps/quasar/README.md` for the
+Quasar service sidecar.
 
 ## Boundaries
 
-- `apps/web` is the canonical Next.js website. Do not restore the retired
-  mobile `www/` snapshot or collapse the website into an Expo static mock.
-- `apps/mobile` is the Expo companion. Preserve its native CloudKit versus
-  encrypted-local fallback distinction and its signed-device acceptance gap.
-- `apps/quasar` holds Quasar's service, shared package and Expo app, which are
-  members of the root workspace, plus `templates/next-site`, which stays
-  outside it with its own lockfile because it is copied per generated site.
-- `apps/website-app` is the imported local Next.js application. Keep its shared
-  UI, agent scaffold, SQLite/Better Auth, worker and Python lockfile together.
-  Run its commands from that app directory.
-- `apps/research-sites` is the generated static export of the research
-  collection, imported with its history on 2026-09-16. It has zero
-  dependencies and no install step. Never hand-edit its `public/`: regenerate it
-  with `apps/web/scripts/export-research.tsx` and keep the manifest provenance.
+One Next 16 app at `apps/mlai` serves the public site, `/app/*`, and the Quasar
+screens. A Capacitor shell loads that app. Better Auth sessions use the Postgres
+side of `@mlai/store`, gating `/app/*` only — WorkOS remains the identity
+system for the rest of the app (login/console/admin) until the design record's
+retirement decision is actually executed in code. Episode, receipt, and vector
+reads use the WDBX side and fail closed when the gateway is absent. The
+decision record is `docs/superpowers/specs/2026-09-22-single-app-merge-design.md`.
+
+- `apps/mlai` is the only Next.js app. Do not add a second one.
+- `apps/quasar` keeps `@quasar/service` and `@quasar/shared`. The service is an
+  optional URL sidecar. `templates/next-site` stays outside the workspace with
+  its own lockfile because it is copied per generated site.
+- `sidecars/python-worker` is the Python document worker, also reached only by
+  configured URL. The app does not spawn it.
+- The research collection ships as `apps/mlai/research/public`. Do not hand-edit
+  it. `bun run build` in `apps/mlai` verifies the manifest inventory and file
+  hashes, then copies them to the ignored `research/out`.
 - `packages/contracts` contains names and types, not publishable benchmark
   values. App content sources remain authoritative for copy and figures.
-- `packages/tooling` holds repository checks and the isolated website-app gate
-  wrapper. `check:topology` runs `bun packages/tooling/src/check-topology.ts`.
+- `packages/tooling` holds repository checks. `check:topology` runs
+  `bun packages/tooling/src/check-topology.ts`.
 - The root is orchestration only. Run app-native gates independently and report
   their results independently.
-- Every app except `apps/research-sites` (no dependencies) and the Quasar
-  template installs through one root Bun workspace: one root `bun.lock`, no app
+- Installs go through one root Bun workspace: one root `bun.lock`, no app
   lockfiles, `linker = "isolated"` in the root `bunfig.toml`. The workspace list
   in the root `package.json` names each member; there is deliberately no
   `apps/*` glob.
-- The React type graphs still differ: the Next apps use React 19.2 types and
-  the Expo apps use SDK 53's 19.0 types. The isolated linker gives each app its
-  own view, and two mechanisms keep third-party declarations (which often
-  import `react` without depending on `@types/react`) on the right copy. The
-  root `package.json` pins the Next-side `@types/react`/`@types/react-dom` and
-  `bunfig.toml`'s `hoistPattern` keeps those two out of Bun's hidden fallback
-  directory, so such declarations resolve to the root pin. Each Expo app
-  typechecks through `tsconfig.typecheck.json`, which maps `react` to its own
-  types. Do not remove either mechanism, and never switch the linker to
-  `hoisted` without re-running every app's typecheck.
+- `bunfig.toml` `hoistPattern` keeps `@types/react` and `@types/react-dom` out of
+  Bun's hidden fallback so third-party `react` type imports resolve to the root
+  pin. Do not switch the linker to `hoisted` without re-running typecheck.
 - The isolated linker exposes only declared dependencies. Declare every
   package an app or its scripts import; do not rely on another package's
   dependencies being reachable.
@@ -51,20 +47,14 @@ Use Bun 1.4 (`packageManager` and CI), not npm, pnpm, or yarn. The lockfile is
 
 ```bash
 bun run install:all      # bun install at the root (every workspace)
-bun run check            # aggregate gate: check:topology && check:workflows && check:tooling && check:web && check:mobile && check:quasar && check:website-app && check:research-sites
+bun run check            # check:topology && check:workflows && check:tooling && check:web && check:quasar
 bun run check:topology
 bun run check:workflows
 bun run check:tooling
-bun run check:research-sites
-bun run check:web
-bun run check:mobile
-bun run check:quasar
-bun run check:website-app
+bun run check:web        # cd apps/mlai && lint && test && build
+bun run check:quasar     # @quasar/* typecheck, then bun test packages
 
-bun run dev:web          # cd apps/web && bun run dev
-bun run dev:mobile       # cd apps/mobile && bun run start
-bun run dev:website-app  # cd apps/website-app && bun run dev
-bun run dev:quasar       # cd apps/quasar/apps/quasar && bun run start
+bun run dev:web          # cd apps/mlai && bun run dev
 ```
 
 For focused work, change into the affected app and follow its local docs. Never
@@ -81,41 +71,35 @@ local build alone.
 - `check:topology` checks that required paths exist (root `bun.lock` and
   `bunfig.toml`, every workspace manifest, both Metro configs and both Expo
   typecheck configs), that no app lockfile exists, that no nested manifest
-  declares `workspaces`, and that the isolated linker is set. It does not
-  compile contracts or validate content, lockfile drift, or app behavior.
+  declares `workspaces`, and that the isolated linker is set. For the root and
+  each app directory holding both `AGENTS.md` and `CLAUDE.md`, it also requires
+  that exactly one declares itself canonical within its first 15 lines and the
+  other names it (`` `AGENTS.md` is canonical ``); a directory with one guide or
+  none passes (`apps/quasar` keeps only `README.md`). It does not compile
+  contracts or validate content, lockfile drift, or app behavior.
 - `check:workflows` runs pinned Actionlint 1.7.12 via Go (Go 1.25+ required;
   first run downloads the module). It checks workflow syntax and expressions,
   with optional ShellCheck and Pyflakes disabled.
 - `check:tooling` runs `bun test packages/tooling/src` for repository wrapper
   regressions; the aggregate gate and CI topology job include it.
-- `check:web`: `lint` is `tsc --noEmit`, then Node-only Vitest, then sitemap/llms
-  generation and Next build. From `apps/web`, focus with
-  `bun run test src/__tests__/landing-page.test.ts`; do not substitute `bun test`.
-- `check:mobile`: TypeScript, Jest in-band, Expo lint, Expo **web** export.
-  From `apps/mobile`: `bun run test __tests__/cloud.test.ts --runInBand`.
-- `check:quasar`: the three Quasar typechecks (`@quasar/*` and `quasar-app`),
-  `bun test packages`, then Expo **web** export from `apps/quasar/apps/quasar`. From `apps/quasar`, focus with
-  `bun test packages/service/src/paths.test.ts` (Bun's runner, unlike web/mobile).
-- `check:research-sites`: `bun test` plus `bun run build`, which verifies the
-  clean manifest, exact file inventory and every file hash before copying
-  `public/` to the ignored `out/`.
-- `check:website-app`: serial database migration, UI build, TypeScript, Vitest,
-  Python pytest and Next build. Both stages share a temporary `MLAI_DATA_DIR`
-  removed on exit; a nonempty explicit override is preserved and may be modified
-  by migration/checks. Run app setup first for parser/model dependencies.
-  CI covers formatting, research validation, TypeScript, Vitest, migration and
-  build; it does not cover pytest, Playwright, or live integrations. The nested
-  agent scaffold remains non-deployable under its own `AGENTS.md`.
-- The root workspace lists Quasar's `packages/*` and `apps/*`;
-  `templates/next-site` has its own lockfile and is not built by that aggregate
-  gate.
-- CI covers six jobs: topology, web, mobile, quasar, website-app and
-  research-sites. Hosted runs have been blocked by a billing lock since
-  2026-09-08, so a red hosted check after that date is unmeasured, not a
-  failing gate.
-- `dev:quasar` starts only the Expo app. Start the service separately from
-  `apps/quasar` with `bun run --filter '@quasar/service' start`; see its README
-  for the unauthenticated LAN listener and provider-dependent acceptance flow.
+- `check:web`: `lint` is `tsc --noEmit`, then Vitest plus the Bun tests in
+  `apps/mlai/tests`, then sitemap generation, the research hash check, and the
+  Next build. From `apps/mlai`, focus Vitest with
+  `bunx vitest run src/__tests__/landing-page.test.ts`. `bun test tests` is the
+  store, workspace, sidecar, and research check; it is not a substitute for Vitest.
+- `check:quasar`: typecheck `@quasar/*`, then `bun test packages`. From `apps/quasar`,
+  focus with `bun test packages/service/src/paths.test.ts`.
+- `templates/next-site` has its own lockfile and is not built by the aggregate gate.
+- CI covers topology, web, quasar, and `check (self-hosted)` (full gate on the
+  `mlai`-labelled macOS runner; same-repository events only). Hosted runs have
+  been blocked by a billing lock since 2026-09-08, so a red hosted check after
+  that date is unmeasured, not a failing gate; while no runner is registered the
+  self-hosted job queues and is then cancelled (next push, or the 24-hour
+  queue limit), which is equally unmeasured.
+- Start the Quasar service separately from `apps/quasar` with
+  `bun run --filter '@quasar/service' start`. See its README for the
+  unauthenticated LAN listener and provider-dependent acceptance flow. A local
+  build does not prove a signed-device CloudKit sync.
 
 ## Documentation
 
@@ -124,14 +108,14 @@ app architecture and commands. Avoid copying long app instructions into the
 root; link to the authoritative file so the copies cannot drift.
 
 <!-- machine-git-policy -->
-## Two permanent checkouts of this repository exist
+## A second full checkout of this repository exists (archived since 2026-09-18)
 
-`~/dev/active/mlai` and `~/dev/active/MLAI-CORPORATION-WWW` are **two full
-checkouts of this same repository**, both tracking `origin/main`. The second was
-created deliberately, on Donald's explicit choice; it is not a worktree and not a
-mistake to clean up. `~/dev/active/mlai` stays the canonical one for ordinary work.
-
-The consequences are easy to get wrong and expensive:
+`~/dev/active/mlai` is the canonical checkout. A second full checkout, created
+deliberately on Donald's explicit choice (not a worktree, not a mistake to clean
+up), was moved with 22 other projects from `~/dev/active/MLAI-CORPORATION-WWW` to
+`~/Archive/experimental-2026-09-18/MLAI-CORPORATION-WWW` on 2026-09-18. It is
+restore-only there: do not develop in it. If it is ever restored, the rules below
+apply again, so they stay recorded:
 
 - A commit made in one checkout is **invisible to the other until it is pushed and
   fetched**. Always `git fetch` in the other before trusting any ahead/behind
@@ -160,4 +144,4 @@ called done. Full policy: `~/.claude/CLAUDE.md` (*Git discipline*).
 
 ## GitHub Pages
 
-- **GitHub Pages** publishes the static companion in `apps/web/site/` via `.github/workflows/pages.yml` (Actions only). The legacy `gh-pages` branch is retired; do not recreate it for deploys.
+- **GitHub Pages** publishes the static companion in `apps/mlai/site/` via `.github/workflows/pages.yml` (Actions only). The legacy `gh-pages` branch is retired; do not recreate it for deploys.

@@ -2,7 +2,7 @@
 //
 // A layered MLP rendered in rotating perspective; activations propagate
 // layer→layer; it warps into a radial "fabric" and blooms on demand. Paints its
-// own deep-black base for contrast control. Moved here from apps/web's
+// own deep-black base for contrast control. Moved here from apps/quasar-web's
 // neural.tsx with three injections in place of globals: the random source
 // (default Math.random, preserving the old non-reproducibility; tests seed it),
 // the intensity read (the app supplies window.__tw.neural), and the colour

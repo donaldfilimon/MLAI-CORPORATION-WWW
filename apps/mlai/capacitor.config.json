@@ -1,0 +1,5 @@
+{
+  "appId": "ai.mlai.app",
+  "appName": "MLAI",
+  "webDir": "capacitor/www"
+}

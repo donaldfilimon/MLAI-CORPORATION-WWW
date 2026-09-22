@@ -2,7 +2,7 @@
   "name": "quasar",
   "private": true,
   "scripts": {
-    "typecheck": "bun run --filter '@quasar/*' --filter quasar-app typecheck",
+    "typecheck": "bun run --filter '@quasar/*' typecheck",
     "test": "bun test packages"
   }
 }

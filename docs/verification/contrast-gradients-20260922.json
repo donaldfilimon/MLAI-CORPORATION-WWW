@@ -1,0 +1,461 @@
+{
+  "generatedAt": "2026-09-22T07:46:00+00:00",
+  "question": "Contrast of text over gradients, images and blurred panels: the case axe-core returns as 'incomplete' and cannot judge (open item from the 2026-09-17 axe pass).",
+  "method": "Pixel-sampled WCAG 2.2 1.4.3 check. playwright-core 1.63.0 drives local Google Chrome (headless, deviceScaleFactor 1, prefers-reduced-motion: reduce) at 1280x800 and 375x812. Routes = every sitemap route with at most one path segment, the first three of each collection, plus /login, /signup, /showcase (39, the axe-heading-order-20260922 set). Each page is scrolled through once to trigger in-view reveals, then captured viewport by viewport with instant scrolling (the site sets scroll-behavior: smooth, which otherwise desynchronizes boxes and pixels). For every visible text node: effective colour = computed colour (resolved through a canvas, so oklch/lab work) times the ancestor opacity chain; the text is made transparent (and background-clip:text glyphs hidden, Next dev overlay hidden) and the pixels under its client rects are sampled on a grid. Ratio per sample = composite text over that pixel vs the pixel. A box fails when its 5th-percentile ratio is below 4.5 (3 for >=24px or >=18.66px bold). The 5th percentile is lenient relative to WCAG's letter (a worst-single-pixel reading is stricter); worst-pixel minima are kept per box in the raw run. Skipped: svg/canvas, [hidden], [aria-hidden=true] (decorative, exempt under 1.4.3; the final run only), .sr-only, KaTeX MathML.",
+  "positiveControl": "A 14px rgba(255,255,255,0.22) line injected over the home hero gradient was flagged at both viewports (1.94-1.98:1).",
+  "baselineCommit": "4e62c49",
+  "baselineServer": "next dev (port 3210)",
+  "finalServer": "next build + next start (port 3210), production build of the fix commits",
+  "before": {
+    "routeViewportPairs": 78,
+    "textBoxesChecked": 5891,
+    "invisibleTextBoxesSkipped": "not counted in this run",
+    "scrollDriftFrames": 0,
+    "navigationErrors": [],
+    "failingBoxes": 334,
+    "failingBoxesOverNonUniformBackground": 0,
+    "uniqueFailingSources": [
+      {
+        "text": "chain verified",
+        "selector": "span.font-mono.text-[10px].uppercase.tracking-[0.18em]",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.69,
+        "need": 4.5,
+        "routes": [
+          "/"
+        ]
+      },
+      {
+        "text": "Illustrative trace. Every answer keeps t",
+        "selector": "figcaption.border-t.border-white/8.px-5.py-3",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.69,
+        "need": 4.5,
+        "routes": [
+          "/"
+        ]
+      },
+      {
+        "text": "2026",
+        "selector": "p.text-[10px].font-mono.text-text-dim/60.uppercase",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/",
+          "/about",
+          "/benchmarks",
+          "/blog",
+          "/blog/inside-wdbx-hybrid-ranker",
+          "/blog/on-saying-im-not-sure",
+          "/blog/wdbx-v2-release",
+          "/changelog",
+          "/demo",
+          "/docs",
+          "/docs/architecture",
+          "/docs/getting-started",
+          "/docs/identity",
+          "/get-started",
+          "/links",
+          "/login",
+          "/privacy",
+          "/products",
+          "/products/abbey",
+          "/products/abi",
+          "/products/wdbx",
+          "/projects",
+          "/projects/abbey",
+          "/projects/abi",
+          "/projects/wdbx",
+          "/research",
+          "/research/ai-overview",
+          "/research/sea-overview",
+          "/research/wdbx-overview",
+          "/security",
+          "/services",
+          "/showcase",
+          "/signup",
+          "/team",
+          "/team/donald-filimon",
+          "/terms"
+        ]
+      },
+      {
+        "text": "Privacy Policy",
+        "selector": "a.text-[10px].font-mono.text-text-dim/60.uppercase",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/",
+          "/about",
+          "/benchmarks",
+          "/blog",
+          "/blog/inside-wdbx-hybrid-ranker",
+          "/blog/on-saying-im-not-sure",
+          "/blog/wdbx-v2-release",
+          "/changelog",
+          "/demo",
+          "/docs",
+          "/docs/architecture",
+          "/docs/getting-started",
+          "/docs/identity",
+          "/get-started",
+          "/links",
+          "/login",
+          "/privacy",
+          "/products",
+          "/products/abbey",
+          "/products/abi",
+          "/products/wdbx",
+          "/projects",
+          "/projects/abbey",
+          "/projects/abi",
+          "/projects/wdbx",
+          "/research",
+          "/research/ai-overview",
+          "/research/sea-overview",
+          "/research/wdbx-overview",
+          "/security",
+          "/services",
+          "/showcase",
+          "/signup",
+          "/team",
+          "/team/donald-filimon",
+          "/terms"
+        ]
+      },
+      {
+        "text": "Terms of Service",
+        "selector": "a.text-[10px].font-mono.text-text-dim/60.uppercase",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/",
+          "/about",
+          "/benchmarks",
+          "/blog",
+          "/blog/inside-wdbx-hybrid-ranker",
+          "/blog/on-saying-im-not-sure",
+          "/blog/wdbx-v2-release",
+          "/changelog",
+          "/demo",
+          "/docs",
+          "/docs/architecture",
+          "/docs/getting-started",
+          "/docs/identity",
+          "/get-started",
+          "/links",
+          "/login",
+          "/privacy",
+          "/products",
+          "/products/abbey",
+          "/products/abi",
+          "/products/wdbx",
+          "/projects",
+          "/projects/abbey",
+          "/projects/abi",
+          "/projects/wdbx",
+          "/research",
+          "/research/ai-overview",
+          "/research/sea-overview",
+          "/research/wdbx-overview",
+          "/security",
+          "/services",
+          "/showcase",
+          "/signup",
+          "/team",
+          "/team/donald-filimon",
+          "/terms"
+        ]
+      },
+      {
+        "text": "Security",
+        "selector": "a.text-[10px].font-mono.text-text-dim/60.uppercase",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/",
+          "/about",
+          "/benchmarks",
+          "/blog",
+          "/blog/inside-wdbx-hybrid-ranker",
+          "/blog/on-saying-im-not-sure",
+          "/blog/wdbx-v2-release",
+          "/changelog",
+          "/demo",
+          "/docs",
+          "/docs/architecture",
+          "/docs/getting-started",
+          "/docs/identity",
+          "/get-started",
+          "/links",
+          "/login",
+          "/privacy",
+          "/products",
+          "/products/abbey",
+          "/products/abi",
+          "/products/wdbx",
+          "/projects",
+          "/projects/abbey",
+          "/projects/abi",
+          "/projects/wdbx",
+          "/research",
+          "/research/ai-overview",
+          "/research/sea-overview",
+          "/research/wdbx-overview",
+          "/security",
+          "/services",
+          "/showcase",
+          "/signup",
+          "/team",
+          "/team/donald-filimon",
+          "/terms"
+        ]
+      },
+      {
+        "text": "All inquiries are protected under NDA by",
+        "selector": "p.text-xs.text-text-dim/60.mb-10.flex",
+        "fontPx": 12,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/about"
+        ]
+      },
+      {
+        "text": "Direct Expert",
+        "selector": "span.text-[10px].font-mono.uppercase.tracking-widest",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/docs"
+        ]
+      },
+      {
+        "text": "Empathetic Polymath",
+        "selector": "span.text-[10px].font-mono.uppercase.tracking-widest",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/docs"
+        ]
+      },
+      {
+        "text": "Adaptive Moderator",
+        "selector": "span.text-[10px].font-mono.uppercase.tracking-widest",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/docs"
+        ]
+      },
+      {
+        "text": ".md \u2193",
+        "selector": "span.font-mono.text-[10px].text-text-dim/60.group-hover:text-sky-400",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/docs"
+        ]
+      },
+      {
+        "text": "Local AI runtime",
+        "selector": "span.text-[10px].font-mono.font-bold.tracking-[0.2em]",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/projects"
+        ]
+      },
+      {
+        "text": "Semantic storage",
+        "selector": "span.text-[10px].font-mono.font-bold.tracking-[0.2em]",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/projects"
+        ]
+      },
+      {
+        "text": "Companion & identity",
+        "selector": "span.text-[10px].font-mono.font-bold.tracking-[0.2em]",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/projects"
+        ]
+      },
+      {
+        "text": "Swift UI framework",
+        "selector": "span.text-[10px].font-mono.font-bold.tracking-[0.2em]",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/projects"
+        ]
+      },
+      {
+        "text": "16",
+        "selector": "span.text-[10px].text-text-dim/60",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/benchmarks"
+        ]
+      },
+      {
+        "text": "32",
+        "selector": "span.text-[10px].text-text-dim/60",
+        "fontPx": 10,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/benchmarks"
+        ]
+      },
+      {
+        "text": "External",
+        "selector": "span.text-[10px].font-mono.font-bold.uppercase",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.71,
+        "need": 4.5,
+        "routes": [
+          "/links"
+        ]
+      },
+      {
+        "text": "Internal",
+        "selector": "span.text-[10px].font-mono.font-bold.uppercase",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.71,
+        "need": 4.5,
+        "routes": [
+          "/links"
+        ]
+      },
+      {
+        "text": "\u2500\u26d3\u2500",
+        "selector": "span.font-mono.text-[10px].text-cyan-400/50",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 3.35,
+        "need": 4.5,
+        "routes": [
+          "/demo"
+        ]
+      },
+      {
+        "text": "United States",
+        "selector": "div.flex.items-center.gap-2.text-xs",
+        "fontPx": 12,
+        "effectiveAlpha": 0.6,
+        "worstP5": 3.39,
+        "need": 4.5,
+        "routes": [
+          "/team/donald-filimon"
+        ]
+      },
+      {
+        "text": "Zig",
+        "selector": "span.text-[10px].font-mono.uppercase.tracking-widest",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.68,
+        "need": 4.5,
+        "routes": [
+          "/team/donald-filimon"
+        ]
+      },
+      {
+        "text": "Zig \u00b7 Rust \u00b7 Py",
+        "selector": "span.text-[10px].font-mono.uppercase.tracking-widest",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.68,
+        "need": 4.5,
+        "routes": [
+          "/team/donald-filimon"
+        ]
+      },
+      {
+        "text": "Swift",
+        "selector": "span.text-[10px].font-mono.uppercase.tracking-widest",
+        "fontPx": 10,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.68,
+        "need": 4.5,
+        "routes": [
+          "/team/donald-filimon"
+        ]
+      },
+      {
+        "text": "Building something aligned?",
+        "selector": "p.text-xs.font-mono.uppercase.tracking-widest",
+        "fontPx": 12,
+        "effectiveAlpha": 0.5,
+        "worstP5": 2.68,
+        "need": 4.5,
+        "routes": [
+          "/team/donald-filimon"
+        ]
+      },
+      {
+        "text": "No public account creation. Membership i",
+        "selector": "p.pt-3.text-center.font-mono.text-[10px]",
+        "fontPx": 10,
+        "effectiveAlpha": 0.7,
+        "worstP5": 3.9,
+        "need": 4.5,
+        "routes": [
+          "/login",
+          "/signup"
+        ]
+      }
+    ]
+  },
+  "after": {
+    "routeViewportPairs": 78,
+    "textBoxesChecked": 6253,
+    "invisibleTextBoxesSkipped": 15,
+    "scrollDriftFrames": 0,
+    "navigationErrors": [],
+    "failingBoxes": 0,
+    "failingBoxesOverNonUniformBackground": 0,
+    "uniqueFailingSources": []
+  },
+  "coverageNote": "The baseline did not count text that was still at opacity 0 at capture time. The first post-fix run did: 792 boxes on /, /services, /showcase and /products/*, all hidden by a reduced-motion defect (Reveal, Hero, BacktracePanel, Product, Services, Showcase kept server-rendered opacity:0 when prefers-reduced-motion was set). That defect is fixed in its own commit; the final run's invisibleTextBoxesSkipped is the coverage figure to trust. Text the baseline missed this way (e.g. text-dim/45 in Hero and BacktracePanel) was caught by the source guard instead. The final run's 15 skipped boxes are all on /showcase/film: title cards of the film timeline (MLAI CORPORATION, Infrastructure for / resilient intelligence., ABBEY) that sit at opacity 0 until their scene plays, identically with and without reduced motion. By design, not a defect; not measured.",
+  "fixes": "Every text use of text-text-dim at /40-/70 raised to /80 (>= 5.02:1 on the darkest measured surface; /70 was 4.26:1). Opacity utilities only; no brand token changed. Exempt and unchanged: placeholder text (kept by the earlier audit) and the ArrowUpRight icon on /team/donald-filimon (non-text, beside its link text).",
+  "homeRecheck": "After the final motion variant (initial skipped under reduced motion, animate always targets visible), / was re-audited on a fresh production build: 173 boxes at 1280x800 and 163 at 375x812, 0 failing, 0 invisible, 0 errors.",
+  "guards": "apps/quasar-web/src/__tests__/a11y-source.test.ts: 'small metadata text does not drop below text-dim/80 anywhere in the app' and 'reduced motion never leaves server-rendered hidden content un-animated' (both verified to fail against the pre-fix source)."
+}

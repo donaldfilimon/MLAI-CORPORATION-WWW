@@ -1,0 +1,19 @@
+{
+  "name": "@mlai/store",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth.ts",
+    "./wdbx": "./src/wdbx.ts"
+  },
+  "dependencies": {
+    "better-auth": "^1.7.3",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.5",
+    "typescript": "^7.0.2"
+  }
+}

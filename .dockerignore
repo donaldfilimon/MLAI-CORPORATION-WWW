@@ -1,4 +1,4 @@
-# Build context for apps/web/Dockerfile, which runs from the repository root.
+# Build context for apps/quasar-web/Dockerfile, which runs from the repository root.
 # The frozen root-workspace install needs the root manifests and EVERY
 # workspace package.json, so other apps are excluded file by file with their
 # manifests re-included. Use `dir/**` (not bare `dir`) for anything that needs
@@ -56,8 +56,8 @@ apps/website-app/**
 !apps/website-app/packages/*/package.json
 !apps/website-app/mlai-website-agent/package.json
 
-# apps/web scratch and non-source outputs
-apps/web/output
-apps/web/ds-bundle
-apps/web/.ds-sync
-apps/web/.design-sync
+# apps/quasar-web scratch and non-source outputs
+apps/quasar-web/output
+apps/quasar-web/ds-bundle
+apps/quasar-web/.ds-sync
+apps/quasar-web/.design-sync

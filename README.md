@@ -11,7 +11,7 @@ Current journey delivery and acceptance limits: [four-app delivery ledger](docs/
 
 | Path | Purpose | Native gate |
 |---|---|---|
-| `apps/web/` | Next.js 15 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
+| `apps/quasar-web/` | Next.js 16 website, API routes, private console, Cloud Run deployment, and app-owned OpenTofu | `bun run check:web` |
 | `apps/mobile/` | Expo SDK 53 mobile companion and native CloudKit module | `bun run check:mobile` |
 | `apps/quasar/` | Local AI site builder: service, shared package, Expo app, and a separately locked Next template | `bun run check:quasar` |
 | `apps/website-app/` | Next.js local application, Abbey workspace, SQLite/Better Auth, Python worker, and agent package | `bun run check:website-app` |
@@ -22,7 +22,7 @@ Current journey delivery and acceptance limits: [four-app delivery ledger](docs/
 
 The former mobile `www/` subtree was a historical copy of the website. Its
 history is retained by the merge, but the current implementation lives only at
-`apps/web/`. Quasar keeps its own app, service, shared package, template, and
+`apps/quasar-web/`. Quasar keeps its own app, service, shared package, template, and
 acceptance flow under `apps/quasar/`.
 
 ## Setup and verification
@@ -90,7 +90,7 @@ checkouts is still a separate operator decision.
 Run its commands from that directory, or use the root wrappers above. It keeps
 its shared UI package, SQLite migrations, Python worker and lock, and
 non-deployable agent scaffold; its JavaScript dependencies are locked by the
-root `bun.lock`. `apps/web` remains the canonical production
+root `bun.lock`. `apps/quasar-web` remains the canonical production
 website with its existing deployment workflows.
 
 Before the full website-app gate, follow [its setup guide](apps/website-app/README.md):

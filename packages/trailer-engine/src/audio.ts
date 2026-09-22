@@ -4,7 +4,7 @@
 // context factory, the reduced-motion query and the scheduler. That keeps the
 // engine free of brand data and testable in Node with hand-written fakes, and
 // it is what lets the persona registry be a constructor argument rather than an
-// import. The brand adapter (apps/web/src/film/neural-voice.ts) owns the
+// import. The brand adapter (apps/quasar-web/src/film/neural-voice.ts) owns the
 // personas, the pronunciation vocabulary and the Kokoro CDN import.
 //
 // Disposal follows playback.ts: every async continuation captures the current

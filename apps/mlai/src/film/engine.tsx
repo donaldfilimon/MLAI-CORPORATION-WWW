@@ -1,0 +1,350 @@
+// engine.tsx — timeline engine (ported from animations.jsx). Imports easing.
+// Exports: Stage, Sprite, useTime, useTimeline, useSprite, PlaybackBar,
+// TextSprite, RectSprite. Depended on by main.tsx + every scene.
+
+import {
+  createContext, useContext, useState, useRef, useEffect, useMemo, useCallback,
+  type ReactNode, type CSSProperties,
+} from "react";
+import { advance, frameDelta } from "@mlai/trailer-engine";
+import { Easing, clamp } from "./easing";
+
+/* ── timeline context ─────────────────────────────────────────── */
+
+interface TimelineValue {
+  // `time` is the displayed playhead (follows scrubber-hover preview) — render off it.
+  // `clock` is the true playhead (ignores hover) — fire side effects (speech) off it.
+  time: number; clock: number; duration: number; playing: boolean;
+  setTime: (t: number | ((t: number) => number)) => void;
+  setPlaying: (p: boolean | ((p: boolean) => boolean)) => void;
+  // The Stage's unscaled root. Chrome that must keep its real pixel size (the
+  // voice toggle) portals here instead of rendering inside the scaled picture,
+  // which shrinks a 90×28 button to 22×7 at a 320 px viewport.
+  chrome: HTMLElement | null;
+}
+const TimelineContext = createContext<TimelineValue>({
+  time: 0, clock: 0, duration: 10, playing: false, setTime: () => {}, setPlaying: () => {}, chrome: null,
+});
+export const useTime = () => useContext(TimelineContext).time;
+export const useTimeline = () => useContext(TimelineContext);
+
+/* ── sprite ───────────────────────────────────────────────────── */
+
+interface SpriteValue { localTime: number; progress: number; duration: number; visible: boolean; }
+const SpriteContext = createContext<SpriteValue>({ localTime: 0, progress: 0, duration: 0, visible: true });
+export const useSprite = () => useContext(SpriteContext);
+
+export function Sprite({ start = 0, end = Infinity, children, keepMounted = false }: {
+  start?: number; end?: number; keepMounted?: boolean;
+  children: ReactNode | ((v: SpriteValue) => ReactNode);
+}) {
+  const { time } = useTimeline();
+  const visible = time >= start && time <= end;
+  if (!visible && !keepMounted) return null;
+  const duration = end - start;
+  const localTime = Math.max(0, time - start);
+  const progress = duration > 0 && isFinite(duration) ? clamp(localTime / duration, 0, 1) : 0;
+  const value: SpriteValue = { localTime, progress, duration, visible };
+  return (
+    <SpriteContext.Provider value={value}>
+      {typeof children === "function" ? children(value) : children}
+    </SpriteContext.Provider>
+  );
+}
+
+/* ── text / rect sprites (handy primitives) ───────────────────── */
+
+export function TextSprite({ text, x = 0, y = 0, size = 48, color = "#fff",
+  font = "Inter, 'Geist Variable', system-ui, sans-serif", weight = 600, entryDur = 0.45, exitDur = 0.35,
+  align = "left", letterSpacing = "-0.01em" }: {
+  text: string; x?: number; y?: number; size?: number; color?: string; font?: string;
+  weight?: number; entryDur?: number; exitDur?: number; align?: "left" | "center" | "right"; letterSpacing?: string;
+}) {
+  const { localTime, duration } = useSprite();
+  const exitStart = Math.max(0, duration - exitDur);
+  let opacity = 1, ty = 0;
+  if (localTime < entryDur) { const t = Easing.easeOutBack(clamp(localTime / entryDur, 0, 1)); opacity = t; ty = (1 - t) * 16; }
+  else if (localTime > exitStart) { const t = Easing.easeInCubic(clamp((localTime - exitStart) / exitDur, 0, 1)); opacity = 1 - t; ty = -t * 8; }
+  const tx = align === "center" ? "-50%" : align === "right" ? "-100%" : "0";
+  return (
+    <div style={{ position: "absolute", left: x, top: y, transform: `translate(${tx}, ${ty}px)`, opacity,
+      fontFamily: font, fontSize: size, fontWeight: weight, color, letterSpacing, whiteSpace: "pre", lineHeight: 1.1 }}>
+      {text}
+    </div>
+  );
+}
+
+export function RectSprite({ x = 0, y = 0, width = 100, height = 100, color = "#fff", radius = 8,
+  entryDur = 0.4, exitDur = 0.3, render }: {
+  x?: number; y?: number; width?: number; height?: number; color?: string; radius?: number;
+  entryDur?: number; exitDur?: number; render?: (ctx: SpriteValue) => CSSProperties;
+}) {
+  const ctx = useSprite();
+  const { localTime, duration } = ctx;
+  const exitStart = Math.max(0, duration - exitDur);
+  let opacity = 1, scale = 1;
+  if (localTime < entryDur) { const t = Easing.easeOutBack(clamp(localTime / entryDur, 0, 1)); opacity = clamp(localTime / entryDur, 0, 1); scale = 0.4 + 0.6 * t; }
+  else if (localTime > exitStart) { const t = Easing.easeInQuad(clamp((localTime - exitStart) / exitDur, 0, 1)); opacity = 1 - t; scale = 1 - 0.15 * t; }
+  return <div style={{ position: "absolute", left: x, top: y, width, height, background: color, borderRadius: radius,
+    opacity, transform: `scale(${scale})`, transformOrigin: "center", ...(render ? render(ctx) : {}) }} />;
+}
+
+/* ── reduced motion ───────────────────────────────────────────── */
+
+export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+type MatchMediaLike = (query: string) => { matches: boolean };
+
+/**
+ * True when the environment asks for reduced motion, in which case the Stage
+ * clock holds instead of advancing. Takes the matchMedia function as a
+ * parameter so the gating is testable in the Node-only Vitest setup; the
+ * default reads `window.matchMedia` and answers false with no DOM or when the
+ * browser lacks matchMedia.
+ */
+export function prefersReducedMotion(
+  matchMedia: MatchMediaLike | undefined = typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia.bind(window)
+    : undefined,
+): boolean {
+  if (!matchMedia) return false;
+  try {
+    return matchMedia(REDUCED_MOTION_QUERY).matches === true;
+  } catch {
+    return false;
+  }
+}
+
+/* ── seeking ──────────────────────────────────────────────────── */
+
+/**
+ * Where a seek lands. A seek onto the end pauses: the clock's next frame would
+ * otherwise wrap a looping film to 0, so End on the scrubber (and dragging it
+ * to the far right) read as "jump to start". Resuming from the end still wraps,
+ * exactly as reaching it by playback does. `atEnd` is never true for a
+ * zero-length film, which has no last frame to hold.
+ */
+export function resolveSeek(t: number, duration: number): { time: number; atEnd: boolean } {
+  const time = clamp(t, 0, duration);
+  return { time, atEnd: duration > 0 && time >= duration };
+}
+
+/* ── stage ────────────────────────────────────────────────────── */
+
+export function Stage({ width = 1920, height = 1080, duration = 10, background = "#040406",
+  loop = true, autoplay = true, persistKey = "animstage", ready = true, children }: {
+  width?: number; height?: number; duration?: number; background?: string;
+  loop?: boolean; autoplay?: boolean; persistKey?: string; ready?: boolean; children: ReactNode;
+}) {
+  const [time, setTime] = useState<number>(() => {
+    try { const v = parseFloat(localStorage.getItem(persistKey + ":t") || "0"); return isFinite(v) ? clamp(v, 0, duration) : 0; }
+    catch { return 0; }
+  });
+  const [playing, setPlaying] = useState(autoplay);
+  const [hoverTime, setHoverTime] = useState<number | null>(null);
+  const [scale, setScale] = useState(1);
+  const [chrome, setChrome] = useState<HTMLElement | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const stageRefCb = useCallback((el: HTMLDivElement | null) => { stageRef.current = el; setChrome(el); }, []);
+  const rafRef = useRef(0);
+  const lastTsRef = useRef<number | null>(null);
+  const timeRef = useRef(time);
+  timeRef.current = time;
+  const lastSaveRef = useRef(0);
+
+  // Persist the playhead, but throttled — the clock ticks ~60Hz and writing to
+  // localStorage every frame is needless main-thread work. Save at most ~1/s and
+  // flush the final position when the Stage unmounts (e.g. navigating away).
+  useEffect(() => {
+    const now = performance.now();
+    if (now - lastSaveRef.current >= 1000) {
+      lastSaveRef.current = now;
+      try { localStorage.setItem(persistKey + ":t", String(time)); } catch { /* ignore */ }
+    }
+  }, [time, persistKey]);
+  useEffect(() => () => {
+    try { localStorage.setItem(persistKey + ":t", String(timeRef.current)); } catch { /* ignore */ }
+  }, [persistKey]);
+
+  useEffect(() => {
+    const el = stageRef.current; if (!el) return;
+    const measure = () => {
+      const barH = 44;
+      setScale(Math.max(0.05, Math.min(el.clientWidth / width, (el.clientHeight - barH) / height)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure); ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => { ro.disconnect(); window.removeEventListener("resize", measure); };
+  }, [width, height]);
+
+  useEffect(() => {
+    // Hold the clock until the voice is ready, so no line is crossed before the
+    // model can speak it (autoplay stays armed; it simply doesn't advance yet).
+    if (!playing || !ready) { lastTsRef.current = null; return; }
+    const stepFrame = (ts: number) => {
+      if (lastTsRef.current == null) lastTsRef.current = ts;
+      // reduced-motion check: if enabled, hold the clock (keep polling so a
+      // change in the OS setting resumes playback without a remount).
+      if (prefersReducedMotion()) {
+        lastTsRef.current = ts;
+        rafRef.current = requestAnimationFrame(stepFrame);
+        return;
+      }
+      // frameDelta clamps the step — see MAX_FRAME_DT in easing.ts for why a
+      // backgrounded tab would otherwise jump the playhead by the time away.
+      const dt = frameDelta(ts, lastTsRef.current); lastTsRef.current = ts;
+      setTime((t) => {
+        const r = advance(t, dt, duration, loop);
+        if (r.time >= duration && loop) return 0;
+        if (r.ended) setPlaying(false);
+        return r.time;
+      });
+      rafRef.current = requestAnimationFrame(stepFrame);
+    };
+    rafRef.current = requestAnimationFrame(stepFrame);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); lastTsRef.current = null; };
+  }, [playing, ready, duration, loop]);
+
+  // Pause when the tab goes away. rAF stops in a background tab but the
+  // AudioContext does not, so without this the narration keeps advancing
+  // against a frozen picture and returns out of sync. `playing` is the single
+  // lever — narration.tsx mirrors it to NeuralVoice — so clearing it pauses
+  // clock and voice together. Deliberately does NOT auto-resume: audio should
+  // not restart at a tab nobody is looking at.
+  useEffect(() => {
+    const onVisibility = () => { if (document.hidden) setPlaying(false); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
+  const seekTo = useCallback((t: number) => {
+    const r = resolveSeek(t, duration);
+    setHoverTime(null); setTime(r.time);
+    if (r.atEnd) setPlaying(false);
+  }, [duration]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      // A focused button owns Space (activates it natively); toggling playback
+      // too would make "Return to start" or the voice toggle also play/pause.
+      if (e.code === "Space" && target?.closest("button, [role=button]")) return;
+      // Clear any scrubber-hover preview so keyboard control isn't frozen at the
+      // hovered frame when the pointer is resting on the track (mouseleave never fires).
+      if (e.code === "Space") { e.preventDefault(); setHoverTime(null); setPlaying((p) => !p); }
+      else if (e.code === "ArrowLeft") { setHoverTime(null); setTime((t) => clamp(t - (e.shiftKey ? 1 : 0.1), 0, duration)); }
+      else if (e.code === "ArrowRight") { seekTo(timeRef.current + (e.shiftKey ? 1 : 0.1)); }
+      else if (e.key === "0" || e.code === "Home") { setHoverTime(null); setTime(0); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [duration, seekTo]);
+
+  const displayTime = hoverTime != null ? hoverTime : time;
+  const ctxValue = useMemo<TimelineValue>(() => ({ time: displayTime, clock: time, duration, playing, setTime, setPlaying, chrome }),
+    [displayTime, time, duration, playing, chrome]);
+
+  return (
+    <div ref={stageRefCb} style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+      alignItems: "center", background: "#0a0a0a", fontFamily: "Inter, 'Geist Variable', system-ui, sans-serif" }}>
+      <div style={{ flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 0 }}>
+        <div style={{ width, height, background, position: "relative", transform: `scale(${scale})`, transformOrigin: "center",
+          flexShrink: 0, boxShadow: "0 20px 60px rgba(0,0,0,0.4)", overflow: "hidden" }}>
+          <TimelineContext.Provider value={ctxValue}>{children}</TimelineContext.Provider>
+        </div>
+      </div>
+      <PlaybackBar time={displayTime} duration={duration} playing={playing}
+        onPlayPause={() => setPlaying((p) => !p)} onReset={() => setTime(0)}
+        onSeek={seekTo} onHover={(t) => setHoverTime(t)} />
+      {!ready && (
+        <div style={{ position: "absolute", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(4,4,6,0.5)", backdropFilter: "blur(2px)", color: "rgba(220,220,228,0.85)",
+          fontFamily: "JetBrains Mono, ui-monospace, monospace", fontSize: 13, letterSpacing: "0.34em" }}>
+          <span className="mlai-voice-pulse">PREPARING&nbsp;VOICE…</span>
+          {/* The only animation that runs while the clock holds, so it too must honor reduced motion. */}
+          <style>{`@keyframes mlaiVoicePulse{0%,100%{opacity:.4}50%{opacity:1}}.mlai-voice-pulse{animation:mlaiVoicePulse 1.2s ease-in-out infinite}@media (prefers-reduced-motion: reduce){.mlai-voice-pulse{animation:none;opacity:.8}}`}</style>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── playback bar ─────────────────────────────────────────────── */
+
+function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, onHover }: {
+  time: number; duration: number; playing: boolean;
+  onPlayPause: () => void; onReset: () => void; onSeek: (t: number) => void; onHover: (t: number | null) => void;
+}) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const timeFromEvent = useCallback((e: { clientX: number }) => {
+    const rect = trackRef.current!.getBoundingClientRect();
+    return clamp((e.clientX - rect.left) / rect.width, 0, 1) * duration;
+  }, [duration]);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onUp = () => setDragging(false);
+    const onMove = (e: MouseEvent) => { if (trackRef.current) onSeek(timeFromEvent(e)); };
+    window.addEventListener("mouseup", onUp); window.addEventListener("mousemove", onMove);
+    return () => { window.removeEventListener("mouseup", onUp); window.removeEventListener("mousemove", onMove); };
+  }, [dragging, timeFromEvent, onSeek]);
+
+  const pct = duration > 0 ? (time / duration) * 100 : 0;
+  const fmt = (t: number) => {
+    const total = Math.max(0, t), m = Math.floor(total / 60), s = Math.floor(total % 60), cs = Math.floor((total * 100) % 100);
+    return `${m}:${String(s).padStart(2, "0")}.${String(cs).padStart(2, "0")}`;
+  };
+  const mono = "JetBrains Mono, ui-monospace, monospace";
+
+  return (
+    <div className="mlai-transport" style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(20,20,20,0.92)",
+      borderTop: "1px solid rgba(255,255,255,0.08)", width: "100%", maxWidth: 680, alignSelf: "center", borderRadius: 8,
+      color: "#f6f4ef", userSelect: "none", flexShrink: 0 }}>
+      {/* Inline styles cannot express :focus-visible, so the transport's keyboard
+          focus ring lives here, scoped to this bar. Pointer clicks show nothing. */}
+      <style>{`.mlai-transport button:focus-visible,.mlai-transport [role="slider"]:focus-visible{outline:2px solid #7cb0ff;outline-offset:2px;border-radius:6px}`}</style>
+      <IconButton onClick={onReset} title="Return to start (0)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2v10M12 2L5 7l7 5V2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" /></svg>
+      </IconButton>
+      <IconButton onClick={onPlayPause} title="Play/pause (space)">
+        {playing
+          ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="2" width="3" height="10" fill="currentColor" /><rect x="8" y="2" width="3" height="10" fill="currentColor" /></svg>
+          : <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2l9 5-9 5V2z" fill="currentColor" /></svg>}
+      </IconButton>
+      <div style={{ fontFamily: mono, fontSize: 12, fontVariantNumeric: "tabular-nums", width: 64, textAlign: "right" }}>{fmt(time)}</div>
+      <div ref={trackRef}
+        role="slider" tabIndex={0} aria-label="Playhead" aria-valuemin={0} aria-valuemax={Math.round(duration)} aria-valuenow={Math.round(time)} aria-valuetext={fmt(time)}
+        onKeyDown={(e) => {
+          // The window handler already scrubs on arrows; this makes the track a
+          // real slider for assistive tech, with Home/End as well.
+          if (e.key === "Home") { e.preventDefault(); onSeek(0); }
+          else if (e.key === "End") { e.preventDefault(); onSeek(duration); }
+        }}
+        onMouseMove={(e) => (dragging ? onSeek(timeFromEvent(e)) : onHover(timeFromEvent(e)))}
+        onMouseLeave={() => { if (!dragging) onHover(null); }}
+        onMouseDown={(e) => { setDragging(true); onSeek(timeFromEvent(e)); onHover(null); }}
+        style={{ flex: 1, height: 22, position: "relative", cursor: "pointer", display: "flex", alignItems: "center" }}>
+        <div style={{ position: "absolute", left: 0, right: 0, height: 4, background: "rgba(255,255,255,0.12)", borderRadius: 2 }} />
+        <div style={{ position: "absolute", left: 0, width: `${pct}%`, height: 4, background: "oklch(72% 0.12 250)", borderRadius: 2 }} />
+        <div style={{ position: "absolute", left: `${pct}%`, top: "50%", width: 12, height: 12, marginLeft: -6, marginTop: -6, background: "#fff", borderRadius: 6, boxShadow: "0 2px 4px rgba(0,0,0,0.4)" }} />
+      </div>
+      <div style={{ fontFamily: mono, fontSize: 12, fontVariantNumeric: "tabular-nums", width: 64, textAlign: "left", color: "rgba(246,244,239,0.55)" }}>{fmt(duration)}</div>
+    </div>
+  );
+}
+
+function IconButton({ children, onClick, title }: { children: ReactNode; onClick: () => void; title: string }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <button type="button" onClick={onClick} title={title} aria-label={title} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
+        background: hover ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: 6, color: "#f6f4ef", cursor: "pointer", padding: 0, transition: "background 120ms" }}>
+      {children}
+    </button>
+  );
+}

@@ -43,8 +43,8 @@ jobs:
       # Same drift check as the hosted topology job, then the full install.
       - run: bun install --frozen-lockfile --lockfile-only
       - run: bun install --frozen-lockfile
-      # All eight stages. check:workflows uses the host's Go (1.25+), and
-      # check:website-app creates and removes its own MLAI_DATA_DIR.
+      # Topology, workflows, tooling, the one Next app, and the Quasar sidecar.
+      # check:workflows uses the host's Go (1.25+).
       - run: bun run check
 
   topology:
@@ -72,30 +72,13 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/web
+      - run: bun install --frozen-lockfile --filter @mlai/platform --filter @quesar/web
       - run: bun run lint
-        working-directory: apps/web
+        working-directory: apps/mlai
       - run: bun run test
-        working-directory: apps/web
+        working-directory: apps/mlai
       - run: bun run build
-        working-directory: apps/web
-
-  mobile:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile --filter @mlai/platform --filter @mlai/mobile
-      - run: bun run typecheck
-        working-directory: apps/mobile
-      - run: bun run test -- --runInBand
-        working-directory: apps/mobile
-      - run: bun run lint
-        working-directory: apps/mobile
-      - run: bunx expo export --platform web
-        working-directory: apps/mobile
+        working-directory: apps/mlai
 
   quasar:
     runs-on: ubuntu-latest
@@ -104,49 +87,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile --filter @mlai/platform --filter quasar --filter '@quasar/*' --filter quasar-app
+      - run: bun install --frozen-lockfile --filter @mlai/platform --filter quasar --filter '@quasar/*'
       - run: bun run typecheck
         working-directory: apps/quasar
       - run: bun run test
         working-directory: apps/quasar
-      - run: bunx expo export --platform web
-        working-directory: apps/quasar/apps/quasar
-
-  website-app:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/website-app
-    steps:
-      - uses: actions/checkout@v7
-      - name: Initialize isolated application data
-        run: echo "MLAI_DATA_DIR=$RUNNER_TEMP/mlai-website-app-ci" >> "$GITHUB_ENV"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile --filter @mlai/platform --filter mlai-website-app
-        working-directory: ${{ github.workspace }}
-      - run: bun run typecheck
-      - run: bun run format:check
-      - run: bun run verify:research
-      - run: bun run test
-      # Migrate once before parallel Next build workers import the database.
-      - run: bun run db:migrate
-      - run: bun run build
-
-  research-sites:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/research-sites
-    steps:
-      - uses: actions/checkout@v7
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.4.2"
-      # Zero dependencies by design: no install step. build verifies the
-      # manifest and every file hash before copying public/ to out/.
-      - run: bun run check
