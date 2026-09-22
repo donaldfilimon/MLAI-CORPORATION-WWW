@@ -1602,6 +1602,7 @@ coordinator reviews, gates and commits.
 
 ## Run CI on a self-hosted runner while hosted Actions are billing-locked
 status: blocked
+- **2026-09-22 02:0x EDT (session e84039, completion pass):** local gate re-run at `e2af569`, since hosted CI is still locked. `bun install --frozen-lockfile --lockfile-only` EXIT 0. `bun run check` EXIT 0 across all eight stages: topology, tooling 17, web 58 files / 513 tests plus build, mobile 7 suites / 59 tests plus export, quasar 69 plus export, website-app 18 files / 138 tests, research-sites 11. On Donald's choice, an uncommitted edit to the frozen `docs/sources/nextjs-landing-20260916/.../metrics.ts` was saved to `~/Archive/2026-09-22-mlai-completion/metrics-ts.patch` and reverted. It retagged WDBX figures as "measured" with hardware and HNSW parameters that no harness backs. The patch re-applies with `git apply`. Two untracked root zips of `6ea254e` went to `~/.Trash`. `main` was then pushed. This goal is still blocked on the runner token.
 - **2026-09-22 01:3x EDT (session ed2df7), re-measured:** still waiting on the registration token. `~/actions-runner-mlai` has `run.sh`/`svc.sh` but no `.runner` or `.credentials`, and `launchctl list` shows only the abbey and abi runner labels. `ci.yml` line 34 still targets `[self-hosted, macOS, ARM64, mlai]`. Status set to `blocked`: named stop, Donald enters the token (`.github/self-hosted-runner.md`).
 
 Captured 2026-09-17 05:5x EDT on Donald's choice ("Register a macOS runner"), in the
