@@ -33,9 +33,9 @@ export function Projects() {
                     <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-text-dim/60 uppercase">
                       {project.kind}
                     </span>
-                    <h3 className="mt-2 font-display text-xl font-semibold text-white">
+                    <h2 className="mt-2 font-display text-xl font-semibold text-white">
                       {project.name}
-                    </h3>
+                    </h2>
                   </div>
                   <p className="text-sm leading-relaxed text-text-dim text-pretty">
                     {project.tagline}

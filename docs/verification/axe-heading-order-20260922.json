@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-09-22T05:41:12+00:00",
+  "method": "axe-core 4.13.0 run via playwright-core 1.63.0 driving local Google Chrome (channel: chrome, headless, 1280x800) against `next dev` on http://localhost:3000; rules heading-order, link-in-text-block, empty-heading, page-has-heading-one; routes = every sitemap route with at most one path segment plus the first three of each collection, plus /login, /signup, /showcase.",
+  "baselineCommit": "4583197",
+  "fixCommit": "the commit that adds this file (git log -- docs/verification/axe-heading-order-20260922.json)",
+  "routes": 39,
+  "before": {
+    "violatingRoutes": 34,
+    "byRoute": {
+      "/": "heading-orderx1",
+      "/about": "heading-orderx2",
+      "/products": "heading-orderx1",
+      "/research": "heading-orderx1",
+      "/services": "heading-orderx2",
+      "/team": "heading-orderx1",
+      "/blog": "heading-orderx1",
+      "/docs": "heading-orderx2",
+      "/projects": "heading-orderx1",
+      "/benchmarks": "heading-orderx1",
+      "/changelog": "heading-orderx1",
+      "/demo": "heading-orderx1",
+      "/showcase": "heading-orderx1",
+      "/privacy": "heading-orderx1",
+      "/terms": "heading-orderx1",
+      "/security": "heading-orderx1",
+      "/products/abi": "heading-orderx1",
+      "/products/abbey": "heading-orderx1",
+      "/products/wdbx": "heading-orderx1",
+      "/research/ai-overview": "heading-orderx1",
+      "/research/wdbx-overview": "heading-orderx1",
+      "/research/sea-overview": "heading-orderx1",
+      "/blog/wdbx-v2-release": "heading-orderx1",
+      "/blog/on-saying-im-not-sure": "heading-orderx1",
+      "/blog/inside-wdbx-hybrid-ranker": "heading-orderx1",
+      "/team/donald-filimon": "heading-orderx1",
+      "/docs/getting-started": "heading-orderx1",
+      "/docs/architecture": "heading-orderx1",
+      "/docs/identity": "heading-orderx1",
+      "/projects/abi": "heading-orderx1",
+      "/projects/wdbx": "heading-orderx1",
+      "/projects/abbey": "heading-orderx1",
+      "/login": "heading-orderx1",
+      "/signup": "heading-orderx1"
+    }
+  },
+  "after": {
+    "violatingRoutes": 0,
+    "errors": 0,
+    "byRoute": {}
+  },
+  "rootCauses": [
+    "Footer column headings were <h4> on every route; after h1/h2 page content that skips a level. Now <h2>.",
+    "Card bands directly under the page <h1> rendered <h3> titles with no <h2> between (About values, Blog rubrics, Docs capabilities via FeatureCard headingLevel; Services, Team, Projects inline). Now <h2>."
+  ]
+}

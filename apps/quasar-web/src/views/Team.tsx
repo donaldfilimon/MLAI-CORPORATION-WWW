@@ -80,13 +80,13 @@ export const Team = () => {
                     <TeamPhoto name={member.name} image={member.image} />
                   )}
 
-                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">
+                  <h2 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">
                     {member.slug ? (
                       <Link to={`/team/${member.slug}`}>{member.name}</Link>
                     ) : (
                       member.name
                     )}
-                  </h3>
+                  </h2>
                   <div className="text-cyan-400 font-mono text-[10px] uppercase tracking-[0.15em] mb-3">
                     {member.role}
                   </div>
@@ -121,9 +121,9 @@ export const Team = () => {
               <div className="w-16 h-16 rounded-full bg-cyan-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                 <Users className="w-8 h-8 text-cyan-400" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h2 className="text-xl font-bold text-white mb-2">
                 Join the Mission
-              </h3>
+              </h2>
               <p className="text-sm text-text-dim mb-6">
                 We're always looking for exceptional minds in neural research
                 and systems safety.

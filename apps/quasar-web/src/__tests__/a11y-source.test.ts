@@ -89,6 +89,22 @@ describe("a11y source guards", () => {
     expect(terms).toMatch(/\bunderline\b/);
   });
 
+  it("heading levels rise by one: footer columns and first-band cards are h2, not h4/h3 under an h1", () => {
+    // axe heading-order, 2026-09-22 audit of 40 routes on next dev: 35 failed,
+    // every one through the footer's <h4> columns, and six more through a card
+    // band that followed the page <h1> with no <h2> between.
+    expect(read("src/components/Footer.tsx")).not.toMatch(/<h4[\s>]/);
+    const card = read("src/components/site/FeatureCard.tsx");
+    expect(card).toMatch(/headingLevel\?: "h2" \| "h3";/);
+    expect(card).toMatch(/headingLevel = "h3"/);
+    for (const file of ["src/views/About.tsx", "src/views/Blog.tsx", "src/views/Docs.tsx"]) {
+      expect(read(file), file).toMatch(/headingLevel="h2"/);
+    }
+    for (const file of ["src/views/Services.tsx", "src/views/Team.tsx", "src/views/Projects.tsx"]) {
+      expect(read(file), file).not.toMatch(/<h3[\s>]/);
+    }
+  });
+
   it("flagged small metadata text does not drop below text-dim/80", () => {
     for (const file of ["src/components/article.tsx", "src/views/Changelog.tsx", "src/components/demos/WdbxLiveDemo.tsx"]) {
       expect(read(file), file).not.toMatch(/(?<!placeholder:)text-text-dim\/[5-7]0\b/);

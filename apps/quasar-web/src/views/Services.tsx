@@ -100,9 +100,9 @@ export const Services = () => {
                     >
                       {icons[i]}
                     </div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors mb-3">
+                    <h2 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors mb-3">
                       {service.title}
-                    </h3>
+                    </h2>
                     <p className="text-text-dim leading-relaxed text-sm mb-6">
                       {service.description}
                     </p>

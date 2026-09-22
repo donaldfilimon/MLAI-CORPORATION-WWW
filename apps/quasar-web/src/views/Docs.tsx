@@ -402,7 +402,7 @@ export function Docs() {
 
             <div className="grid gap-5 sm:grid-cols-2">
               {capabilities.map((c) => (
-                <FeatureCard key={c.title} title={c.title} desc={c.desc} />
+                <FeatureCard key={c.title} title={c.title} desc={c.desc} headingLevel="h2" />
               ))}
             </div>
 

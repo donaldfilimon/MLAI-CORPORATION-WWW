@@ -57,9 +57,9 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+            <h2 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
               Products & research
-            </h4>
+            </h2>
             <ul className="space-y-3 text-sm text-text-dim">
               <li><Link to="/products" className="hover:text-cyan-400">All products</Link></li>
               {productJourneys.map((product) => <li key={product.slug}><Link to={`/products/${product.slug}`} className="hover:text-cyan-400">{product.name}</Link></li>)}
@@ -104,9 +104,9 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+            <h2 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
               Resources
-            </h4>
+            </h2>
             <ul className="space-y-3 text-sm text-text-dim">
               <li>
                 <Link
@@ -166,9 +166,9 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+            <h2 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
               Company
-            </h4>
+            </h2>
             <ul className="space-y-3 text-sm text-text-dim">
               <li>
                 <Link
@@ -214,9 +214,9 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
+            <h2 className="font-display font-bold text-white mb-6 text-sm uppercase tracking-wider">
               Stay in the loop
-            </h4>
+            </h2>
             <p className="text-sm text-text-dim mb-4">
               For release notes, benchmarks, and research updates, send an
               inquiry with &ldquo;updates&rdquo; in your message and we&apos;ll

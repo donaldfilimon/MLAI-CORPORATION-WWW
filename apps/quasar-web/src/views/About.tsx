@@ -80,6 +80,7 @@ export const About = () => {
                 key={item.title}
                 title={item.title}
                 desc={item.description}
+                headingLevel="h2"
               />
             ))}
           </CardGrid>

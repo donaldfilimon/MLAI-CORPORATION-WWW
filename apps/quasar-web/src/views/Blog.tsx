@@ -42,7 +42,7 @@ export function Blog() {
 
         <CardGrid cols={3} className="mb-12">
           {RUBRICS.map((item) => (
-            <FeatureCard key={item} title={item} desc={RUBRIC_DESC} />
+            <FeatureCard key={item} title={item} desc={RUBRIC_DESC} headingLevel="h2" />
           ))}
         </CardGrid>
 
